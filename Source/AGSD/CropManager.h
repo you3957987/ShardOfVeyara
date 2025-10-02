@@ -40,9 +40,4 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
 	TMap<int32, FCropArrayWrapper> ResisterCropArray;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 };

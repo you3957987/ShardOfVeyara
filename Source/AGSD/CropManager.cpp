@@ -3,6 +3,9 @@
 
 #include "CropManager.h"
 
+#include "AGSDGameStateBase.h"
+#include "Kismet/GameplayStatics.h"
+
 // Sets default values
 ACropManager::ACropManager()
 {
@@ -55,13 +58,10 @@ void ACropManager::UnregisterCrop(ACrop* Crop, int32 ScheduledDay)
 void ACropManager::BeginPlay()
 {
 	Super::BeginPlay();
-	
-}
 
-// Called every frame
-void ACropManager::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
+	if (AAGSDGameStateBase* GameState = Cast<AAGSDGameStateBase>(UGameplayStatics::GetGameState(GetWorld())))
+	{
+		GameState->OnDayChangedDelegate.AddUObject(this, &ACropManager::HandleDayPassed);
+	}
 }
 

@@ -2,6 +2,8 @@
 
 
 #include "Crop.h"
+
+#include "AGSDGameStateBase.h"
 #include "CropManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Misc/AssetRegistryInterface.h"
@@ -14,17 +16,14 @@ ACrop::ACrop()
 	//루트 컴포넌트 설정
 	CropMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CropMesh"));
 	RootComponent = CropMesh;
+
+	CropMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 // Called when the game starts or when spawned
 void ACrop::BeginPlay()
 {
 	Super::BeginPlay();
-	ACropManager* Manager = Cast<ACropManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACropManager::StaticClass()));
-	if (Manager != nullptr)
-	{
-		Manager->ResisterCrop(this, ScheduledDay);
-	}
 }
 
 void ACrop::SetCropData(UUCropData* CData)
@@ -33,7 +32,20 @@ void ACrop::SetCropData(UUCropData* CData)
 	{
 		this->CropData = CData;
 		CurrentGrowStageIndex = 0;
+
+		AAGSDGameStateBase* GS = Cast<AAGSDGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
+		if (!GS) return;
+
+		int32 CurrentDay = GS->GetCurrentDay();
+		
 		GrowthTimeCounter = CData->GrowthStages[CurrentGrowStageIndex].TimeToGrow;
+
+		ScheduledDay = CurrentDay + GrowthTimeCounter;
+		
+		if (ACropManager* Manager = Cast<ACropManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACropManager::StaticClass())))
+		{
+			Manager->ResisterCrop(this, ScheduledDay);
+		}
 
 		MeshUpdate();
 	}

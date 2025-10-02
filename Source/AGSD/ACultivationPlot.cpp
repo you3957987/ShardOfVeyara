@@ -7,6 +7,7 @@
 #include "Crop.h"
 
 #include "MovieSceneSequenceID.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AACultivationPlot::AACultivationPlot()
@@ -27,9 +28,11 @@ AACultivationPlot::AACultivationPlot()
 //오버랩 시작 함수 구현부
 void AACultivationPlot::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (!bCanPlant) return;
 	if (Cast<AAGSDCharacter>(OtherActor))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AACultivationPlot::OnBeginOverlap"));
+		bCanPlant = false;
 		ACrop* NewCrop = GetWorld()->SpawnActorDeferred<ACrop>(
 			ACrop::StaticClass(),
 			GetTransform(),
@@ -40,7 +43,7 @@ void AACultivationPlot::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AAct
 		if (NewCrop)
 		{
 			NewCrop->SetCropData(CropData);
-			NewCrop->FinishSpawning(GetTransform());
+			UGameplayStatics::FinishSpawningActor(NewCrop, GetTransform());
 		}
 	}
 }
