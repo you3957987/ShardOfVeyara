@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "UCropData.h"
 #include "ACultivationPlot.generated.h"
 
 UCLASS()
@@ -18,6 +19,10 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	//작물 정보
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Farming")
+	UUCropData* CropData;
 
 public:	
 	// Called every frame

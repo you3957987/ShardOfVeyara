@@ -30,7 +30,10 @@ void ACropManager::HandleDayPassed(int32 CurrentDay)
 	{
 		for (ACrop* Crop : DaySchedule->CropsToAdvance)
 		{
-			if (Crop != nullptr) Crop->AdvanceGrowth();
+			if (Crop == nullptr) continue;
+			Crop->AdvanceGrowth();
+			if (!Crop->GetFullyGrown())
+				ResisterCrop(Crop, Crop->GetScheduledDay());
 		}
 	}
 	ResisterCropArray.Remove(CurrentDay);

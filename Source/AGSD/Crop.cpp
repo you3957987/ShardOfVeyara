@@ -10,8 +10,10 @@
 ACrop::ACrop()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
+	PrimaryActorTick.bCanEverTick = false;
+	//루트 컴포넌트 설정
+	CropMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CropMesh"));
+	RootComponent = CropMesh;
 }
 
 // Called when the game starts or when spawned
@@ -23,13 +25,6 @@ void ACrop::BeginPlay()
 	{
 		Manager->ResisterCrop(this, ScheduledDay);
 	}
-}
-
-// Called every frame
-void ACrop::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 
 void ACrop::SetCropData(UUCropData* CData)
@@ -52,12 +47,8 @@ void ACrop::AdvanceGrowth()
 		GrowthTimeCounter = CropData->GrowthStages[CurrentGrowStageIndex].TimeToGrow;
 		MeshUpdate();
 		ScheduledDay += GrowthTimeCounter;
-		ACropManager* Manager = Cast<ACropManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACropManager::StaticClass()));
-		if (Manager != nullptr)
-		{
-			Manager->ResisterCrop(this, ScheduledDay);
-		}
 	}
+	if (CurrentGrowStageIndex >= 4) FullyGrown = true;
 }
 
 void ACrop::MeshUpdate()

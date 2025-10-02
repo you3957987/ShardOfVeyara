@@ -4,6 +4,7 @@
 #include "ACultivationPlot.h"
 #include "Components/BoxComponent.h"
 #include "AGSDCharacter.h"
+#include "Crop.h"
 
 #include "MovieSceneSequenceID.h"
 
@@ -28,7 +29,19 @@ void AACultivationPlot::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AAct
 {
 	if (Cast<AAGSDCharacter>(OtherActor))
 	{
-		AActor* NewCrop = GetWorld()->SpawnActor<AActor>(GetActorLocation(), GetActorRotation());
+		UE_LOG(LogTemp, Warning, TEXT("AACultivationPlot::OnBeginOverlap"));
+		ACrop* NewCrop = GetWorld()->SpawnActorDeferred<ACrop>(
+			ACrop::StaticClass(),
+			GetTransform(),
+			this,
+			nullptr,
+			ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+			);
+		if (NewCrop)
+		{
+			NewCrop->SetCropData(CropData);
+			NewCrop->FinishSpawning(GetTransform());
+		}
 	}
 }
 

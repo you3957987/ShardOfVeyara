@@ -32,19 +32,24 @@ protected:
 	//다음 단계까지 남은 시간
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
 	int32 GrowthTimeCounter = 0;
-
+	//다음 성장 날짜
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
 	int32 ScheduledDay = 0;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
+	bool FullyGrown = false;
+	
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 	//작물이 경작지에 심길 때 실행할 함수
 	void SetCropData(UUCropData* CData);
 	//작물 매니저가 성장 날짜가 되었을 땨 호출하여 성장을 처리하는 함수
 	void AdvanceGrowth();
 
 	FORCEINLINE int32 GetGrowthTimeCounter() const { return GrowthTimeCounter; };
+	FORCEINLINE int32 GetCurrentGrowStageIndex() const { return CurrentGrowStageIndex; };
+	FORCEINLINE int32 GetScheduledDay() const { return ScheduledDay; };
+	FORCEINLINE bool GetFullyGrown() const { return FullyGrown; };
+	
 private:
 	//작물 메시 정보 업데이트
 	void MeshUpdate();
