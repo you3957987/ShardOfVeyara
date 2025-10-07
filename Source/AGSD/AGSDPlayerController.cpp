@@ -9,6 +9,18 @@
 #include "AGSD.h"
 #include "Widgets/Input/SVirtualJoystick.h"
 
+void AAGSDPlayerController::ShowInteractionWidget()
+{
+	if (!WBP_InteractionWidget) return;
+	if (!InteractionWidget) InteractionWidget = CreateWidget<UUserWidget>(this, WBP_InteractionWidget);
+	if (!InteractionWidget->IsInViewport()) InteractionWidget->AddToViewport();
+}
+
+void AAGSDPlayerController::HideInteractionWidget()
+{
+	if (InteractionWidget && InteractionWidget->IsInViewport()) InteractionWidget->RemoveFromParent();
+}
+
 void AAGSDPlayerController::BeginPlay()
 {
 	Super::BeginPlay();

@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "UCropData.h"
+#include "Interaction.h"
 #include "ACultivationPlot.generated.h"
 
 UCLASS()
-class AGSD_API AACultivationPlot : public AActor
+class AGSD_API AACultivationPlot : public AActor, public IInteraction
 {
 	GENERATED_BODY()
 	
@@ -33,6 +34,11 @@ public:
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	//오버랩 종료 시 작동할 함수
+	UFUNCTION()
+	void OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	virtual void Interact_Implementation() override;
 private:
 	//루트 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CultivationPlot, meta = (AllowPrivateAccess = "true"))

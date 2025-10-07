@@ -32,7 +32,6 @@ class AAGSDCharacter : public ACharacter
 	UCameraComponent* FollowCamera;
 	
 protected:
-
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* JumpAction;
@@ -49,13 +48,41 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* MouseLookAction;
 
+	/** Mouse Look Input Action */
+	UPROPERTY(EditAnywhere, Category="Input")
+	UInputAction* Interaction;
+
 public:
 
 	/** Constructor */
 	AAGSDCharacter();	
 
+	//G 키 입력과 바인딩될 함수
+	void TryInteract();
+
+	//AACultivationPlot에서 호출하여 상호작용 대상을 설정/초기화하는 함수
+	FORCEINLINE void SetCurrentInteractableActor(AActor* NewActor) { CurrentInteractableActor = NewActor;};
+
+	//AACultivationPlot에서 호출하여 액터를 추가하는 함수
+	void AddInteractableActor(AActor* NewActor);
+	//AACultivationPlot에서 호출하여 액터를 제거하는 함수
+	void RemoveInteractableActor(AActor* ActorToRemove);
+	//상호작용 가능 액터 개수
+	FORCEINLINE int32 GetInteractableActorNum() const {return InteractableActorsInRange.Num();}
+	
+	UPROPERTY(EditAnywhere, Category="Input")
+	class UInputMappingContext* IMC_Farmer;
+	
 protected:
 
+	//현재 상호작용 가능한 액터 포인터 (AACultivationPlot 또는 ACrop 등)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
+	AActor* CurrentInteractableActor = nullptr;
+	
+	//현재 상호작용 가능한 모든 액터를 저장하는 TSet (중복 없이 빠른 추가/제거)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
+	TSet<AActor*> InteractableActorsInRange; 
+	
 	/** Initialize input action bindings */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

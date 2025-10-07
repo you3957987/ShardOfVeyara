@@ -2,6 +2,7 @@
 
 
 #include "FarmingGameMode.h"
+#include "AGSDPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -16,10 +17,6 @@ void AFarmingGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 	GameState = GetGameState<AAGSDGameStateBase>();
-	if (!GameState)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Game State is null"));
-	}
 }
 
 void AFarmingGameMode::Tick(float DeltaSeconds)

@@ -4,9 +4,8 @@
 #include "ACultivationPlot.h"
 #include "Components/BoxComponent.h"
 #include "AGSDCharacter.h"
+#include "AGSDPlayerController.h"
 #include "Crop.h"
-
-#include "MovieSceneSequenceID.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -20,31 +19,66 @@ AACultivationPlot::AACultivationPlot()
 	//콜리전 박스 설정
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision Box"));
 	CollisionBox->SetupAttachment(RootComponent);
-	CollisionBox->SetBoxExtent(FVector(60.0f, 60.f, 60.f));
-	CollisionBox->SetRelativeLocation(FVector(0.f, 0.f, 120.f));
+	CollisionBox->SetBoxExtent(FVector(40.0f, 40.f, 40.f));
+	CollisionBox->SetRelativeLocation(FVector(0.f, 0.f, 80.f));
 	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &AACultivationPlot::OnBeginOverlap);
+	CollisionBox->OnComponentEndOverlap.AddDynamic(this, &AACultivationPlot::OnEndOverlap);
 }
 
 //오버랩 시작 함수 구현부
 void AACultivationPlot::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!bCanPlant) return;
-	if (Cast<AAGSDCharacter>(OtherActor))
+	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AACultivationPlot::OnBeginOverlap"));
-		bCanPlant = false;
-		ACrop* NewCrop = GetWorld()->SpawnActorDeferred<ACrop>(
-			ACrop::StaticClass(),
-			GetTransform(),
-			this,
-			nullptr,
-			ESpawnActorCollisionHandlingMethod::AlwaysSpawn
-			);
-		if (NewCrop)
+		if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(player->GetController()))	PlayerController->ShowInteractionWidget();
+		player->AddInteractableActor(this);
+		/*
+		if (Implements<UInteraction>())
 		{
-			NewCrop->SetCropData(CropData);
-			UGameplayStatics::FinishSpawningActor(NewCrop, GetTransform());
+			IInteraction::Execute_Interact(this);
 		}
+		*/
+	}
+}
+
+//오버랩 종료 함수 구현부
+void AACultivationPlot::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
+	{
+		player->RemoveInteractableActor(this);
+		if (player->GetInteractableActorNum() > 0) return;
+		if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(player->GetController()))	PlayerController->HideInteractionWidget();
+	}
+}
+
+void AACultivationPlot::Interact_Implementation()
+{
+	UE_LOG(LogTemp, Warning, TEXT("AACultivationPlot::OnBeginOverlap"));
+	
+	CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	FTransform SpawnTransform = GetTransform();
+	SpawnTransform.SetLocation(GetActorLocation() + FVector(0.f, 0.f, 15.f));
+
+	/*
+	float RandomYaw = FMath::RandRange(0.f, 360.f);
+	FQuat RandomRotation = FQuat(FRotator(0.f, RandomYaw, 0.0f));
+	SpawnTransform.SetRotation(RandomRotation);
+	*/
+	
+	ACrop* NewCrop = GetWorld()->SpawnActorDeferred<ACrop>(
+		ACrop::StaticClass(),
+		SpawnTransform,
+		this,
+		nullptr,
+		ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+		);
+	if (NewCrop)
+	{
+		NewCrop->SetCropData(CropData);
+		UGameplayStatics::FinishSpawningActor(NewCrop, SpawnTransform);
 	}
 }
 

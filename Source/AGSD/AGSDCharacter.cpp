@@ -10,6 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Interaction.h"
 #include "AGSD.h"
 
 AAGSDCharacter::AAGSDCharacter()
@@ -50,11 +51,51 @@ AAGSDCharacter::AAGSDCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
+void AAGSDCharacter::TryInteract()
+{
+	CurrentInteractableActor = nullptr;
+
+	float MinDistance = FLT_MAX;
+
+	const FVector PlayerLocation = GetActorLocation();
+
+	for (AActor* CurrentActor : InteractableActorsInRange)
+	{
+		if (!CurrentActor) continue;
+
+		const float DistanceSq = FVector::DistSquared(PlayerLocation, CurrentActor->GetActorLocation());
+		if (DistanceSq < MinDistance)
+		{
+			MinDistance = DistanceSq;
+			CurrentInteractableActor = CurrentActor;
+		}
+	}
+	if (!CurrentInteractableActor) return;
+	if (CurrentInteractableActor->Implements<UInteraction>()) IInteraction::Execute_Interact(CurrentInteractableActor);
+}
+
+void AAGSDCharacter::AddInteractableActor(AActor* NewActor)
+{
+	if (NewActor) InteractableActorsInRange.Add(NewActor);
+}
+
+void AAGSDCharacter::RemoveInteractableActor(AActor* ActorToRemove)
+{
+	if (ActorToRemove) InteractableActorsInRange.Remove(ActorToRemove);
+}
+
 void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
-		
+		if (EnhancedInputComponent != nullptr)
+		{
+			if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+			{
+				UEnhancedInputLocalPlayerSubsystem* EnhancedSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
+				EnhancedSubsystem->AddMappingContext(IMC_Farmer, 1);
+			}
+		}
 		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
@@ -65,6 +106,9 @@ void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AAGSDCharacter::Look);
+
+		//G 키를 누를 때 TryInteract 함수를 호출하도록 바인딩
+		EnhancedInputComponent->BindAction(Interaction, ETriggerEvent::Triggered, this, &AAGSDCharacter::TryInteract);
 	}
 	else
 	{

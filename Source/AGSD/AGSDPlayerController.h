@@ -18,6 +18,16 @@ class AAGSDPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
+public:
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UUserWidget> WBP_InteractionWidget;
+
+	void ShowInteractionWidget();
+	void HideInteractionWidget();
+private:
+	UPROPERTY()
+	class UUserWidget* InteractionWidget;
+	
 protected:
 
 	/** Input Mapping Contexts */

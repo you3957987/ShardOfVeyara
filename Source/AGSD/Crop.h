@@ -38,7 +38,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
 	bool FullyGrown = false;
-	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
+	int32 FinishGrowStageIndex = 0;
 public:	
 	//작물이 경작지에 심길 때 실행할 함수
 	void SetCropData(UUCropData* CData);

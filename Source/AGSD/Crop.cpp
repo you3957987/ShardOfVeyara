@@ -32,6 +32,7 @@ void ACrop::SetCropData(UUCropData* CData)
 	{
 		this->CropData = CData;
 		CurrentGrowStageIndex = 0;
+		FinishGrowStageIndex = CData->GrowthStages.Num() - 1;	
 
 		AAGSDGameStateBase* GS = Cast<AAGSDGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
 		if (!GS) return;
@@ -53,14 +54,15 @@ void ACrop::SetCropData(UUCropData* CData)
 
 void ACrop::AdvanceGrowth()
 {
-	if (CurrentGrowStageIndex < 4)
+	if (CurrentGrowStageIndex < FinishGrowStageIndex)
 	{
 		CurrentGrowStageIndex++;
 		GrowthTimeCounter = CropData->GrowthStages[CurrentGrowStageIndex].TimeToGrow;
 		MeshUpdate();
+		
 		ScheduledDay += GrowthTimeCounter;
 	}
-	if (CurrentGrowStageIndex >= 4) FullyGrown = true;
+	if (CurrentGrowStageIndex >= FinishGrowStageIndex) FullyGrown = true;
 }
 
 void ACrop::MeshUpdate()
