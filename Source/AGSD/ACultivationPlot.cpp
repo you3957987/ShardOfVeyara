@@ -12,7 +12,7 @@
 AACultivationPlot::AACultivationPlot()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	//루트 컴포넌트 설정
 	RootScene = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	RootComponent = RootScene;
@@ -42,8 +42,7 @@ void AACultivationPlot::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AAct
 }
 
 //오버랩 종료 함수 구현부
-void AACultivationPlot::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void AACultivationPlot::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
 	{
@@ -59,6 +58,23 @@ void AACultivationPlot::Interact_Implementation()
 	
 	CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	if (PlantedCrop == nullptr)
+	{
+		PlantCrop();
+	}
+}
+
+
+
+// Called when the game starts or when spawned
+void AACultivationPlot::BeginPlay()
+{
+	Super::BeginPlay();
+	
+}
+
+void AACultivationPlot::PlantCrop()
+{
 	FTransform SpawnTransform = GetTransform();
 	SpawnTransform.SetLocation(GetActorLocation() + FVector(0.f, 0.f, 15.f));
 
@@ -68,26 +84,26 @@ void AACultivationPlot::Interact_Implementation()
 	SpawnTransform.SetRotation(RandomRotation);
 	*/
 	
-	ACrop* NewCrop = GetWorld()->SpawnActorDeferred<ACrop>(
-		ACrop::StaticClass(),
-		SpawnTransform,
-		this,
-		nullptr,
-		ESpawnActorCollisionHandlingMethod::AlwaysSpawn
-		);
-	if (NewCrop)
+	PlantedCrop = GetWorld()->SpawnActorDeferred<ACrop>(
+	ACrop::StaticClass(),
+	SpawnTransform,
+	this,
+	nullptr,
+	ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+	);
+	if (PlantedCrop)
 	{
-		NewCrop->SetCropData(CropData);
-		UGameplayStatics::FinishSpawningActor(NewCrop, SpawnTransform);
+		PlantedCrop->SetCropData(CropData);
+		PlantedCrop->OnDestroyed.AddDynamic(this, &AACultivationPlot::OnPlantedCropDestroyed);
+		UGameplayStatics::FinishSpawningActor(PlantedCrop, SpawnTransform);
 	}
 }
 
-
-// Called when the game starts or when spawned
-void AACultivationPlot::BeginPlay()
+void AACultivationPlot::OnPlantedCropDestroyed(AActor* DestroyedActor)
 {
-	Super::BeginPlay();
-	
+	PlantedCrop = nullptr;
+	if (CollisionBox)
+		CollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 // Called every frame

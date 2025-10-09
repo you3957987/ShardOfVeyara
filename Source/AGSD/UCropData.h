@@ -20,6 +20,9 @@ struct FHarvestItem
 	//수확 시 획득할 수량
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Harvest")
 	int32 Quantity;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Harvest")
+	class UStaticMesh* Mesh;
 };
 
 USTRUCT(BlueprintType)
@@ -34,6 +37,20 @@ struct FGrowthStageData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Farming")
 	int32 TimeToGrow;
 };
+
+USTRUCT(BlueprintType)
+struct FHarvestedStageData
+{
+	GENERATED_BODY()
+	//해당 단계의 시각적 메시
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Farming")
+	class UStaticMesh* Mesh;
+
+	//작물이 다음 단계로 진행되는 날짜
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Farming")
+	int32 TimeToGrow;
+};
+
 UCLASS()
 class AGSD_API UUCropData : public UPrimaryDataAsset
 {
@@ -48,6 +65,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Farming")
 	TArray<FGrowthStageData> GrowthStages;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Farming")
+	TArray<FGrowthStageData> HarvestedStages;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Harvest")
 	TArray<FHarvestItem> HarvestRewards;
 };

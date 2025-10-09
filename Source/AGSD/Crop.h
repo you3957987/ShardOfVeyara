@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "UCropData.h"
+#include "Interaction.h"
 #include "Crop.generated.h"
 
 UCLASS()
-class AGSD_API ACrop : public AActor
+class AGSD_API ACrop : public AActor, public IInteraction
 {
 	GENERATED_BODY()
 	
@@ -41,6 +42,8 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
 	int32 FinishGrowStageIndex = 0;
+
+	void HarvestCrop();
 public:	
 	//작물이 경작지에 심길 때 실행할 함수
 	void SetCropData(UUCropData* CData);
@@ -51,8 +54,22 @@ public:
 	FORCEINLINE int32 GetCurrentGrowStageIndex() const { return CurrentGrowStageIndex; };
 	FORCEINLINE int32 GetScheduledDay() const { return ScheduledDay; };
 	FORCEINLINE bool GetFullyGrown() const { return FullyGrown; };
+
+	//오버랩 시작 시 작동할 함수
+	UFUNCTION()
+	void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	//오버랩 종료 시 작동할 함수
+	UFUNCTION()
+	void OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	virtual void Interact_Implementation() override;
 	
 private:
 	//작물 메시 정보 업데이트
 	void MeshUpdate();
+
+	//콜리전 박스
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CultivationPlot, meta = (AllowPrivateAccess = "true"))
+	class USphereComponent* CollisionBox;
 };

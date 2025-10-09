@@ -27,6 +27,14 @@ protected:
 
 	bool bCanPlant = true;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
+	class ACrop* PlantedCrop = nullptr;
+
+	void PlantCrop();
+
+	UFUNCTION()
+	void OnPlantedCropDestroyed(AActor* DestroyedActor);
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

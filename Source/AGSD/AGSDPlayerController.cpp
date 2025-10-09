@@ -7,18 +7,26 @@
 #include "InputMappingContext.h"
 #include "Blueprint/UserWidget.h"
 #include "AGSD.h"
+#include "Animation/WidgetAnimation.h"
 #include "Widgets/Input/SVirtualJoystick.h"
 
 void AAGSDPlayerController::ShowInteractionWidget()
 {
 	if (!WBP_InteractionWidget) return;
-	if (!InteractionWidget) InteractionWidget = CreateWidget<UUserWidget>(this, WBP_InteractionWidget);
-	if (!InteractionWidget->IsInViewport()) InteractionWidget->AddToViewport();
+	if (!InteractionWidget) InteractionWidget = CreateWidget<UInteractionWidget>(this, WBP_InteractionWidget);
+	if (!InteractionWidget->IsInViewport())
+	{
+		InteractionWidget->AddToViewport();
+		InteractionWidget->PlayFadeInAnim(false);
+	}
 }
 
 void AAGSDPlayerController::HideInteractionWidget()
 {
-	if (InteractionWidget && InteractionWidget->IsInViewport()) InteractionWidget->RemoveFromParent();
+	if (InteractionWidget && InteractionWidget->IsInViewport())
+	{
+		InteractionWidget->PlayFadeInAnim(true);
+	}
 }
 
 void AAGSDPlayerController::BeginPlay()

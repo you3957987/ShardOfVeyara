@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "InteractionWidget.h"
 #include "AGSDPlayerController.generated.h"
 
 class UInputMappingContext;
@@ -20,13 +21,13 @@ class AAGSDPlayerController : public APlayerController
 	
 public:
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class UUserWidget> WBP_InteractionWidget;
+	TSubclassOf<class UInteractionWidget> WBP_InteractionWidget;
 
 	void ShowInteractionWidget();
 	void HideInteractionWidget();
 private:
 	UPROPERTY()
-	class UUserWidget* InteractionWidget;
+	class UInteractionWidget* InteractionWidget;
 	
 protected:
 
