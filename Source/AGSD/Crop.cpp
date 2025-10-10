@@ -36,7 +36,10 @@ void ACrop::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 {
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
 	{
-		if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(player->GetController()))	PlayerController->ShowInteractionWidget();
+		FString InteractAction = TEXT("수확하기");
+		FText NewText = FText::FromString(InteractAction);
+		
+		if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(player->GetController()))	PlayerController->ShowInteractionWidget(NewText);
 		player->AddInteractableActor(this);
 		/*
 		if (Implements<UInteraction>())

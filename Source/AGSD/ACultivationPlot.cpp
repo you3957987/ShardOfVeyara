@@ -19,8 +19,7 @@ AACultivationPlot::AACultivationPlot()
 	//콜리전 박스 설정
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision Box"));
 	CollisionBox->SetupAttachment(RootComponent);
-	CollisionBox->SetBoxExtent(FVector(40.0f, 40.f, 40.f));
-	CollisionBox->SetRelativeLocation(FVector(0.f, 0.f, 80.f));
+	CollisionBox->SetBoxExtent(FVector(50.0f, 50.f, 50.f));
 	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &AACultivationPlot::OnBeginOverlap);
 	CollisionBox->OnComponentEndOverlap.AddDynamic(this, &AACultivationPlot::OnEndOverlap);
 }
@@ -29,8 +28,8 @@ AACultivationPlot::AACultivationPlot()
 void AACultivationPlot::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
-	{
-		if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(player->GetController()))	PlayerController->ShowInteractionWidget();
+	{		
+		ShowWidget(player);
 		player->AddInteractableActor(this);
 		/*
 		if (Implements<UInteraction>())
@@ -39,6 +38,12 @@ void AACultivationPlot::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AAct
 		}
 		*/
 	}
+}
+
+void AACultivationPlot::ShowWidget_Implementation(ACharacter* player)
+{
+	if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(player->GetController()))
+		PlayerController->ShowInteractionWidget(InteractActionText);
 }
 
 //오버랩 종료 함수 구현부

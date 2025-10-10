@@ -23,7 +23,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UInteractionWidget> WBP_InteractionWidget;
 
-	void ShowInteractionWidget();
+	void ShowInteractionWidget(const FText& NewText);
 	void HideInteractionWidget();
 private:
 	UPROPERTY()

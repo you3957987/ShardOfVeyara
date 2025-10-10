@@ -3,6 +3,8 @@
 
 #include "InteractionWidget.h"
 
+#include "Components/TextBlock.h"
+
 void UInteractionWidget::PlayFadeInAnim(bool IsReverse)
 {
 	if (!FadeInAnim) return;
@@ -25,4 +27,12 @@ void UInteractionWidget::PlayFadeInAnim(bool IsReverse)
 void UInteractionWidget::OnFadeOutAnimFinished()
 {
 	RemoveFromParent();
+}
+
+void UInteractionWidget::SetInteractionText(const FText& NewText)
+{
+	if (InteractionText)
+	{
+		InteractionText->SetText(NewText);
+	}
 }

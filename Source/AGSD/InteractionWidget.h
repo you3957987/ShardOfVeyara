@@ -17,11 +17,17 @@ class AGSD_API UInteractionWidget : public UUserWidget
 public:
 	UFUNCTION()
 	void PlayFadeInAnim(bool IsReverse);
+
+	UFUNCTION()
+	void SetInteractionText(const FText& NewText);
 	
 protected:
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	UWidgetAnimation* FadeInAnim;
 
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* InteractionText;
+	
 	UFUNCTION()
 	void OnFadeOutAnimFinished();
 };

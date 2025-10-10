@@ -53,24 +53,6 @@ AAGSDCharacter::AAGSDCharacter()
 
 void AAGSDCharacter::TryInteract()
 {
-	CurrentInteractableActor = nullptr;
-
-	float MinDistance = FLT_MAX;
-
-	const FVector PlayerLocation = GetActorLocation();
-
-	for (AActor* CurrentActor : InteractableActorsInRange)
-	{
-		if (!CurrentActor) continue;
-
-		const float DistanceSq = FVector::DistSquared(PlayerLocation, CurrentActor->GetActorLocation());
-		if (DistanceSq < MinDistance)
-		{
-			MinDistance = DistanceSq;
-			CurrentInteractableActor = CurrentActor;
-		}
-	}
-	if (!CurrentInteractableActor) return;
 	if (CurrentInteractableActor->Implements<UInteraction>()) IInteraction::Execute_Interact(CurrentInteractableActor);
 }
 
@@ -82,6 +64,40 @@ void AAGSDCharacter::AddInteractableActor(AActor* NewActor)
 void AAGSDCharacter::RemoveInteractableActor(AActor* ActorToRemove)
 {
 	if (ActorToRemove) InteractableActorsInRange.Remove(ActorToRemove);
+}
+
+void AAGSDCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (InteractableActorsInRange.Num() <= 0)
+	{
+		CurrentInteractableActor = nullptr;
+		return;
+	}
+	
+	float MinDistance = FLT_MAX;
+
+	const FVector PlayerLocation = GetActorLocation();
+
+	AActor* MinDistanceActor = nullptr;
+	
+	for (AActor* CurrentActor : InteractableActorsInRange)
+	{
+		if (!CurrentActor) continue;
+
+		const float DistanceSq = FVector::DistSquared(PlayerLocation, CurrentActor->GetActorLocation());
+		if (DistanceSq < MinDistance)
+		{
+			MinDistance = DistanceSq;
+			MinDistanceActor = CurrentActor;
+		}
+	}
+	if (MinDistanceActor != nullptr && CurrentInteractableActor != MinDistanceActor)
+	{
+		CurrentInteractableActor = MinDistanceActor;
+		CurrentInteractableActor->Show
+	}
 }
 
 void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

@@ -72,7 +72,8 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category="Input")
 	class UInputMappingContext* IMC_Farmer;
-	
+
+	virtual void Tick(float DeltaSeconds) override;
 protected:
 
 	//현재 상호작용 가능한 액터 포인터 (AACultivationPlot 또는 ACrop 등)
