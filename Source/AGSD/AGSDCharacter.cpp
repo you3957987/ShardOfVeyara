@@ -53,6 +53,7 @@ AAGSDCharacter::AAGSDCharacter()
 
 void AAGSDCharacter::TryInteract()
 {
+	if (CurrentInteractableActor == nullptr) return;
 	if (CurrentInteractableActor->Implements<UInteraction>()) IInteraction::Execute_Interact(CurrentInteractableActor);
 }
 
@@ -96,7 +97,7 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 	if (MinDistanceActor != nullptr && CurrentInteractableActor != MinDistanceActor)
 	{
 		CurrentInteractableActor = MinDistanceActor;
-		CurrentInteractableActor->Show
+		IInteraction::Execute_ShowWidget(CurrentInteractableActor, this);
 	}
 }
 

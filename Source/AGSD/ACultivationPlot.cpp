@@ -29,7 +29,7 @@ void AACultivationPlot::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AAct
 {
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
 	{		
-		ShowWidget(player);
+		IInteraction::Execute_ShowWidget(this, player);
 		player->AddInteractableActor(this);
 		/*
 		if (Implements<UInteraction>())

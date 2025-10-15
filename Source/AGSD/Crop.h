@@ -44,6 +44,9 @@ protected:
 	int32 FinishGrowStageIndex = 0;
 
 	void HarvestCrop();
+
+	FText InteractActionText = FText::FromString(TEXT("수확하기"));
+
 public:	
 	//작물이 경작지에 심길 때 실행할 함수
 	void SetCropData(UUCropData* CData);
@@ -64,7 +67,8 @@ public:
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	virtual void Interact_Implementation() override;
-	
+	virtual void ShowWidget_Implementation(ACharacter* player) override;
+
 private:
 	//작물 메시 정보 업데이트
 	void MeshUpdate();

@@ -25,5 +25,8 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = "Interaction")
 	void Interact();
 	virtual void Interact_Implementation() = 0;
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Interaction")
 	void ShowWidget(ACharacter* player);
+	virtual void ShowWidget_Implementation(ACharacter* player) = 0;
 };

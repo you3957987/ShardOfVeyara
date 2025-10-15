@@ -14,9 +14,9 @@ void AAGSDPlayerController::ShowInteractionWidget(const FText& NewText)
 {
 	if (!WBP_InteractionWidget) return;
 	if (!InteractionWidget) InteractionWidget = CreateWidget<UInteractionWidget>(this, WBP_InteractionWidget);
+	InteractionWidget->SetInteractionText(NewText);
 	if (!InteractionWidget->IsInViewport())
 	{
-		InteractionWidget->SetInteractionText(NewText);
 		InteractionWidget->AddToViewport();
 		InteractionWidget->PlayFadeInAnim(false);
 	}

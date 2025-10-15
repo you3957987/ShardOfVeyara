@@ -36,10 +36,7 @@ void ACrop::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 {
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
 	{
-		FString InteractAction = TEXT("수확하기");
-		FText NewText = FText::FromString(InteractAction);
-		
-		if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(player->GetController()))	PlayerController->ShowInteractionWidget(NewText);
+		IInteraction::Execute_ShowWidget(this, player);
 		player->AddInteractableActor(this);
 		/*
 		if (Implements<UInteraction>())
@@ -105,6 +102,12 @@ void ACrop::Interact_Implementation()
 	UE_LOG(LogTemp, Warning, TEXT("ACrop::OnBeginOverlap"));
 
 	HarvestCrop();
+}
+
+void ACrop::ShowWidget_Implementation(ACharacter* player)
+{
+	if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(player->GetController()))
+		PlayerController->ShowInteractionWidget(InteractActionText);
 }
 
 void ACrop::AdvanceGrowth()
