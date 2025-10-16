@@ -53,7 +53,11 @@ AAGSDCharacter::AAGSDCharacter()
 
 void AAGSDCharacter::TryInteract()
 {
-	if (CurrentInteractableActor == nullptr) return;
+	if (InteractableActorsInRange.Num() <= 0)
+	{
+		CurrentInteractableActor = nullptr;
+		return;
+	}
 	if (CurrentInteractableActor->Implements<UInteraction>()) IInteraction::Execute_Interact(CurrentInteractableActor);
 }
 

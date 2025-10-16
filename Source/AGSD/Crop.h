@@ -47,6 +47,7 @@ protected:
 
 	FText InteractActionText = FText::FromString(TEXT("수확하기"));
 
+	void RegisterCropToManager(int32 GrowthTimeCounter);
 public:	
 	//작물이 경작지에 심길 때 실행할 함수
 	void SetCropData(UUCropData* CData);
@@ -71,7 +72,7 @@ public:
 
 private:
 	//작물 메시 정보 업데이트
-	void MeshUpdate();
+	void MeshUpdate(int32 CurrentGrowStageIndex);
 
 	//콜리전 박스
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CultivationPlot, meta = (AllowPrivateAccess = "true"))

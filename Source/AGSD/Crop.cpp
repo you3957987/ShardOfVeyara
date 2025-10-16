@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "AGSDCharacter.h"
 #include "AGSDPlayerController.h"
+#include "harvest.h"
 
 // Sets default values
 ACrop::ACrop()
@@ -19,7 +20,14 @@ ACrop::ACrop()
 	CropMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CropMesh"));
 	RootComponent = CropMesh;
 
-	CropMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	CropMesh->SetCollisionResponseToChannel(
+		ECollisionChannel::ECC_Pawn,
+		ECR_Overlap
+		);
+	CropMesh->SetCollisionResponseToChannel(
+		ECollisionChannel::ECC_Camera,
+		ECR_Ignore
+		);
 
 	//콜리전 박스 설정
 	CollisionBox = CreateDefaultSubobject<USphereComponent>(TEXT("Collision Box"));
@@ -67,7 +75,58 @@ void ACrop::BeginPlay()
 //작물 수확 구현부
 void ACrop::HarvestCrop()
 {
-	Destroy();
+	const float SpawnRadius = 50.f;
+	const FVector TargetLocation = GetActorLocation();
+
+	float RandomAngle = FMath::RandRange(0.0f, 360.f);
+	float RandomDist = FMath::RandRange(0.f, SpawnRadius);
+
+	FVector SpawnOffset(
+		RandomDist * FMath::Cos(RandomAngle),
+		RandomDist * FMath::Sin(RandomAngle),
+		0.0f
+		);
+
+	FVector FinalSpawnLocation = TargetLocation + SpawnOffset;
+
+	FTransform SpawnTransform = GetTransform();
+	SpawnTransform.SetLocation(FinalSpawnLocation + FVector(0.f, 0.f, 40.f));
+	
+	Aharvest* Harvest = GetWorld()->SpawnActorDeferred<Aharvest>(
+	Aharvest::StaticClass(),
+	SpawnTransform,
+	this,
+	nullptr,
+	ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+	);
+	if (Harvest)
+	{
+		Harvest->SetCropData(CropData);
+		UGameplayStatics::FinishSpawningActor(Harvest, SpawnTransform);
+		//초기 선형 속도 설정: Z축(위) 방향으로만 작은 속도를 줌
+		if (Harvest->GetMeshComponent()) // Harvest 액터에 MeshComponent를 가져오는 함수가 있다고 가정
+		{
+			// 50.0f 정도의 작은 힘으로 위로 튀어 오르게 합니다.
+			Harvest->GetMeshComponent()->SetPhysicsLinearVelocity(FVector(0.0f, 0.0f, 100.0f)); 
+		}
+	}
+}
+
+void ACrop::RegisterCropToManager(int32 growthTimeCounter)
+{
+	AAGSDGameStateBase* GS = Cast<AAGSDGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
+	if (!GS) return;
+
+	int32 CurrentDay = GS->GetCurrentDay();
+
+	ScheduledDay = CurrentDay + growthTimeCounter;
+		
+	if (ACropManager* Manager = Cast<ACropManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACropManager::StaticClass())))
+	{
+		Manager->ResisterCrop(this, ScheduledDay);
+	}
+
+	MeshUpdate(CurrentGrowStageIndex);
 }
 
 void ACrop::SetCropData(UUCropData* CData)
@@ -78,21 +137,9 @@ void ACrop::SetCropData(UUCropData* CData)
 		CurrentGrowStageIndex = 0;
 		FinishGrowStageIndex = CData->GrowthStages.Num() - 1;	
 
-		AAGSDGameStateBase* GS = Cast<AAGSDGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
-		if (!GS) return;
-
-		int32 CurrentDay = GS->GetCurrentDay();
-		
 		GrowthTimeCounter = CData->GrowthStages[CurrentGrowStageIndex].TimeToGrow;
 
-		ScheduledDay = CurrentDay + GrowthTimeCounter;
-		
-		if (ACropManager* Manager = Cast<ACropManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACropManager::StaticClass())))
-		{
-			Manager->ResisterCrop(this, ScheduledDay);
-		}
-
-		MeshUpdate();
+		RegisterCropToManager(GrowthTimeCounter);
 	}
 }
 
@@ -101,7 +148,8 @@ void ACrop::Interact_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACrop::OnBeginOverlap"));
 
-	HarvestCrop();
+	for (int i = 0; i < CropData->HarvestRewards[0].Quantity; i++)	HarvestCrop();
+	Destroy();
 }
 
 void ACrop::ShowWidget_Implementation(ACharacter* player)
@@ -116,7 +164,7 @@ void ACrop::AdvanceGrowth()
 	{
 		CurrentGrowStageIndex++;
 		GrowthTimeCounter = CropData->GrowthStages[CurrentGrowStageIndex].TimeToGrow;
-		MeshUpdate();
+		MeshUpdate(CurrentGrowStageIndex);
 		
 		ScheduledDay += GrowthTimeCounter;
 	}
@@ -127,11 +175,11 @@ void ACrop::AdvanceGrowth()
 	}
 }
 
-void ACrop::MeshUpdate()
+void ACrop::MeshUpdate(int32 currentGrowStageIndex)
 {
-	if (CropData != nullptr && CropData->GrowthStages[CurrentGrowStageIndex].Mesh)
+	if (CropData != nullptr && CropData->GrowthStages[currentGrowStageIndex].Mesh)
 	{
-		CropMesh->SetStaticMesh(CropData->GrowthStages[CurrentGrowStageIndex].Mesh);
+		CropMesh->SetStaticMesh(CropData->GrowthStages[currentGrowStageIndex].Mesh);
 	}
 }
 

@@ -23,7 +23,7 @@ public:
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Time")
-	float TimeScale = 2.f;
+	float TimeScale = 12.f;
 
 	const float GameHoursPerDay = 24.0f;
 
