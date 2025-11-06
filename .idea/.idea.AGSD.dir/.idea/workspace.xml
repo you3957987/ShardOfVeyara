@@ -9,20 +9,7 @@
   <component name="ChangeListManager">
     <list default="true" id="4fb32fe1-2f7b-4ce4-b591-d5e38df0812d" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_BeetCropData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_BeetCropData.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_CarrotCropData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_CarrotCropData.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_CornCropData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_CornCropData.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_LettuceCropData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_LettuceCropData.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_PumpkinCropData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_PumpkinCropData.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_RiceCropData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_RiceCropData.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_TomatoCropData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_TomatoCropData.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_WatermelonCropData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_WatermelonCropData.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_WheatCropData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_WheatCropData.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/2/KL/5ZES6BMKIZVS2SK11VY9YO.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/2/KL/5ZES6BMKIZVS2SK11VY9YO.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/Crop.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/Crop.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/Crop.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/Crop.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/FarmingGameMode.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/FarmingGameMode.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Input/IA_Interaction.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Input/IA_Interaction.uasset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,21 +50,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Farming-System&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="AGSD" type="Uproject" factoryName="rider.uproject">
       <configuration_1 setup="1">
@@ -174,6 +161,7 @@
       <workItem from="1760060497335" duration="5300000" />
       <workItem from="1760547145338" duration="1290000" />
       <workItem from="1760587138164" duration="7676000" />
+      <workItem from="1762403463245" duration="369000" />
     </task>
     <servers />
   </component>
