@@ -58,7 +58,7 @@ void AAGSDCharacter::TryInteract()
 		CurrentInteractableActor = nullptr;
 		return;
 	}
-	if (CurrentInteractableActor->Implements<UInteraction>()) IInteraction::Execute_Interact(CurrentInteractableActor);
+	if (IsValid(CurrentInteractableActor)&&CurrentInteractableActor->Implements<UInteraction>()) IInteraction::Execute_Interact(CurrentInteractableActor);
 }
 
 void AAGSDCharacter::AddInteractableActor(AActor* NewActor)
