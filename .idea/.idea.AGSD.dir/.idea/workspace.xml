@@ -9,12 +9,15 @@
   <component name="ChangeListManager">
     <list default="true" id="4fb32fe1-2f7b-4ce4-b591-d5e38df0812d" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Input/IA_Interaction.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Input/IA_Interaction.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/My_Work/Level/Forest_Sky_Island.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/My_Work/Level/Forest_Sky_Island.umap" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DpaMonitoringSettings">
+    <option name="firstShow" value="false" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -50,21 +53,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Uproject.AGSD.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;YJH__Enemy&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="AGSD" type="Uproject" factoryName="rider.uproject">
       <configuration_1 setup="1">
@@ -72,7 +76,7 @@
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
         <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Binaries/Win64/UnrealEditor-Win64-DebugGame.exe" />
-        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\user\Documents\GitHub\AGSD\AGSD.uproject&quot;" />
+        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\YJH\Documents\GitHub\AGSD\AGSD.uproject&quot;" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.6" />
         <option name="PASS_PARENT_ENVS" value="1" />
@@ -98,7 +102,7 @@
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
         <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Binaries/Win64/UnrealEditor.exe" />
-        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\user\Documents\GitHub\AGSD\AGSD.uproject&quot;" />
+        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\YJH\Documents\GitHub\AGSD\AGSD.uproject&quot;" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.6" />
         <option name="PASS_PARENT_ENVS" value="1" />
@@ -162,6 +166,8 @@
       <workItem from="1760547145338" duration="1290000" />
       <workItem from="1760587138164" duration="7676000" />
       <workItem from="1762403463245" duration="369000" />
+      <workItem from="1762406687020" duration="284000" />
+      <workItem from="1762406994289" duration="289000" />
     </task>
     <servers />
   </component>
