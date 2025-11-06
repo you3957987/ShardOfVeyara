@@ -53,29 +53,33 @@ AAGSDCharacter::AAGSDCharacter()
 
 void AAGSDCharacter::TryInteract()
 {
-	if (InteractableActorsInRange.Num() <= 0)
+	if (!CanInteract)
 	{
 		CurrentInteractableActor = nullptr;
 		return;
 	}
-	if (IsValid(CurrentInteractableActor)&&CurrentInteractableActor->Implements<UInteraction>()) IInteraction::Execute_Interact(CurrentInteractableActor);
+	if (!IsValid(CurrentInteractableActor)) return;
+	if (!CurrentInteractableActor->Implements<UInteraction>()) return;
+	IInteraction::Execute_Interact(CurrentInteractableActor);
 }
 
 void AAGSDCharacter::AddInteractableActor(AActor* NewActor)
 {
 	if (NewActor) InteractableActorsInRange.Add(NewActor);
+	CanInteract = true;
 }
 
 void AAGSDCharacter::RemoveInteractableActor(AActor* ActorToRemove)
 {
 	if (ActorToRemove) InteractableActorsInRange.Remove(ActorToRemove);
+	if(InteractableActorsInRange.Num() <= 0) CanInteract = false;
 }
 
 void AAGSDCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (InteractableActorsInRange.Num() <= 0)
+	if (!CanInteract)
 	{
 		CurrentInteractableActor = nullptr;
 		return;

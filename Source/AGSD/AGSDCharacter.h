@@ -82,7 +82,10 @@ protected:
 	
 	//현재 상호작용 가능한 모든 액터를 저장하는 TSet (중복 없이 빠른 추가/제거)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
-	TSet<AActor*> InteractableActorsInRange; 
+	TSet<AActor*> InteractableActorsInRange = {}; 
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
+    bool CanInteract = false;
 	
 	/** Initialize input action bindings */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
