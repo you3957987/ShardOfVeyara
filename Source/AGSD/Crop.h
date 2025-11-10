@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "UCropData.h"
 #include "Interaction.h"
+#include "harvest.h"
 #include "Crop.generated.h"
 
 UCLASS()
@@ -24,6 +25,8 @@ protected:
 	//현재 단계의 작물 메시
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* CropMesh;
+	UPROPERTY(EditAnywhere, Category = "Farming") // EditDefaultsOnly도 가능
+	TSubclassOf<Aharvest> HarvestClass;
 	//작물 정보
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
 	UUCropData* CropData;

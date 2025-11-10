@@ -9,7 +9,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "AGSDCharacter.h"
 #include "AGSDPlayerController.h"
-#include "harvest.h"
 
 // Sets default values
 ACrop::ACrop()
@@ -75,6 +74,8 @@ void ACrop::BeginPlay()
 //작물 수확 구현부
 void ACrop::HarvestCrop()
 {
+	if (HarvestClass == nullptr) return;
+	
 	const float SpawnRadius = 50.f;
 	const FVector TargetLocation = GetActorLocation();
 
@@ -93,7 +94,7 @@ void ACrop::HarvestCrop()
 	SpawnTransform.SetLocation(FinalSpawnLocation + FVector(0.f, 0.f, 40.f));
 	
 	Aharvest* Harvest = GetWorld()->SpawnActorDeferred<Aharvest>(
-	Aharvest::StaticClass(),
+	HarvestClass,
 	SpawnTransform,
 	this,
 	nullptr,

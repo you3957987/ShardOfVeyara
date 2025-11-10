@@ -40,7 +40,12 @@ protected:
 	UUCropData* CropData;
 
 	FText InteractActionText = FText::FromString(TEXT("수집하기"));
-	
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interact")
+	void HarvestInteract(AAGSDCharacter* player);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interact")
+	AAGSDCharacter* InteractingPlayer = nullptr;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

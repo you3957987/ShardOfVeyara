@@ -5,7 +5,6 @@
 #include "Components/BoxComponent.h"
 #include "AGSDCharacter.h"
 #include "AGSDPlayerController.h"
-#include "Crop.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -80,6 +79,13 @@ void AACultivationPlot::BeginPlay()
 
 void AACultivationPlot::PlantCrop()
 {
+	// ★ 1. 에디터에서 작물 블루프린트(CropClassToPlant)를 설정했는지 확인
+	if (!CropClassToPlant)
+	{
+		UE_LOG(LogTemp, Error, TEXT("'%s'에 CropClassToPlant가 설정되지 않았습니다!"), *GetName());
+		return;
+	}
+	
 	FTransform SpawnTransform = GetTransform();
 	SpawnTransform.SetLocation(GetActorLocation() + FVector(0.f, 0.f, 15.f));
 
@@ -90,7 +96,7 @@ void AACultivationPlot::PlantCrop()
 	*/
 	
 	PlantedCrop = GetWorld()->SpawnActorDeferred<ACrop>(
-	ACrop::StaticClass(),
+	CropClassToPlant,
 	SpawnTransform,
 	this,
 	nullptr,

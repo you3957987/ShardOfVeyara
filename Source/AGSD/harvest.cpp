@@ -46,6 +46,8 @@ void Aharvest::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other
 	{
 		IInteraction::Execute_ShowWidget(this, player);
 		player->AddInteractableActor(this);
+
+		InteractingPlayer = player;
 		/*
 		if (Implements<UInteraction>())
 		{
@@ -61,6 +63,11 @@ void Aharvest::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
 	{
 		player->RemoveInteractableActor(this);
+
+		if (player == InteractingPlayer)
+		{
+			InteractingPlayer = nullptr;
+		}
 		if (player->GetInteractableActorNum() > 0) return;
 		if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(player->GetController()))	PlayerController->HideInteractionWidget();
 	}
@@ -82,7 +89,7 @@ void Aharvest::Tick(float DeltaTime)
 
 void Aharvest::Interact_Implementation()
 {
-	Destroy();
+	HarvestInteract(InteractingPlayer);
 }
 
 void Aharvest::ShowWidget_Implementation(ACharacter* player)
@@ -102,4 +109,3 @@ void Aharvest::SetCropData(UUCropData* CData)
 		}
 	}
 }
-
