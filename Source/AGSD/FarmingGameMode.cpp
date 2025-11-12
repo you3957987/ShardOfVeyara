@@ -23,16 +23,25 @@ void AFarmingGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (!GameState) return;
+	HandleTimeIncrement(DeltaSeconds * TimeScale);
+}
 
-	float GameTimeElapsed = DeltaSeconds * TimeScale;
-	GameState->SetCurrentTime(GameTimeElapsed);
+void AFarmingGameMode::HandleTimeIncrement(float time)
+{
+	if (!GameState) return;
+	GameState->AddCurrentTime(time);
 
 	if (GameState->GetCurrentTime() >= GameHoursPerDay)
 	{
 		GameState->InitCurrentTime();
+		Reset = true;
+	}
+	if (GameState->GetCurrentTime() > 360.f && Reset)
+	{
+		Reset = false;
 		GameState->AdvanceDay();
 	}
+	GameState->OnSecondChangedDelegate.Broadcast(GameState->GetCurrentTime());
 }
 
 

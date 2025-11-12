@@ -22,6 +22,31 @@ void AAGSDPlayerController::ShowInteractionWidget(const FText& NewText)
 	}
 }
 
+void AAGSDPlayerController::ShowClockWidget()
+{
+	if (!WBP_ClockWidget)
+	{
+		UE_LOG(LogTemp, Display, TEXT("WBP_ClockWidget Empty"));
+		return;
+	}
+	if (!ClockWidget)
+	{
+		ClockWidget = CreateWidget<UClockWidget>(this, WBP_ClockWidget);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Display, TEXT("ClockWidget Empty"));
+	}
+	if (!ClockWidget->IsInViewport())
+	{
+		ClockWidget->AddToViewport();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Display, TEXT("ClockWidget is In Viewport"));
+	}
+}
+
 void AAGSDPlayerController::HideInteractionWidget()
 {
 	if (InteractionWidget && InteractionWidget->IsInViewport())
@@ -34,6 +59,7 @@ void AAGSDPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	ShowClockWidget();
 	// only spawn touch controls on local player controllers
 	if (SVirtualJoystick::ShouldDisplayTouchInterface() && IsLocalPlayerController())
 	{
@@ -50,7 +76,6 @@ void AAGSDPlayerController::BeginPlay()
 			UE_LOG(LogAGSD, Error, TEXT("Could not spawn mobile controls widget."));
 
 		}
-
 	}
 }
 

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "InteractionWidget.h"
+#include "ClockWidget.h"
 #include "AGSDPlayerController.generated.h"
 
 class UInputMappingContext;
@@ -22,12 +23,17 @@ class AAGSDPlayerController : public APlayerController
 public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UInteractionWidget> WBP_InteractionWidget;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UClockWidget> WBP_ClockWidget;
 
 	void ShowInteractionWidget(const FText& NewText);
+	void ShowClockWidget();
 	void HideInteractionWidget();
 private:
 	UPROPERTY()
 	class UInteractionWidget* InteractionWidget;
+	UPROPERTY()
+	class UClockWidget* ClockWidget;
 	
 protected:
 

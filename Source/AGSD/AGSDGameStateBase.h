@@ -10,7 +10,8 @@
  * 
  */
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnDayChanged, int32 /* CurrentDay */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnDayChanged, int32);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSecondChanged, float, time);
 
 UCLASS()
 class AGSD_API AAGSDGameStateBase : public AGameStateBase
@@ -19,13 +20,14 @@ class AGSD_API AAGSDGameStateBase : public AGameStateBase
 
 public:
 	FOnDayChanged OnDayChangedDelegate;
+	FOnSecondChanged OnSecondChangedDelegate;
 	
 	void AdvanceDay();
 
 	FORCEINLINE int32 GetCurrentDay() const { return CurrentDay; }
-	FORCEINLINE int32 GetCurrentTime() const { return CurrentTime; }
-	FORCEINLINE void SetCurrentTime(float Time) { CurrentTime += Time; }
-	FORCEINLINE void InitCurrentTime() { CurrentTime = 0.0f; }
+	FORCEINLINE float GetCurrentTime() const { return CurrentTime; }
+	FORCEINLINE void InitCurrentTime() { CurrentTime = 0.f; }
+	FORCEINLINE void AddCurrentTime(float Time) { CurrentTime += Time; }
 
 	UFUNCTION()
 	void OnRep_CurrentDay();
@@ -37,5 +39,5 @@ protected:
 	int32 CurrentDay = 1;
 
 	UPROPERTY(visibleAnywhere, BlueprintReadOnly, Category = "Time")
-	float CurrentTime = 0.0f;
+	float CurrentTime = 360.f;
 };

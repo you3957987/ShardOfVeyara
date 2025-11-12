@@ -20,12 +20,19 @@ public:
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
-
+	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Time")
-	float TimeScale = 12.f;
+	float TimeScale = 48.f;
 
-	const float GameHoursPerDay = 24.0f;
-
+	const float GameHoursPerDay = (24.f * 60.f);
+	const float ResetHour = (6.f * 60.f);
+	
 	class AAGSDGameStateBase* GameState = nullptr;
+
+	void HandleTimeIncrement(float time);
+
+	bool Reset = false;
+private:
+	FTimerHandle TimeUpdateTimerHandle;
 };
