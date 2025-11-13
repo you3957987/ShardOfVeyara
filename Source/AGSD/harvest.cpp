@@ -72,20 +72,6 @@ void Aharvest::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 	}
 }
 
-// Called when the game starts or when spawned
-void Aharvest::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void Aharvest::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
 void Aharvest::Interact_Implementation()
 {
 	HarvestInteract(InteractingPlayer);

@@ -7,8 +7,6 @@
 #include "GameFramework/Actor.h"
 #include "harvest.generated.h"
 
-class UUCropData;
-
 UCLASS()
 class AGSD_API Aharvest : public AActor, public IInteraction
 {
@@ -27,10 +25,8 @@ public:
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	FORCEINLINE UStaticMeshComponent* GetMeshComponent() const { return HarvestMesh; };
+	
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 	//현재 단계의 작물 메시
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* HarvestMesh;
@@ -42,10 +38,8 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interact")
 	AAGSDCharacter* InteractingPlayer = nullptr;
+	
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 	virtual void Interact_Implementation() override;
 	virtual void ShowWidget_Implementation(ACharacter* player) override;
 	
