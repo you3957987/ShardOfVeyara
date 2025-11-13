@@ -44,7 +44,8 @@ void ATimeLight::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	if (!GameState) return;
-	
+
+	if (!Timeflow) return;
 	float TimeOffset = 360.0f;
 	const float TotalTime = 1440.0f; 
 

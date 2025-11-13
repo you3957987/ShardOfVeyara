@@ -35,10 +35,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* HarvestMesh;
 
-	//작물 정보
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
-	UUCropData* CropData;
-
 	FText InteractActionText = FText::FromString(TEXT("수집하기"));
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interact")
@@ -52,8 +48,6 @@ public:
 
 	virtual void Interact_Implementation() override;
 	virtual void ShowWidget_Implementation(ACharacter* player) override;
-
-	void SetCropData(UUCropData* CData);
 	
 private:
 	//콜리전 박스

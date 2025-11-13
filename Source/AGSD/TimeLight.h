@@ -28,6 +28,9 @@ protected:
 	UDirectionalLightComponent* MoonLight;
 
 	AAGSDGameStateBase* GameState;
+
+	UPROPERTY(EditAnywhere)
+	bool Timeflow = true;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

@@ -94,7 +94,7 @@ void ACrop::HarvestCrop()
 	SpawnTransform.SetLocation(FinalSpawnLocation + FVector(0.f, 0.f, 40.f));
 	
 	Aharvest* Harvest = GetWorld()->SpawnActorDeferred<Aharvest>(
-	HarvestClass,
+	CropData->HarvestRewards[0].Harvest,
 	SpawnTransform,
 	this,
 	nullptr,
@@ -102,7 +102,6 @@ void ACrop::HarvestCrop()
 	);
 	if (Harvest)
 	{
-		Harvest->SetCropData(CropData);
 		UGameplayStatics::FinishSpawningActor(Harvest, SpawnTransform);
 		//초기 선형 속도 설정: Z축(위) 방향으로만 작은 속도를 줌
 		if (Harvest->GetMeshComponent()) // Harvest 액터에 MeshComponent를 가져오는 함수가 있다고 가정

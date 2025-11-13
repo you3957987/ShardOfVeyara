@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "harvest.h"
 #include "UCropData.generated.h"
 
 /**
@@ -22,7 +23,7 @@ struct FHarvestItem
 	int32 Quantity;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Harvest")
-	class UStaticMesh* Mesh;
+	TSubclassOf<Aharvest> Harvest;
 };
 
 USTRUCT(BlueprintType)
