@@ -5,7 +5,6 @@
 #include "Components/sphereComponent.h"
 #include "AGSDCharacter.h"
 #include "AGSDPlayerController.h"
-#include "UCropData.h"
 
 // Sets default values
 Aharvest::Aharvest()
@@ -96,16 +95,4 @@ void Aharvest::ShowWidget_Implementation(ACharacter* player)
 {
 	if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(player->GetController()))
 		PlayerController->ShowInteractionWidget(InteractActionText);
-}
-
-void Aharvest::SetCropData(UUCropData* CData)
-{
-	if (CData != nullptr)
-	{
-		this->CropData = CData;
-		if (CropData != nullptr && CropData->HarvestRewards[0].Mesh)
-		{
-			HarvestMesh->SetStaticMesh(CropData->HarvestRewards[0].Mesh);
-		}
-	}
 }

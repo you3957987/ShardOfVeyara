@@ -9,13 +9,24 @@
   <component name="ChangeListManager">
     <list default="true" id="4fb32fe1-2f7b-4ce4-b591-d5e38df0812d" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_CultivationPlot.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_CultivationPlot.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/BP_ItemMaster.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/BP_ItemMaster.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/ACultivationPlot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/ACultivationPlot.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/ACultivationPlot.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/ACultivationPlot.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Crop.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Crop.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_FarmingGameMode.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_FarmingGameMode.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Harvest.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_BeetCropData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_BeetCropData.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_CarrotCropData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_CarrotCropData.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_CornCropData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_CornCropData.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_LettuceCropData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_LettuceCropData.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_PumpkinCropData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_PumpkinCropData.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_RiceCropData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_RiceCropData.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_TomatoCropData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_TomatoCropData.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_WatermelonCropData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_WatermelonCropData.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_WheatCropData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/BP_WheatCropData.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/DT_InventoryItemData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/DT_InventoryItemData.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/4/2N/NU47URB1C468H56HUQ5S3N.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/4/2N/NU47URB1C468H56HUQ5S3N.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGSD/Crop.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/Crop.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/Crop.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/Crop.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/TimeLight.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/TimeLight.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/TimeLight.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/TimeLight.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/UCropData.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/UCropData.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGSD/harvest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/harvest.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGSD/harvest.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/harvest.h" afterDir="false" />
     </list>
@@ -43,6 +54,7 @@
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/UMG/Public/Blueprint/UserWidget.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/AGSDGameStateBase.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/AGSDGameStateBase.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/AGSD/ClockWidget.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/FarmingGameMode.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/Interaction.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/Interaction.h" root0="FORCE_HIGHLIGHTING" />
@@ -63,7 +75,7 @@
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Farming-System&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -171,6 +183,9 @@
       <workItem from="1760587138164" duration="7676000" />
       <workItem from="1762403463245" duration="369000" />
       <workItem from="1762775101749" duration="4432000" />
+      <workItem from="1762964915357" duration="7716000" />
+      <workItem from="1762973442440" duration="8030000" />
+      <workItem from="1763011422917" duration="2379000" />
     </task>
     <servers />
   </component>
