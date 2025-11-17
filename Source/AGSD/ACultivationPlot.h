@@ -13,7 +13,6 @@ UCLASS()
 class AGSD_API AACultivationPlot : public AActor, public IInteraction
 {
 	GENERATED_BODY()
-
 	
 public:	
 	// Sets default values for this actor's properties
@@ -41,7 +40,7 @@ protected:
 	void OnPlantedCropDestroyed(AActor* DestroyedActor);
 
 	FText InteractActionText = FText::FromString(TEXT("작물심기"));
-
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -53,7 +52,7 @@ public:
 	UFUNCTION()
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	virtual void Interact_Implementation(AAGSDCharacter* player) override;
+	virtual void Interact_Implementation() override;
 	virtual void ShowWidget_Implementation(ACharacter* player) override;
 private:
 	//루트 컴포넌트

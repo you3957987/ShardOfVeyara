@@ -70,7 +70,7 @@ public:
 	UFUNCTION()
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	virtual void Interact_Implementation(AAGSDCharacter* player) override;
+	virtual void Interact_Implementation() override;
 	virtual void ShowWidget_Implementation(ACharacter* player) override;
 
 private:

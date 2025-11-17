@@ -27,9 +27,15 @@ AACultivationPlot::AACultivationPlot()
 void AACultivationPlot::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
-	{
+	{		
 		IInteraction::Execute_ShowWidget(this, player);
 		player->AddInteractableActor(this);
+		/*
+		if (Implements<UInteraction>())
+		{
+			IInteraction::Execute_Interact(this);
+		}
+		*/
 	}
 }
 
@@ -50,10 +56,10 @@ void AACultivationPlot::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor
 	}
 }
 
-void AACultivationPlot::Interact_Implementation(AAGSDCharacter* player)
+void AACultivationPlot::Interact_Implementation()
 {
-	if (!player) return;
-	if (player->PlayerAct != EPlayerAction::Plant) return;
+	UE_LOG(LogTemp, Warning, TEXT("AACultivationPlot::OnBeginOverlap"));
+	
 	CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	if (PlantedCrop == nullptr)
@@ -115,5 +121,6 @@ void AACultivationPlot::OnPlantedCropDestroyed(AActor* DestroyedActor)
 void AACultivationPlot::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 }
 

@@ -40,7 +40,7 @@ protected:
 	AAGSDCharacter* InteractingPlayer = nullptr;
 	
 public:	
-	virtual void Interact_Implementation(AAGSDCharacter* player) override;
+	virtual void Interact_Implementation() override;
 	virtual void ShowWidget_Implementation(ACharacter* player) override;
 	
 private:

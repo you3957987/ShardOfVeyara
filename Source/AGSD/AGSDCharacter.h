@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "HairStrandsInterface.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "AGSDCharacter.generated.h"
@@ -19,12 +18,6 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
  *  A simple player-controllable third person character
  *  Implements a controllable orbiting camera
  */
-UENUM(BlueprintType)
-enum class EPlayerAction : uint8
-{
-	None UMETA(DisplayName = "None"),
-	Plant UMETA(DisplayName = "Plant")
-};
 UCLASS(abstract)
 class AAGSDCharacter : public ACharacter
 {
@@ -81,10 +74,6 @@ public:
 	class UInputMappingContext* IMC_Farmer;
 
 	virtual void Tick(float DeltaSeconds) override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EPlayerAction PlayerAct = EPlayerAction::None;
-	
 protected:
 
 	//현재 상호작용 가능한 액터 포인터 (AACultivationPlot 또는 ACrop 등)

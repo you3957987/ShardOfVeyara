@@ -64,7 +64,7 @@ void APickUpItem::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 	}
 }
 
-void APickUpItem::Interact_Implementation(AAGSDCharacter* player = nullptr)
+void APickUpItem::Interact_Implementation()
 {
 	PickUpInteract(InteractingPlayer);
 }
