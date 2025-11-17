@@ -72,7 +72,7 @@ void Aharvest::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 	}
 }
 
-void Aharvest::Interact_Implementation()
+void Aharvest::Interact_Implementation(AAGSDCharacter* player = nullptr)
 {
 	HarvestInteract(InteractingPlayer);
 }

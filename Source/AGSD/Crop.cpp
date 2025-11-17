@@ -144,7 +144,7 @@ void ACrop::SetCropData(UUCropData* CData)
 }
 
 //상호작용 시 구현부
-void ACrop::Interact_Implementation()
+void ACrop::Interact_Implementation(AAGSDCharacter* player = nullptr)
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACrop::OnBeginOverlap"));
 
