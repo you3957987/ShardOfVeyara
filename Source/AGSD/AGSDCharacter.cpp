@@ -60,7 +60,7 @@ void AAGSDCharacter::TryInteract()
 	}
 	if (!IsValid(CurrentInteractableActor)) return;
 	if (!CurrentInteractableActor->Implements<UInteraction>()) return;
-	IInteraction::Execute_Interact(CurrentInteractableActor);
+	IInteraction::Execute_Interact(CurrentInteractableActor, this);
 }
 
 void AAGSDCharacter::AddInteractableActor(AActor* NewActor)
@@ -82,9 +82,34 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 	if (!CanInteract)
 	{
 		CurrentInteractableActor = nullptr;
+		if (PC) PC->HideInteractionWidget();
 		return;
 	}
-	
+
+	AActor* MinDistanceActor = MinDistActor();
+
+	if (CurrentInteractableActor == MinDistanceActor) return;
+
+	CurrentInteractableActor = MinDistanceActor;
+	if (CurrentInteractableActor != nullptr)
+	{
+		IInteraction::Execute_ShowWidget(CurrentInteractableActor, this);
+	}
+	else
+	{
+		if(PC) PC->HideInteractionWidget();
+	}
+}
+
+void AAGSDCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	PC = Cast<AAGSDPlayerController>(GetController());
+}
+
+AActor* AAGSDCharacter::MinDistActor()
+{
 	float MinDistance = FLT_MAX;
 
 	const FVector PlayerLocation = GetActorLocation();
@@ -94,24 +119,19 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 	for (AActor* CurrentActor : InteractableActorsInRange)
 	{
 		if (!CurrentActor) continue;
+
+		if (!IInteraction::Execute_CanInteract(CurrentActor, HoldingState)) continue;
 		
-		/*
-		if(CurrentActor->IsA(AACultivationPlot::StaticClass())) {
-		    if(HoldingState != EHoldingState::EHS_Seed) continue;
-		}
-		*/
 		const float DistanceSq = FVector::DistSquared(PlayerLocation, CurrentActor->GetActorLocation());
+
 		if (DistanceSq < MinDistance)
 		{
 			MinDistance = DistanceSq;
 			MinDistanceActor = CurrentActor;
 		}
 	}
-	if (MinDistanceActor != nullptr && CurrentInteractableActor != MinDistanceActor)
-	{
-		CurrentInteractableActor = MinDistanceActor;
-		IInteraction::Execute_ShowWidget(CurrentInteractableActor, this);
-	}
+
+	return MinDistanceActor;
 }
 
 void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

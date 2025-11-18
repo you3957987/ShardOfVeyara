@@ -43,14 +43,7 @@ void ACrop::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 {
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
 	{
-		IInteraction::Execute_ShowWidget(this, player);
 		player->AddInteractableActor(this);
-		/*
-		if (Implements<UInteraction>())
-		{
-			IInteraction::Execute_Interact(this);
-		}
-		*/
 	}
 }
 
@@ -60,8 +53,6 @@ void ACrop::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
 	{
 		player->RemoveInteractableActor(this);
-		if (player->GetInteractableActorNum() > 0) return;
-		if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(player->GetController()))	PlayerController->HideInteractionWidget();
 	}
 }
 
@@ -144,7 +135,7 @@ void ACrop::SetCropData(UUCropData* CData)
 }
 
 //상호작용 시 구현부
-void ACrop::Interact_Implementation()
+void ACrop::Interact_Implementation(AAGSDCharacter* player)
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACrop::OnBeginOverlap"));
 
@@ -156,6 +147,11 @@ void ACrop::ShowWidget_Implementation(ACharacter* player)
 {
 	if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(player->GetController()))
 		PlayerController->ShowInteractionWidget(InteractActionText);
+}
+
+bool ACrop::CanInteract_Implementation(EHoldingState state)
+{
+	return true;
 }
 
 void ACrop::AdvanceGrowth()

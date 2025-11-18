@@ -16,10 +16,8 @@ class AGSD_API UInteractionWidget : public UUserWidget
 
 public:
 	UFUNCTION()
-	void PlayFadeInAnim(bool IsReverse);
-
-	UFUNCTION()
 	void SetInteractionText(const FText& NewText);
+	void SetTargetOpacity(float NewOpacity);
 	
 protected:
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
@@ -27,7 +25,14 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* InteractionText;
-	
-	UFUNCTION()
-	void OnFadeOutAnimFinished();
+
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+private:
+	/** 최종적으로 도달하고자 하는 목표 투명도 (0.0 또는 1.0) */
+	float TargetOpacity = 0.0f;
+    
+	/** 투명도 보간 속도 (EditDefaultsOnly로 BP에서 설정 가능) */
+	UPROPERTY(EditDefaultsOnly, Category = "Fade")
+	float FadeSpeed = 8.0f;
 };

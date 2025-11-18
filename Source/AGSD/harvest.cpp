@@ -32,7 +32,7 @@ Aharvest::Aharvest()
 	//콜리전 박스 설정
 	CollisionBox = CreateDefaultSubobject<USphereComponent>(TEXT("Collision Box"));
 	CollisionBox->SetupAttachment(RootComponent);
-	CollisionBox->SetSphereRadius(50);
+	CollisionBox->SetSphereRadius(75);
 	CollisionBox->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
 	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &Aharvest::OnBeginOverlap);
 	CollisionBox->OnComponentEndOverlap.AddDynamic(this, &Aharvest::OnEndOverlap);
@@ -43,16 +43,7 @@ void Aharvest::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other
 {
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
 	{
-		IInteraction::Execute_ShowWidget(this, player);
 		player->AddInteractableActor(this);
-
-		InteractingPlayer = player;
-		/*
-		if (Implements<UInteraction>())
-		{
-			IInteraction::Execute_Interact(this);
-		}
-		*/
 	}
 }
 
@@ -62,23 +53,22 @@ void Aharvest::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
 	{
 		player->RemoveInteractableActor(this);
-
-		if (player == InteractingPlayer)
-		{
-			InteractingPlayer = nullptr;
-		}
-		if (player->GetInteractableActorNum() > 0) return;
-		if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(player->GetController()))	PlayerController->HideInteractionWidget();
 	}
 }
 
-void Aharvest::Interact_Implementation()
+void Aharvest::Interact_Implementation(AAGSDCharacter* player)
 {
-	HarvestInteract(InteractingPlayer);
+	UE_LOG(LogTemp, Display, TEXT("Interacting with %s"), *GetNameSafe(player));
+	HarvestInteract(player);
 }
 
 void Aharvest::ShowWidget_Implementation(ACharacter* player)
 {
 	if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(player->GetController()))
 		PlayerController->ShowInteractionWidget(InteractActionText);
+}
+
+bool Aharvest::CanInteract_Implementation(EHoldingState state)
+{
+	return true;
 }

@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "HoldingState.h"
+#include "AGSDPlayerController.h"
 #include "AGSDCharacter.generated.h"
 
 class USpringArmComponent;
@@ -54,6 +55,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* Interaction;
 
+	AAGSDPlayerController* PC;
 public:
 
 	/** Constructor */
@@ -76,9 +78,15 @@ public:
 	class UInputMappingContext* IMC_Farmer;
 
 	virtual void Tick(float DeltaSeconds) override;
+	virtual void BeginPlay() override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="HoldingState")
 	EHoldingState HoldingState = EHoldingState::EHS_None;
+
+	AActor* MinDistActor();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interaction")
+	FString SubSeedAmount();
 	
 protected:
 

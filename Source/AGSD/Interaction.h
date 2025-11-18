@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "HoldingState.h"
 #include "Interaction.generated.h"
 
 // This class does not need to be modified.
@@ -23,10 +24,15 @@ class AGSD_API IInteraction
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	UFUNCTION(BlueprintNativeEvent, Category = "Interaction")
-	void Interact();
-	virtual void Interact_Implementation() = 0;
+	void Interact(AAGSDCharacter* player);
+	virtual void Interact_Implementation(AAGSDCharacter* player) = 0;
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Interaction")
 	void ShowWidget(ACharacter* player);
 	virtual void ShowWidget_Implementation(ACharacter* player) = 0;
+	
+	UFUNCTION(BlueprintNativeEvent, Category = "Interaction")
+	bool CanInteract(EHoldingState state);
+	virtual bool CanInteract_Implementation(EHoldingState state) = 0;
+	
 };
