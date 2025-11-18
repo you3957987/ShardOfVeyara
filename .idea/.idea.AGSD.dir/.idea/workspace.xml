@@ -7,27 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4fb32fe1-2f7b-4ce4-b591-d5e38df0812d" name="변경" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ChestUI/Blueprint/WBP_ChestSlot.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ChestUI/Blueprint/WBP_ChestSlot.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ChestUI/Blueprint/WBP_ChestUI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ChestUI/Blueprint/WBP_ChestUI.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BPFL.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BPFL.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_HarvestBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_HarvestBase.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_PickUpItemBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_PickUpItemBase.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Inventory/BPAC_InventoryComponent.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Inventory/BPAC_InventoryComponent.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Inventory/Struct_InventorySlotData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Inventory/Struct_InventorySlotData.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/BP_ItemMaster.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/BP_ItemMaster.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/DT_InventoryItemData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/DT_InventoryItemData.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/Enum_ItemCategory.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/Enum_ItemCategory.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/Hotbar/WBP_Hotbar.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/Hotbar/WBP_Hotbar.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/Hotbar/WBP_HotbarSlot.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/Hotbar/WBP_HotbarSlot.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_InventorySlot.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_InventorySlot.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_InventoryUI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_InventoryUI.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_PlayerHUD.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_PlayerHUD.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_SlotDragnDrop.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_SlotDragnDrop.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.h" afterDir="false" />
-    </list>
+    <list default="true" id="4fb32fe1-2f7b-4ce4-b591-d5e38df0812d" name="변경" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
