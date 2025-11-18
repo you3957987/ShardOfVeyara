@@ -5,12 +5,14 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "HoldingState.h"
 #include "AGSDCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
 class UInputAction;
 struct FInputActionValue;
+class AACultivationPlot;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -74,6 +76,10 @@ public:
 	class UInputMappingContext* IMC_Farmer;
 
 	virtual void Tick(float DeltaSeconds) override;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="HoldingState")
+	EHoldingState HoldingState = EHoldingState::EHS_None;
+	
 protected:
 
 	//현재 상호작용 가능한 액터 포인터 (AACultivationPlot 또는 ACrop 등)

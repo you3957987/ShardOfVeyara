@@ -94,7 +94,12 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 	for (AActor* CurrentActor : InteractableActorsInRange)
 	{
 		if (!CurrentActor) continue;
-
+		
+		/*
+		if(CurrentActor->IsA(AACultivationPlot::StaticClass())) {
+		    if(HoldingState != EHoldingState::EHS_Seed) continue;
+		}
+		*/
 		const float DistanceSq = FVector::DistSquared(PlayerLocation, CurrentActor->GetActorLocation());
 		if (DistanceSq < MinDistance)
 		{
