@@ -6,11 +6,14 @@
 #include "AGSDGameStateBase.h"
 #include "Components/TextBlock.h"
 
-bool UClockWidget::Initialize()
+void UClockWidget::NativeOnInitialized()
 {
-	if (!Super::Initialize()) return false;
+	Super::NativeOnInitialized();
+
+	UWorld* World = GetWorld();
+	if (!World) return;
 	
-	if (AAGSDGameStateBase* GameState = Cast<AAGSDGameStateBase>(UGameplayStatics::GetGameState(GetWorld())))
+	if (AAGSDGameStateBase* GameState = Cast<AAGSDGameStateBase>(UGameplayStatics::GetGameState(World)))
 	{
 		GameState->OnSecondChangedDelegate.AddDynamic(this, &UClockWidget::SetTimeText);
 	}
@@ -18,8 +21,6 @@ bool UClockWidget::Initialize()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("GameState Cast failed in UClockWidget::Initialize"))
 	}
-	
-	return true;
 }
 
 void UClockWidget::SetTimeText(float time)

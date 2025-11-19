@@ -64,7 +64,7 @@ public:
 private:
 	//루트 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CultivationPlot, meta = (AllowPrivateAccess = "true"))
-	class USceneComponent* RootScene;
+	class UStaticMeshComponent* Mesh;
 	//콜리전 박스
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CultivationPlot, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* CollisionBox;
