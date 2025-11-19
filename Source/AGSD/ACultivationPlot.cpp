@@ -14,8 +14,8 @@ AACultivationPlot::AACultivationPlot()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 	//루트 컴포넌트 설정
-	RootScene = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	RootComponent = RootScene;
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	RootComponent = Mesh;
 	//콜리전 박스 설정
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision Box"));
 	CollisionBox->SetupAttachment(RootComponent);

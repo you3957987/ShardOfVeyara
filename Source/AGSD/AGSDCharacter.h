@@ -87,6 +87,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interaction")
 	FString SubSeedAmount();
+
+	void SetHighLight(AActor* TargetActor, bool bActive);
 	
 protected:
 
@@ -131,7 +133,6 @@ public:
 	virtual void DoJumpEnd();
 
 public:
-
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 

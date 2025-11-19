@@ -81,6 +81,7 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 
 	if (!CanInteract)
 	{
+		SetHighLight(CurrentInteractableActor, false);
 		CurrentInteractableActor = nullptr;
 		if (PC) PC->HideInteractionWidget();
 		return;
@@ -89,11 +90,15 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 	AActor* MinDistanceActor = MinDistActor();
 
 	if (CurrentInteractableActor == MinDistanceActor) return;
-
+	
+	//CurrentInteractableActor 메시의 커스텀 텝스 패스 랜더 비활성화
+	SetHighLight(CurrentInteractableActor, false);
 	CurrentInteractableActor = MinDistanceActor;
 	if (CurrentInteractableActor != nullptr)
 	{
 		IInteraction::Execute_ShowWidget(CurrentInteractableActor, this);
+		//CurrentInteractableActor 메시의 커스텀 텝스 패스 랜더 활성화
+		SetHighLight(CurrentInteractableActor, true);
 	}
 	else
 	{
@@ -132,6 +137,19 @@ AActor* AAGSDCharacter::MinDistActor()
 	}
 
 	return MinDistanceActor;
+}
+
+void AAGSDCharacter::SetHighLight(AActor* TargetActor, bool bActive)
+{
+	if (TargetActor)
+	{
+		TArray<UPrimitiveComponent*> Comps;
+		TargetActor->GetComponents(Comps);
+		for (UPrimitiveComponent* Comp : Comps)
+		{
+			Comp->SetRenderCustomDepth(bActive);
+		}
+	}
 }
 
 void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

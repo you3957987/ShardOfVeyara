@@ -18,7 +18,7 @@ public:
 	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
 	class UTextBlock* TimeText;
 
-	virtual bool Initialize() override;
+	virtual void NativeOnInitialized() override;
 	
 protected:
 	UFUNCTION()
