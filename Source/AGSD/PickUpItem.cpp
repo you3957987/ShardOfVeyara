@@ -4,6 +4,7 @@
 #include "PickUpItem.h"
 #include "Components/SphereComponent.h"
 #include "AGSDPlayerController.h"
+#include "AGSDCharacter.h"
 
 APickUpItem::APickUpItem()
 {
@@ -41,10 +42,7 @@ void APickUpItem::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Ot
 	UE_LOG(LogTemp, Warning, TEXT("PickUpItemOnBeginOverlap"));
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
 	{
-		IInteraction::Execute_ShowWidget(this, player);
 		player->AddInteractableActor(this);
-
-		InteractingPlayer = player;
 	}
 }
 
@@ -54,24 +52,22 @@ void APickUpItem::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
 	{
 		player->RemoveInteractableActor(this);
-
-		if (player == InteractingPlayer)
-		{
-			InteractingPlayer = nullptr;
-		}
-		if (player->GetInteractableActorNum() > 0) return;
-		if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(player->GetController()))	PlayerController->HideInteractionWidget();
 	}
 }
 
-void APickUpItem::Interact_Implementation()
+void APickUpItem::Interact_Implementation(AAGSDCharacter* player)
 {
-	PickUpInteract(InteractingPlayer);
+	PickUpInteract(player);
 }
 
 void APickUpItem::ShowWidget_Implementation(ACharacter* player)
 {
 	if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(player->GetController()))
 		PlayerController->ShowInteractionWidget(InteractActionText);
+}
+
+bool APickUpItem::CanInteract_Implementation(EHoldingState state)
+{
+	return true;
 }
 

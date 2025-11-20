@@ -5,12 +5,15 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "HoldingState.h"
+#include "AGSDPlayerController.h"
 #include "AGSDCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
 class UInputAction;
 struct FInputActionValue;
+class AACultivationPlot;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -52,6 +55,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* Interaction;
 
+	AAGSDPlayerController* PC;
 public:
 
 	/** Constructor */
@@ -74,6 +78,18 @@ public:
 	class UInputMappingContext* IMC_Farmer;
 
 	virtual void Tick(float DeltaSeconds) override;
+	virtual void BeginPlay() override;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="HoldingState")
+	EHoldingState HoldingState = EHoldingState::EHS_None;
+
+	AActor* MinDistActor();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interaction")
+	FString SubSeedAmount();
+
+	void SetHighLight(AActor* TargetActor, bool bActive);
+	
 protected:
 
 	//현재 상호작용 가능한 액터 포인터 (AACultivationPlot 또는 ACrop 등)
@@ -117,7 +133,6 @@ public:
 	virtual void DoJumpEnd();
 
 public:
-
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 

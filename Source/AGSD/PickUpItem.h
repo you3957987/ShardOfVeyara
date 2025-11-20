@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Interaction.h"
-#include "AGSDCharacter.h"
 #include "GameFramework/Actor.h"
+#include "AGSDCharacter.h"
 #include "PickUpItem.generated.h"
 /**
  * 
@@ -34,13 +34,11 @@ protected:
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interact")
 	void PickUpInteract(AAGSDCharacter* player);
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interact")
-	AAGSDCharacter* InteractingPlayer = nullptr;
 	
 public:
-	virtual void Interact_Implementation() override;
+	virtual void Interact_Implementation(AAGSDCharacter* player) override;
 	virtual void ShowWidget_Implementation(ACharacter* player) override;
+	virtual bool CanInteract_Implementation(EHoldingState state) override;
 
 private:
 	//콜리전 박스

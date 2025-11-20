@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AGSDCharacter.h"
 #include "Interaction.h"
 #include "GameFramework/Actor.h"
 #include "harvest.generated.h"
@@ -34,14 +35,12 @@ protected:
 	FText InteractActionText = FText::FromString(TEXT("수집하기"));
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interact")
-	void HarvestInteract(AAGSDCharacter* player);
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interact")
-	AAGSDCharacter* InteractingPlayer = nullptr;
+	void HarvestInteract(AAGSDCharacter* Player);
 	
 public:	
-	virtual void Interact_Implementation() override;
+	virtual void Interact_Implementation(AAGSDCharacter* player) override;
 	virtual void ShowWidget_Implementation(ACharacter* player) override;
+	virtual bool CanInteract_Implementation(EHoldingState state) override;
 	
 private:
 	//콜리전 박스

@@ -3,8 +3,9 @@
 
 #include "ACultivationPlot.h"
 #include "Components/BoxComponent.h"
-#include "AGSDCharacter.h"
 #include "AGSDPlayerController.h"
+#include "AGSDCharacter.h"
+#include "SeedDataTable.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -13,8 +14,8 @@ AACultivationPlot::AACultivationPlot()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 	//루트 컴포넌트 설정
-	RootScene = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	RootComponent = RootScene;
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	RootComponent = Mesh;
 	//콜리전 박스 설정
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision Box"));
 	CollisionBox->SetupAttachment(RootComponent);
@@ -28,14 +29,7 @@ void AACultivationPlot::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AAct
 {
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
 	{		
-		IInteraction::Execute_ShowWidget(this, player);
 		player->AddInteractableActor(this);
-		/*
-		if (Implements<UInteraction>())
-		{
-			IInteraction::Execute_Interact(this);
-		}
-		*/
 	}
 }
 
@@ -45,25 +39,30 @@ void AACultivationPlot::ShowWidget_Implementation(ACharacter* player)
 		PlayerController->ShowInteractionWidget(InteractActionText);
 }
 
+bool AACultivationPlot::CanInteract_Implementation(EHoldingState state)
+{
+	return state == EHoldingState::EHS_Seed;
+}
+
 //오버랩 종료 함수 구현부
 void AACultivationPlot::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
 	{
 		player->RemoveInteractableActor(this);
-		if (player->GetInteractableActorNum() > 0) return;
-		if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(player->GetController()))	PlayerController->HideInteractionWidget();
 	}
 }
 
-void AACultivationPlot::Interact_Implementation()
+void AACultivationPlot::Interact_Implementation(AAGSDCharacter* player)
 {
+	if (!SeedDataTable) return;
 	UE_LOG(LogTemp, Warning, TEXT("AACultivationPlot::OnBeginOverlap"));
 	
 	CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	if (PlantedCrop == nullptr)
 	{
+		GetSeedInfo(FName(*player->SubSeedAmount()));
 		PlantCrop();
 	}
 }
@@ -115,6 +114,21 @@ void AACultivationPlot::OnPlantedCropDestroyed(AActor* DestroyedActor)
 	PlantedCrop = nullptr;
 	if (CollisionBox)
 		CollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+}
+
+void AACultivationPlot::GetSeedInfo(FName TargetRowName)
+{
+	if (!SeedDataTable) return;
+	
+	static const FString Context(TEXT("Seed Data Context"));
+
+	FSeedData* SeedRow = SeedDataTable->FindRow<FSeedData>(TargetRowName, Context);
+	if (SeedRow)
+	{
+		CropData = SeedRow->CropData.Get();
+
+		if (!CropData) CropData = SeedRow->CropData.LoadSynchronous();
+	}
 }
 
 // Called every frame

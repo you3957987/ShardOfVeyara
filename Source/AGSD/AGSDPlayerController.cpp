@@ -15,10 +15,10 @@ void AAGSDPlayerController::ShowInteractionWidget(const FText& NewText)
 	if (!WBP_InteractionWidget) return;
 	if (!InteractionWidget) InteractionWidget = CreateWidget<UInteractionWidget>(this, WBP_InteractionWidget);
 	InteractionWidget->SetInteractionText(NewText);
+	InteractionWidget->SetTargetOpacity(1.0f);
 	if (!InteractionWidget->IsInViewport())
 	{
 		InteractionWidget->AddToViewport();
-		InteractionWidget->PlayFadeInAnim(false);
 	}
 }
 
@@ -51,7 +51,7 @@ void AAGSDPlayerController::HideInteractionWidget()
 {
 	if (InteractionWidget && InteractionWidget->IsInViewport())
 	{
-		InteractionWidget->PlayFadeInAnim(true);
+		InteractionWidget->SetTargetOpacity(0.0f);
 	}
 }
 

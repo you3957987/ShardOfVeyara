@@ -24,6 +24,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Farming")
 	TSubclassOf<ACrop> CropClassToPlant;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Farming")
+	class UDataTable* SeedDataTable;
 	
 	//작물 정보
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Farming")
@@ -40,6 +43,8 @@ protected:
 	void OnPlantedCropDestroyed(AActor* DestroyedActor);
 
 	FText InteractActionText = FText::FromString(TEXT("작물심기"));
+
+	void GetSeedInfo(FName TargetRowName);
 	
 public:	
 	// Called every frame
@@ -52,12 +57,14 @@ public:
 	UFUNCTION()
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	virtual void Interact_Implementation() override;
+	virtual void Interact_Implementation(AAGSDCharacter* player) override;
 	virtual void ShowWidget_Implementation(ACharacter* player) override;
+	virtual bool CanInteract_Implementation(EHoldingState state) override;
+	
 private:
 	//루트 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CultivationPlot, meta = (AllowPrivateAccess = "true"))
-	class USceneComponent* RootScene;
+	class UStaticMeshComponent* Mesh;
 	//콜리전 박스
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CultivationPlot, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* CollisionBox;

@@ -45,12 +45,13 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
 	int32 FinishGrowStageIndex = 0;
-
+	
 	void HarvestCrop();
 
 	FText InteractActionText = FText::FromString(TEXT("수확하기"));
 
 	void RegisterCropToManager(int32 GrowthTimeCounter);
+	
 public:	
 	//작물이 경작지에 심길 때 실행할 함수
 	void SetCropData(UUCropData* CData);
@@ -70,8 +71,9 @@ public:
 	UFUNCTION()
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	virtual void Interact_Implementation() override;
+	virtual void Interact_Implementation(AAGSDCharacter* player) override;
 	virtual void ShowWidget_Implementation(ACharacter* player) override;
+	virtual bool CanInteract_Implementation(EHoldingState state) override;
 
 private:
 	//작물 메시 정보 업데이트

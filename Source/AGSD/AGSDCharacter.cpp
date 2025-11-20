@@ -60,7 +60,7 @@ void AAGSDCharacter::TryInteract()
 	}
 	if (!IsValid(CurrentInteractableActor)) return;
 	if (!CurrentInteractableActor->Implements<UInteraction>()) return;
-	IInteraction::Execute_Interact(CurrentInteractableActor);
+	IInteraction::Execute_Interact(CurrentInteractableActor, this);
 }
 
 void AAGSDCharacter::AddInteractableActor(AActor* NewActor)
@@ -81,10 +81,40 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 
 	if (!CanInteract)
 	{
+		SetHighLight(CurrentInteractableActor, false);
 		CurrentInteractableActor = nullptr;
+		if (PC) PC->HideInteractionWidget();
 		return;
 	}
+
+	AActor* MinDistanceActor = MinDistActor();
+
+	if (CurrentInteractableActor == MinDistanceActor) return;
 	
+	//CurrentInteractableActor 메시의 커스텀 텝스 패스 랜더 비활성화
+	SetHighLight(CurrentInteractableActor, false);
+	CurrentInteractableActor = MinDistanceActor;
+	if (CurrentInteractableActor != nullptr)
+	{
+		IInteraction::Execute_ShowWidget(CurrentInteractableActor, this);
+		//CurrentInteractableActor 메시의 커스텀 텝스 패스 랜더 활성화
+		SetHighLight(CurrentInteractableActor, true);
+	}
+	else
+	{
+		if(PC) PC->HideInteractionWidget();
+	}
+}
+
+void AAGSDCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	PC = Cast<AAGSDPlayerController>(GetController());
+}
+
+AActor* AAGSDCharacter::MinDistActor()
+{
 	float MinDistance = FLT_MAX;
 
 	const FVector PlayerLocation = GetActorLocation();
@@ -95,17 +125,30 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 	{
 		if (!CurrentActor) continue;
 
+		if (!IInteraction::Execute_CanInteract(CurrentActor, HoldingState)) continue;
+		
 		const float DistanceSq = FVector::DistSquared(PlayerLocation, CurrentActor->GetActorLocation());
+
 		if (DistanceSq < MinDistance)
 		{
 			MinDistance = DistanceSq;
 			MinDistanceActor = CurrentActor;
 		}
 	}
-	if (MinDistanceActor != nullptr && CurrentInteractableActor != MinDistanceActor)
+
+	return MinDistanceActor;
+}
+
+void AAGSDCharacter::SetHighLight(AActor* TargetActor, bool bActive)
+{
+	if (TargetActor)
 	{
-		CurrentInteractableActor = MinDistanceActor;
-		IInteraction::Execute_ShowWidget(CurrentInteractableActor, this);
+		TArray<UPrimitiveComponent*> Comps;
+		TargetActor->GetComponents(Comps);
+		for (UPrimitiveComponent* Comp : Comps)
+		{
+			Comp->SetRenderCustomDepth(bActive);
+		}
 	}
 }
 
