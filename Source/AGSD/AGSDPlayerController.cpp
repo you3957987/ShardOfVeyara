@@ -31,7 +31,7 @@ void AAGSDPlayerController::ShowClockWidget()
 	}
 	if (!ClockWidget)
 	{
-		ClockWidget = CreateWidget<UClockWidget>(this, WBP_ClockWidget);
+		ClockWidget = CreateWidget<UUserWidget>(this, WBP_ClockWidget);
 	}
 	else
 	{

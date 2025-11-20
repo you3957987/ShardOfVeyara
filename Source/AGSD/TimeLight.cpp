@@ -18,16 +18,24 @@ ATimeLight::ATimeLight()
 	SunLight = CreateDefaultSubobject<UDirectionalLightComponent>(TEXT("SunLight"));
 	SunLight->SetupAttachment(RootComponent);
 	SunLight->SetIntensity(3.f);
-	SunLight->ForwardShadingPriority = 10;
-	
-	/*
+
 	MoonLight = CreateDefaultSubobject<UDirectionalLightComponent>(TEXT("MoonLight"));
 	MoonLight->SetupAttachment(RootComponent);
-	MoonLight->SetIntensity(0.5f);
-	MoonLight->SetLightColor(FLinearColor(0.25f, 0.375f, 0.5f));
+	MoonLight->SetIntensity(3.f);
+	MoonLight->SetLightColor(FColor(152, 168, 231));
+	MoonLight->SetAtmosphereSunLightIndex(1);
+	
+	SkyAtmosphere = CreateDefaultSubobject<USkyAtmosphereComponent>(TEXT("SkyAtmosphere"));
+	SkyAtmosphere->SetupAttachment(RootComponent);
 
-	MoonLight->SetRelativeRotation(FRotator(180.f, 0.f, 0.f));
-	*/
+	ExponentialHeightFog = CreateDefaultSubobject<UExponentialHeightFogComponent>(TEXT("ExponentialHeightFog"));
+	ExponentialHeightFog->SetupAttachment(RootComponent);
+
+	SkyLight = CreateDefaultSubobject<USkyLightComponent>(TEXT("SkyLight"));
+	SkyLight->SetupAttachment(RootComponent);
+
+	VolumetricCloud = CreateDefaultSubobject<UVolumetricCloudComponent>(TEXT("VolumetricCloud"));
+	VolumetricCloud->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -63,7 +71,7 @@ void ATimeLight::Tick(float DeltaTime)
 	// SetActorRelativeRotation을 사용해야 누적 회전이 아닌 원하는 각도로 정확히 설정됩니다.
 	// 기존 코드에서 Roll(X) 축 회전만 사용했으므로 Pitch(X)로 가정합니다.
 	
-	FRotator NewRotator = FRotator(-NewPitch, 0.f, 0.f);
-	SetActorRelativeRotation(NewRotator);
+	SunLight->SetRelativeRotation(FRotator(-NewPitch, 0.f, 0.f));
+	MoonLight->SetRelativeRotation(FRotator(-NewPitch + 180.f, 0.f, 0.f));
 }
 

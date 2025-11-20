@@ -5,6 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/DirectionalLightComponent.h"
+#include "Components/ExponentialHeightFogComponent.h"
+#include "Components/SkyAtmosphereComponent.h"
+#include "Components/SkyLightComponent.h"
+#include "Components/VolumetricCloudComponent.h"
 #include "AGSDGameStateBase.h"
 #include "TimeLight.generated.h"
 
@@ -23,10 +27,22 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	UDirectionalLightComponent* SunLight;
-	
+
 	UPROPERTY(EditAnywhere)
 	UDirectionalLightComponent* MoonLight;
 
+	UPROPERTY(EditAnywhere)
+	USkyAtmosphereComponent* SkyAtmosphere;
+
+	UPROPERTY(EditAnywhere)
+	UExponentialHeightFogComponent* ExponentialHeightFog;
+
+	UPROPERTY(EditAnywhere)
+	USkyLightComponent* SkyLight;
+
+	UPROPERTY(EditAnywhere)
+	UVolumetricCloudComponent* VolumetricCloud;
+	
 	AAGSDGameStateBase* GameState;
 
 	UPROPERTY(EditAnywhere)

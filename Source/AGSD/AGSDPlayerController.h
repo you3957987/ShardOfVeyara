@@ -24,7 +24,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UInteractionWidget> WBP_InteractionWidget;
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class UClockWidget> WBP_ClockWidget;
+	TSubclassOf<class UUserWidget> WBP_ClockWidget;
 
 	void ShowInteractionWidget(const FText& NewText);
 	void ShowClockWidget();
@@ -33,7 +33,7 @@ private:
 	UPROPERTY()
 	class UInteractionWidget* InteractionWidget;
 	UPROPERTY()
-	class UClockWidget* ClockWidget;
+	class UUserWidget* ClockWidget;
 	
 protected:
 
