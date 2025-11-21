@@ -39,9 +39,9 @@ void AACultivationPlot::ShowWidget_Implementation(ACharacter* player)
 		PlayerController->ShowInteractionWidget(InteractActionText);
 }
 
-bool AACultivationPlot::CanInteract_Implementation(EHoldingState state)
+bool AACultivationPlot::CanInteract_Implementation(AAGSDCharacter* player)
 {
-	return state == EHoldingState::EHS_Seed;
+	return player->HoldingState == EHoldingState::EHS_Seed;
 }
 
 //오버랩 종료 함수 구현부

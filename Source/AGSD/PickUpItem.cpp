@@ -66,7 +66,7 @@ void APickUpItem::ShowWidget_Implementation(ACharacter* player)
 		PlayerController->ShowInteractionWidget(InteractActionText);
 }
 
-bool APickUpItem::CanInteract_Implementation(EHoldingState state)
+bool APickUpItem::CanInteract_Implementation(AAGSDCharacter* player)
 {
 	return true;
 }

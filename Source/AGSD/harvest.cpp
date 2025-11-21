@@ -68,7 +68,7 @@ void Aharvest::ShowWidget_Implementation(ACharacter* player)
 		PlayerController->ShowInteractionWidget(InteractActionText);
 }
 
-bool Aharvest::CanInteract_Implementation(EHoldingState state)
+bool Aharvest::CanInteract_Implementation(AAGSDCharacter* player)
 {
 	return true;
 }

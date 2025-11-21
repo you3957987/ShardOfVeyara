@@ -125,7 +125,7 @@ AActor* AAGSDCharacter::MinDistActor()
 	{
 		if (!CurrentActor) continue;
 
-		if (!IInteraction::Execute_CanInteract(CurrentActor, HoldingState)) continue;
+		if (!IInteraction::Execute_CanInteract(CurrentActor, this)) continue;
 		
 		const float DistanceSq = FVector::DistSquared(PlayerLocation, CurrentActor->GetActorLocation());
 

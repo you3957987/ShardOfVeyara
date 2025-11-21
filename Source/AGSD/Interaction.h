@@ -32,7 +32,7 @@ public:
 	virtual void ShowWidget_Implementation(ACharacter* player) = 0;
 	
 	UFUNCTION(BlueprintNativeEvent, Category = "Interaction")
-	bool CanInteract(EHoldingState state);
-	virtual bool CanInteract_Implementation(EHoldingState state) = 0;
+	bool CanInteract(AAGSDCharacter* player);
+	virtual bool CanInteract_Implementation(AAGSDCharacter* player) = 0;
 	
 };

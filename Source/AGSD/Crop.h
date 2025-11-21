@@ -73,7 +73,7 @@ public:
 
 	virtual void Interact_Implementation(AAGSDCharacter* player) override;
 	virtual void ShowWidget_Implementation(ACharacter* player) override;
-	virtual bool CanInteract_Implementation(EHoldingState state) override;
+	virtual bool CanInteract_Implementation(AAGSDCharacter* player) override;
 
 private:
 	//작물 메시 정보 업데이트

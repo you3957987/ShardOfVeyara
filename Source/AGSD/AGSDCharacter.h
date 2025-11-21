@@ -67,8 +67,11 @@ public:
 	//AACultivationPlot에서 호출하여 상호작용 대상을 설정/초기화하는 함수
 	FORCEINLINE void SetCurrentInteractableActor(AActor* NewActor) { CurrentInteractableActor = NewActor;};
 
+	UFUNCTION(BlueprintCallable)
 	//AACultivationPlot에서 호출하여 액터를 추가하는 함수
 	void AddInteractableActor(AActor* NewActor);
+
+	UFUNCTION(BlueprintCallable)
 	//AACultivationPlot에서 호출하여 액터를 제거하는 함수
 	void RemoveInteractableActor(AActor* ActorToRemove);
 	//상호작용 가능 액터 개수
@@ -88,7 +91,13 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interaction")
 	FString SubSeedAmount();
 
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	FORCEINLINE void SetCanOpenChest(bool boolean) { bCanOpenChest = boolean; };
+
 	void SetHighLight(AActor* TargetActor, bool bActive);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bCanOpenChest = true;
 	
 protected:
 

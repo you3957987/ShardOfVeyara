@@ -149,7 +149,7 @@ void ACrop::ShowWidget_Implementation(ACharacter* player)
 		PlayerController->ShowInteractionWidget(InteractActionText);
 }
 
-bool ACrop::CanInteract_Implementation(EHoldingState state)
+bool ACrop::CanInteract_Implementation(AAGSDCharacter* player)
 {
 	return true;
 }

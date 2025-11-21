@@ -40,7 +40,7 @@ protected:
 public:	
 	virtual void Interact_Implementation(AAGSDCharacter* player) override;
 	virtual void ShowWidget_Implementation(ACharacter* player) override;
-	virtual bool CanInteract_Implementation(EHoldingState state) override;
+	virtual bool CanInteract_Implementation(AAGSDCharacter* player) override;
 	
 private:
 	//콜리전 박스
