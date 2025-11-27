@@ -1,7 +1,7 @@
 #include "BaseEnemy.h"
-
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/Progressbar.h"
 #include "Kismet/GameplayStatics.h" // UGameplayStatics 사용을 위한 헤더 파일
 #include "Components/SphereComponent.h" // USphereComponent 사용을 위한 헤더 파일
@@ -10,6 +10,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "EnemyProjectile/BaseEnemyProjectile.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 
 ABaseEnemy::ABaseEnemy()
 {
@@ -17,18 +18,32 @@ ABaseEnemy::ABaseEnemy()
 
 	AttackRangeSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AttackRangeSphere"));
 	AttackRangeSphere->SetupAttachment(RootComponent); // 루트 컴포넌트
-
+	AttackRangeSphere->ShapeColor = FColor::Red;
+	AttackRangeSphere->SetSphereRadius(AttackRange); // 초기 공격 범위 설정
+	AttackRangeSphere->SetVisibility(false); // 디버그 모드 기본은 비활성화
+	
 	DetectRangeSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AcceptRangeSphere"));
 	DetectRangeSphere->SetupAttachment(RootComponent); // 루트 컴포넌트
-
+	DetectRangeSphere->ShapeColor = FColor::Green;
+	DetectRangeSphere->SetSphereRadius(DetectRange);
+	DetectRangeSphere->SetVisibility(false);
+	DetectRangeSphere->SetHiddenInGame(false); 
+	
 	ChaseRangeSphere = CreateDefaultSubobject<USphereComponent>(TEXT("ChaseRangeSphere"));
 	ChaseRangeSphere->SetupAttachment(RootComponent); // 루트 컴포넌트
+	ChaseRangeSphere->ShapeColor = FColor::Blue;
+	ChaseRangeSphere->SetSphereRadius(ChaseRange);
+	ChaseRangeSphere->SetVisibility(false);
+	ChaseRangeSphere->SetHiddenInGame(false); 
 
 	MeleeAttackPoint = CreateDefaultSubobject<USceneComponent>(TEXT("AttackPoint"));
 	MeleeAttackPoint->SetupAttachment(RootComponent); // 루트 컴포넌트
 	
 	AttackRangePointSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AttackRangePointSphere"));
 	AttackRangePointSphere->SetupAttachment(MeleeAttackPoint); // AttackPoint에 부착
+	AttackRangePointSphere->ShapeColor = FColor::Purple;
+	AttackRangePointSphere->SetVisibility(false);
+	AttackRangePointSphere->SetHiddenInGame(false); 
 
 	RangedAttackPoint = CreateDefaultSubobject<USceneComponent>(TEXT("RangedAttackPoint"));
 	RangedAttackPoint->SetupAttachment(RootComponent); // 루트 컴포넌트
@@ -40,7 +55,7 @@ ABaseEnemy::ABaseEnemy()
 	
 	// 적 캐릭터 태그 추가 -> 이걸 이용해서 프로젝트에서 플러그인 에너미 접근. 매우 중요!!!!
 	Tags.Add(FName("Enemy")); 
-	// AI 컨트롤러가 자동 빙의 하는거 제한
+	// AI 컨트롤러가 자동 빙의 하는거 제한. BeginPlay에서 스폰 몽타주 사용 여부에 따라 설정
 	AutoPossessAI = EAutoPossessAI::Disabled;
 }
 
@@ -72,6 +87,8 @@ void ABaseEnemy::BeginPlay()
 	{
 		SpawnDefaultController();// 스폰 몽타주 사용 안하면 자동 빙의 설정
 	}
+
+	TestDeadLogic(); // 죽음 로직 테스트 함수
 }
 
 void ABaseEnemy::Tick(float DeltaTime)
@@ -96,12 +113,19 @@ void ABaseEnemy::Tick(float DeltaTime)
 				// 공격 로그를 출력합니다.
 				UE_LOG(LogTemp, Warning, TEXT("Attack Hit Detected on: %s"), *OverlappingActor->GetName());
 
+				// 플레이어에게 대미지를 적용합니다.
+				UGameplayStatics::ApplyDamage(
+					OverlappingActor,
+					MeleeAttackDamage, // 헤더 파일에 선언된 대미지 변수
+					GetController(),
+					this,
+					UDamageType::StaticClass()
+				);
+				
 				// 공격한 목록에 추가하여 중복 피해를 방지합니다.
 				HittedActors.Add(OverlappingActor);
 
 				bIsAttacking = false; // 공격 상태를 종료합니다.
-				
-				// 이 아래에 이제 대미지 넣는거 추가 가능
 			}
 		}
 	}
@@ -128,8 +152,6 @@ void ABaseEnemy::PollInit()
 // 포커스, 사운드, 애니메이션, 이펙트 등
 void ABaseEnemy::Attack()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("BaseEnemyAttackCall") );
-	
 	// 여기서 SetFoucs 하면 나중에 ClearFocus 도 해줘야함. 일단 커찮아서 안함.
 
 	if ( AttackMontage ) // 공격 애니메이션 몽타주가 설정되어 있는지 확인
@@ -157,7 +179,8 @@ void ABaseEnemy::ShootProjectile()
 		if (World)
 		{
 			// 계산된 위치와 회전값으로 발사체를 스폰하고, 스폰된 액터의 포인터를 가져옵니다.
-			ABaseEnemyProjectile* SpawnedProjectile = World->SpawnActor<ABaseEnemyProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+			ABaseEnemyProjectile* SpawnedProjectile =
+				World->SpawnActor<ABaseEnemyProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
 
 			// 엄
 		}
@@ -185,25 +208,51 @@ float ABaseEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& Dama
 
 void ABaseEnemy::Die()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Enemy Die Call") );
-
+	if ( DeathMontage ) PlayAnimMontage(DeathMontage);
+	else GetMesh()->SetSimulatePhysics(true);
 	
-	if ( DeathMontage ) // 죽음 애니메이션 몽타주가 설정되어 있는지 확인
-	{
-		PlayAnimMontage(DeathMontage); // 죽음 애니메이션 재생
-	}
+	// 충돌 비활성화
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCharacterMovement()->DisableMovement();
 
-	// AI 컨트롤러를 가져옵니다.
+	// AI 로직 중지
 	AAIController* AIController = Cast<AAIController>(GetController());
 	if (AIController)
 	{
-		// AI 컨트롤러에서 블랙보드 컴포넌트를 가져옵니다.
 		UBlackboardComponent* BlackboardComp = AIController->GetBlackboardComponent();
 		if (BlackboardComp)
 		{
 			BlackboardComp->SetValueAsBool(TEXT("IsDead"), true);
 		}
 	}
+	
+	if (HealthBarWidget)
+	{
+		HealthBarWidget->SetVisibility(false);
+	}
+}
+
+void ABaseEnemy::AfterDieMontageEnd()
+{
+	if ( GetMesh() )
+	{
+		GetMesh()->bPauseAnims = true;
+	}
+	
+	// 0.3초 후에 SpawnEffectAndDestroy 함수를 호출합니다.
+	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this,
+		&ABaseEnemy::SpawnDeadEffectAndDestroy, 1.0f, false);
+}
+
+void ABaseEnemy::SpawnDeadEffectAndDestroy()
+{
+	if ( DeathEffectCascade )
+	{
+		const FVector SpawnLocation = GetMesh()->GetComponentLocation() - (GetActorForwardVector() * 100.0f);
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DeathEffectCascade,
+			SpawnLocation);
+	}
+	Destroy(); // 이펙트가 없으면 바로 액터 삭제
 }
 
 void ABaseEnemy::SpawnAndPossessAIController()
@@ -241,6 +290,27 @@ void ABaseEnemy::UpdateHealthBarWidget(float DeltaTime)
 			// 위젯이 항상 수평을 유지하도록 Yaw 값만 사용하여 회전을 설정합니다.
 			HealthBarWidget->SetWorldRotation(FRotator(0.f, LookAtRotation.Yaw, 0.f));
 		}
+
+		UEnemyHealthBarWidget* HealthBar = Cast<UEnemyHealthBarWidget>(HealthBarWidget->GetUserWidgetObject());
+		if ( HealthBar )
+		{
+			HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
+		}
+	}
+}
+
+void ABaseEnemy::TestDeadLogic()
+{
+	// 죽음 로직 체크
+	if (bCheckDeadLogic)
+	{
+		FTimerHandle DeadTestTimerHandle;
+		// 5초 후에 체력을 0으로 만들고 Die() 함수를 호출합니다.
+		GetWorld()->GetTimerManager().SetTimer(DeadTestTimerHandle, [this]()
+		{
+		 Health = 0.f;
+		 Die();
+		}, 5.0f, false);
 	}
 }
 
@@ -252,6 +322,24 @@ void ABaseEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 	// 변경된 프로퍼티의 이름을 가져옵니다.
 	const FName PropertyName = (PropertyChangedEvent.Property != nullptr) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
 
+	// 디버그 모드에 따라 어택, 디텍트, 체이스 범위 구체의 가시성을 설정합니다.
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(ABaseEnemy, bDebugMode))
+	{
+		if ( bDebugMode == true )
+		{
+			if ( AttackRangeSphere ) AttackRangeSphere->SetVisibility(true);
+			if ( DetectRangeSphere ) DetectRangeSphere->SetVisibility(true);
+			if ( ChaseRangeSphere ) ChaseRangeSphere->SetVisibility(true);
+			if ( AttackRangePointSphere ) AttackRangePointSphere->SetVisibility(true);
+		}
+		else
+		{
+			if ( AttackRangeSphere ) AttackRangeSphere->SetVisibility(false);
+			if ( DetectRangeSphere ) DetectRangeSphere->SetVisibility(false);
+			if ( ChaseRangeSphere ) ChaseRangeSphere->SetVisibility(false);
+			if ( AttackRangePointSphere ) AttackRangePointSphere->SetVisibility(false);
+		}
+	}
 	// AttackRange 프로퍼티가 변경되었는지 확인합니다.
 	if (PropertyName == GET_MEMBER_NAME_CHECKED(ABaseEnemy, AttackRange))
 	{

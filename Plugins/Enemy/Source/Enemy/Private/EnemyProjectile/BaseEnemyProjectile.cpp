@@ -1,6 +1,8 @@
 #include "EnemyProjectile/BaseEnemyProjectile.h"
+#include "NiagaraComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ABaseEnemyProjectile::ABaseEnemyProjectile()
 {
@@ -21,17 +23,25 @@ ABaseEnemyProjectile::ABaseEnemyProjectile()
 	CollisionComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	
 	// 특정 채널에 대한 반응을 '블록(Block)'으로 설정
-	CollisionComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
-	CollisionComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
+	CollisionComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Overlap);
+	CollisionComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	CollisionComp->SetCollisionResponseToChannel(ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
 	// 스케탈 메시 설정은 에디터에서 하기
 
 	// 외형을 표시할 스태틱 메시 컴포넌트 생성
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
-	MeshComp->SetupAttachment(RootComponent); // 충돌 컴포넌트에 부착
+	MeshComp->SetupAttachment(RootComponent); 
 
 	// 메시 컴포넌트는 콜리전 없음
 	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	// 나이아가라 이펙트 컴포넌트 생성
+	NiagaraEffectComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraEffectComp"));
+	NiagaraEffectComp->SetupAttachment(RootComponent); 
+
+	TrailEffectComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("TrailEffectComp"));
+	TrailEffectComp->SetupAttachment(RootComponent);
+	
 	// 투사체 이동 컴포넌트 생성
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovement->UpdatedComponent = CollisionComp; // 이동을 적용할 컴포넌트 설정
@@ -40,41 +50,85 @@ ABaseEnemyProjectile::ABaseEnemyProjectile()
 
 	ProjectileMovement->InitialSpeed = ProjectileSpeed; // 초기 속도 설정
 	ProjectileMovement->MaxSpeed = ProjectileSpeed; // 최대 속도 설정
-	
+
+	// 액터 태그 추가
+	Tags.Add(FName("EnemyProjectile"));
 }
 
 void ABaseEnemyProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if ( CollisionComp )
+	if (CollisionComp)
 	{
-		CollisionComp->OnComponentHit.AddDynamic(this, &ABaseEnemyProjectile::OnHit);
+		CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &ABaseEnemyProjectile::OnOverlapBegin);
 	}
 }
 
 void ABaseEnemyProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
-void ABaseEnemyProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	FVector NormalImpulse, const FHitResult& Hit)
+void ABaseEnemyProjectile::CreateHitEffect()
 {
-	// 자기 자신이나 소유자와 충돌한 경우는 무시합니다.
-	if (OtherActor && (OtherActor != this) && (OtherActor != GetOwner()))
-	{
-		// 충돌한 액터가 "Player" 태그를 가지고 있는지 확인합니다.
-		if (OtherActor->ActorHasTag(FName("Player")))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Projectile hit Player: %s"), *OtherActor->GetName());
-			
-		}
-		// 충돌 후 투사체를 파괴합니다.
-		Destroy();
-	}
+	// 기본 구현은 아무 것도 하지 않습니다.
 }
+
+void ABaseEnemyProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+ UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	// 자기 자신, 소유자, 또는 다른 적 투사체와 충돌한 경우 무시합니다.
+	if (!OtherActor || OtherActor == this || OtherActor == GetOwner() || OtherActor->ActorHasTag(FName("EnemyProjectile")))
+	{
+		return;
+	}
+
+	// 충돌 대상이 플레이어이거나 월드(벽, 바닥 등)인지 확인합니다.
+	const bool bIsPlayer = OtherActor->ActorHasTag(FName("Player"));
+	const bool bIsWorldObject = OtherComp &&
+	 (OtherComp->GetCollisionObjectType() == ECC_WorldStatic || OtherComp->GetCollisionObjectType() == ECC_WorldDynamic);
+
+	// 플레이어나 월드 오브젝트가 아니면 충돌을 처리하지 않습니다.
+	if (!bIsPlayer && !bIsWorldObject) return;
+
+	// 플레이어랑 충돌 시 대미지 넣는거 넣기!!!
+	if (bIsPlayer)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Projectile hit Player: %s"), *OtherActor->GetName());
+		UGameplayStatics::ApplyDamage(
+		   OtherActor,
+		   Damage, // 헤더 파일에 선언된 대미지 변수
+		   GetOwner() ? GetOwner()->GetInstigatorController() : nullptr,
+		   this,
+		   UDamageType::StaticClass()
+		  );
+	}
+
+	// SweepResult에서 충돌 위치를 가져옵니다.
+	EffectCreateLocation = SweepResult.ImpactPoint;
+	CreateHitEffect();
+
+	// 메시가 없고 나이아가라 이펙트만 있는 경우 액터를 즉시 파괴합니다.
+	if (bOnlyNiagaraEffect)
+	{
+		Destroy();
+		return;
+	}
+	// 트레일 이펙트가 충분히 나올떄 까지 파괴 대기
+
+	// 추가적인 충돌 및 상호작용을 방지합니다.
+	CollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ProjectileMovement->StopMovementImmediately();
+	if (MeshComp)
+	{
+		MeshComp->SetVisibility(false);
+	}
+
+	// 트레일 이펙트가 사라질 시간을 주기 위해 2초 후에 액터를 파괴합니다.
+	SetLifeSpan(2.0f);
+}
+
 
 void ABaseEnemyProjectile::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {

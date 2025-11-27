@@ -4,8 +4,9 @@
 #include "Components/SphereComponent.h"
 #include "EnemyProjectile/BaseEnemyProjectile.h"
 #include "EnemyProjectile/GroundAttackProjectile.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h" // 헤더 파일 추가
 
 ABossSkeletonMage::ABossSkeletonMage()
 {
@@ -42,6 +43,8 @@ void ABossSkeletonMage::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	TraceTargetCharacterForGroundAttackEffect(DeltaTime);
+	
 	if (bIsAttacking == true ) // 공격 중일 때
 	{
 		TArray<AActor*> OverlappingActors;
@@ -105,8 +108,11 @@ void ABossSkeletonMage::TeleportMoveToNextPoint()
 {
 	if (TeleportDestination != FVector::ZeroVector)
 	{
-		SetActorLocation(TeleportDestination);
-
+		SpawnTeleportEffectAtLocation(GetActorLocation()); // 현재 위치에 이펙트 생성
+		
+		SetActorLocation(TeleportDestination); // 텔레포트 이동
+		SpawnTeleportEffectAtLocation(TeleportDestination);// 도착 위치에 이펙트 생성
+		
 		// TargetCharacter를 찾아서 바라보도록 회전
 		if (TargetCharacter)
 		{
@@ -118,6 +124,31 @@ void ABossSkeletonMage::TeleportMoveToNextPoint()
 			SetActorRotation(FRotator(0.f, LookAtRotation.Yaw, 0.f));
 		}
 	}
+}
+
+void ABossSkeletonMage::SpawnTeleportEffectAtLocation(const FVector& Location)
+{
+	if (TeleportEffect == nullptr) return;
+
+	FVector SpawnLocation = Location;
+
+	// 바닥을 찾기 위해 라인 트레이스를 수행합니다.
+	FHitResult HitResult;
+	const FVector StartTrace = Location + FVector(0.f, 0.f, 100.f); // 약간 위에서 시작
+	const FVector EndTrace = Location - FVector(0.f, 0.f, 1000.f); // 아래로 1000 유닛
+	FCollisionQueryParams TraceParams;
+	TraceParams.AddIgnoredActor(this);
+
+	// 라인 트레이스로 바닥 위치를 찾습니다.
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_WorldStatic, TraceParams))
+	{
+		// 충돌 지점을 스폰 위치로 설정합니다.
+		SpawnLocation = HitResult.Location;
+	}
+
+	// 나이아가라 이펙트를 스폰합니다.
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TeleportEffect, SpawnLocation,
+		FRotator::ZeroRotator, FVector(7.f));
 }
 
 void ABossSkeletonMage::PlayFireBallmontage()
@@ -161,6 +192,8 @@ void ABossSkeletonMage::ShootFireBall()
 void ABossSkeletonMage::StartSummoning(const FVector& Location1, const FVector& Location2)
 {
 	if ( BlackboardComp == nullptr ) return;
+	
+	SpawnSummonEffectAtLocation(GetActorLocation()); // 마법사가 소환 시작 이펙트
 	
 	BlackboardComp->SetValueAsFloat("AttackDelay", SummonEnemyDelay); // 행동 딜레이 설정
 
@@ -211,17 +244,41 @@ void ABossSkeletonMage::SummonEnemy()
 				SpawnLocation, 
 				SpawnRotation, 
 				SpawnParams);
-   
-			// 
-			/*
-			if (SpawnedEnemy)
+
+			if ( SummonEffectFromEnemy )
 			{
-				//SpawnedEnemy->bAlwaysChase = true; // 소환된 적이 무조건 플레이어를 추적하도록 설정
-				//SpawnedEnemy->bUseSpawnMontage = true; // 이거 디폴트로 트루인 상태임
+				// 나이아가라 이펙트를 스폰합니다.
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), SummonEffectFromEnemy,
+					SpawnLocation + FVector(0.f, 0.f, 5.f),
+					FRotator::ZeroRotator, FVector(20.f));
 			}
-			*/
 		}
 	}
+}
+
+void ABossSkeletonMage::SpawnSummonEffectAtLocation(const FVector& Location)
+{
+	if (SummonEffectFromMage == nullptr) return;
+
+	FVector SpawnLocation = Location;
+
+	// 바닥을 찾기 위해 라인 트레이스를 수행합니다.
+	FHitResult HitResult;
+	const FVector StartTrace = Location + FVector(0.f, 0.f, 100.f); // 약간 위에서 시작
+	const FVector EndTrace = Location - FVector(0.f, 0.f, 1000.f); // 아래로 1000 유닛
+	FCollisionQueryParams TraceParams;
+	TraceParams.AddIgnoredActor(this);
+
+	// 라인 트레이스로 바닥 위치를 찾습니다.
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_WorldStatic, TraceParams))
+	{
+		// 충돌 지점보다 약간 위에 스폰 위치를 설정합니다.
+		SpawnLocation = HitResult.Location + FVector(0.f, 0.f, 5.f);
+	}
+
+	// 나이아가라 이펙트를 스폰합니다.
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), SummonEffectFromMage, SpawnLocation,
+		FRotator::ZeroRotator, FVector(20.f));
 }
 
 void ABossSkeletonMage::PlayGroundAreaAttackMontage()
@@ -229,6 +286,15 @@ void ABossSkeletonMage::PlayGroundAreaAttackMontage()
 	if ( BlackboardComp == nullptr ) return;
 	
 	BlackboardComp->SetValueAsFloat("AttackDelay", GroundAttackDelay); // 행동 딜레이 설정
+
+	GroundTargetingComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+		GetWorld(),
+		GroundTargetingEffect,
+		TargetCharacter->GetActorLocation(), // 초기 위치
+		FRotator::ZeroRotator,
+		FVector(1.f),
+		true
+	);
 	
 	if ( GroundAreaAttackMontage )
 	{
@@ -236,10 +302,44 @@ void ABossSkeletonMage::PlayGroundAreaAttackMontage()
 	}
 }
 
+void ABossSkeletonMage::TraceTargetCharacterForGroundAttackEffect(float DeltaTime)
+{
+	// 그라운드 타겟팅 이펙트 위치 업데이트
+	if (GroundTargetingComponent && GroundTargetingComponent->IsValidLowLevel() && IsValid(TargetCharacter))
+	{
+		FVector CharacterLocation = TargetCharacter->GetActorLocation();
+		FVector TargetLocation = CharacterLocation;
+
+		// 캐릭터 위치에서 아래로 라인 트레이스를 실행하여 바닥을 찾습니다.
+		FHitResult HitResult;
+		FVector StartTrace = CharacterLocation;
+		FVector EndTrace = CharacterLocation - FVector(0.f, 0.f, 1000.f); // 아래로 1000 유닛
+		FCollisionQueryParams TraceParams;
+		TraceParams.AddIgnoredActor(this);
+		TraceParams.AddIgnoredActor(TargetCharacter);
+
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_WorldStatic, TraceParams))
+		{
+			// 충돌 지점을 타겟 위치로 설정합니다.
+			TargetLocation = HitResult.Location;
+		}
+
+		// 이펙트의 월드 위치를 업데이트합니다. (Z축으로 2만큼 상승)
+		GroundTargetingComponent->SetWorldLocation(TargetLocation + FVector(0.f, 0.f, 5.f));
+	}
+}
+
 // 애님 노티파이에서 호출할 함수
 void ABossSkeletonMage::GroundAreaAttack()
 {
 	if (!IsValid(TargetCharacter) || GroundAttackClass == nullptr) return;
+
+	// 타겟팅 이펙트가 존재하면 제거합니다.
+	if (GroundTargetingComponent && GroundTargetingComponent->IsValidLowLevel())
+	{
+		GroundTargetingComponent->DestroyComponent();
+		GroundTargetingComponent = nullptr;
+	}
 	
 	//UE_LOG(LogTemp, Warning, TEXT("a"));
 
@@ -270,12 +370,20 @@ void ABossSkeletonMage::GroundAreaAttack()
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	// 월드에 장판 프로젝타일을 스폰합니다.
-	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(GroundAttackClass, SpawnLocation, SpawnRotation, SpawnParams);
+	AGroundAttackProjectile* SpawnedProjectile = GetWorld()->SpawnActor<AGroundAttackProjectile>(GroundAttackClass, SpawnLocation, SpawnRotation, SpawnParams);
 
 	// 스폰된 액터가 유효하고, 유지 시간이 0보다 크면 LifeSpan을 설정합니다.
-	if (SpawnedActor)
+	if (SpawnedProjectile)
 	{
-		SpawnedActor->SetLifeSpan(GroundAttackDuration);
+		//SpawnedProjectile->SetLifeSpan(GroundAttackDuration);
+		SpawnedProjectile->DurationTime = GroundAttackDuration; // 장판 유지 시간 설정
+	}
+	if ( GroundAttackEffect ) 
+	{
+		// 나이아가라 이펙트를 스폰합니다.
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), GroundAttackEffect,
+			SpawnLocation + FVector(0.f, 0.f, 2.f),
+			FRotator::ZeroRotator, FVector(5.f));
 	}
 }
 
@@ -288,5 +396,16 @@ void ABossSkeletonMage::PlayPushTargetMontage()
 	if ( PushTargetMontage )
 	{
 		PlayAnimMontage(PushTargetMontage);
+	}
+}
+
+void ABossSkeletonMage::CreateMagicShield()
+{
+	if ( MagicShieldEffect )
+	{
+		// 나이아가라 이펙트를 스폰합니다.
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), MagicShieldEffect,
+			GetActorLocation() + FVector(0.f, 0.f, 10.f),
+			FRotator::ZeroRotator, FVector(1.f));
 	}
 }

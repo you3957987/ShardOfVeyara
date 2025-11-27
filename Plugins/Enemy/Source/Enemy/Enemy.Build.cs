@@ -41,6 +41,7 @@ public class Enemy : ModuleRules
 				"AIModule",
 				"UMG",
 				"NavigationSystem",
+				"Niagara"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

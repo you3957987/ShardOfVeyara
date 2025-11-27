@@ -36,6 +36,10 @@ class ENEMY_API ABossSkeletonMage : public ABaseBossEnemy
 	class UAnimMontage* TeleportMontage;
 	// 텔레포트 목적지 위치 저장용 변수
 	FVector TeleportDestination;
+	// 텔레포트 시각 효과
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	class UNiagaraSystem* TeleportEffect;
+	void SpawnTeleportEffectAtLocation(const FVector& Location);
 	
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	float FireBallDelay = 5.f;
@@ -55,7 +59,12 @@ class ENEMY_API ABossSkeletonMage : public ABaseBossEnemy
 	TArray<TSubclassOf<class ABaseEnemy>> SummonableEnemyClasses;
 	// 소환될 위치들을 저장할 배열
 	TArray<FVector> SummonLocations;
-
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	class UNiagaraSystem* SummonEffectFromMage;
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	class UNiagaraSystem* SummonEffectFromEnemy;
+	void SpawnSummonEffectAtLocation(const FVector& Location);
+	
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	float GroundAttackDelay = 8.f;
 	// 장판 유지 시간
@@ -66,17 +75,29 @@ class ENEMY_API ABossSkeletonMage : public ABaseBossEnemy
 	// 장판 공격 발사체 클래스
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	TSubclassOf<class AGroundAttackProjectile> GroundAttackClass;
-
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	class UNiagaraSystem* GroundTargetingEffect;
+	/** 스폰된 GroundTargetingEffect 컴포넌트를 추적하기 위한 포인터 */
+	UPROPERTY()
+	class UNiagaraComponent* GroundTargetingComponent;
+	void TraceTargetCharacterForGroundAttackEffect(float DeltaTime);
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	class UNiagaraSystem* GroundAttackEffect;
+	
+	
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	float PushTargetDelay = 3.f;
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	class UAnimMontage* PushTargetMontage;
 	// 수평으로 밀어내는 힘
 	UPROPERTY(EditAnywhere, Category = "자체설정")
-	float PushForce = 1000.f;
+	float PushForce = 2000.f;
 	// 위로 띄우는 힘
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	float PushUpwardForce = 400.f; 
+	// 쉴드 이펙트
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	class UNiagaraSystem* MagicShieldEffect;
 	
 public:
 	ABossSkeletonMage();
@@ -134,4 +155,6 @@ public:
 	void PushTarget_Start( ){ HittedActors.Empty();bIsAttacking = true; };
 	UFUNCTION( BlueprintCallable )
 	void PushTarget_End( ){HittedActors.Empty();bIsAttacking = false;} ;
+	UFUNCTION( BlueprintCallable )
+	void CreateMagicShield();
 };
