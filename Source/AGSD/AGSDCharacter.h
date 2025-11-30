@@ -62,11 +62,11 @@ protected:
 	TArray<FInputBufferEntry> InputBuffer;
 
 	UPROPERTY(EditDefaultsOnly, Category="Input Buffer")
-	float InputBufferDuration = 0.15f;
+	float InputBufferDuration = 0.3f;
 
 private:
 	UFUNCTION(BlueprintCallable)
-	void HandleAttackInput();
+	void HandleAttackInput(FName ActionName);
 	
 public:
 
@@ -116,6 +116,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bCanOpenChest = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool SkillMotion = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool Mining = false;

@@ -51,9 +51,8 @@ AAGSDCharacter::AAGSDCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
-void AAGSDCharacter::HandleAttackInput()
+void AAGSDCharacter::HandleAttackInput(FName ActionName)
 {
-	FName ActionName = FName("Attack");
 	float CurrentTime = GetWorld()->GetTimeSeconds();
 	int32 CurrentFrame = GFrameCounter;
 
@@ -166,11 +165,11 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 		}
 	}
 
-	if (!Mining)
+	if (!SkillMotion)
 	{
 		// 2. 가장 복잡한 커맨드 (StrongAttack 콤보) 먼저 확인
 		// CheckCombo는 Input1="Attack", Input2="Attack"으로 설정해야 합니다. (Attack 2번 연속 입력 가정)
-		if (CheckCombo(InputBuffer, FName("Attack"), FName("Attack"), 0.3f)) 
+		if (CheckCombo(InputBuffer, FName("Forward"), FName("Attack"), 0.3f)) 
 		{
 			// 커맨드 인식 성공 시
 			StrongAttack();
@@ -183,10 +182,10 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 		// 이전 입력 (Attack 2번째)이 너무 늦었거나, Attack 1개만 들어왔을 경우
 		else if (CheckSingleInput(InputBuffer, FName("Attack"))) // 버퍼에 입력이 남아있는 경우
 		{
-				Attack();  
+			Attack();  
                 
 				// ⭐ 수정 3: 사용된 입력 1개를 버퍼에서 제거 ⭐
-				ConsumeInputs(InputBuffer, 1);
+			ConsumeInputs(InputBuffer, 1);
 		}
 	}
 
@@ -289,10 +288,10 @@ void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void AAGSDCharacter::Move(const FInputActionValue& Value)
 {
-	if (Mining) return;
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
-
+	if (MovementVector.Y > 0.0f) HandleAttackInput(FName("Forward"));
+	if (Mining) return;
 	// route the input
 	DoMove(MovementVector.X, MovementVector.Y);
 }
