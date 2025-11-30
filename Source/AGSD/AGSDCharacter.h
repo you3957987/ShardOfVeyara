@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "HoldingState.h"
 #include "AGSDPlayerController.h"
+#include "InputBufferEntry.h"
 #include "AGSDCharacter.generated.h"
 
 class USpringArmComponent;
@@ -56,6 +57,17 @@ protected:
 	UInputAction* Interaction;
 
 	AAGSDPlayerController* PC;
+	
+	UPROPERTY(VisibleAnywhere, Category="Input Buffer")
+	TArray<FInputBufferEntry> InputBuffer;
+
+	UPROPERTY(EditDefaultsOnly, Category="Input Buffer")
+	float InputBufferDuration = 0.15f;
+
+private:
+	UFUNCTION(BlueprintCallable)
+	void HandleAttackInput();
+	
 public:
 
 	/** Constructor */
@@ -91,6 +103,12 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interaction")
 	FString SubSeedAmount();
 
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interaction")
+	void StrongAttack();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interaction")
+	void Attack();
+	
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	FORCEINLINE void SetCanOpenChest(bool boolean) { bCanOpenChest = boolean; };
 
@@ -98,6 +116,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bCanOpenChest = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool Mining = false;
 	
 protected:
 
@@ -120,9 +141,21 @@ protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
+	virtual void Jump() override;
+
+	virtual void StopJumping() override;
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 
+	void ConsumeInputs(TArray<FInputBufferEntry>& Buffer, int32 Count);
+	bool CheckCombo(
+	const TArray<FInputBufferEntry>& Buffer, 
+	FName Input1, 
+	FName Input2, 
+	float MaxTimeBetweenInputs);
+
+	// AAGSDCharacter.h에 추가
+	bool CheckSingleInput(const TArray<FInputBufferEntry>& Buffer, FName InputName);
 public:
 
 	/** Handles move inputs from either controls or UI interfaces */
@@ -147,5 +180,8 @@ public:
 
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void WeaponAttack();
 };
 

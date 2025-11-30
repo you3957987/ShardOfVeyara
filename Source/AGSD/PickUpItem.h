@@ -18,6 +18,8 @@ class AGSD_API APickUpItem : public AActor, public IInteraction
 public:
 	APickUpItem();
 
+	virtual void BeginPlay() override;;
+
 	//오버랩 시작 시 작동할 함수
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -30,6 +32,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* Mesh;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn = "true"))
+	bool Holding = false;
+	
 	FText InteractActionText = FText::FromString(TEXT("수집하기"));
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interact")

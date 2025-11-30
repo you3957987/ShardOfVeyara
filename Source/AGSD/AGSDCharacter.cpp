@@ -51,6 +51,17 @@ AAGSDCharacter::AAGSDCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
+void AAGSDCharacter::HandleAttackInput()
+{
+	FName ActionName = FName("Attack");
+	float CurrentTime = GetWorld()->GetTimeSeconds();
+	int32 CurrentFrame = GFrameCounter;
+
+	FInputBufferEntry NewEntry(ActionName, CurrentTime, CurrentFrame);
+
+	InputBuffer.Add(NewEntry);
+}
+
 void AAGSDCharacter::TryInteract()
 {
 	if (!CanInteract)
@@ -75,16 +86,108 @@ void AAGSDCharacter::RemoveInteractableActor(AActor* ActorToRemove)
 	if(InteractableActorsInRange.Num() <= 0) CanInteract = false;
 }
 
+void AAGSDCharacter::ConsumeInputs(TArray<FInputBufferEntry>& Buffer, int32 Count)
+{
+	// 버퍼가 충분한 입력을 가지고 있는지 확인
+	if (Buffer.Num() >= Count)
+	{
+		// Count만큼 가장 최근 입력(배열의 끝)부터 제거
+		for (int32 i = 0; i < Count; ++i)
+		{
+			Buffer.RemoveAt(Buffer.Num() - 1);
+		}
+	}
+}
+
+bool AAGSDCharacter::CheckCombo(
+	const TArray<FInputBufferEntry>& Buffer, 
+	FName Input1, 
+	FName Input2, 
+	float MaxTimeBetweenInputs)
+{
+	// 1. 최소 길이 확인
+	if (Buffer.Num() < 2)
+	{
+		return false;
+	}
+
+	// 2. 최근 입력 두 개 가져오기 (직접 접근)
+	const FInputBufferEntry& Entry2 = Buffer[Buffer.Num() - 1]; // Input2 (가장 최근)
+	const FInputBufferEntry& Entry1 = Buffer[Buffer.Num() - 2]; // Input1 (바로 이전)
+    
+	// 3. 순서 확인
+	bool bSequenceMatch = (Entry1.InputName == Input1) && (Entry2.InputName == Input2);
+
+	if (!bSequenceMatch)
+	{
+		return false;
+	}
+
+	// 4. 시간 간격 확인
+	float TimeDifference = Entry2.TimeStamp - Entry1.TimeStamp;
+
+	// 두 입력 사이의 시간 간격이 허용 시간 내에 있는지 확인
+	if (TimeDifference <= MaxTimeBetweenInputs)
+	{
+		return true; // 커맨드 인식 성공!
+	}
+
+	return false;
+}
+
+bool AAGSDCharacter::CheckSingleInput(const TArray<FInputBufferEntry>& Buffer, FName InputName)
+{
+	// 1. 최소 길이 확인
+	if (Buffer.Num() < 1)
+	{
+		return false;
+	}
+
+	// 2. 가장 최근 입력의 이름이 우리가 찾는 InputName과 일치하는지 확인
+	// (시간 유효성은 이미 Tick 시작 부분의 정리 로직에서 검증되었으므로 시간 비교는 필요 없음)
+	const FInputBufferEntry& LastEntry = Buffer[Buffer.Num() - 1];
+
+	return LastEntry.InputName == InputName;
+}
+
 void AAGSDCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (!CanInteract)
+	float CurrentTime = GetWorld()->GetTimeSeconds();
+
+	// 1. 유효 시간이 지난 입력 제거 (버퍼 정리)
+	// 오래된 입력은 앞에서부터 제거합니다. (FIFO: First In, First Out)
+	for (int32 i = InputBuffer.Num() - 1; i >= 0; --i)
 	{
-		SetHighLight(CurrentInteractableActor, false);
-		CurrentInteractableActor = nullptr;
-		if (PC) PC->HideInteractionWidget();
-		return;
+		if (CurrentTime - InputBuffer[i].TimeStamp > InputBufferDuration)
+		{
+			InputBuffer.RemoveAt(i);
+		}
+	}
+
+	if (!Mining)
+	{
+		// 2. 가장 복잡한 커맨드 (StrongAttack 콤보) 먼저 확인
+		// CheckCombo는 Input1="Attack", Input2="Attack"으로 설정해야 합니다. (Attack 2번 연속 입력 가정)
+		if (CheckCombo(InputBuffer, FName("Attack"), FName("Attack"), 0.3f)) 
+		{
+			// 커맨드 인식 성공 시
+			StrongAttack();
+            
+			// ⭐ 수정 1: 사용된 입력 2개를 버퍼에서 제거 ⭐
+			ConsumeInputs(InputBuffer, 2); 
+		}
+        
+		// 3. StrongAttack 콤보가 인식되지 않았을 경우, 단일 Attack 입력이 남아있는지 확인
+		// 이전 입력 (Attack 2번째)이 너무 늦었거나, Attack 1개만 들어왔을 경우
+		else if (CheckSingleInput(InputBuffer, FName("Attack"))) // 버퍼에 입력이 남아있는 경우
+		{
+				Attack();  
+                
+				// ⭐ 수정 3: 사용된 입력 1개를 버퍼에서 제거 ⭐
+				ConsumeInputs(InputBuffer, 1);
+		}
 	}
 
 	AActor* MinDistanceActor = MinDistActor();
@@ -165,8 +268,8 @@ void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 			}
 		}
 		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AAGSDCharacter::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AAGSDCharacter::StopJumping);
 
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAGSDCharacter::Move);
@@ -186,11 +289,24 @@ void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void AAGSDCharacter::Move(const FInputActionValue& Value)
 {
+	if (Mining) return;
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	// route the input
 	DoMove(MovementVector.X, MovementVector.Y);
+}
+
+void AAGSDCharacter::Jump()
+{
+	if (Mining) return;
+	Super::Jump();
+}
+
+void AAGSDCharacter::StopJumping()
+{
+	if (Mining) return;
+	Super::StopJumping();
 }
 
 void AAGSDCharacter::Look(const FInputActionValue& Value)
