@@ -63,6 +63,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category="Input Buffer")
 	float InputBufferDuration = 0.3f;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Input Buffer")
+	float InputDifference = 0.3f;
 
 private:
 	UFUNCTION(BlueprintCallable)

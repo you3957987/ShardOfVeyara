@@ -169,7 +169,7 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 	{
 		// 2. 가장 복잡한 커맨드 (StrongAttack 콤보) 먼저 확인
 		// CheckCombo는 Input1="Attack", Input2="Attack"으로 설정해야 합니다. (Attack 2번 연속 입력 가정)
-		if (CheckCombo(InputBuffer, FName("Forward"), FName("Attack"), 0.3f)) 
+		if (CheckCombo(InputBuffer, FName("Forward"), FName("Attack"), InputDifference)) 
 		{
 			// 커맨드 인식 성공 시
 			StrongAttack();
