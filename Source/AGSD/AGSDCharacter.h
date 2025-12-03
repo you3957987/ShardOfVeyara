@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "HoldingState.h"
 #include "AGSDPlayerController.h"
+#include "HoldingWeapon.h"
 #include "InputBufferEntry.h"
 #include "AGSDCharacter.generated.h"
 
@@ -100,6 +101,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="HoldingState")
 	EHoldingState HoldingState = EHoldingState::EHS_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="HoldingState")
+	EHoldingWeapon HoldingWeapon = EHoldingWeapon::None;
 
 	AActor* MinDistActor();
 

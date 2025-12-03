@@ -8,12 +8,241 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4fb32fe1-2f7b-4ce4-b591-d5e38df0812d" name="변경" comment="">
+      <change afterPath="$PROJECT_DIR$/Source/AGSD/HoldingWeapon.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/CR/Demo/Meshes/SKM_Manny.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/CR/Demo/Meshes/SKM_Manny.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/CR/Demo/Meshes/SK_Mannequin.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/CR/Demo/Meshes/SK_Mannequin.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/CR/LQ/CharacterModular/Modular_010_Topa07/Mesh/SKM_Topa07_1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/CR/LQ/CharacterModular/Modular_010_Topa07/Mesh/SKM_Topa07_1.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ChestUI/Blueprint/BP_Chest.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ChestUI/Blueprint/BP_Chest.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ChestUI/Blueprint/WBP_ChestAndInventory.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ChestUI/Blueprint/WBP_ChestAndInventory.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ChestUI/Blueprint/WBP_ChestUI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ChestUI/Blueprint/WBP_ChestUI.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/ABP_Farmer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/ABP_Farmer.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Farmer_A_Mining_PickAxe_2H_01_End.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Farmer_A_Mining_PickAxe_2H_01_Loop_01.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Farmer_A_Mining_PickAxe_2H_01_Start_02.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/MDT_Anim.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/SK_Mannequin_Sequence.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/SK_Mannequin_Sequence1.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand01_swing_01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand01_thrustHigh_01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand01_thrustLow_01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand01_thrustMid_01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand02_swing_01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand03_jabHigh01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand03_jabLow01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand03_jabMid01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand03_shieldBash_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand03_swing_01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand03_thrustHigh_01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand03_thrustLow_01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand03_thrustMid_01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand04_jabHigh01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand04_jabLow01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand04_jabMid01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand04_swing_01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand04_thrustHight_01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand04_thrustLowt_01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand04_thrustMid_01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_01Hit01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_01Hit02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_02Hit01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_02Hit02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_03hit01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_03hit02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_04_ThrowMid01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_04hit01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_04hit02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_crouch01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_crouch02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_crouch03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_crouch04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle01to1H02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle01to1H03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle01to1H04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle01to2H01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle01to2H02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle01to2H03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle01to2H04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle01to2H05_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle01to2H06_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle02to1H01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle02to1H03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle02to1H04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle02to2H01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle02to2H02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle02to2H03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle02to2H04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle02to2H05_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle02to2H06_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle03to1H01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle03to1H02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle03to1H04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle03to2H01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle03to2H02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle03to2H03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle03to2H04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle03to2H05_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle03to2H06_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle04to1H01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle04to1H02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle04to1H03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle04to2H01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle04to2H02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle04to2H03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle04to2H04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle04to2H05_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle04to2H06_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_idle04to3H05_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_run01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_run02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_run03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_run04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_walk01_backwards_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_walk01_forward_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_walk01_left_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_walk01_right_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_walk02_forward_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_walk03_forward_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_1hand_walk04_forward_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand01_jabHigh01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand01_jabLow01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand01_jabMid01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand01_trustHigh01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand01_trustLow01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand01_trustMid01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand03_jabHigh01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand03_jabLow01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand03_jabMid01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand03_trustHigh01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand03_trustMid01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand03_trustlow01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand04_jabHigh01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand04_jabLow01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand04_jabMid01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand04_trustHigh01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand04_trustLow01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand04_trustMid01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand05_BigSwingHigh01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand05_BigSwingLow01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand05_BigSwingMid01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand05_BigSwingUp01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand05_swingHigh01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand05_swingLow01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand05_swingMid01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_01hit01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_01hit02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_02hit01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_02hit02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_03hit01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_03hit02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_04hit01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_04hit02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_05hit01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_05hit02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_06hit01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_06hit02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_blockLoop01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_crouch01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_crouch02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_crouch03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_crouch04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_crouch05_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_crouch06_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle01to02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle01to03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle01to04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle01to05_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle01to06_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle01to1H01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle01to1H02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle01to1H03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle01to1H04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle02to01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle02to03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle02to04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle02to05_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle02to06_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle02to1H01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle02to1H02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle02to1H03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle02to1H04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle03to01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle03to02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle03to04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle03to05_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle03to06_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle03to1H01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle03to1H02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle03to1H03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle03to1H04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle04to01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle04to02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle04to03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle04to05_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle04to06_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle04to1H01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle04to1H02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle04to1H03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle04to1H04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle05_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle05to01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle05to02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle05to03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle05to04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle05to06_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle05to1H01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle05to1H02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle05to1H03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle05to1H04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle06_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle06to01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle06to02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle06to03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle06to04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle06to05_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle06to1H01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle06to1H02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle06to1H03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_idle06to1H04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_run01_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_run02_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_run03_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_run04_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_run05_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_run06_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_walk01_forward_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_walk02_forward_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_walk03_forward_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_walk04_forward_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_walk05_forward_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/Spear/Farmer_A_spear_2hand_walk06_forward_Mirrored.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Farmer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Farmer.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_PickUpItemBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_PickUpItemBase.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Forke.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Forke.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Hoe.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Hoe.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_WeaponBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_WeaponBase.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/Crop.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/Crop.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Inventory/BPAC_InventoryComponent.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Inventory/BPAC_InventoryComponent.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/BP_ItemApple.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/BP_ItemApple.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/BP_ItemAxe.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/BP_ItemAxe.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/BP_ItemBanana.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/BP_ItemBanana.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/BP_ItemHelmet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/BP_ItemHelmet.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/BP_ItemMaster.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/BP_ItemMaster.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/BP_ItemPineapple.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/BP_ItemPineapple.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/DT_InventoryItemData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/DT_InventoryItemData.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/Hotbar/WBP_HotbarSlot.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/Hotbar/WBP_HotbarSlot.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_InventorySlot.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_InventorySlot.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_InventoryUI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_InventoryUI.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_SlotDragnDrop.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_SlotDragnDrop.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/2/XU/JAZ5AXVSXGP6VW0SDX4LDZ.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/2/XU/JAZ5AXVSXGP6VW0SDX4LDZ.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/F/5K/C2EKWO6U11AQNOGNM8PHIJ.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/F/5K/C2EKWO6U11AQNOGNM8PHIJ.uasset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,6 +265,7 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Classes/GameFramework/Actor.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Classes/GameFramework/Character.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Private/Character.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/AGSDGameStateBase.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -43,6 +273,8 @@
     <setting file="file://$PROJECT_DIR$/Source/AGSD/Anim_SpearJab.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/ClockWidget.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/FarmingGameMode.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/AGSD/HoldingWeapon.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/AGSD/HoldingWeapon.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/InputBufferEntry.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/InputBufferEntry.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/Interaction.h" root0="FORCE_HIGHLIGHTING" />
@@ -82,8 +314,8 @@
         <option name="CONFIGURATION" value="DebugGame Editor" />
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
-        <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.6/Engine/Binaries/Win64/UnrealEditor-Win64-DebugGame.exe" />
-        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\ehyun\GitHub\AGSD\AGSD.uproject&quot;" />
+        <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Binaries/Win64/UnrealEditor-Win64-DebugGame.exe" />
+        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\user\Documents\GitHub\AGSD\AGSD.uproject&quot;" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.6" />
         <option name="PASS_PARENT_ENVS" value="1" />
@@ -108,8 +340,8 @@
         <option name="CONFIGURATION" value="Development Editor" />
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
-        <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.6/Engine/Binaries/Win64/UnrealEditor.exe" />
-        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\ehyun\GitHub\AGSD\AGSD.uproject&quot;" />
+        <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Binaries/Win64/UnrealEditor.exe" />
+        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\user\Documents\GitHub\AGSD\AGSD.uproject&quot;" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.6" />
         <option name="PASS_PARENT_ENVS" value="1" />
@@ -199,6 +431,7 @@
       <workItem from="1764472045304" duration="4521000" />
       <workItem from="1764559599575" duration="598000" />
       <workItem from="1764563182174" duration="763000" />
+      <workItem from="1764764723750" duration="3572000" />
     </task>
     <servers />
   </component>
