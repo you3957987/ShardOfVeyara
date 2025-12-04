@@ -8,7 +8,6 @@
 #include "Components/WidgetComponent.h"
 #include "EnemyHUD/EnemyHealthBarWidget.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "EnemyProjectile/BaseEnemyProjectile.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 
@@ -21,6 +20,7 @@ ABaseEnemy::ABaseEnemy()
 	AttackRangeSphere->ShapeColor = FColor::Red;
 	AttackRangeSphere->SetSphereRadius(AttackRange); // 초기 공격 범위 설정
 	AttackRangeSphere->SetVisibility(false); // 디버그 모드 기본은 비활성화
+	AttackRangeSphere->SetHiddenInGame(false);
 	
 	DetectRangeSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AcceptRangeSphere"));
 	DetectRangeSphere->SetupAttachment(RootComponent); // 루트 컴포넌트
@@ -35,23 +35,18 @@ ABaseEnemy::ABaseEnemy()
 	ChaseRangeSphere->SetSphereRadius(ChaseRange);
 	ChaseRangeSphere->SetVisibility(false);
 	ChaseRangeSphere->SetHiddenInGame(false); 
-
-	MeleeAttackPoint = CreateDefaultSubobject<USceneComponent>(TEXT("AttackPoint"));
-	MeleeAttackPoint->SetupAttachment(RootComponent); // 루트 컴포넌트
 	
-	AttackRangePointSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AttackRangePointSphere"));
-	AttackRangePointSphere->SetupAttachment(MeleeAttackPoint); // AttackPoint에 부착
-	AttackRangePointSphere->ShapeColor = FColor::Purple;
-	AttackRangePointSphere->SetVisibility(false);
-	AttackRangePointSphere->SetHiddenInGame(false); 
-
-	RangedAttackPoint = CreateDefaultSubobject<USceneComponent>(TEXT("RangedAttackPoint"));
-	RangedAttackPoint->SetupAttachment(RootComponent); // 루트 컴포넌트
-
 	// 체력 바 위젯 컴포넌트 생성 및 설정
 	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBarWidget"));
 	HealthBarWidget->SetupAttachment(RootComponent);
 	HealthBarWidget->SetWidgetSpace(EWidgetSpace::World); // 월드 공간으로 변경
+
+	// 캐릭터 메시의 콜리전을 비활성화합니다.
+	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
+
+	// 캡슐 컴포넌트가 카메라에 반응하지 않도록 설정합니다.
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	
 	// 적 캐릭터 태그 추가 -> 이걸 이용해서 프로젝트에서 플러그인 에너미 접근. 매우 중요!!!!
 	Tags.Add(FName("Enemy")); 
@@ -87,7 +82,6 @@ void ABaseEnemy::BeginPlay()
 	{
 		SpawnDefaultController();// 스폰 몽타주 사용 안하면 자동 빙의 설정
 	}
-
 	TestDeadLogic(); // 죽음 로직 테스트 함수
 }
 
@@ -99,42 +93,6 @@ void ABaseEnemy::Tick(float DeltaTime)
 
 	UpdateHealthBarWidget(DeltaTime); // 체력 바 위젯 업데이트 -> 항상 캐릭터 쪽으로 바라보도록
 	
-	if (bIsAttacking == true && EnemyType == EEnemyType::EET_Melee) // 근접 공격 타입이고 공격 중일 때
-	{
-		TArray<AActor*> OverlappingActors;
-		// AttackRangePointSphere와 겹치는 모든 액터를 가져옵니다.
-		AttackRangePointSphere->GetOverlappingActors(OverlappingActors);
-		
-		for (AActor* OverlappingActor : OverlappingActors)
-		{
-			// 액터가 유효하고 "Player" 태그를 가지고 있으며, 아직 공격한 목록에 없는지 확인합니다.
-			if (OverlappingActor && OverlappingActor->ActorHasTag(FName("Player")) && !HittedActors.Contains(OverlappingActor))
-			{
-				// 공격 로그를 출력합니다.
-				UE_LOG(LogTemp, Warning, TEXT("Attack Hit Detected on: %s"), *OverlappingActor->GetName());
-
-				// 플레이어에게 대미지를 적용합니다.
-				UGameplayStatics::ApplyDamage(
-					OverlappingActor,
-					MeleeAttackDamage, // 헤더 파일에 선언된 대미지 변수
-					GetController(),
-					this,
-					UDamageType::StaticClass()
-				);
-				
-				// 공격한 목록에 추가하여 중복 피해를 방지합니다.
-				HittedActors.Add(OverlappingActor);
-
-				bIsAttacking = false; // 공격 상태를 종료합니다.
-			}
-		}
-	}
-}
-
-void ABaseEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 void ABaseEnemy::PollInit()
@@ -160,33 +118,6 @@ void ABaseEnemy::Attack()
 	}
 }
 
-// 원거리 공격 몽타주에서 애님 노티파이로 호출
-void ABaseEnemy::ShootProjectile()
-{
-	//UE_LOG(LogTemp, Warning, TEXT("BaseEnemyShootProjectileCall") );
-
-	if (ProjectileClass && RangedAttackPoint && TargetCharacter)
-	{
-		const FVector SpawnLocation = RangedAttackPoint->GetComponentLocation();
-		// RangedAttackPoint에서 TargetCharacter의 위치를 바라보는 회전값을 계산합니다.
-		const FRotator SpawnRotation = UKismetMathLibrary::FindLookAtRotation(SpawnLocation, TargetCharacter->GetActorLocation());
-
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
-		SpawnParams.Instigator = this;
-		
-		UWorld* World = GetWorld();
-		if (World)
-		{
-			// 계산된 위치와 회전값으로 발사체를 스폰하고, 스폰된 액터의 포인터를 가져옵니다.
-			ABaseEnemyProjectile* SpawnedProjectile =
-				World->SpawnActor<ABaseEnemyProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
-
-			// 엄
-		}
-	}
-}
-
 float ABaseEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 	class AController* EventInstigator, AActor* DamageCauser)
 {
@@ -209,7 +140,6 @@ float ABaseEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& Dama
 void ABaseEnemy::Die()
 {
 	if ( DeathMontage ) PlayAnimMontage(DeathMontage);
-	else GetMesh()->SetSimulatePhysics(true);
 	
 	// 충돌 비활성화
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -248,9 +178,12 @@ void ABaseEnemy::SpawnDeadEffectAndDestroy()
 {
 	if ( DeathEffectCascade )
 	{
-		const FVector SpawnLocation = GetMesh()->GetComponentLocation() - (GetActorForwardVector() * 100.0f);
+		const FVector SpawnLocation = GetMesh()->GetComponentLocation() + (GetActorForwardVector() * DeathEffectForwardOffset);
+		const FRotator SpawnRotation = GetActorRotation();
+		const FVector SpawnScale = FVector(DeathEffectScale);
+
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DeathEffectCascade,
-			SpawnLocation);
+		 SpawnLocation, SpawnRotation, SpawnScale);
 	}
 	Destroy(); // 이펙트가 없으면 바로 액터 삭제
 }
@@ -330,14 +263,12 @@ void ABaseEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEv
 			if ( AttackRangeSphere ) AttackRangeSphere->SetVisibility(true);
 			if ( DetectRangeSphere ) DetectRangeSphere->SetVisibility(true);
 			if ( ChaseRangeSphere ) ChaseRangeSphere->SetVisibility(true);
-			if ( AttackRangePointSphere ) AttackRangePointSphere->SetVisibility(true);
 		}
 		else
 		{
 			if ( AttackRangeSphere ) AttackRangeSphere->SetVisibility(false);
 			if ( DetectRangeSphere ) DetectRangeSphere->SetVisibility(false);
 			if ( ChaseRangeSphere ) ChaseRangeSphere->SetVisibility(false);
-			if ( AttackRangePointSphere ) AttackRangePointSphere->SetVisibility(false);
 		}
 	}
 	// AttackRange 프로퍼티가 변경되었는지 확인합니다.
