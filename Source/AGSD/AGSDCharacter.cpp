@@ -254,6 +254,25 @@ void AAGSDCharacter::SetHighLight(AActor* TargetActor, bool bActive)
 	}
 }
 
+float AAGSDCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+	class AController* EventInstigator, AActor* DamageCauser)
+{
+	float DamageToApply = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	UE_LOG(LogTemp, Warning, TEXT("BossSkeletonMage Take Damage : %f"), DamageToApply);
+
+	if ( DamageToApply > 0.f )
+	{
+		Health -= DamageToApply;
+		if ( Health <= 0.f )
+		{
+			Die();
+		}
+	}
+	
+	return DamageToApply;
+}
+
 void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
