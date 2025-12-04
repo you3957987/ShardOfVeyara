@@ -1,6 +1,7 @@
 #include "Enemy/BaseExploderEnemy.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ABaseExploderEnemy::ABaseExploderEnemy()
 {
@@ -24,6 +25,15 @@ void ABaseExploderEnemy::Explode()
 			if (Actor && Actor->ActorHasTag(FName("Player")))
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Explode overlap with Player: %s"), *Actor->GetName());
+
+				// 데미지 적용
+				UGameplayStatics::ApplyDamage(
+					Actor,
+					ExplosionDamage,
+					GetController(),
+					this,
+					UDamageType::StaticClass()
+				);
 			}
 		}
 	}
