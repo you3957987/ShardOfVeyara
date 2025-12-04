@@ -263,10 +263,10 @@ float AAGSDCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 
 	if ( DamageToApply > 0.f )
 	{
-		Health -= DamageToApply;
-		if ( Health <= 0.f )
+		//Health -= DamageToApply;
+		//if ( Health <= 0.f )
 		{
-			Die();
+		//	Die();
 		}
 	}
 	

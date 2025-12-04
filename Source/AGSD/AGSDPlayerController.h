@@ -26,7 +26,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> WBP_ClockWidget;
 
+	UFUNCTION(BlueprintCallable)
 	void ShowInteractionWidget(const FText& NewText);
+	
 	void ShowClockWidget();
 	void HideInteractionWidget();
 private:
