@@ -3,6 +3,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/ProgressBar.h"
+#include "Components/sphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "EnemyBoss/SkeletonMage/BossSkeletonMage.h"
 #include "EnemyHUD/EnemyHealthBarWidget.h"
@@ -26,7 +27,17 @@ ABaseBossEnemy::ABaseBossEnemy()
 	HealthBarWidget->SetupAttachment(RootComponent);
 	HealthBarWidget->SetWidgetSpace(EWidgetSpace::World); 
 
+	PlayerDetectRangeSphere = CreateDefaultSubobject<USphereComponent>(TEXT("PlayerDetectRangeSphere"));
+	PlayerDetectRangeSphere->SetupAttachment(RootComponent); // 루트 컴포넌트
+	PlayerDetectRangeSphere->ShapeColor = FColor::Green;
+	PlayerDetectRangeSphere->SetSphereRadius(PlayerDetectRange);
+	PlayerDetectRangeSphere->SetVisibility(false);
+	PlayerDetectRangeSphere->SetHiddenInGame(false); 
+	
 	Tags.Add(FName("Enemy")); // 적 캐릭터 태그 추가 -> 이걸 이용해서 프로젝트에서 플러그인 에너미 접근. 매우 중요!!!!
+
+	// AI 컨트롤러가 자동 빙의 하는거 제한. 범위 안에 플레이어가 들어왔을 때 오버랩 이벤트로 빙의
+	AutoPossessAI = EAutoPossessAI::Disabled;
 }
 
 void ABaseBossEnemy::BeginPlay()
@@ -40,6 +51,12 @@ void ABaseBossEnemy::BeginPlay()
 		{
 			HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 		}
+	}
+
+	if ( PlayerDetectRangeSphere )
+	{
+		// 오버랩 이벤트 바인딩
+		PlayerDetectRangeSphere->OnComponentBeginOverlap.AddDynamic(this, &ABaseBossEnemy::OnPlayerDetectOverlapBegin);
 	}
 	
 	TestDeadLogic();
@@ -73,6 +90,16 @@ void ABaseBossEnemy::PollInit(float DeltaTime)
 		{
 			bTargetInitalize = true; // 캐릭터가 유효하면 초기화 플래그를 true로 설정합니다.
 		}
+	}
+}
+
+void ABaseBossEnemy::OnPlayerDetectOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	// 오버랩된 액터가 플레이어인지 확인합니다.
+	if (OtherActor && OtherActor->ActorHasTag(FName("Player")))
+	{
+		SpawnDefaultController();// 스폰 몽타주 사용 안하면 자동 빙의 설정
 	}
 }
 
@@ -188,12 +215,33 @@ void ABaseBossEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChang
 
 	// 변경된 프로퍼티의 이름을 가져옵니다.
 	const FName PropertyName = (PropertyChangedEvent.Property != nullptr) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+
+	// 디버그 모드에 따라 어택, 디텍트, 체이스 범위 구체의 가시성을 설정합니다.
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(ABaseBossEnemy, bDebugMode))
+	{
+		if ( bDebugMode == true )
+		{
+			if ( PlayerDetectRangeSphere ) PlayerDetectRangeSphere->SetVisibility(true);
+		}
+		else
+		{
+			if ( PlayerDetectRangeSphere ) PlayerDetectRangeSphere->SetVisibility(false);
+		}
+	}
 	
 	if ( PropertyName == GET_MEMBER_NAME_CHECKED(ABaseBossEnemy, MoveSpeed) )
 	{
 		if ( GetCharacterMovement() )
 		{
 			GetCharacterMovement()->MaxWalkSpeed = MoveSpeed;
+		}
+	}
+	if ( PropertyName == GET_MEMBER_NAME_CHECKED(ABaseBossEnemy, PlayerDetectRange) )
+	{
+		if ( PlayerDetectRangeSphere )
+		{
+			// 플레이어 인식 범위 스피어의 반지름을 PlayerDetectRange 값으로 설정합니다.
+			PlayerDetectRangeSphere->SetSphereRadius(PlayerDetectRange);
 		}
 	}
 }
