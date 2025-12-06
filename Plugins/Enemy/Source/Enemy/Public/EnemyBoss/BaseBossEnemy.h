@@ -15,6 +15,12 @@ protected:
 	UPROPERTY(EditAnywhere, Category="자체설정")
 	bool bCheckDeadLogic = false;
 	void TestDeadLogic(); // 테스트용 죽음 로직 함수
+
+	// 체력 바 위젯 컴포넌트
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "자체설정")
+	TObjectPtr<class UWidgetComponent> HealthBarWidget;
+	// Tick에서 체력 바 위젯을 내 캐릭터 쪽으로 돌아보게 하는 함수
+	void UpdateHealthBarWidget(float DeltaTime);
 	
 	// 최대 체력
 	UPROPERTY(EditAnywhere, Category="자체설정")
@@ -57,8 +63,7 @@ protected:
 public:
 	ABaseBossEnemy();
 	virtual void Tick(float DeltaTime) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	
 	// 데미지 처리 함수 재정의
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, AActor* DamageCauser) override;
