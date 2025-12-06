@@ -2,9 +2,13 @@
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/ProgressBar.h"
+#include "Components/WidgetComponent.h"
 #include "EnemyBoss/SkeletonMage/BossSkeletonMage.h"
+#include "EnemyHUD/EnemyHealthBarWidget.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 ABaseBossEnemy::ABaseBossEnemy()
 {
@@ -16,7 +20,11 @@ ABaseBossEnemy::ABaseBossEnemy()
 	// 캡슐 컴포넌트가 카메라에 반응하지 않도록 설정합니다.
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
-	
+
+	// 체력 바 위젯 컴포넌트 생성 및 설정
+	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBarWidget"));
+	HealthBarWidget->SetupAttachment(RootComponent);
+	HealthBarWidget->SetWidgetSpace(EWidgetSpace::World); 
 
 	Tags.Add(FName("Enemy")); // 적 캐릭터 태그 추가 -> 이걸 이용해서 프로젝트에서 플러그인 에너미 접근. 매우 중요!!!!
 }
@@ -25,6 +33,15 @@ void ABaseBossEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if ( HealthBarWidget ) // 체력바 위젯에서 프로그레스바 설정
+	{
+		UEnemyHealthBarWidget* HealthBar = Cast<UEnemyHealthBarWidget>(HealthBarWidget->GetUserWidgetObject());
+		if ( HealthBar )
+		{
+			HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
+		}
+	}
+	
 	TestDeadLogic();
 }
 
@@ -59,11 +76,31 @@ void ABaseBossEnemy::PollInit(float DeltaTime)
 	}
 }
 
-void ABaseBossEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ABaseBossEnemy::UpdateHealthBarWidget(float DeltaTime)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	if (HealthBarWidget && HealthBarWidget->IsVisible())
+	{
+		APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		if (PC && PC->PlayerCameraManager)
+		{
+			const FVector CameraLocation = PC->PlayerCameraManager->GetCameraLocation();
+			const FVector WidgetLocation = HealthBarWidget->GetComponentLocation();
 
+			// 위젯에서 카메라를 바라보는 방향의 회전값을 계산합니다.
+			const FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(WidgetLocation, CameraLocation);
+
+			// 위젯이 항상 수평을 유지하도록 Yaw 값만 사용하여 회전을 설정합니다.
+			HealthBarWidget->SetWorldRotation(FRotator(0.f, LookAtRotation.Yaw, 0.f));
+		}
+
+		UEnemyHealthBarWidget* HealthBar = Cast<UEnemyHealthBarWidget>(HealthBarWidget->GetUserWidgetObject());
+		if ( HealthBar )
+		{
+			HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
+		}
+	}
 }
+
 
 float ABaseBossEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 	class AController* EventInstigator, AActor* DamageCauser)
@@ -97,7 +134,11 @@ void ABaseBossEnemy::Die()
 	{
 		BlackboardComp->SetValueAsBool(TEXT("IsDead"), true);
 	}
-	
+
+	if (HealthBarWidget)
+	{
+		HealthBarWidget->SetVisibility(false);
+	}
 }
 
 void ABaseBossEnemy::AfterDieMontageEnd()

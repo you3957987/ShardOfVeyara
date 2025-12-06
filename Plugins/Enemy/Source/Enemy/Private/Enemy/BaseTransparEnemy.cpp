@@ -33,9 +33,15 @@ void ABaseTransparEnemy::Tick(float DeltaTime)
 
 void ABaseTransparEnemy::Attack()
 {
-	Super::Attack();
-	// 공격시 투명화 해제
+	// 공격 적중시 투명화 해제
 	SetCharacterTransparency(false);
+	
+	FTimerHandle DelayTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(DelayTimerHandle, [this]()
+	{
+		Super::Attack();
+	}, 0.3f, false); // 특정 지연 후에 실행
+	
 }
 
 float ABaseTransparEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -63,9 +69,8 @@ void ABaseTransparEnemy::CheckMeleeAttackHit(float DeltaTime)
 			// 액터가 유효하고 "Player" 태그를 가지고 있으며, 아직 공격한 목록에 없는지 확인합니다.
 			if (OverlappingActor && OverlappingActor->ActorHasTag(FName("Player")) && !HittedActors.Contains(OverlappingActor))
 			{
-				// 공격 로그를 출력합니다.
 				UE_LOG(LogTemp, Warning, TEXT("Attack Hit Detected on: %s"), *OverlappingActor->GetName());
-
+				
 				// 플레이어에게 대미지를 적용합니다.
 				UGameplayStatics::ApplyDamage(
 					OverlappingActor,
@@ -91,41 +96,49 @@ void ABaseTransparEnemy::SetCharacterTransparency(bool bMakeTransparent)
 	if ( TransparChangeEffect && GetWorld() )
 	{
 		// 나이아가라 이펙트를 현재 위치에 생성합니다.
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TransparChangeEffect, GetActorLocation(), GetActorRotation());
-	}
-	
-	// HealthBarWidget의 가시성을 설정합니다.
-	if (HealthBarWidget) HealthBarWidget->SetVisibility(!bMakeTransparent);
-	
-	// 모든 메시 컴포넌트를 순회합니다.
-	TArray<UMeshComponent*> MeshComponents;
-	GetComponents<UMeshComponent>(MeshComponents);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),
+			TransparChangeEffect, GetActorLocation(), GetActorRotation());
 
-	for (UMeshComponent* MeshComp : MeshComponents)
-	{
-		if (!MeshComp) continue;
-
-		// TransparencyData 배열에서 현재 메시 컴포넌트와 이름이 일치하는 데이터를 찾습니다.
-		for (const FTransparencyMaterialData& Data : TransparencyData)
+	
+		FTimerHandle DelayTimerHandle;
+		// 이펙트 생성 이후 일정 시간 이후에 투명도 변경
+		GetWorld()->GetTimerManager().SetTimer(DelayTimerHandle, [this, bMakeTransparent]()
 		{
-			if (Data.MeshComponentName == MeshComp->GetFName())
-			{
-				// 해당 메시 컴포넌트의 머티리얼 슬롯별 데이터를 순회합니다.
-				for (const FMaterialSlotTransparencyData& SlotData : Data.MaterialSlots)
-				{
-					// 설정할 머티리얼을 결정합니다.
-					UMaterialInterface* MaterialToSet = bMakeTransparent
-					? SlotData.TransparentMaterial : SlotData.OpaqueMaterial;
+			// HealthBarWidget의 가시성을 설정합니다.
+			if (HealthBarWidget) HealthBarWidget->SetVisibility(!bMakeTransparent);
 
-					// 머티리얼을 교체합니다.
-					if (MaterialToSet)
+			// 모든 메시 컴포넌트를 순회합니다.
+			TArray<UMeshComponent*> MeshComponents;
+			GetComponents<UMeshComponent>(MeshComponents);
+
+			for (UMeshComponent* MeshComp : MeshComponents)
+			{
+				if (!MeshComp) continue;
+
+				// TransparencyData 배열에서 현재 메시 컴포넌트와 이름이 일치하는 데이터를 찾습니다.
+				for (const FTransparencyMaterialData& Data : TransparencyData)
+				{
+					if (Data.MeshComponentName == MeshComp->GetFName())
 					{
-						MeshComp->SetMaterial(SlotData.MaterialSlotIndex, MaterialToSet);
+						// 해당 메시 컴포넌트의 머티리얼 슬롯별 데이터를 순회합니다.
+						for (const FMaterialSlotTransparencyData& SlotData : Data.MaterialSlots)
+						{
+							// 설정할 머티리얼을 결정합니다.
+							UMaterialInterface* MaterialToSet = bMakeTransparent
+								? SlotData.TransparentMaterial
+								: SlotData.OpaqueMaterial;
+
+							// 머티리얼을 교체합니다.
+							if (MaterialToSet)
+							{
+								MeshComp->SetMaterial(SlotData.MaterialSlotIndex, MaterialToSet);
+							}
+						}
+						break;
 					}
 				}
-				break; // 다음 메시 컴포넌트로 넘어갑니다.
 			}
-		}
+		}, 0.1f, false); // 특정 지연 후에 실행
 	}
 }
 
