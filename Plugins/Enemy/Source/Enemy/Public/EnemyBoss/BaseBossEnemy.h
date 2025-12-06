@@ -16,6 +16,20 @@ protected:
 	bool bCheckDeadLogic = false;
 	void TestDeadLogic(); // 테스트용 죽음 로직 함수
 
+	// 디버그 모드
+	UPROPERTY(EditAnywhere, Category="자체설정")
+	bool bDebugMode = false;
+	// 플레이어 인식 후 AI 행동 시작 범위 스피어
+	UPROPERTY(VisibleAnywhere)
+	class USphereComponent* PlayerDetectRangeSphere;
+	// 플레이어 인식 후 AI 행동 중지 범위
+	UPROPERTY(EditAnywhere, Category="자체설정")
+	float PlayerDetectRange = 1200.f;
+	// 플레이어가 감지 범위에 들어왔을 때 호출될 함수
+	UFUNCTION()
+	void OnPlayerDetectOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	
 	// 체력 바 위젯 컴포넌트
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "자체설정")
 	TObjectPtr<class UWidgetComponent> HealthBarWidget;
