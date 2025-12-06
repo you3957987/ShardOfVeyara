@@ -84,7 +84,7 @@ void ACrop::HarvestCrop()
 	FTransform SpawnTransform = GetTransform();
 	SpawnTransform.SetLocation(FinalSpawnLocation + FVector(0.f, 0.f, 40.f));
 	
-	Aharvest* Harvest = GetWorld()->SpawnActorDeferred<Aharvest>(
+	APickUpItem* Harvest = GetWorld()->SpawnActorDeferred<APickUpItem>(
 	CropData->HarvestRewards[0].Harvest,
 	SpawnTransform,
 	this,

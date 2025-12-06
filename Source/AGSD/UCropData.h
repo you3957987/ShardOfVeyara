@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "harvest.h"
+#include "PickUpItem.h"
 #include "UCropData.generated.h"
 
 /**
@@ -23,7 +23,7 @@ struct FHarvestItem
 	int32 Quantity;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Harvest")
-	TSubclassOf<Aharvest> Harvest;
+	TSubclassOf<APickUpItem> Harvest;
 };
 
 USTRUCT(BlueprintType)

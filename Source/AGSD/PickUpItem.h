@@ -45,6 +45,7 @@ public:
 	virtual void ShowWidget_Implementation(ACharacter* player) override;
 	virtual bool CanInteract_Implementation(AAGSDCharacter* player) override;
 
+	FORCEINLINE UStaticMeshComponent* GetMeshComponent() const { return Mesh; };
 private:
 	//콜리전 박스
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CultivationPlot, meta = (AllowPrivateAccess = "true"))

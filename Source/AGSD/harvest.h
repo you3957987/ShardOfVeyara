@@ -16,6 +16,6 @@ public:
 	// Sets default values for this actor's properties
 	Aharvest();
 	
-	FORCEINLINE UStaticMeshComponent* GetMeshComponent() const { return Mesh; };
+
 
 };

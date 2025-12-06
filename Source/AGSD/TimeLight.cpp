@@ -71,7 +71,7 @@ void ATimeLight::Tick(float DeltaTime)
 	// SetActorRelativeRotation을 사용해야 누적 회전이 아닌 원하는 각도로 정확히 설정됩니다.
 	// 기존 코드에서 Roll(X) 축 회전만 사용했으므로 Pitch(X)로 가정합니다.
 	
-	SunLight->SetRelativeRotation(FRotator(-NewPitch, 0.f, 0.f));
-	MoonLight->SetRelativeRotation(FRotator(-NewPitch + 180.f, 0.f, 0.f));
+	SunLight->SetRelativeRotation(FRotator(0.f - NewPitch, 0.f, 0.f));
+	MoonLight->SetRelativeRotation(FRotator(180.f - NewPitch, 0.f, 0.f));
 }
 

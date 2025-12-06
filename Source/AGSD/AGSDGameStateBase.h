@@ -28,16 +28,16 @@ public:
 	FORCEINLINE float GetCurrentTime() const { return CurrentTime; }
 	FORCEINLINE void InitCurrentTime() { CurrentTime = 0.f; }
 	FORCEINLINE void AddCurrentTime(float Time) { CurrentTime += Time; }
-
+	
 	UFUNCTION()
 	void OnRep_CurrentDay();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 protected:
-	UPROPERTY(visibleAnywhere, BlueprintReadOnly, Category = "Time")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
 	int32 CurrentDay = 1;
 
-	UPROPERTY(visibleAnywhere, BlueprintReadOnly, Category = "Time")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
 	float CurrentTime = 360.f;
 };
