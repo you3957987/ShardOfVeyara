@@ -67,6 +67,7 @@ void ABaseBossEnemy::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	PollInit(DeltaTime);
+	UpdateHealthBarWidget(DeltaTime);
 }
 
 void ABaseBossEnemy::PollInit(float DeltaTime)
