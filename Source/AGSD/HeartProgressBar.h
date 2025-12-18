@@ -30,6 +30,4 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	class UImage* HeartProgressBarImage;
-
-	virtual void PreConstruct();
 };
