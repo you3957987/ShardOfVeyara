@@ -67,6 +67,7 @@ void ABaseBossEnemy::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	PollInit(DeltaTime);
+	UpdateHealthBarWidget(DeltaTime);
 }
 
 void ABaseBossEnemy::PollInit(float DeltaTime)
@@ -142,6 +143,11 @@ float ABaseBossEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 		if ( Health <= 0.f )
 		{
 			Die();
+		}
+		UEnemyHealthBarWidget* HealthBar = Cast<UEnemyHealthBarWidget>(HealthBarWidget->GetUserWidgetObject());
+		if ( HealthBar )
+		{
+			HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 		}
 	}
 	

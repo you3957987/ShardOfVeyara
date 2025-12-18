@@ -178,12 +178,16 @@ void ABaseEnemy::SpawnDeadEffectAndDestroy()
 {
 	if ( DeathEffectCascade )
 	{
-		const FVector SpawnLocation = GetMesh()->GetComponentLocation() + (GetActorForwardVector() * DeathEffectForwardOffset);
+		// 현재 위치 + (앞방향 * 앞뒤 오프셋) + (윗방향 * 위아래 오프셋)
+		const FVector SpawnLocation = GetMesh()->GetComponentLocation() 
+			+ (GetActorForwardVector() * DeathEffectForwardOffset)
+			+ (GetActorUpVector() * DeathEffectUpOffset);
+
 		const FRotator SpawnRotation = GetActorRotation();
 		const FVector SpawnScale = FVector(DeathEffectScale);
 
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DeathEffectCascade,
-		 SpawnLocation, SpawnRotation, SpawnScale);
+			SpawnLocation, SpawnRotation, SpawnScale);
 	}
 	Destroy(); // 이펙트가 없으면 바로 액터 삭제
 }

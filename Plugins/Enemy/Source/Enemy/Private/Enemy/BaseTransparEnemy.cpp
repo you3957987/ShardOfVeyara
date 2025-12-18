@@ -33,8 +33,8 @@ void ABaseTransparEnemy::Tick(float DeltaTime)
 
 void ABaseTransparEnemy::Attack()
 {
-	// 공격 적중시 투명화 해제
-	SetCharacterTransparency(false);
+	// 공격 시 투명 상태라면 투명화 해제
+	if ( bIsTransparent == true ) SetCharacterTransparency(false);
 	
 	FTimerHandle DelayTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(DelayTimerHandle, [this]()
@@ -47,6 +47,9 @@ void ABaseTransparEnemy::Attack()
 float ABaseTransparEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 	class AController* EventInstigator, AActor* DamageCauser)
 {
+	// 데미지 입을 때 투명 상태라면 투명화 해제
+	if ( bIsTransparent == true ) SetCharacterTransparency(false);
+	
 	// 부모 클래스의 TakeDamage를 호출하여 기본 데미지 처리를 수행합니다.
 	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
@@ -95,9 +98,14 @@ void ABaseTransparEnemy::SetCharacterTransparency(bool bMakeTransparent)
 
 	if ( TransparChangeEffect && GetWorld() )
 	{
-		// 나이아가라 이펙트를 현재 위치에 생성합니다.
+		// 현재 위치 + (앞방향 * 앞뒤 오프셋) + (윗방향 * 위아래 오프셋)
+		const FVector SpawnLocation = GetActorLocation()
+			+ (GetActorForwardVector() * TransEffectForwardOffset)
+			+ (GetActorUpVector() * TransEffectUpOffset);
+
+		// 나이아가라 이펙트를 계산된 위치에 생성합니다.
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),
-			TransparChangeEffect, GetActorLocation(), GetActorRotation());
+			TransparChangeEffect, SpawnLocation, GetActorRotation());
 
 	
 		FTimerHandle DelayTimerHandle;
