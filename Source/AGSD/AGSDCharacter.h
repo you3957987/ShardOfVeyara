@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "HoldingState.h"
 #include "AGSDPlayerController.h"
+#include "HeartProgressBar.h"
 #include "HoldingWeapon.h"
 #include "InputBufferEntry.h"
 #include "AGSDCharacter.generated.h"
@@ -132,6 +133,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	
 protected:
 
 	//현재 상호작용 가능한 액터 포인터 (AACultivationPlot 또는 ACrop 등)
@@ -148,8 +150,20 @@ protected:
 	/** Initialize input action bindings */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PlayerState")
+	float MaxHealth = 100.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PlayerState")
+	float Health = 100.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerUI")
+	TObjectPtr<class UWidgetComponent> HealthBarWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerUI")
+	UHeartProgressBar* HealthBar;
+
+	FORCEINLINE float getHealth() const {return Health;};
+	
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 

@@ -12,6 +12,8 @@
 #include "InputActionValue.h"
 #include "Interaction.h"
 #include "AGSD.h"
+#include "HeartProgressBar.h"
+#include "Components/WidgetComponent.h"
 
 AAGSDCharacter::AAGSDCharacter()
 {
@@ -49,6 +51,10 @@ AAGSDCharacter::AAGSDCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBarWidget"));
+	HealthBarWidget->SetupAttachment(RootComponent);
+	HealthBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
 }
 
 void AAGSDCharacter::HandleAttackInput(FName ActionName)
@@ -213,6 +219,17 @@ void AAGSDCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	PC = Cast<AAGSDPlayerController>(GetController());
+
+	if (HealthBarWidget)
+	{
+		UE_LOG(LogTemp, Display, TEXT("HealthBarWidget is %s"), *HealthBarWidget->GetName());
+		HealthBar = Cast<UHeartProgressBar>(HealthBarWidget->GetUserWidgetObject());
+		if (HealthBar)
+		{
+			UE_LOG(LogTemp, Display, TEXT("HealthBarWidget is %s"), *HealthBar->GetName());
+			HealthBar->SetPercent(Health / MaxHealth);
+		}
+	}
 }
 
 AActor* AAGSDCharacter::MinDistActor()
@@ -259,14 +276,15 @@ float AAGSDCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 {
 	float DamageToApply = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	UE_LOG(LogTemp, Warning, TEXT("BossSkeletonMage Take Damage : %f"), DamageToApply);
+	UE_LOG(LogTemp, Warning, TEXT("Player Take Damage : %f"), DamageToApply);
 
 	if ( DamageToApply > 0.f )
 	{
-		//Health -= DamageToApply;
-		//if ( Health <= 0.f )
+		Health -= DamageToApply;
+		HealthBar->SetPercent(Health / MaxHealth);
+		if ( Health <= 0.f )
 		{
-		//	Die();
+			//Die();
 		}
 	}
 	
