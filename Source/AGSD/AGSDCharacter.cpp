@@ -281,7 +281,7 @@ float AAGSDCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 	if ( DamageToApply > 0.f )
 	{
 		Health -= DamageToApply;
-		HealthBar->SetPercent(Health / MaxHealth);
+		if (HealthBar) HealthBar->SetPercent(Health / MaxHealth);
 		if ( Health <= 0.f )
 		{
 			//Die();
