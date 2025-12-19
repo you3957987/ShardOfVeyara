@@ -37,7 +37,7 @@ void ABaseRangedEnemy::ShootProjectile()
 			// 계산된 위치와 회전값으로 발사체를 스폰하고, 스폰된 액터의 포인터를 가져옵니다.
 			ABaseEnemyProjectile* SpawnedProjectile =
 				World->SpawnActor<ABaseEnemyProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
-
+			
 			// 엄
 		}
 	}
