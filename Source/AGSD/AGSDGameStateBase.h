@@ -26,6 +26,7 @@ public:
 
 	FORCEINLINE int32 GetCurrentDay() const { return CurrentDay; }
 	FORCEINLINE float GetCurrentTime() const { return CurrentTime; }
+	FORCEINLINE void SetCurrentTime(float time) { CurrentTime = time; }
 	FORCEINLINE void InitCurrentTime() { CurrentTime = 0.f; }
 	FORCEINLINE void AddCurrentTime(float Time) { CurrentTime += Time; }
 	

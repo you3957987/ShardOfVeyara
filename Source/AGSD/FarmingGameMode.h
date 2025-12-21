@@ -21,6 +21,7 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 	
+	void NextDay(float time);
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Time")
 	float TimeScale = 48.f;

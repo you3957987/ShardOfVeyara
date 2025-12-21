@@ -16,6 +16,7 @@ void UClockWidget::NativeOnInitialized()
 	if (AAGSDGameStateBase* GameState = Cast<AAGSDGameStateBase>(UGameplayStatics::GetGameState(World)))
 	{
 		GameState->OnSecondChangedDelegate.AddDynamic(this, &UClockWidget::SetTimeText);
+		GameState->OnDayChangedDelegate.AddUObject(this, &UClockWidget::SetDayText);
 	}
 	else
 	{
@@ -45,5 +46,15 @@ void UClockWidget::SetTimeText(float time)
 		}
 		TimeString += FString::Printf(TEXT("%02d"), CorrectionTime % 60);
 		TimeText->SetText(FText::FromString(TimeString));
+	}
+}
+
+void UClockWidget::SetDayText(int32 day)
+{
+	if (DayText)
+	{
+		FString DayString = TEXT("Day ");
+		DayString += FString::Printf(TEXT("%d"), day);
+		DayText->SetText(FText::FromString(DayString));
 	}	
 }

@@ -13,6 +13,8 @@
 #include "Interaction.h"
 #include "AGSD.h"
 #include "HeartProgressBar.h"
+#include "SOVGameInstance.h"
+#include "Components/ProgressBar.h"
 #include "Components/WidgetComponent.h"
 
 AAGSDCharacter::AAGSDCharacter()
@@ -51,10 +53,6 @@ AAGSDCharacter::AAGSDCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
-
-	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBarWidget"));
-	HealthBarWidget->SetupAttachment(RootComponent);
-	HealthBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
 }
 
 void AAGSDCharacter::HandleAttackInput(FName ActionName)
@@ -219,17 +217,24 @@ void AAGSDCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	PC = Cast<AAGSDPlayerController>(GetController());
-
-	if (HealthBarWidget)
+	GI = Cast<USOVGameInstance>(GetGameInstance());
+	
+	HealthBar = getHealthBar();
+	if (HealthBar)
 	{
-		UE_LOG(LogTemp, Display, TEXT("HealthBarWidget is %s"), *HealthBarWidget->GetName());
-		HealthBar = Cast<UHeartProgressBar>(HealthBarWidget->GetUserWidgetObject());
-		if (HealthBar)
-		{
-			UE_LOG(LogTemp, Display, TEXT("HealthBarWidget is %s"), *HealthBar->GetName());
-			HealthBar->SetPercent(Health / MaxHealth);
-		}
+		Health = GI->PlayerHealth;
+		MaxHealth = GI->MaxPlayerHealth;
+		
+		HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 	}
+}
+
+void AAGSDCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	GI->PlayerHealth = Health;
+	GI->MaxPlayerHealth = MaxHealth;
 }
 
 AActor* AAGSDCharacter::MinDistActor()
@@ -281,7 +286,7 @@ float AAGSDCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 	if ( DamageToApply > 0.f )
 	{
 		Health -= DamageToApply;
-		if (HealthBar) HealthBar->SetPercent(Health / MaxHealth);
+		if (HealthBar) HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 		if ( Health <= 0.f )
 		{
 			//Die();

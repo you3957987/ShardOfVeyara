@@ -7,9 +7,10 @@
 #include "Logging/LogMacros.h"
 #include "HoldingState.h"
 #include "AGSDPlayerController.h"
-#include "HeartProgressBar.h"
+#include "HealthBar.h"
 #include "HoldingWeapon.h"
 #include "InputBufferEntry.h"
+#include "SOVGameInstance.h"
 #include "AGSDCharacter.generated.h"
 
 class USpringArmComponent;
@@ -99,6 +100,7 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="HoldingState")
 	EHoldingState HoldingState = EHoldingState::EHS_None;
@@ -110,6 +112,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interaction")
 	FString SubSeedAmount();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	UHealthBar* getHealthBar();
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interaction")
 	void StrongAttack();
@@ -133,7 +138,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USOVGameInstance* GI;
 	
+	FORCEINLINE AAGSDPlayerController* getPlayerController() const {return PC;};
+	FORCEINLINE USOVGameInstance* getPlayerGameInstance() const {return GI;};
 protected:
 
 	//현재 상호작용 가능한 액터 포인터 (AACultivationPlot 또는 ACrop 등)
@@ -157,10 +167,10 @@ protected:
 	float Health = 100.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerUI")
-	TObjectPtr<class UWidgetComponent> HealthBarWidget;
+	class UHealthBar* HealthBar;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerUI")
-	UHeartProgressBar* HealthBar;
+	TSubclassOf<class UHealthBar> WBP_HealthBar;
 
 	FORCEINLINE float getHealth() const {return Health;};
 	
