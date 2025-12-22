@@ -21,6 +21,8 @@ class AAGSDPlayerController : public APlayerController
 	GENERATED_BODY()
 	
 public:
+	AAGSDPlayerController();
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UInteractionWidget> WBP_InteractionWidget;
 	UPROPERTY(EditDefaultsOnly)
