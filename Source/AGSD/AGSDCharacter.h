@@ -83,7 +83,10 @@ public:
 	void TryInteract();
 
 	//AACultivationPlot에서 호출하여 상호작용 대상을 설정/초기화하는 함수
-	FORCEINLINE void SetCurrentInteractableActor(AActor* NewActor) { CurrentInteractableActor = NewActor;};
+	FORCEINLINE void SetCurrentInteractableActor(AActor* NewActor) { CurrentInteractableActor = NewActor;}
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Item")
+	FString getPlayerHoidingItemID();
 
 	UFUNCTION(BlueprintCallable)
 	//AACultivationPlot에서 호출하여 액터를 추가하는 함수
@@ -111,7 +114,7 @@ public:
 	AActor* MinDistActor();
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interaction")
-	FString SubSeedAmount();
+	FString SubItemAmount();
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	UHealthBar* getHealthBar();
