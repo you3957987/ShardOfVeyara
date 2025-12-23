@@ -42,6 +42,8 @@ void APickUpItem::BeginPlay()
 	if (Holding)
 	{
 		CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		Mesh->SetSimulatePhysics(false);
+		Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 }
 

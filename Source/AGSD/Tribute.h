@@ -58,4 +58,10 @@ public:
 	//오버랩 종료 시 작동할 함수
 	UFUNCTION()
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Tribute")
+	void PlayFireNiagara();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Tribute")
+	void PlayFireExplosionNiagara();
 };

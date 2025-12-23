@@ -41,9 +41,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tribute")
 	UDataTable* ItemDataTable;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tribute")
+	float FadeSpeed = 10.0f;
+
 public:
 	void SetNextTributeItem(const TMap<FString, int32>& ItemMap);
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Tribute")
 	void SetTributeItemData(const FString& ItemID, int32 Amount, UTributeItem* TargetWidget);
+
+	void SetTargetOpacity(float NewOpacity);
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual void NativeConstruct() override;
+
+private:
+	float TargetOpacity = 0.0f;
 };

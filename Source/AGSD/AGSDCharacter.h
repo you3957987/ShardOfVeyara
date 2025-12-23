@@ -10,6 +10,7 @@
 #include "HealthBar.h"
 #include "HoldingWeapon.h"
 #include "InputBufferEntry.h"
+#include "PlayerStateWidget.h"
 #include "SOVGameInstance.h"
 #include "AGSDCharacter.generated.h"
 
@@ -169,6 +170,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PlayerState")
 	float Health = 100.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
+	float Damage = 100.0;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerUI")
 	class UHealthBar* HealthBar;
 
@@ -195,6 +199,10 @@ protected:
 
 	// AAGSDCharacter.h에 추가
 	bool CheckSingleInput(const TArray<FInputBufferEntry>& Buffer, FName InputName);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerUI")
+	UPlayerStateWidget* PlayerStateWidget;
+	
 public:
 
 	/** Handles move inputs from either controls or UI interfaces */
@@ -212,8 +220,7 @@ public:
 	/** Handles jump pressed inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
-
-public:
+	
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
@@ -222,5 +229,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void WeaponAttack();
+
+	UFUNCTION()
+	void AddDamage(float addDamage);
 };
 

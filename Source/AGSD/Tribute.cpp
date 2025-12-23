@@ -4,7 +4,6 @@
 #include "Tribute.h"
 
 #include "AGSDCharacter.h"
-#include "AudioMixerBlueprintLibrary.h"
 #include "TributeUI.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
@@ -33,7 +32,6 @@ void ATribute::BeginPlay()
 	Super::BeginPlay();
 
 	if (!TributeUI) return;
-	TributeUI->SetVisibility(false);
 	TributeUIInstance = Cast<UTributeUI>(TributeUI->GetUserWidgetObject());
 	if (!TributeUIInstance || !TributeDataTable) return;
 	SetNextTributeUI();
@@ -58,6 +56,7 @@ void ATribute::Tick(float DeltaTime)
 
 void ATribute::Interact_Implementation(AAGSDCharacter* player)
 {
+	PlayFireNiagara();
 	FString ItemID = player->SubItemAmount();
 	int* FoundAmount = CurrentLevelTributeItems.Find(ItemID);
 	if (FoundAmount)
@@ -79,6 +78,8 @@ void ATribute::Interact_Implementation(AAGSDCharacter* player)
 	if (bIsLevelComplete)
 	{
 		CurrentLevelTributeItems = {};
+		PlayFireExplosionNiagara();
+		player->AddDamage(10.0f);
 		SetNextTributeUI();
 	}
 }
@@ -103,7 +104,7 @@ void ATribute::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other
 {
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
 	{
-		TributeUI->SetVisibility(true);
+		TributeUIInstance->SetTargetOpacity(1.0f);
 		player->AddInteractableActor(this);
 	}
 }
@@ -113,7 +114,7 @@ void ATribute::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 {
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
 	{
-		TributeUI->SetVisibility(false);
+		TributeUIInstance->SetTargetOpacity(0.0f);
 		player->RemoveInteractableActor(this);
 	}
 }

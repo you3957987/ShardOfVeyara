@@ -13,6 +13,7 @@
 #include "Interaction.h"
 #include "AGSD.h"
 #include "HeartProgressBar.h"
+#include "PlayerStateWidget.h"
 #include "SOVGameInstance.h"
 #include "Components/ProgressBar.h"
 #include "Components/WidgetComponent.h"
@@ -399,4 +400,13 @@ void AAGSDCharacter::DoJumpEnd()
 {
 	// signal the character to stop jumping
 	StopJumping();
+}
+
+void AAGSDCharacter::AddDamage(float addDamage)
+{
+	Damage += addDamage;
+	if (PlayerStateWidget)
+	{
+		PlayerStateWidget->SetDamageText(Damage);
+	}
 }
