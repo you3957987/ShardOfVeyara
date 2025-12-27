@@ -92,15 +92,21 @@ void ABaseFlyingPet::Tick(float DeltaTime)
 
 void ABaseFlyingPet::PollInit(float DeltaTime)
 {
-	if ( bTargetInitalize == false )
+	if (bTargetInitalize == false)
 	{
-		// 더 안전하고 깔끔한 방식
 		TargetActor = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-        
-		if ( TargetActor ) // 타겟 액터가 유효한지 확인합니다.
+       
+		if (TargetActor) 
 		{
-			bTargetInitalize = true; // 타겟이 유효하면 초기화 플래그를 true로 설정합니다.
-			bIsFolloingTarget = true; // 타겟이 설정되면 따라다니기 모드 활성화
+			// ✅ 인터페이스를 통해 함수 호출
+			if (TargetActor->GetClass()->ImplementsInterface(UPetConversationInterface::StaticClass()))
+			{
+				// Execute_ 함수명을 사용하여 안전하게 호출합니다.
+				IPetConversationInterface::Execute_SetMyPet(TargetActor, this);
+            
+				bTargetInitalize = true;
+				bIsFolloingTarget = true;
+			}
 		}
 	}
 }
@@ -192,7 +198,7 @@ void ABaseFlyingPet::CheckSurroundingEnemy()
 {
 	// 현재 상태가 대화 중이면 적 감지 무시
 	if (!EnemyDetectSphere || PetState == EPetState::EPS_Conversation) return;
-
+	
 	TArray<AActor*> OverlappingActors;
 	// 현재 스피어 안에 있는 모든 액터를 가져옵니다. (필터링할 클래스가 있다면 두 번째 인자에 넣음)
 	EnemyDetectSphere->GetOverlappingActors(OverlappingActors, ACharacter::StaticClass());
@@ -208,7 +214,14 @@ void ABaseFlyingPet::CheckSurroundingEnemy()
 		if (Actor->ActorHasTag("Enemy"))
 		{
 			// Boss 태그가 있다면 무시 
-			if (Actor->ActorHasTag("Boss")) continue;
+			if (Actor->ActorHasTag("Boss"))
+			{
+				if ( bBossBattleMode == true ) return; // 이미 보스전 모드라면 무시
+				bBossBattleMode = true;
+				UE_LOG(LogTemp, Warning, TEXT("BossBattleMode Detected - EnemyDetectRange Maximize"));
+				EnemyDetectSphere->SetSphereRadius(30000.f); // 매우 넓은 범위로 설정
+				return; // 
+			}
 			
 			bEnemyFound = true;
 			break; // 한 명이라도 있으면 배틀 모드이므로 더 검사할 필요 없음
@@ -224,6 +237,12 @@ void ABaseFlyingPet::CheckSurroundingEnemy()
 			PetState = EPetState::EPS_Battle;
 			if ( PetTalkComp ) PetTalkComp->Travel_FollowToBattle();
 		}
+	}
+	else if ( bEnemyFound == false && bBossBattleMode == true ) // 보스전 모드 해제 조건
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BossBattleMode Ended - EnemyDetectRange Restore"));
+		bBossBattleMode = false;
+		EnemyDetectSphere->SetSphereRadius(EnemyDetectRange); // 원래 범위으로 복귀	
 	}
 	else
 	{

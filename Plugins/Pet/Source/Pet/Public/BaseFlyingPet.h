@@ -30,6 +30,7 @@ enum class EPetState : uint8
 {
 	EPS_Follow UMETA(DisplayName = "Follow"),
 	EPS_Battle UMETA(DisplayName = "Battle"),
+	EPS_BossBattle UMETA(DisplayName = "Boss Battle"),
 	EPS_Conversation UMETA(DisplayName = "Conversation"),
 	
 	EPS_MAX UMETA(DisplayName = "Default") // 최대값, 추가적인 값을 위한 공간
@@ -115,8 +116,10 @@ protected:
 	void CheckSurroundingEnemy();
 	//  적 감지 주기 (초 단위)
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
-	float EnemyDetectInterval = 1.0f;
-
+	float EnemyDetectInterval = 0.5f;
+	// 만약 보스 만나면 보스 끝나기 전까지 기능 조정용 플래그
+	bool bBossBattleMode = false;
+	
 public:
 	ABaseFlyingPet();
 	virtual void Tick(float DeltaTime) override;

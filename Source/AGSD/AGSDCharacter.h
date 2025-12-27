@@ -9,6 +9,7 @@
 #include "AGSDPlayerController.h"
 #include "HoldingWeapon.h"
 #include "InputBufferEntry.h"
+#include "Interface/PetConversationInterface.h"
 #include "AGSDCharacter.generated.h"
 
 class USpringArmComponent;
@@ -24,7 +25,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
  *  Implements a controllable orbiting camera
  */
 UCLASS(abstract)
-class AAGSDCharacter : public ACharacter
+class AAGSDCharacter : public ACharacter, public IPetConversationInterface
 {
 	GENERATED_BODY()
 
@@ -186,6 +187,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
 
+	// 대화 자막바 관련 추가( 인터페이스를 추가하고 인터페이스 함수중 하나인 SetMyPet 구현 )
+	//--
+	
+	UPROPERTY( BlueprintReadOnly)
+	class ABaseFlyingPet* Pet;
+
+	virtual void SetMyPet_Implementation(AActor* NewPet) override;
+
+	virtual void MasterToPetConversation_Implementation(FName DialogueID) override;
+	//--
+	// 대화 자막바 관련 추가
+	
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

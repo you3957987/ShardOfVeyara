@@ -9,19 +9,29 @@
   <component name="ChangeListManager">
     <list default="true" id="4fb32fe1-2f7b-4ce4-b591-d5e38df0812d" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/9/R2/0LE7PM4NUA2FKYSWZW8OV9.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Snake_Trans/BP_Snake.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Snake_Trans/BP_Snake.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Wasp_Ranged/BP_Wasp.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Wasp_Ranged/BP_Wasp.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/TestMap/ThirdPerson/Level_EnemyTest.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/TestMap/ThirdPerson/Level_EnemyTest.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/4/LD/JSSI0FR4XV6QGDBLIEXW9Q.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/BaseEnemy.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/BaseEnemy.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BaseBossEnemy.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BaseBossEnemy.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/Pet/CuteWhale_Fly/ABP_Whale.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Content/Pet/CuteWhale_Fly/ABP_Whale.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/BP_Boss_SkeletonMage_LowPoly.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/BP_Boss_SkeletonMage_LowPoly.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/7/U4/1GOAWBED1GVUW6OHLRPNOU.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/B/ME/R73VRCJJFSJNNTWY02R0OR.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/D/9L/J4SEJ0TRNH339NRP6IM1IO.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/SkeletonMage/BossSkeletonMage.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/SkeletonMage/BossSkeletonMage.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/SkeletonMage/BossSkeletonMage.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/SkeletonMage/BossSkeletonMage.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/ConversationTrigger/BP_TestTrigger.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Content/ConversationTrigger/BP_TestTrigger.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/DataTable/DT_TestConv.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Content/DataTable/DT_TestConv.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/DataTable/DT_Travel_ItemDetect.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Content/DataTable/DT_Travel_ItemDetect.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/HUD/WBP_TravelSubtitle.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Content/HUD/WBP_TravelSubtitle.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/Pet/CuteWhale_Fly/BP_WhalePet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Content/Pet/CuteWhale_Fly/BP_WhalePet.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/Pet/CuteWhale_Fly/BS_Whale.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Content/Pet/CuteWhale_Fly/BS_Whale.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Pet.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Pet.Build.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/Test/podcast-that-stays-up-to-date-polish-voice-over-456242.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Content/Test/podcast-that-stays-up-to-date-polish-voice-over-456242.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/BaseFlyingPet.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/BaseFlyingPet.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/Trigger/ConversationTrigger.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/Trigger/ConversationTrigger.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Public/BaseFlyingPet.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Public/BaseFlyingPet.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Public/Interface/PetConversationInterface.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Public/Interface/PetConversationInterface.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Public/Trigger/ConversationTrigger.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Public/Trigger/ConversationTrigger.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/ReadMe.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/ReadMe.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSD.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSD.Build.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -200,6 +210,7 @@
       <workItem from="1766798301388" duration="372000" />
       <workItem from="1766801207659" duration="354000" />
       <workItem from="1766801649106" duration="526000" />
+      <workItem from="1766811539753" duration="10064000" />
     </task>
     <servers />
   </component>

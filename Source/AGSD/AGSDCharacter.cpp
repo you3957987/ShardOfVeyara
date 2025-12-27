@@ -12,6 +12,7 @@
 #include "InputActionValue.h"
 #include "Interaction.h"
 #include "AGSD.h"
+#include "BaseFlyingPet.h"
 
 AAGSDCharacter::AAGSDCharacter()
 {
@@ -376,4 +377,20 @@ void AAGSDCharacter::DoJumpEnd()
 {
 	// signal the character to stop jumping
 	StopJumping();
+}
+
+void AAGSDCharacter::SetMyPet_Implementation(AActor* NewPet)
+{
+	if (NewPet)
+	{
+		Pet = Cast<ABaseFlyingPet>(NewPet);
+	}
+}
+
+void AAGSDCharacter::MasterToPetConversation_Implementation(FName DialogueID)
+{
+	if ( Pet )
+	{
+		Pet->StartConversation(DialogueID);
+	}
 }
