@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Interface/PetConversationInterface.h"
 #include "BaseFlyingPet.generated.h"
 
 // 펫의 위치 설정을 관리하는 구조체
@@ -28,25 +29,36 @@ UENUM(BlueprintType)
 enum class EPetState : uint8
 {
 	EPS_Follow UMETA(DisplayName = "Follow"),
-	EPS_Conversation UMETA(DisplayName = "Conversation"),
 	EPS_Battle UMETA(DisplayName = "Battle"),
+	EPS_Conversation UMETA(DisplayName = "Conversation"),
 	
 	EPS_MAX UMETA(DisplayName = "Default") // 최대값, 추가적인 값을 위한 공간
 };
 
+// 델리게이트 선언 , 인자값은 FName DialogueID (대화 ID)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FConversationStart, FName, DialogueID);
+
 UCLASS()
-class PET_API ABaseFlyingPet : public APawn
-{
+class PET_API ABaseFlyingPet : public APawn, public IPetConversationInterface
+{//  인터페이스 상속 추가
 	GENERATED_BODY()
 
-	// 캐릭터 초기화 여부를 나타내는 변수
-	bool bTargetInitalize = false;
+	friend class UPetTalkComponent; // PetTalkComponent에서 BaseFlyingPet의 protected 멤버에 접근할 수 있도록 합니다.
 	
 protected:
 	virtual void BeginPlay() override;
-
+	// 캐릭터 초기화 여부를 나타내는 변수
+	bool bTargetInitalize = false;
 	void PollInit(float DeltaTime); // 틱에서 하는 초기화
-
+	
+	// 아이템 감지 콜리전 시작 함수
+	UFUNCTION()
+	void OnItemDetectBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	
+	// 펫이 대상을 따라다니는 함수
+	void FollowingTarget(float DeltaTime);
+	
 	// 루트 컴포넌트
 	UPROPERTY(VisibleAnywhere)
 	class USphereComponent* CollisionComp;
@@ -59,20 +71,18 @@ protected:
 	// 펫이 아이템을 감지하는 범위 컴포넌트
 	UPROPERTY(VisibleAnywhere)
 	class USphereComponent* ItemDetectSphere;
-	// 아이템 감지 스피어에 아이템 겹침 이벤트 처리 함수
-	UFUNCTION()
-	void OnItemDetectBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	
-
+	UPROPERTY(VisibleAnywhere)
+	class USceneComponent* ItemDetectPingSpawnPoint;
+	// 펫의 대화 컴포넌트
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UPetTalkComponent* PetTalkComp;
 	// 공중에서 떠다니는 움직임을 위한 컴포넌트
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UFloatingPawnMovement* FloatingMovement;
 
 	// 따라다닐 대상 캐릭터
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "자체설정")
 	ACharacter* TargetActor;
-	
 	// 펫의 현재 상태
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	EPetState PetState;
@@ -85,29 +95,49 @@ protected:
 	// 캐릭터와 대화할 때의 위치 설정
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	FPetPositionSettings ConversationSettings;
-	
 	// 이동 속도 (보간 속도)
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	float MoveInterpSpeed = 1.0f;
-	
 	// 자유 이동 모드 토글
 	UFUNCTION(BlueprintCallable, Category = "자체설정")
 	void SetFreeRoaming(bool bNewState);
-
+	// 디버그 모드 여부 및 감지 범위
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	bool bDebugMode = false;
 	UPROPERTY(EditAnywhere, Category = "자체설정")
-	float EnemyDetectRange = 500.f;
+	float EnemyDetectRange = 2000.f;
 	UPROPERTY(EditAnywhere, Category = "자체설정")
-	float ItemDetectRange = 300.f;
-	
-	void FollowingTarget(float DeltaTime);
-	
+	float ItemDetectRange = 1500.f;
+
+	// 주기적으로 적을 감지하기 위한 타이머 핸들
+	FTimerHandle EnemyDetectTimerHandle;
+	// 주변 적 감지 함수
+	void CheckSurroundingEnemy();
+	//  적 감지 주기 (초 단위)
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	float EnemyDetectInterval = 1.0f;
+
 public:
 	ABaseFlyingPet();
 	virtual void Tick(float DeltaTime) override;
+	// 인터페이스 함수 구현
+	virtual void TriggerPetConversation_Implementation(FName DialogueID) override;
 
-
+	// ABP 에 서 사용할 현재 속도 변수
+	UPROPERTY(BlueprintReadOnly)
+	FVector CurrentVelocity;
+	
+	// 2. 외부에서 바인딩할 델리게이트 인스턴스
+	UPROPERTY(BlueprintAssignable)
+	FConversationStart OnPetConversationStart;
+	
+	// 대화 상태로 전환하며 대화 시작 -> 펫 토크 컴포넌트로 실제 대화 로직 위임
+	UFUNCTION(BlueprintCallable)
+	void StartConversation(FName DialogueID);
+	// 대화 종료 및 이전 상태로 복귀 로직 처리
+	UFUNCTION(BlueprintCallable)
+	void EndConversation();
+	
 #if WITH_EDITOR
 	// 에디터에서 프로퍼티가 변경될 때 호출됩니다.
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
