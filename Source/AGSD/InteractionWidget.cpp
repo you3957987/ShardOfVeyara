@@ -40,3 +40,10 @@ void UInteractionWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTi
 		}
 	}
 }
+
+void UInteractionWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	SetRenderOpacity(0.0f);
+}

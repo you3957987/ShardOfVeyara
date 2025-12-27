@@ -18,9 +18,13 @@ public:
 	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
 	class UTextBlock* TimeText;
 
+	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
+	class UTextBlock* DayText;
+
 	virtual void NativeOnInitialized() override;
 	
 protected:
 	UFUNCTION()
 	void SetTimeText(float time);
+	void SetDayText(int32 day);
 };

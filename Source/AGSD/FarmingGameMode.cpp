@@ -26,6 +26,13 @@ void AFarmingGameMode::Tick(float DeltaSeconds)
 	HandleTimeIncrement(DeltaSeconds * TimeScale);
 }
 
+void AFarmingGameMode::NextDay(float time)
+{
+	GameState->SetCurrentTime(time);
+	Reset = false;
+	GameState->AdvanceDay();
+}
+
 void AFarmingGameMode::HandleTimeIncrement(float time)
 {
 	if (!GameState) return;
@@ -38,8 +45,7 @@ void AFarmingGameMode::HandleTimeIncrement(float time)
 	}
 	if (GameState->GetCurrentTime() > 360.f && Reset)
 	{
-		Reset = false;
-		GameState->AdvanceDay();
+		NextDay(GameState->GetCurrentTime());
 	}
 	GameState->OnSecondChangedDelegate.Broadcast(GameState->GetCurrentTime());
 }

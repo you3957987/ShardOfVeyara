@@ -10,6 +10,12 @@
 #include "Animation/WidgetAnimation.h"
 #include "Widgets/Input/SVirtualJoystick.h"
 
+AAGSDPlayerController::AAGSDPlayerController()
+{
+	DefaultMouseCursor = EMouseCursor::Default;
+	CurrentMouseCursor = EMouseCursor::Default;
+}
+
 void AAGSDPlayerController::ShowInteractionWidget(const FText& NewText)
 {
 	if (!WBP_InteractionWidget) return;

@@ -62,7 +62,7 @@ void AACultivationPlot::Interact_Implementation(AAGSDCharacter* player)
 
 	if (PlantedCrop == nullptr)
 	{
-		GetSeedInfo(FName(*player->SubSeedAmount()));
+		GetSeedInfo(FName(*player->SubItemAmount()));
 		PlantCrop();
 	}
 }

@@ -20,14 +20,12 @@ public:
 	void SetTargetOpacity(float NewOpacity);
 	
 protected:
-	UPROPERTY(meta = (BindWidgetAnim), Transient)
-	UWidgetAnimation* FadeInAnim;
-
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* InteractionText;
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-
+	virtual void NativeConstruct() override;
+	
 private:
 	/** 최종적으로 도달하고자 하는 목표 투명도 (0.0 또는 1.0) */
 	float TargetOpacity = 0.0f;
