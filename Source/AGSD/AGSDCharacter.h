@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "HoldingState.h"
 #include "AGSDPlayerController.h"
+#include "FadeWidget.h"
 #include "HealthBar.h"
 #include "HoldingWeapon.h"
 #include "InputBufferEntry.h"
@@ -38,7 +39,8 @@ class AAGSDCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
-	
+	bool bCanBeDamage = true;
+
 protected:
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, Category="Input")
@@ -71,6 +73,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Input Buffer")
 	float InputDifference = 0.3f;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UFadeWidget> WBP_FadeWidget;
+
+	UPROPERTY()
+	class UFadeWidget* FadeWidget;
+	
 private:
 	UFUNCTION(BlueprintCallable)
 	void HandleAttackInput(FName ActionName);
@@ -140,6 +148,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool Mining = false;
 
+	void Die();
 	UFUNCTION(BlueprintCallable)
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
@@ -148,6 +157,7 @@ public:
 	
 	FORCEINLINE AAGSDPlayerController* getPlayerController() const {return PC;};
 	FORCEINLINE USOVGameInstance* getPlayerGameInstance() const {return GI;};
+	
 protected:
 
 	//현재 상호작용 가능한 액터 포인터 (AACultivationPlot 또는 ACrop 등)
@@ -202,7 +212,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerUI")
 	UPlayerStateWidget* PlayerStateWidget;
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
+	class UAnimMontage* DyingMontage;
 public:
 
 	/** Handles move inputs from either controls or UI interfaces */
@@ -232,5 +244,8 @@ public:
 
 	UFUNCTION()
 	void AddDamage(float addDamage);
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerState")
+	void HealthRecovery(float amount);
 };
 

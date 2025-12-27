@@ -12,11 +12,11 @@
 #include "InputActionValue.h"
 #include "Interaction.h"
 #include "AGSD.h"
+#include "FadeWidget.h"
 #include "HeartProgressBar.h"
 #include "PlayerStateWidget.h"
 #include "SOVGameInstance.h"
 #include "Components/ProgressBar.h"
-#include "Components/WidgetComponent.h"
 
 AAGSDCharacter::AAGSDCharacter()
 {
@@ -223,9 +223,11 @@ void AAGSDCharacter::BeginPlay()
 	HealthBar = getHealthBar();
 	if (HealthBar)
 	{
-		Health = GI->PlayerHealth;
-		MaxHealth = GI->MaxPlayerHealth;
-		
+		if (GI->MaxPlayerHealth != 0.f)
+		{
+			Health = GI->PlayerHealth;
+			MaxHealth = GI->MaxPlayerHealth;
+		}
 		HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 	}
 }
@@ -277,9 +279,45 @@ void AAGSDCharacter::SetHighLight(AActor* TargetActor, bool bActive)
 	}
 }
 
-float AAGSDCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-	class AController* EventInstigator, AActor* DamageCauser)
+void AAGSDCharacter::Die()
 {
+	DisableInput(PC);
+	
+	// 1. 애니메이션 인스턴스 가져오기
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	// 2. 안전성 검사 (AnimInstance와 Montage가 존재하는지)
+	if (AnimInstance && DyingMontage)
+	{
+		// 3. 몽타주 재생
+		// PlaySlotAnimationAsDynamicMontage 등 여러 방법이 있지만, 일반 몽타주는 아래 함수가 표준입니다.
+		AnimInstance->Montage_Play(DyingMontage);
+
+		// (선택) 특정 섹션으로 바로 이동하고 싶을 때
+		// AnimInstance->Montage_JumpToSection(FName("NextCombo"), AttackMontage);
+	}
+
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
+	{
+		if (!WBP_FadeWidget) return;
+		if (!FadeWidget) FadeWidget = CreateWidget<UFadeWidget>(PC, WBP_FadeWidget);
+		FadeWidget->SetRenderOpacity(0.f);
+		FadeWidget->SetTargetOpacity(1.f);
+		if (!FadeWidget->IsInViewport()) FadeWidget->AddToViewport(100);
+		FTimerHandle TimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, TimerHandle]()
+		{
+			if (FadeWidget) FadeWidget->SetTargetOpacity(0.f);
+		}, 2.0f, false);
+	}, 2.0f, false);
+	
+}
+
+float AAGSDCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+                                 class AController* EventInstigator, AActor* DamageCauser)
+{
+	if (!bCanBeDamage) return 0.f;
 	float DamageToApply = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	UE_LOG(LogTemp, Warning, TEXT("Player Take Damage : %f"), DamageToApply);
@@ -290,7 +328,8 @@ float AAGSDCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 		if (HealthBar) HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 		if ( Health <= 0.f )
 		{
-			//Die();
+			Die();
+			bCanBeDamage = false;
 		}
 	}
 	
@@ -409,4 +448,10 @@ void AAGSDCharacter::AddDamage(float addDamage)
 	{
 		PlayerStateWidget->SetDamageText(Damage);
 	}
+}
+
+void AAGSDCharacter::HealthRecovery(float amount)
+{
+	Health = FMath::Clamp(Health + amount, 0, 100);
+	if (HealthBar) HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 }

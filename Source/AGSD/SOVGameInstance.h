@@ -16,7 +16,7 @@ class AGSD_API USOVGameInstance : public UGameInstance
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float MaxPlayerHealth = 100.f;
+	float MaxPlayerHealth = 0.f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float PlayerHealth = MaxPlayerHealth;
