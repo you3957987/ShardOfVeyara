@@ -39,7 +39,6 @@ class AAGSDCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
-	bool bCanBeDamage = true;
 
 protected:
 	/** Jump Input Action */
@@ -78,7 +77,7 @@ protected:
 
 	UPROPERTY()
 	class UFadeWidget* FadeWidget;
-	
+
 private:
 	UFUNCTION(BlueprintCallable)
 	void HandleAttackInput(FName ActionName);
@@ -157,9 +156,10 @@ public:
 	
 	FORCEINLINE AAGSDPlayerController* getPlayerController() const {return PC;};
 	FORCEINLINE USOVGameInstance* getPlayerGameInstance() const {return GI;};
+
+	FORCEINLINE float getPlayerMaxhealth() const { return MaxHealth;}
 	
 protected:
-
 	//현재 상호작용 가능한 액터 포인터 (AACultivationPlot 또는 ACrop 등)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
 	AActor* CurrentInteractableActor = nullptr;
@@ -182,6 +182,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
 	float Damage = 100.0;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "PlayerState")
+	bool bCanBeDamage = true;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerUI")
 	class UHealthBar* HealthBar;
@@ -215,6 +218,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	class UAnimMontage* DyingMontage;
+
+	UFUNCTION()
+	void WakeUp();
+	
 public:
 
 	/** Handles move inputs from either controls or UI interfaces */

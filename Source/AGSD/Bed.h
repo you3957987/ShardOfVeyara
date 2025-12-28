@@ -33,6 +33,12 @@ protected:
 	UPROPERTY()
 	class UFadeWidget* FadeWidget;
 
+	UFUNCTION()
+	void WakeUp();
+
+	UPROPERTY()
+	class AAGSDCharacter* TargetPlayer;
+	
 private:
 	//콜리전 박스
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CultivationPlot, meta = (AllowPrivateAccess = "true"))

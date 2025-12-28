@@ -9,6 +9,7 @@
 /**
  * 
  */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnFadeFinished);
 UCLASS()
 class AGSD_API UFadeWidget : public UUserWidget
 {
@@ -17,10 +18,16 @@ class AGSD_API UFadeWidget : public UUserWidget
 public:
 	UFUNCTION()
 	void SetTargetOpacity(float NewOpacity);
-	
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnFadeFinished OnFadeFinished;
+
+	bool bIsTickPaused = true;
+
 protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	virtual void NativeConstruct() override;
+	
 private:
 	/** 최종적으로 도달하고자 하는 목표 투명도 (0.0 또는 1.0) */
 	float TargetOpacity = 1.0f;

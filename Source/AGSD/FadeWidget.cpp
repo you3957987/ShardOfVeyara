@@ -6,12 +6,15 @@
 void UFadeWidget::SetTargetOpacity(float NewOpacity)
 {
 	TargetOpacity = FMath::Clamp<float>(NewOpacity, 0.0f, 1.0f);
+	bIsTickPaused = false;
 }
 
 void UFadeWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
+	if (bIsTickPaused) return;
+	
 	float CurrentOpacity = GetRenderOpacity();
 
 	// 1. [보간] 현재 투명도에서 목표 투명도로 부드럽게 이동합니다.
@@ -21,18 +24,20 @@ void UFadeWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	// Render Opacity 적용
 	SetRenderOpacity(NextOpacity);
 
-	// 2. [최적화/Cleanup] 목표가 0(사라짐)이고, 거의 다 사라졌다면 위젯을 뷰포트에서 제거합니다.
-	if (TargetOpacity == 0.0f && NextOpacity <= 0.01f)
+	if (FMath::IsNearlyEqual(NextOpacity, TargetOpacity, 0.005f))
 	{
-		if (IsInViewport()) // 이중 체크: 이미 제거되었는지 확인
+		if (TargetOpacity == 0.0f)
 		{
-			RemoveFromParent();
+			if (IsInViewport()) // 이중 체크: 이미 제거되었는지 확인
+			{
+				RemoveFromParent();
+			}
 		}
+		OnFadeFinished.Broadcast();
 	}
 }
 
 void UFadeWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	SetRenderOpacity(0.f);
 }

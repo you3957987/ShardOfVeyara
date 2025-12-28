@@ -17,6 +17,7 @@
 #include "PlayerStateWidget.h"
 #include "SOVGameInstance.h"
 #include "Components/ProgressBar.h"
+#include "Kismet/GameplayStatics.h"
 
 AAGSDCharacter::AAGSDCharacter()
 {
@@ -230,6 +231,17 @@ void AAGSDCharacter::BeginPlay()
 		}
 		HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 	}
+	if (WBP_FadeWidget) 
+	{
+		if (!FadeWidget) FadeWidget = CreateWidget<UFadeWidget>(PC, WBP_FadeWidget);
+                
+		if (FadeWidget)
+		{
+			FadeWidget->SetRenderOpacity(1.0f);
+			FadeWidget->SetTargetOpacity(0.0f);
+			if (!FadeWidget->IsInViewport()) FadeWidget->AddToViewport(100);
+		}
+	}	
 }
 
 void AAGSDCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -279,6 +291,14 @@ void AAGSDCharacter::SetHighLight(AActor* TargetActor, bool bActive)
 	}
 }
 
+void AAGSDCharacter::WakeUp()
+{
+	FadeWidget->OnFadeFinished.RemoveDynamic(this, &AAGSDCharacter::WakeUp);
+	HealthRecovery(10.f);
+	UWorld* World = GetWorld();
+	UGameplayStatics::OpenLevel(World, FName(*World->GetMapName()));
+}
+
 void AAGSDCharacter::Die()
 {
 	DisableInput(PC);
@@ -292,26 +312,26 @@ void AAGSDCharacter::Die()
 		// 3. 몽타주 재생
 		// PlaySlotAnimationAsDynamicMontage 등 여러 방법이 있지만, 일반 몽타주는 아래 함수가 표준입니다.
 		AnimInstance->Montage_Play(DyingMontage);
-
-		// (선택) 특정 섹션으로 바로 이동하고 싶을 때
-		// AnimInstance->Montage_JumpToSection(FName("NextCombo"), AttackMontage);
-	}
-
-	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
-	{
-		if (!WBP_FadeWidget) return;
-		if (!FadeWidget) FadeWidget = CreateWidget<UFadeWidget>(PC, WBP_FadeWidget);
-		FadeWidget->SetRenderOpacity(0.f);
-		FadeWidget->SetTargetOpacity(1.f);
-		if (!FadeWidget->IsInViewport()) FadeWidget->AddToViewport(100);
-		FTimerHandle TimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, TimerHandle]()
+		
+		FTimerHandle TimerHandle;// 2. 대기 시간 (초 단위)
+		GetWorldTimerManager().SetTimer(TimerHandle, FTimerDelegate::CreateLambda([this]()
 		{
-			if (FadeWidget) FadeWidget->SetTargetOpacity(0.f);
-		}, 2.0f, false);
-	}, 2.0f, false);
-	
+			if (WBP_FadeWidget) 
+			{
+				if (!FadeWidget) FadeWidget = CreateWidget<UFadeWidget>(PC, WBP_FadeWidget);
+                
+				if (FadeWidget)
+				{
+					FadeWidget->OnFadeFinished.AddDynamic(this, &AAGSDCharacter::WakeUp);
+					FadeWidget->SetRenderOpacity(0.0f);
+					FadeWidget->SetTargetOpacity(1.0f);
+					if (!FadeWidget->IsInViewport()) FadeWidget->AddToViewport(100);
+				}
+			}	
+		}),
+		1.0f, false
+		);
+	}
 }
 
 float AAGSDCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -324,12 +344,12 @@ float AAGSDCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 
 	if ( DamageToApply > 0.f )
 	{
-		Health -= DamageToApply;
+		Health = FMath::Clamp(Health - DamageToApply, 0, MaxHealth);
 		if (HealthBar) HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 		if ( Health <= 0.f )
 		{
-			Die();
 			bCanBeDamage = false;
+			Die();
 		}
 	}
 	
@@ -452,6 +472,6 @@ void AAGSDCharacter::AddDamage(float addDamage)
 
 void AAGSDCharacter::HealthRecovery(float amount)
 {
-	Health = FMath::Clamp(Health + amount, 0, 100);
+	Health = FMath::Clamp(Health + amount, 0, MaxHealth);
 	if (HealthBar) HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 }
