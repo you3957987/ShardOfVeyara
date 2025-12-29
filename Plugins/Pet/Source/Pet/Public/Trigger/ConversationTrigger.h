@@ -4,6 +4,16 @@
 #include "GameFramework/Actor.h"
 #include "ConversationTrigger.generated.h"
 
+// 펫의 위치랑 매칭시킬 펫의 상태 열거형
+UENUM(BlueprintType)
+enum class EConversationType : uint8
+{
+	ECT_BIG UMETA(DisplayName = "Big"), // 큰 자막바 
+	ECT_SMALL UMETA(DisplayName = "Small"), // 작은 자막바
+	
+	ECT_MAX UMETA(DisplayName = "Default") // 최대값, 추가적인 값을 위한 공간
+};
+
 UCLASS()
 class PET_API AConversationTrigger : public AActor
 {
@@ -24,6 +34,10 @@ protected:
 	// 감지할 태그를 에디터에서 지정 (기본값은 Player )
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	FName TargetTag = TEXT("Player");
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	EConversationType ConversationType = EConversationType::ECT_BIG;
+
 	
 public:
 	AConversationTrigger();

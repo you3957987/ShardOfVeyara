@@ -124,8 +124,9 @@ public:
 	ABaseFlyingPet();
 	virtual void Tick(float DeltaTime) override;
 	// 인터페이스 함수 구현
-	virtual void TriggerPetConversation_Implementation(FName DialogueID) override;
-
+	virtual void TriggerPetBigConversation_Implementation(FName DialogueID) override;
+	virtual void TriggerPetSmallConversation_Implementation(FName DialogueID) override;
+	
 	// ABP 에 서 사용할 현재 속도 변수
 	UPROPERTY(BlueprintReadOnly)
 	FVector CurrentVelocity;
@@ -136,7 +137,9 @@ public:
 	
 	// 대화 상태로 전환하며 대화 시작 -> 펫 토크 컴포넌트로 실제 대화 로직 위임
 	UFUNCTION(BlueprintCallable)
-	void StartConversation(FName DialogueID);
+	void StartBigConversation(FName DialogueID);
+	UFUNCTION(BlueprintCallable)
+	void StartSmallConversation(FName DialogueID);
 	// 대화 종료 및 이전 상태로 복귀 로직 처리
 	UFUNCTION(BlueprintCallable)
 	void EndConversation();
