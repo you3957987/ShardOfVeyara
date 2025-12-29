@@ -9,23 +9,25 @@
   <component name="ChangeListManager">
     <list default="true" id="4fb32fe1-2f7b-4ce4-b591-d5e38df0812d" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Farmer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Farmer.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/BluePrint/BP_GameInstance.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/BluePrint/BP_GameInstance.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/BluePrint/BP_Portal.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/BluePrint/BP_Portal.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Level/Farm_Sky_Island.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Level/Farm_Sky_Island.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/Anim/AM_BossSkeletonMageFireBall.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/Anim/AM_BossSkeletonMageFireBall.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/Anim/AM_BossSkeletonMageGroundAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/Anim/AM_BossSkeletonMageGroundAttack.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/Anim/AM_BossSkeletonMagePushTarget.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/Anim/AM_BossSkeletonMagePushTarget.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/Anim/AM_BossSkeletonMageTeleport.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/Anim/AM_BossSkeletonMageTeleport.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Beholder_Explode/AM_BeholderExplode.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Beholder_Explode/AM_BeholderExplode.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Frog_Explode/AM_FrogAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Frog_Explode/AM_FrogAttack.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Rat_Melee/AM_RatAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Rat_Melee/AM_RatAttack.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonMinion_Melee/AM_SkeletonMinionAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonMinion_Melee/AM_SkeletonMinionAttack.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRogue_Ranged/AM_SkeletonRogue_RangedAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRogue_Ranged/AM_SkeletonRogue_RangedAttack.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonWarrior_Melee/AM_SkeletonWarrior_SpinAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonWarrior_Melee/AM_SkeletonWarrior_SpinAttack.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/0/HZ/I2OZ3MHK3LICQ99N6CVJAW.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/5/3E/F0S2S64KDOT12K9GGDF334.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/SkeletonMage/BossSkeletonMage.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/SkeletonMage/BossSkeletonMage.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/SkeletonMage/BossSkeletonMage.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/SkeletonMage/BossSkeletonMage.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Snake_Trans/AM_SnakeAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Snake_Trans/AM_SnakeAttack.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Specter_Trans/AM_SpecterAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Specter_Trans/AM_SpecterAttack.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Spider_Melee/AM_SpiderAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Spider_Melee/AM_SpiderAttack.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Wasp_Ranged/AM_WaspAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Wasp_Ranged/AM_WaspAttack.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Config/DefaultPet.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Config/DefaultPet.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/DataTable/DT_TestConv.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Content/DataTable/DT_TestConv.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/HUD/WBP_ConversationSubtitle.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Content/HUD/WBP_ConversationSubtitle.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/Pet/CuteWhale_Fly/BP_WhalePet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Content/Pet/CuteWhale_Fly/BP_WhalePet.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/BaseFlyingPet.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/BaseFlyingPet.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/Component/PetTalkComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/Component/PetTalkComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/HUD/TravelSubtitle.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/HUD/TravelSubtitle.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/Trigger/ConversationTrigger.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/Trigger/ConversationTrigger.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Public/BaseFlyingPet.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Public/BaseFlyingPet.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Public/Component/PetTalkComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Public/Component/PetTalkComponent.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Public/Interface/PetConversationInterface.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Public/Interface/PetConversationInterface.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Public/Trigger/ConversationTrigger.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Public/Trigger/ConversationTrigger.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.h" afterDir="false" />
     </list>
@@ -208,6 +210,7 @@
       <workItem from="1766801649106" duration="526000" />
       <workItem from="1766811539753" duration="10064000" />
       <workItem from="1766969967301" duration="4823000" />
+      <workItem from="1766984373967" duration="5648000" />
     </task>
     <servers />
   </component>

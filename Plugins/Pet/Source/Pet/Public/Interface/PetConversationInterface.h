@@ -20,7 +20,7 @@ class PET_API IPetConversationInterface
 public:
 	// 대화 시작을 요청하는 함수 (BlueprintNativeEvent로 선언하여 C++과 블루프린트 양쪽에서 구현 가능하게 함)
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void TriggerPetConversation(FName DialogueID);
+	void TriggerPetBigConversation(FName DialogueID);
 
 	// 추가할 함수: 펫 객체를 주인에게 등록합니다.
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
@@ -28,6 +28,12 @@ public:
 
 	// 주인 쪽에서 펫의 대화 시작함수를 호출하는 함수( 이상한거 맞음 )( Implementation 없이 펫 안의 StartConversation 다이렉트로 호출 )
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void MasterToPetConversation(FName DialogueID);
+	void MasterToPetBigConversation(FName DialogueID);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void TriggerPetSmallConversation(FName DialogueID);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void MasterToPetSmallConversation(FName DialogueID);
 	
 };
