@@ -18,6 +18,10 @@
 #include "SOVGameInstance.h"
 #include "Components/ProgressBar.h"
 #include "Kismet/GameplayStatics.h"
+<<<<<<< HEAD
+=======
+#include "BaseFlyingPet.h"
+>>>>>>> c424cfd17141ebd12aed7c0edfc6f53e79f50378
 
 AAGSDCharacter::AAGSDCharacter()
 {
@@ -221,6 +225,7 @@ void AAGSDCharacter::BeginPlay()
 	PC = Cast<AAGSDPlayerController>(GetController());
 	GI = Cast<USOVGameInstance>(GetGameInstance());
 	
+	SpawnMyPetAfterTravel(); // 펫 있으면 오픈 레벨 이후 펫 스폰
 	HealthBar = getHealthBar();
 	if (HealthBar)
 	{
@@ -246,6 +251,7 @@ void AAGSDCharacter::BeginPlay()
 
 void AAGSDCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	DestroyPetBeforeTravel();
 	Super::EndPlay(EndPlayReason);
 
 	GI->PlayerHealth = Health;
@@ -475,3 +481,52 @@ void AAGSDCharacter::HealthRecovery(float amount)
 	Health = FMath::Clamp(Health + amount, 0, MaxHealth);
 	if (HealthBar) HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 }
+<<<<<<< HEAD
+=======
+//--------------
+
+void AAGSDCharacter::SetMyPet_Implementation(AActor* NewPet)
+{
+	if (NewPet)
+	{
+		Pet = Cast<ABaseFlyingPet>(NewPet);
+		bHasPet = true; // 이제 펫이 있다고 표시
+	}
+}
+
+void AAGSDCharacter::MasterToPetConversation_Implementation(FName DialogueID)
+{
+	if ( Pet )
+	{
+		Pet->StartConversation(DialogueID);
+	}
+}
+
+void AAGSDCharacter::DestroyPetBeforeTravel()
+{
+	if ( bHasPet && Pet )
+	{
+		Pet->Destroy();
+		Pet = nullptr;
+	}
+}
+
+void AAGSDCharacter::SpawnMyPetAfterTravel()
+{
+	if ( bHasPet )
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SpawnMyPetAfterTravel"));
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = GetInstigator();
+
+		FVector SpawnLocation = GetActorLocation() + FVector(0.f, -180.f, 0.f); // 캐릭터 뒤쪽에 스폰
+		FRotator SpawnRotation = FRotator::ZeroRotator;
+
+		GetWorld()->SpawnActor<ABaseFlyingPet>(DefaultPetClass, SpawnLocation, SpawnRotation, SpawnParams);
+	}
+}
+
+
+//--------------
+>>>>>>> c424cfd17141ebd12aed7c0edfc6f53e79f50378
