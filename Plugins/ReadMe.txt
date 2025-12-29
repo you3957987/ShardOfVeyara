@@ -7,3 +7,16 @@
 1 - 2. Recast 에서 에이전트 반경은 넉넉히 50 정도로 하기. + NavMesh를 그냥 넓히면 맵 중간 중간에 이동 가능 영역 생기는거 고려 해야함!
 2. 사용하는 캐릭터 Blueprint에서 태그 추가 ->Player 추가.  안하면 적들 공격을 플레이어가 감지 못함
 3. 적들한테는 Enemy 태그 추가하기도 나중에 필요
+
+4. 대화 관련 
+(  추가한 점. 빌드.cs 파일에 Pet 추가, 캐릭터 헤더 파일에 인터페이스랑 펫 헤더 추가 )
+
+대화 접근법
+#include "Interface/PetConversationInterface.h"
+헤더에 추가한 뒤
+
+if (OtherActor->Implements<UPetConversationInterface>())
+인터페이스 있는지 검사 혹시 모르니 하면 하고
+IPetConversationInterface::Execute_MasterToPetConversation(OtherActor, DialogueID);
+호출하면 됨
+

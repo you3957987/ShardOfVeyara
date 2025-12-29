@@ -13,6 +13,7 @@
 #include "InputBufferEntry.h"
 #include "PlayerStateWidget.h"
 #include "SOVGameInstance.h"
+#include "Interface/PetConversationInterface.h"
 #include "AGSDCharacter.generated.h"
 
 class USpringArmComponent;
@@ -28,7 +29,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
  *  Implements a controllable orbiting camera
  */
 UCLASS(abstract)
-class AAGSDCharacter : public ACharacter
+class AAGSDCharacter : public ACharacter, public IPetConversationInterface
 {
 	GENERATED_BODY()
 
@@ -240,6 +241,43 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
 	
+
+	// 펫 관련 추가( 인터페이스를 추가하고 인터페이스 함수중 하나인 SetMyPet 구현 )
+	//--
+
+	/*
+	#include "Interface/PetConversationInterface.h"
+	#include "BaseFlyingPet.h"
+	IPetConversationInterface::Execute_MasterToPetConversation(OtherActor, DialogueID); 캐릭터에서 실행하면 자동으로 대화 실행
+	 */
+
+	UPROPERTY( EditAnywhere, Category="Pet")
+	bool bHasPet = false;
+	
+	UPROPERTY( BlueprintReadOnly)
+	class ABaseFlyingPet* Pet;
+
+	// 에디터의 Details 패널에서 어떤 펫 블루프린트를 쓸지 선택하는 변수
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pet")
+	TSubclassOf<class ABaseFlyingPet> DefaultPetClass;
+
+	// 캐릭터가 레벨을 떠날떄 언리얼 엔진이 호출하는 함수
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	// 인터페이스 함수 구현
+	virtual void SetMyPet_Implementation(AActor* NewPet) override;
+	virtual void MasterToPetConversation_Implementation(FName DialogueID) override;
+
+	// 레벨 이동 전 펫 파괴 및 이동 후 펫 스폰 함수
+	UFUNCTION(BlueprintCallable)
+	void DestroyPetBeforeTravel();
+	UFUNCTION(BlueprintCallable)
+	void SpawnMyPetAfterTravel();
+	
+	//--
+	// 펫 관련 추가
+	
+public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 

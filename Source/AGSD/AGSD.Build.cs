@@ -19,7 +19,8 @@ public class AGSD : ModuleRules
 			"GameplayStateTreeModule",
 			"UMG",
 			"Slate",
-			"SlateCore"
+			"SlateCore",
+			"Pet"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });

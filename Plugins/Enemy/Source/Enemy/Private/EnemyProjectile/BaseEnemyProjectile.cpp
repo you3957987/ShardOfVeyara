@@ -81,7 +81,8 @@ void ABaseEnemyProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedCompone
 	// 자기 자신, 소유자, 다른 적 투사체, 또는 다른 적 캐릭터와 충돌한 경우 무시합니다.
 	if (!OtherActor || OtherActor == this || OtherActor == GetOwner() 
 	 || OtherActor->ActorHasTag(FName("EnemyProjectile")) 
-	 || OtherActor->ActorHasTag(FName("Enemy"))) // 이 줄을 추가하세요.
+	 || OtherActor->ActorHasTag(FName("Enemy"))
+	 || OtherActor->ActorHasTag(FName("Pet")) ) // 이 줄을 추가하세요.
 	{
 		return;
 	}
