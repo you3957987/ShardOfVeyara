@@ -2,6 +2,7 @@
 
 
 #include "ACultivationPlot.h"
+#include "CropManager.h"
 #include "Components/BoxComponent.h"
 #include "AGSDPlayerController.h"
 #include "AGSDCharacter.h"
@@ -62,18 +63,67 @@ void AACultivationPlot::Interact_Implementation(AAGSDCharacter* player)
 
 	if (PlantedCrop == nullptr)
 	{
-		GetSeedInfo(FName(*player->SubItemAmount()));
+		SeedName = FName(*player->SubItemAmount());
+		
+		GetSeedInfo(SeedName);
+		
+		CurrentGrowStageIndex = 0;
+		GrowthTimeCounter = CropData->GrowthStages[CurrentGrowStageIndex].TimeToGrow;
+		FinishGrowStageIndex = CropData->GrowthStages.Num() - 1;
+
 		PlantCrop();
+		
+		if (!GS) return;
+		int32 CurrentDay = GS->GetCurrentDay();
+
+		RegisterCropToManager(CurrentDay);
+		PlantedCrop->MeshUpdate(CurrentGrowStageIndex);
 	}
 }
-
-
 
 // Called when the game starts or when spawned
 void AACultivationPlot::BeginPlay()
 {
 	Super::BeginPlay();
+	GI = Cast<USOVGameInstance>(GetGameInstance());
+	GS = Cast<AAGSDGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
 	
+	if (!GI) return;
+	
+	FPlotSaveData LoadedData;
+	// 아까 만든 구조체 데이터를 통째로 넘겨서 저장합니다.
+	if (!GI->GetPlotData(GetActorGuid(), LoadedData)) return;
+	if (LoadedData.SeedName == NAME_None) return;
+
+	SeedName = LoadedData.SeedName;
+	CurrentGrowStageIndex = LoadedData.CurrentGrowStageIndex;
+	GrowthTimeCounter = LoadedData.GrowthTimeCounter;
+	FinishGrowStageIndex = LoadedData.FinishGrowStageIndex;
+	FullyGrown = LoadedData.FullyGrown;
+	ScheduledDay = LoadedData.ScheduledDay;
+
+	
+	CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
+	GetSeedInfo(SeedName);
+	PlantCrop();
+	
+	if (!GS) return;
+
+	int32 CurrentDay = GI->CurrentDay;
+	while (ScheduledDay <= CurrentDay && !FullyGrown)
+	{
+		AdvanceGrowth();
+	}
+	
+	PlantedCrop->MeshUpdate(CurrentGrowStageIndex);
+	if (CurrentGrowStageIndex >= FinishGrowStageIndex)
+	{
+		FullyGrown = true;
+		PlantedCrop->SetCollisionEnable();
+	}
+
+	if (!FullyGrown) RegisterCropToManager(ScheduledDay);
 }
 
 void AACultivationPlot::PlantCrop()
@@ -103,15 +153,22 @@ void AACultivationPlot::PlantCrop()
 	);
 	if (PlantedCrop)
 	{
-		PlantedCrop->SetCropData(CropData);
-		PlantedCrop->OnDestroyed.AddDynamic(this, &AACultivationPlot::OnPlantedCropDestroyed);
+	    PlantedCrop->SetCropData(CropData);
+
+		PlantedCrop->OnHarvested.AddDynamic(this, &AACultivationPlot::OnPlantedCropDestroyed);
 		UGameplayStatics::FinishSpawningActor(PlantedCrop, SpawnTransform);
 	}
 }
 
-void AACultivationPlot::OnPlantedCropDestroyed(AActor* DestroyedActor)
+void AACultivationPlot::OnPlantedCropDestroyed()
 {
 	PlantedCrop = nullptr;
+	
+	CurrentGrowStageIndex = 0;
+	FullyGrown = false;
+	ScheduledDay = 0;
+	SeedName = NAME_None;
+	
 	if (CollisionBox)
 		CollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
@@ -136,5 +193,52 @@ void AACultivationPlot::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AACultivationPlot::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	FPlotSaveData SaveData;
+	SaveData.PlotGuid = GetActorGuid();
+	SaveData.SeedName = SeedName;
+	SaveData.CurrentGrowStageIndex = CurrentGrowStageIndex;
+	SaveData.GrowthTimeCounter = GrowthTimeCounter;
+	SaveData.FinishGrowStageIndex = FinishGrowStageIndex;
+	SaveData.FullyGrown = FullyGrown;
+	SaveData.ScheduledDay = ScheduledDay;
+	
+	if (GI)
+	{
+		// 아까 만든 구조체 데이터를 통째로 넘겨서 저장합니다.
+		GI->UpdatePlotData(SaveData);
+	}
+}
+
+void AACultivationPlot::AdvanceGrowth()
+{
+	if (CurrentGrowStageIndex < FinishGrowStageIndex)
+	{
+		CurrentGrowStageIndex++;
+		GrowthTimeCounter = CropData->GrowthStages[CurrentGrowStageIndex].TimeToGrow;
+		PlantedCrop->MeshUpdate(CurrentGrowStageIndex);
+		
+		ScheduledDay += GrowthTimeCounter;
+	}
+	if (CurrentGrowStageIndex >= FinishGrowStageIndex)
+	{
+		FullyGrown = true;
+		PlantedCrop->SetCollisionEnable();
+	}
+}
+
+void AACultivationPlot::RegisterCropToManager(int32 CurrentDay)
+{
+    ScheduledDay = CurrentDay + GrowthTimeCounter;
+        
+    if (ACropManager* Manager = Cast<ACropManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACropManager::StaticClass())))
+    {
+        Manager->RegisterCrop(this, ScheduledDay);
+    }
 }
 

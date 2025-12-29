@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AGSDGameStateBase.h"
 #include "GameFramework/Actor.h"
 #include "UCropData.h"
 #include "Interaction.h"
@@ -32,23 +33,44 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Farming")
 	UUCropData* CropData;
 
-	bool bCanPlant = true;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
 	class ACrop* PlantedCrop = nullptr;
 
 	void PlantCrop();
 
 	UFUNCTION()
-	void OnPlantedCropDestroyed(AActor* DestroyedActor);
+	void OnPlantedCropDestroyed();
 
 	FText InteractActionText = FText::FromString(TEXT("작물심기"));
 
 	void GetSeedInfo(FName TargetRowName);
 	
+	//다음 성장 날짜
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
+    int32 ScheduledDay = 0;
+    //현재 단계
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
+    int32 CurrentGrowStageIndex = 0;
+    //최종 단계
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
+    int32 FinishGrowStageIndex = 0;
+    //다음 단계까지 남은 시간
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
+    int32 GrowthTimeCounter = 0;
+    //작물이 다 자랐는지
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
+    bool FullyGrown = false;
+
+	FName SeedName = NAME_None;
+	
+    void RegisterCropToManager(int32 CurrentDay);
+
+	AAGSDGameStateBase* GS;
+	USOVGameInstance* GI;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	//오버랩 시작 시 작동할 함수
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -61,6 +83,14 @@ public:
 	virtual void ShowWidget_Implementation(ACharacter* player) override;
 	virtual bool CanInteract_Implementation(AAGSDCharacter* player) override;
 	
+	FORCEINLINE int32 GetScheduledDay() const { return ScheduledDay; };
+    FORCEINLINE int32 GetGrowthTimeCounter() const { return GrowthTimeCounter; };
+    FORCEINLINE int32 GetCurrentGrowStageIndex() const { return CurrentGrowStageIndex; };
+    FORCEINLINE bool GetFullyGrown() const { return FullyGrown; };
+	
+    //작물 매니저가 성장 날짜가 되었을 땨 호출하여 성장을 처리하는 함수
+    void AdvanceGrowth();
+    
 private:
 	//루트 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CultivationPlot, meta = (AllowPrivateAccess = "true"))

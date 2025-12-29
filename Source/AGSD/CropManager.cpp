@@ -2,7 +2,6 @@
 
 
 #include "CropManager.h"
-
 #include "AGSDGameStateBase.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -14,15 +13,15 @@ ACropManager::ACropManager()
 
 }
 
-void ACropManager::ResisterCrop(ACrop* Crop, int32 NextAdvanceDay)
+void ACropManager::RegisterCrop(AACultivationPlot* plot, int32 NextAdvanceDay)
 {
-	if (Crop == nullptr || NextAdvanceDay <= 0) return;
+	if (plot == nullptr || NextAdvanceDay <= 0) return;
 	
 	FCropArrayWrapper& DaySchedule = ResisterCropArray.FindOrAdd(NextAdvanceDay);
 
-	if (DaySchedule.CropsToAdvance.Contains(Crop))	return;
+	if (DaySchedule.CropsToAdvance.Contains(plot))	return;
 	
-	DaySchedule.CropsToAdvance.Add(Crop);
+	DaySchedule.CropsToAdvance.Add(plot);
 }
 
 void ACropManager::HandleDayPassed(int32 CurrentDay)
@@ -31,24 +30,24 @@ void ACropManager::HandleDayPassed(int32 CurrentDay)
 
 	if (FCropArrayWrapper* DaySchedule = ResisterCropArray.Find(CurrentDay))
 	{
-		for (ACrop* Crop : DaySchedule->CropsToAdvance)
+		for (AACultivationPlot* plot : DaySchedule->CropsToAdvance)
 		{
-			if (Crop == nullptr) continue;
-			Crop->AdvanceGrowth();
-			if (!Crop->GetFullyGrown())
-				ResisterCrop(Crop, Crop->GetScheduledDay());
+			if (plot == nullptr) continue;
+			plot->AdvanceGrowth();
+			if (!plot->GetFullyGrown())
+				RegisterCrop(plot, plot->GetScheduledDay());
 		}
 	}
 	ResisterCropArray.Remove(CurrentDay);
 }
 
-void ACropManager::UnregisterCrop(ACrop* Crop, int32 ScheduledDay)
+void ACropManager::UnregisterCrop(AACultivationPlot* plot, int32 ScheduledDay)
 {
-	if (Crop == nullptr || ScheduledDay <= 0) return;
+	if (plot == nullptr || ScheduledDay <= 0) return;
 	
 	if(FCropArrayWrapper* DaySchedule = ResisterCropArray.Find(ScheduledDay))
 	{
-		DaySchedule->CropsToAdvance.RemoveSingleSwap(Crop);
+		DaySchedule->CropsToAdvance.RemoveSingleSwap(plot);
 
 		if (DaySchedule->CropsToAdvance.Num() == 0) ResisterCropArray.Remove(ScheduledDay);
 	}

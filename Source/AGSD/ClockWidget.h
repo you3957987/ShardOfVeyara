@@ -22,6 +22,7 @@ public:
 	class UTextBlock* DayText;
 
 	virtual void NativeOnInitialized() override;
+	virtual void NativeConstruct() override;
 	
 protected:
 	UFUNCTION()
