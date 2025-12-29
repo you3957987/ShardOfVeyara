@@ -99,11 +99,6 @@ class ENEMY_API ABossSkeletonMage : public ABaseBossEnemy
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	class UNiagaraSystem* MagicShieldEffect;
 
-	// 보스 스킬 사운드 데이터 배열(0 텔레포트 1파이어볼 2소환 3장판공격 4푸시)
-	UPROPERTY(EditAnywhere, Category = "자체설정")
-	TArray<class USoundBase*> SkillSoundList;
-	void PlaySkillSound(int32 SkillIndex);
-	
 public:
 	ABossSkeletonMage();
 	virtual void BeginPlay() override;

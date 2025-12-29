@@ -214,6 +214,8 @@ void AAGSDCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	PC = Cast<AAGSDPlayerController>(GetController());
+
+	SpawnMyPetAfterTravel(); // 펫 있으면 오픈 레벨 이후 펫 스폰
 }
 
 AActor* AAGSDCharacter::MinDistActor()
@@ -379,11 +381,20 @@ void AAGSDCharacter::DoJumpEnd()
 	StopJumping();
 }
 
+//--------------
+
+void AAGSDCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	DestroyPetBeforeTravel();
+	Super::EndPlay(EndPlayReason);
+}
+
 void AAGSDCharacter::SetMyPet_Implementation(AActor* NewPet)
 {
 	if (NewPet)
 	{
 		Pet = Cast<ABaseFlyingPet>(NewPet);
+		bHasPet = true; // 이제 펫이 있다고 표시
 	}
 }
 
@@ -394,3 +405,31 @@ void AAGSDCharacter::MasterToPetConversation_Implementation(FName DialogueID)
 		Pet->StartConversation(DialogueID);
 	}
 }
+
+void AAGSDCharacter::DestroyPetBeforeTravel()
+{
+	if ( bHasPet && Pet )
+	{
+		Pet->Destroy();
+		Pet = nullptr;
+	}
+}
+
+void AAGSDCharacter::SpawnMyPetAfterTravel()
+{
+	if ( bHasPet )
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SpawnMyPetAfterTravel"));
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = GetInstigator();
+
+		FVector SpawnLocation = GetActorLocation() + FVector(0.f, -180.f, 0.f); // 캐릭터 뒤쪽에 스폰
+		FRotator SpawnRotation = FRotator::ZeroRotator;
+
+		GetWorld()->SpawnActor<ABaseFlyingPet>(DefaultPetClass, SpawnLocation, SpawnRotation, SpawnParams);
+	}
+}
+
+
+//--------------

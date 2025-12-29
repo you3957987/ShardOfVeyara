@@ -107,8 +107,6 @@ void ABossSkeletonMage::PlayTeleportMontage(const FVector& Destination)
 // 애님 노티파이에서 호출할 함수
 void ABossSkeletonMage::TeleportMoveToNextPoint()
 {
-	PlaySkillSound(0); // 텔레포트 사운드 재생
-	
 	if (TeleportDestination != FVector::ZeroVector)
 	{
 		SpawnTeleportEffectAtLocation(GetActorLocation()); // 현재 위치에 이펙트 생성
@@ -169,8 +167,6 @@ void ABossSkeletonMage::PlayFireBallmontage()
 // 애님 노티파이에서 호출할 함수
 void ABossSkeletonMage::ShootFireBall()
 {
-	PlaySkillSound(1); // 텔레포트 사운드 재생
-	
 	// 필요한 모든 컴포넌트와 변수가 유효한지 확인합니다.
 	if (!IsValid(TargetCharacter) || !IsValid(FireBallSpawnPoint) || FireBallClass == nullptr)
 	{
@@ -201,8 +197,6 @@ void ABossSkeletonMage::StartSummoning(const FVector& Location1, const FVector& 
 	SpawnSummonEffectAtLocation(GetActorLocation()); // 마법사가 소환 시작 이펙트
 	
 	BlackboardComp->SetValueAsFloat("AttackDelay", SummonEnemyDelay); // 행동 딜레이 설정
-
-	PlaySkillSound(2); // 텔레포트 사운드 재생
 	
 	SummonLocations.Empty();
 	SummonLocations.Add(Location1);
@@ -290,7 +284,6 @@ void ABossSkeletonMage::SpawnSummonEffectAtLocation(const FVector& Location)
 
 void ABossSkeletonMage::PlayGroundAreaAttackMontage()
 {
-	PlaySkillSound(3); // 텔레포트 사운드 재생
 	if ( BlackboardComp == nullptr ) return;
 	
 	BlackboardComp->SetValueAsFloat("AttackDelay", GroundAttackDelay); // 행동 딜레이 설정
@@ -397,7 +390,6 @@ void ABossSkeletonMage::GroundAreaAttack()
 
 void ABossSkeletonMage::PlayPushTargetMontage()
 {
-	PlaySkillSound(4); // 텔레포트 사운드 재생
 	if ( BlackboardComp == nullptr ) return;
 	
 	BlackboardComp->SetValueAsFloat("AttackDelay", PushTargetDelay); // 행동 딜레이 설정
@@ -419,16 +411,3 @@ void ABossSkeletonMage::CreateMagicShield()
 	}
 }
 
-void ABossSkeletonMage::PlaySkillSound(int32 SkillIndex)
-{
-	// 1. 배열의 인덱스가 유효한지 확인 (범위 밖 접근 방지)
-	if (SkillSoundList.IsValidIndex(SkillIndex))
-	{
-		// 2. 해당 칸에 사운드 에셋이 실제로 할당되어 있는지 확인
-		if (USoundBase* SelectedSound = SkillSoundList[SkillIndex])
-		{
-			// 3. 2D 사운드로 재생
-			UGameplayStatics::PlaySound2D(GetWorld(), SelectedSound);
-		}
-	}
-}
