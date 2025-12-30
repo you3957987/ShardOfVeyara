@@ -116,6 +116,8 @@ public:
 	virtual void TriggerPetBigConversation_Implementation(FName DialogueID) override;
 	virtual void TriggerPetSmallConversation_Implementation(FName DialogueID) override;
 	virtual void SetPetState_Implementation(EPetState NewState) override;
+
+	// 왜 적용이 안됨?
 	
 	// ABP 에 서 사용할 현재 속도 변수
 	UPROPERTY(BlueprintReadOnly)
