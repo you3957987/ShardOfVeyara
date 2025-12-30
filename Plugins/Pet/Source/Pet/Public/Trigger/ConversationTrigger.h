@@ -39,6 +39,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	EConversationType ConversationType = EConversationType::ECT_BIG;
 
+	// 트리거 박스 보이게 할지 말지 (디버그용)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	bool bDebugMode = false;
 	
 public:
 	AConversationTrigger();
@@ -46,5 +49,10 @@ public:
 	// 이 부분이 빠져 있어서 에러가 발생했습니다. 추가해주세요.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	FName DialogueID;
-	
+
+
+#if WITH_EDITOR
+	// 에디터에서 프로퍼티가 변경될 때 호출됩니다.
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 };

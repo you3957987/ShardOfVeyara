@@ -10,8 +10,7 @@ AConversationTrigger::AConversationTrigger()
 
 	TriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
 	RootComponent = TriggerBox;
-
-	
+	TriggerBox->SetHiddenInGame(true); 
 }
 
 void AConversationTrigger::BeginPlay()
@@ -57,6 +56,23 @@ void AConversationTrigger::OnTriggerBoxBeginOverlap(UPrimitiveComponent* Overlap
 	}
 }
 
+void AConversationTrigger::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
 
+	const FName PropertyName = (PropertyChangedEvent.Property != nullptr) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(AConversationTrigger, bDebugMode))
+	{
+		if ( bDebugMode == true )
+		{
+			if ( TriggerBox ) TriggerBox->SetHiddenInGame(false);
+		}
+		else
+		{
+			if ( TriggerBox ) TriggerBox->SetHiddenInGame(true); 
+		}
+	}
+}
 
 

@@ -203,23 +203,23 @@ void UPetTalkComponent::StartConversation(FName DialogueID)
     //  데이터 테이블에서 ID로 행(Row) 검색
     static const FString ContextString(TEXT("StartConversation_Context"));
     FPetConversationData* RowData = BigConversationDataTable->FindRow<FPetConversationData>(DialogueID, ContextString);
-
-	AActor* OwnerActor = GetOwner();
-
-	if ( OwnerActor && OwnerActor->Implements<UPetConversationInterface>() )
-	{
-		if ( RowData->bIsTalkToOtherCharacter == true ) // 딴놈이랑 대화시에는 그냥 계속 따라다니기 모드
-		{
-			IPetConversationInterface::Execute_SetPetState(OwnerActor, EPetState::EPS_Follow);
-		}
-		else // 펫이 대화시에는 대화 모드로 전환
-		{
-			IPetConversationInterface::Execute_SetPetState(OwnerActor, EPetState::EPS_Conversation);
-		}
-	}
 	
     if (RowData)
     {
+    	AActor* OwnerActor = GetOwner();
+
+    	if ( OwnerActor && OwnerActor->Implements<UPetConversationInterface>() )
+    	{
+    		if ( RowData->bIsTalkToOtherCharacter == true ) // 딴놈이랑 대화시에는 그냥 계속 따라다니기 모드
+    		{
+    			IPetConversationInterface::Execute_SetPetState(OwnerActor, EPetState::EPS_Follow);
+    		}
+    		else // 펫이 대화시에는 대화 모드로 전환
+    		{
+    			IPetConversationInterface::Execute_SetPetState(OwnerActor, EPetState::EPS_Conversation);
+    		}
+    	}
+    	
         //  UI 업데이트
         if (ConversationSubtitleInstance)
         {
@@ -272,7 +272,7 @@ void UPetTalkComponent::StartConversation(FName DialogueID)
     }
     else
     {
-        UE_LOG(LogTemp, Warning, TEXT("Dialogue ID '%s' not found in DataTable."), *DialogueID.ToString());
+        UE_LOG(LogTemp, Error, TEXT("Dialogue ID '%s' not found in DataTable."), *DialogueID.ToString());
         EndConversation();
     }
 }
