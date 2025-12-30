@@ -7,6 +7,8 @@
 #include "HUD/TravelSubtitle.h"
 #include "Kismet/GameplayStatics.h"
 #include "Ping/PingActor.h"
+#include "Header/PetState.h"
+#include "Interface/PetConversationInterface.h"
 
 UPetTalkComponent::UPetTalkComponent()
 {
@@ -202,6 +204,20 @@ void UPetTalkComponent::StartConversation(FName DialogueID)
     static const FString ContextString(TEXT("StartConversation_Context"));
     FPetConversationData* RowData = BigConversationDataTable->FindRow<FPetConversationData>(DialogueID, ContextString);
 
+	AActor* OwnerActor = GetOwner();
+
+	if ( OwnerActor && OwnerActor->Implements<UPetConversationInterface>() )
+	{
+		if ( RowData->bIsTalkToOtherCharacter == true ) // 딴놈이랑 대화시에는 그냥 계속 따라다니기 모드
+		{
+			IPetConversationInterface::Execute_SetPetState(OwnerActor, EPetState::EPS_Follow);
+		}
+		else // 펫이 대화시에는 대화 모드로 전환
+		{
+			IPetConversationInterface::Execute_SetPetState(OwnerActor, EPetState::EPS_Conversation);
+		}
+	}
+	
     if (RowData)
     {
         //  UI 업데이트
