@@ -7,7 +7,6 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h" // 헤더 파일 추가
-#include "Kismet/GameplayStatics.h"
 
 ABossSkeletonMage::ABossSkeletonMage()
 {
@@ -197,7 +196,7 @@ void ABossSkeletonMage::StartSummoning(const FVector& Location1, const FVector& 
 	SpawnSummonEffectAtLocation(GetActorLocation()); // 마법사가 소환 시작 이펙트
 	
 	BlackboardComp->SetValueAsFloat("AttackDelay", SummonEnemyDelay); // 행동 딜레이 설정
-	
+
 	SummonLocations.Empty();
 	SummonLocations.Add(Location1);
 	SummonLocations.Add(Location2);
@@ -410,4 +409,3 @@ void ABossSkeletonMage::CreateMagicShield()
 			FRotator::ZeroRotator, FVector(1.f));
 	}
 }
-

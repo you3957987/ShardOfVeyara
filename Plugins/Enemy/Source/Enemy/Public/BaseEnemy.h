@@ -130,9 +130,6 @@ public:
 	// 죽음 이펙트 생성 앞 뒤 위치 조정용 거리
 	UPROPERTY(EditAnywhere, Category="자체설정")
 	float DeathEffectForwardOffset = 0.0f;
-	// 죽음 이펙트 생성 위 아래 위치 조정용 거리
-	UPROPERTY(EditAnywhere, Category="자체설정")
-	float DeathEffectUpOffset = 0.0f;
 	// 죽음 이펙트 크기 배율
 	UPROPERTY(EditAnywhere, Category="자체설정")
 	float DeathEffectScale = 1.0f;

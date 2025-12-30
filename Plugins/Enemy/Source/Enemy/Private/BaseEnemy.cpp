@@ -21,23 +21,20 @@ ABaseEnemy::ABaseEnemy()
 	AttackRangeSphere->SetSphereRadius(AttackRange); // 초기 공격 범위 설정
 	AttackRangeSphere->SetVisibility(false); // 디버그 모드 기본은 비활성화
 	AttackRangeSphere->SetHiddenInGame(false);
-	AttackRangeSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 	DetectRangeSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AcceptRangeSphere"));
 	DetectRangeSphere->SetupAttachment(RootComponent); // 루트 컴포넌트
 	DetectRangeSphere->ShapeColor = FColor::Green;
 	DetectRangeSphere->SetSphereRadius(DetectRange);
 	DetectRangeSphere->SetVisibility(false);
-	DetectRangeSphere->SetHiddenInGame(false);
-	DetectRangeSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	DetectRangeSphere->SetHiddenInGame(false); 
 	
 	ChaseRangeSphere = CreateDefaultSubobject<USphereComponent>(TEXT("ChaseRangeSphere"));
 	ChaseRangeSphere->SetupAttachment(RootComponent); // 루트 컴포넌트
 	ChaseRangeSphere->ShapeColor = FColor::Blue;
 	ChaseRangeSphere->SetSphereRadius(ChaseRange);
 	ChaseRangeSphere->SetVisibility(false);
-	ChaseRangeSphere->SetHiddenInGame(false);
-	ChaseRangeSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ChaseRangeSphere->SetHiddenInGame(false); 
 	
 	// 체력 바 위젯 컴포넌트 생성 및 설정
 	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBarWidget"));
@@ -181,16 +178,12 @@ void ABaseEnemy::SpawnDeadEffectAndDestroy()
 {
 	if ( DeathEffectCascade )
 	{
-		// 현재 위치 + (앞방향 * 앞뒤 오프셋) + (윗방향 * 위아래 오프셋)
-		const FVector SpawnLocation = GetMesh()->GetComponentLocation() 
-			+ (GetActorForwardVector() * DeathEffectForwardOffset)
-			+ (GetActorUpVector() * DeathEffectUpOffset);
-
+		const FVector SpawnLocation = GetMesh()->GetComponentLocation() + (GetActorForwardVector() * DeathEffectForwardOffset);
 		const FRotator SpawnRotation = GetActorRotation();
 		const FVector SpawnScale = FVector(DeathEffectScale);
 
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DeathEffectCascade,
-			SpawnLocation, SpawnRotation, SpawnScale);
+		 SpawnLocation, SpawnRotation, SpawnScale);
 	}
 	Destroy(); // 이펙트가 없으면 바로 액터 삭제
 }

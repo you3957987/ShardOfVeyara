@@ -13,7 +13,10 @@
 #include "InputBufferEntry.h"
 #include "PlayerStateWidget.h"
 #include "SOVGameInstance.h"
+<<<<<<< HEAD
+=======
 #include "Interface/PetConversationInterface.h"
+>>>>>>> c424cfd17141ebd12aed7c0edfc6f53e79f50378
 #include "AGSDCharacter.generated.h"
 
 class USpringArmComponent;
@@ -29,7 +32,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
  *  Implements a controllable orbiting camera
  */
 UCLASS(abstract)
-class AAGSDCharacter : public ACharacter, public IPetConversationInterface
+class AAGSDCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -241,6 +244,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
 	
+<<<<<<< HEAD
+=======
 
 	// 펫 관련 추가( 인터페이스를 추가하고 인터페이스 함수중 하나인 SetMyPet 구현 )
 	//--
@@ -275,6 +280,7 @@ public:
 	// 펫 관련 추가
 	
 public:
+>>>>>>> c424cfd17141ebd12aed7c0edfc6f53e79f50378
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 

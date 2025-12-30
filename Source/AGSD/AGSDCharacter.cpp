@@ -18,7 +18,10 @@
 #include "SOVGameInstance.h"
 #include "Components/ProgressBar.h"
 #include "Kismet/GameplayStatics.h"
+<<<<<<< HEAD
+=======
 #include "BaseFlyingPet.h"
+>>>>>>> c424cfd17141ebd12aed7c0edfc6f53e79f50378
 
 AAGSDCharacter::AAGSDCharacter()
 {
@@ -478,6 +481,8 @@ void AAGSDCharacter::HealthRecovery(float amount)
 	Health = FMath::Clamp(Health + amount, 0, MaxHealth);
 	if (HealthBar) HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 }
+<<<<<<< HEAD
+=======
 //--------------
 
 void AAGSDCharacter::SetMyPet_Implementation(AActor* NewPet)
@@ -524,3 +529,4 @@ void AAGSDCharacter::SpawnMyPetAfterTravel()
 
 
 //--------------
+>>>>>>> c424cfd17141ebd12aed7c0edfc6f53e79f50378
