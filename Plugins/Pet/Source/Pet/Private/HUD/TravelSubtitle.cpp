@@ -34,8 +34,7 @@ void UTravelSubtitle::ShowSubtitle(FText InText, float Duration, UTexture2D* InP
 		PlayAnimation(FadeInAnim);
 	}
 
-	// 5. [수정] 자막 유지 시간 조절
-	// 보이스 길이(Duration)에 1~1.5초 정도 여유를 더 주면 유저가 읽기 편해집니다.
+	// 보이스 길이(Duration)에 1~1.5초 정도 여유주기
 	float ExtraHoldTime = 1.0f; 
 	float TotalDisplayTime = Duration + ExtraHoldTime;
 
