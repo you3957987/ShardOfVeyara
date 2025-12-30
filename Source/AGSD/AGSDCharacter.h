@@ -263,8 +263,9 @@ public:
 
 	// 인터페이스 함수 구현
 	virtual void SetMyPet_Implementation(AActor* NewPet) override;
-	virtual void MasterToPetConversation_Implementation(FName DialogueID) override;
-
+	virtual void MasterToPetBigConversation_Implementation(FName DialogueID) override;
+	virtual void MasterToPetSmallConversation_Implementation(FName DialogueID) override;
+	
 	// 레벨 이동 전 펫 파괴 및 이동 후 펫 스폰 함수
 	UFUNCTION(BlueprintCallable)
 	void DestroyPetBeforeTravel();

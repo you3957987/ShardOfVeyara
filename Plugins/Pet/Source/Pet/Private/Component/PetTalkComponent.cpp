@@ -7,6 +7,8 @@
 #include "HUD/TravelSubtitle.h"
 #include "Kismet/GameplayStatics.h"
 #include "Ping/PingActor.h"
+#include "Header/PetState.h"
+#include "Interface/PetConversationInterface.h"
 
 UPetTalkComponent::UPetTalkComponent()
 {
@@ -165,7 +167,7 @@ void UPetTalkComponent::Travel_Say(FPetConversationData DialogueData, float Dura
 void UPetTalkComponent::StartConversation(FName DialogueID)
 {
     //  데이터 테이블 유효성 체크
-    if (!ConversationDataTable || DialogueID.IsNone())
+    if (!BigConversationDataTable || DialogueID.IsNone())
     {
         EndConversation(); // ID가 없으면 종료
         return;
@@ -200,8 +202,22 @@ void UPetTalkComponent::StartConversation(FName DialogueID)
 
     //  데이터 테이블에서 ID로 행(Row) 검색
     static const FString ContextString(TEXT("StartConversation_Context"));
-    FPetConversationData* RowData = ConversationDataTable->FindRow<FPetConversationData>(DialogueID, ContextString);
+    FPetConversationData* RowData = BigConversationDataTable->FindRow<FPetConversationData>(DialogueID, ContextString);
 
+	AActor* OwnerActor = GetOwner();
+
+	if ( OwnerActor && OwnerActor->Implements<UPetConversationInterface>() )
+	{
+		if ( RowData->bIsTalkToOtherCharacter == true ) // 딴놈이랑 대화시에는 그냥 계속 따라다니기 모드
+		{
+			IPetConversationInterface::Execute_SetPetState(OwnerActor, EPetState::EPS_Follow);
+		}
+		else // 펫이 대화시에는 대화 모드로 전환
+		{
+			IPetConversationInterface::Execute_SetPetState(OwnerActor, EPetState::EPS_Conversation);
+		}
+	}
+	
     if (RowData)
     {
         //  UI 업데이트
@@ -258,6 +274,58 @@ void UPetTalkComponent::StartConversation(FName DialogueID)
     {
         UE_LOG(LogTemp, Warning, TEXT("Dialogue ID '%s' not found in DataTable."), *DialogueID.ToString());
         EndConversation();
+    }
+}
+
+void UPetTalkComponent::Travel_StartSmallConversation(FName DialogueID)
+{
+    // 1. 데이터 테이블 유효성 체크
+    UDataTable* TargetTable = TravelSmallConversationDataTable ? TravelSmallConversationDataTable : BigConversationDataTable;
+    if (!TargetTable || DialogueID.IsNone() || DialogueID == FName("0")) return;
+    
+    static const FString ContextString(TEXT("TravelSmallConversation_Context"));
+    FPetConversationData* RowData = TargetTable->FindRow<FPetConversationData>(DialogueID, ContextString);
+
+    if (RowData)
+    {
+        //  연속 대화를 위해 기존 음성이 있다면 중지시키고 진행
+        // 이렇게 해야 IsPlaying() 가드에 걸리지 않고 다음 대사가 재생됩니다.
+        if (CurrentFollowVoiceAudioComponent && CurrentFollowVoiceAudioComponent->IsPlaying())
+        {
+            CurrentFollowVoiceAudioComponent->Stop();
+        }
+
+        // 2. 지속 시간 계산 (보이스 우선, 없으면 5초)
+        float Duration = 5.0f;
+        if (RowData->VoiceAudio)
+        {
+            Duration = RowData->VoiceAudio->GetDuration();
+        }
+        if (Duration <= 0.0f) Duration = 5.0f;
+
+        // 3. 자막 표시 및 음성 재생 (준혁님이 요청하신 직접 구현 방식)
+        if (TravelSubtitleInstance)
+        {
+            TravelSubtitleInstance->ShowSubtitle(RowData->DialogueText, Duration, RowData->PetIcon);
+        }
+
+        if (RowData->VoiceAudio)
+        {
+            CurrentFollowVoiceAudioComponent = UGameplayStatics::SpawnSound2D(GetWorld(), RowData->VoiceAudio);
+        }
+
+        // 4. 다음 대사 예약 (체이닝)
+        if (!RowData->NextDialogueID.IsNone() && RowData->NextDialogueID != FName("0"))
+        {
+            FTimerDelegate TimerDel;
+            TimerDel.BindUObject(this, &UPetTalkComponent::Travel_StartSmallConversation, RowData->NextDialogueID);
+
+            // [수정 포인트 2] 대사 사이에 아주 짧은 간격(0.1~0.2초)을 주면 훨씬 자연스럽습니다.
+            float DelayBetweenLines = Duration + 0.1f; 
+
+            GetWorld()->GetTimerManager().ClearTimer(TravelSmallConversationTimerHandle);
+            GetWorld()->GetTimerManager().SetTimer(TravelSmallConversationTimerHandle, TimerDel, DelayBetweenLines, false);
+        }
     }
 }
 

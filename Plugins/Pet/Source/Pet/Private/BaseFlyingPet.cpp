@@ -6,6 +6,7 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Header/PetState.h"
 
 ABaseFlyingPet::ABaseFlyingPet()
 {
@@ -66,7 +67,7 @@ void ABaseFlyingPet::BeginPlay()
 	}
 
 	// [추가] 외부에서 OnPetConversationStart를 Broadcast하면 자동으로 StartConversation이 실행되도록 연결
-	OnPetConversationStart.AddDynamic(this, &ABaseFlyingPet::StartConversation);
+	OnPetConversationStart.AddDynamic(this, &ABaseFlyingPet::StartBigConversation);
 	
 	// 일정 주기마다 주변 적 감지 함수 호출 설정
 	GetWorld()->GetTimerManager().SetTimer(
@@ -274,16 +275,23 @@ void ABaseFlyingPet::OnItemDetectBeginOverlap(UPrimitiveComponent* OverlappedCom
 	}
 }
 
-void ABaseFlyingPet::TriggerPetConversation_Implementation(FName DialogueID)
+void ABaseFlyingPet::TriggerPetBigConversation_Implementation(FName DialogueID)
 {
-	StartConversation(DialogueID);
+	StartBigConversation(DialogueID);
 }
 
-void ABaseFlyingPet::StartConversation( FName DialogueID )
+void ABaseFlyingPet::TriggerPetSmallConversation_Implementation(FName DialogueID)
 {
-	// 대화 상태로 전환
-	PetState = EPetState::EPS_Conversation;
+	StartSmallConversation(DialogueID);
+}
 
+void ABaseFlyingPet::SetPetState_Implementation(EPetState NewState)
+{
+	PetState = NewState;
+}
+
+void ABaseFlyingPet::StartBigConversation( FName DialogueID )
+{
 	// 2. 대화 컴포넌트에 실제 대화 시작 요청
 	if (PetTalkComp)
 	{
@@ -295,6 +303,14 @@ void ABaseFlyingPet::EndConversation()
 {
 	// 따라다니기 상태로 복귀
 	PetState = EPetState::EPS_Follow;
+}
+
+void ABaseFlyingPet::StartSmallConversation(FName DialogueID)
+{
+	if (PetTalkComp)
+	{
+		PetTalkComp->Travel_StartSmallConversation(DialogueID);
+	}
 }
 
 void ABaseFlyingPet::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
