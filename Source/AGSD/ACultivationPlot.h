@@ -58,9 +58,10 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
     int32 GrowthTimeCounter = 0;
     //작물이 다 자랐는지
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Farming")
     bool FullyGrown = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Farming")
 	FName SeedName = NAME_None;
 	
     void RegisterCropToManager(int32 CurrentDay);

@@ -107,8 +107,6 @@ void AACultivationPlot::BeginPlay()
 	
 	GetSeedInfo(SeedName);
 	PlantCrop();
-	
-	if (!GS) return;
 
 	int32 CurrentDay = GI->CurrentDay;
 	while (ScheduledDay <= CurrentDay && !FullyGrown)
@@ -198,7 +196,7 @@ void AACultivationPlot::Tick(float DeltaTime)
 void AACultivationPlot::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
-
+	
 	FPlotSaveData SaveData;
 	SaveData.PlotGuid = GetActorGuid();
 	SaveData.SeedName = SeedName;
@@ -207,7 +205,7 @@ void AACultivationPlot::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	SaveData.FinishGrowStageIndex = FinishGrowStageIndex;
 	SaveData.FullyGrown = FullyGrown;
 	SaveData.ScheduledDay = ScheduledDay;
-	
+
 	if (GI)
 	{
 		// 아까 만든 구조체 데이터를 통째로 넘겨서 저장합니다.
