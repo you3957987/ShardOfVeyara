@@ -301,8 +301,7 @@ void AAGSDCharacter::WakeUp()
 {
 	FadeWidget->OnFadeFinished.RemoveDynamic(this, &AAGSDCharacter::WakeUp);
 	HealthRecovery(10.f);
-	UWorld* World = GetWorld();
-	UGameplayStatics::OpenLevel(World, FName(*World->GetMapName()));
+	TeleportToBed();
 }
 
 void AAGSDCharacter::Die()
