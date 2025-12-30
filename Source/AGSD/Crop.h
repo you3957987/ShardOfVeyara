@@ -29,7 +29,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Farming") // EditDefaultsOnly도 가능
 	TSubclassOf<Aharvest> HarvestClass;
 	//작물 정보
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Farming")
 	UUCropData* CropData;
 	
 	void HarvestCrop();
