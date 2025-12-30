@@ -9,6 +9,7 @@
 #include "harvest.h"
 #include "Crop.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCropHarvestedDelegate);
 UCLASS()
 class AGSD_API ACrop : public AActor, public IInteraction
 {
@@ -30,38 +31,16 @@ protected:
 	//작물 정보
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
 	UUCropData* CropData;
-	//현재 단계
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
-	int32 CurrentGrowStageIndex = 0;
-	//다음 단계까지 남은 시간
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
-	int32 GrowthTimeCounter = 0;
-	//다음 성장 날짜
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
-	int32 ScheduledDay = 0;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
-	bool FullyGrown = false;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
-	int32 FinishGrowStageIndex = 0;
 	
 	void HarvestCrop();
 
 	FText InteractActionText = FText::FromString(TEXT("수확하기"));
 
-	void RegisterCropToManager(int32 GrowthTimeCounter);
+	bool bIsHarvested = false;
 	
 public:	
 	//작물이 경작지에 심길 때 실행할 함수
 	void SetCropData(UUCropData* CData);
-	//작물 매니저가 성장 날짜가 되었을 땨 호출하여 성장을 처리하는 함수
-	void AdvanceGrowth();
-
-	FORCEINLINE int32 GetGrowthTimeCounter() const { return GrowthTimeCounter; };
-	FORCEINLINE int32 GetCurrentGrowStageIndex() const { return CurrentGrowStageIndex; };
-	FORCEINLINE int32 GetScheduledDay() const { return ScheduledDay; };
-	FORCEINLINE bool GetFullyGrown() const { return FullyGrown; };
 
 	//오버랩 시작 시 작동할 함수
 	UFUNCTION()
@@ -75,10 +54,14 @@ public:
 	virtual void ShowWidget_Implementation(ACharacter* player) override;
 	virtual bool CanInteract_Implementation(AAGSDCharacter* player) override;
 
-private:
-	//작물 메시 정보 업데이트
-	void MeshUpdate(int32 CurrentGrowStageIndex);
+    void SetCollisionEnable();
+    
+    //작물 메시 정보 업데이트
+    void MeshUpdate(int32 CurrentGrowStageIndex);
 
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnCropHarvestedDelegate OnHarvested;
+private:
 	//콜리전 박스
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CultivationPlot, meta = (AllowPrivateAccess = "true"))
 	class USphereComponent* CollisionBox;

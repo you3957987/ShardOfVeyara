@@ -2,6 +2,8 @@
 
 
 #include "AGSDGameStateBase.h"
+
+#include "SOVGameInstance.h"
 #include "Net/UnrealNetwork.h"
 
 void AAGSDGameStateBase::OnRep_CurrentDay()
@@ -14,6 +16,22 @@ void AAGSDGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AAGSDGameStateBase, CurrentDay);
 	DOREPLIFETIME(AAGSDGameStateBase, CurrentTime);
+}
+
+void AAGSDGameStateBase::BeginPlay()
+{
+	Super::BeginPlay();
+	USOVGameInstance* GI = Cast<USOVGameInstance>(GetGameInstance());
+	CurrentDay = GI->CurrentDay;
+	CurrentTime = GI->CurrentTime;
+}
+
+void AAGSDGameStateBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	USOVGameInstance* GI = Cast<USOVGameInstance>(GetGameInstance());
+	GI->CurrentDay = CurrentDay;
+	GI->CurrentTime = CurrentTime;
 }
 
 void AAGSDGameStateBase::AdvanceDay()

@@ -4,6 +4,7 @@
 #include "ClockWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "AGSDGameStateBase.h"
+#include "SOVGameInstance.h"
 #include "Components/TextBlock.h"
 
 void UClockWidget::NativeOnInitialized()
@@ -22,6 +23,13 @@ void UClockWidget::NativeOnInitialized()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("GameState Cast failed in UClockWidget::Initialize"))
 	}
+}
+
+void UClockWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+	USOVGameInstance* GI = Cast<USOVGameInstance>(GetGameInstance());
+	SetDayText(GI->CurrentDay);
 }
 
 void UClockWidget::SetTimeText(float time)

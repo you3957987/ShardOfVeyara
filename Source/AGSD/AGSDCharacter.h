@@ -266,9 +266,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pet")
 	TSubclassOf<class ABaseFlyingPet> DefaultPetClass;
 
-	// 캐릭터가 레벨을 떠날떄 언리얼 엔진이 호출하는 함수
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
 	// 인터페이스 함수 구현
 	virtual void SetMyPet_Implementation(AActor* NewPet) override;
 	virtual void MasterToPetConversation_Implementation(FName DialogueID) override;

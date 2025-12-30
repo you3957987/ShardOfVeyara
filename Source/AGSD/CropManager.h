@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Crop.h"
+#include "ACultivationPlot.h"
 #include "CropManager.generated.h"
 
 USTRUCT(BlueprintType)
@@ -14,7 +14,7 @@ struct FCropArrayWrapper
 
 	// TMap의 값으로 사용하기 위해 구조체 내부에 TArray를 선언합니다.
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
-	TArray<class ACrop*> CropsToAdvance;
+	TArray<class AACultivationPlot*> CropsToAdvance;
 };
 
 UCLASS()
@@ -27,12 +27,12 @@ public:
 	ACropManager();
 
 	UFUNCTION(BlueprintCallable, Category = "Farming")
-	void ResisterCrop(ACrop* Crop, int32 NextAdvanceDay);
+	void RegisterCrop(AACultivationPlot* plot, int32 NextAdvanceDay);
 
 	UFUNCTION(BlueprintCallable, Category = "Farming")
 	void HandleDayPassed(int32 CurrentDay);
 	
-	void UnregisterCrop(ACrop* Crop, int32 ScheduledDay);
+	void UnregisterCrop(AACultivationPlot* plot, int32 ScheduledDay);
 
 protected:
 	// Called when the game starts or when spawned

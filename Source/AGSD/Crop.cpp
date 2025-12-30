@@ -2,9 +2,6 @@
 
 
 #include "Crop.h"
-
-#include "AGSDGameStateBase.h"
-#include "CropManager.h"
 #include "Components/sphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "AGSDCharacter.h"
@@ -103,34 +100,11 @@ void ACrop::HarvestCrop()
 	}
 }
 
-void ACrop::RegisterCropToManager(int32 growthTimeCounter)
-{
-	AAGSDGameStateBase* GS = Cast<AAGSDGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
-	if (!GS) return;
-
-	int32 CurrentDay = GS->GetCurrentDay();
-
-	ScheduledDay = CurrentDay + growthTimeCounter;
-		
-	if (ACropManager* Manager = Cast<ACropManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACropManager::StaticClass())))
-	{
-		Manager->ResisterCrop(this, ScheduledDay);
-	}
-
-	MeshUpdate(CurrentGrowStageIndex);
-}
-
 void ACrop::SetCropData(UUCropData* CData)
 {
 	if (CData != nullptr)
 	{
 		this->CropData = CData;
-		CurrentGrowStageIndex = 0;
-		FinishGrowStageIndex = CData->GrowthStages.Num() - 1;	
-
-		GrowthTimeCounter = CData->GrowthStages[CurrentGrowStageIndex].TimeToGrow;
-
-		RegisterCropToManager(GrowthTimeCounter);
 	}
 }
 
@@ -140,6 +114,10 @@ void ACrop::Interact_Implementation(AAGSDCharacter* player)
 	UE_LOG(LogTemp, Warning, TEXT("ACrop::OnBeginOverlap"));
 
 	for (int i = 0; i < CropData->HarvestRewards[0].Quantity; i++)	HarvestCrop();
+	if (OnHarvested.IsBound())
+	{
+		OnHarvested.Broadcast();
+	}
 	Destroy();
 }
 
@@ -154,23 +132,6 @@ bool ACrop::CanInteract_Implementation(AAGSDCharacter* player)
 	return true;
 }
 
-void ACrop::AdvanceGrowth()
-{
-	if (CurrentGrowStageIndex < FinishGrowStageIndex)
-	{
-		CurrentGrowStageIndex++;
-		GrowthTimeCounter = CropData->GrowthStages[CurrentGrowStageIndex].TimeToGrow;
-		MeshUpdate(CurrentGrowStageIndex);
-		
-		ScheduledDay += GrowthTimeCounter;
-	}
-	if (CurrentGrowStageIndex >= FinishGrowStageIndex)
-	{
-		FullyGrown = true;
-		CollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	}
-}
-
 void ACrop::MeshUpdate(int32 currentGrowStageIndex)
 {
 	if (CropData != nullptr && CropData->GrowthStages[currentGrowStageIndex].Mesh)
@@ -179,3 +140,7 @@ void ACrop::MeshUpdate(int32 currentGrowStageIndex)
 	}
 }
 
+void ACrop::SetCollisionEnable()
+{
+    CollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+}
