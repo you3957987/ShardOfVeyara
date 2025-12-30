@@ -35,7 +35,8 @@ ABaseBossEnemy::ABaseBossEnemy()
 	PlayerDetectRangeSphere->SetHiddenInGame(false); 
 	
 	Tags.Add(FName("Enemy")); // 적 캐릭터 태그 추가 -> 이걸 이용해서 프로젝트에서 플러그인 에너미 접근. 매우 중요!!!!
-
+	Tags.Add(FName("Boss")); // 보스 태그 추가
+	
 	// AI 컨트롤러가 자동 빙의 하는거 제한. 범위 안에 플레이어가 들어왔을 때 오버랩 이벤트로 빙의
 	AutoPossessAI = EAutoPossessAI::Disabled;
 }
@@ -143,6 +144,11 @@ float ABaseBossEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 		if ( Health <= 0.f )
 		{
 			Die();
+		}
+		UEnemyHealthBarWidget* HealthBar = Cast<UEnemyHealthBarWidget>(HealthBarWidget->GetUserWidgetObject());
+		if ( HealthBar )
+		{
+			HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 		}
 	}
 	

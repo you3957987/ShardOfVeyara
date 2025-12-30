@@ -98,7 +98,7 @@ class ENEMY_API ABossSkeletonMage : public ABaseBossEnemy
 	// 쉴드 이펙트
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	class UNiagaraSystem* MagicShieldEffect;
-	
+
 public:
 	ABossSkeletonMage();
 	virtual void BeginPlay() override;

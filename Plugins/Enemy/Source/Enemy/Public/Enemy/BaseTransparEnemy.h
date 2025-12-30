@@ -56,6 +56,13 @@ protected:
 	// 투명도 변경 이펙트
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	class UNiagaraSystem* TransparChangeEffect; 
+	// 투명 변경 이펙트 생성 앞 뒤 위치 조정용 거리
+	UPROPERTY(EditAnywhere, Category="자체설정")
+	float TransEffectForwardOffset = 0.0f;
+	// 투명 변경 이펙트 생성 위 아래 위치 조정용 거리
+	UPROPERTY(EditAnywhere, Category="자체설정")
+	float TransEffectUpOffset = 0.0f;
+
 	
 	// 근접 공격 데미지
 	UPROPERTY(EditAnywhere, Category="자체설정")
