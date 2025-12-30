@@ -489,19 +489,11 @@ void AAGSDCharacter::SetMyPet_Implementation(AActor* NewPet)
 	}
 }
 
-void AAGSDCharacter::MasterToPetBigConversation_Implementation(FName DialogueID)
+void AAGSDCharacter::MasterToPetConversation_Implementation(FName DialogueID)
 {
 	if ( Pet )
 	{
-		Pet->StartBigConversation(DialogueID);
-	}
-}
-
-void AAGSDCharacter::MasterToPetSmallConversation_Implementation(FName DialogueID)
-{
-	if ( Pet )
-	{
-		Pet->StartSmallConversation(DialogueID);
+		Pet->StartConversation(DialogueID);
 	}
 }
 
