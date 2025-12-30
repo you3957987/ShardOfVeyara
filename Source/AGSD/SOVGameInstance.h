@@ -28,6 +28,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float PlayerHealth = MaxPlayerHealth;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bHasPet = false;
+	
 	UPROPERTY(BlueprintReadWrite, Category = "Farming")
 	TMap<FGuid, FPlotSaveData> GlobalPlotDataMap;
 
