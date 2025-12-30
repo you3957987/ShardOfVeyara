@@ -6,6 +6,7 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Header/PetState.h"
 
 ABaseFlyingPet::ABaseFlyingPet()
 {
@@ -284,11 +285,13 @@ void ABaseFlyingPet::TriggerPetSmallConversation_Implementation(FName DialogueID
 	StartSmallConversation(DialogueID);
 }
 
+void ABaseFlyingPet::SetPetState_Implementation(EPetState NewState)
+{
+	PetState = NewState;
+}
+
 void ABaseFlyingPet::StartBigConversation( FName DialogueID )
 {
-	// 대화 상태로 전환
-	PetState = EPetState::EPS_Conversation;
-
 	// 2. 대화 컴포넌트에 실제 대화 시작 요청
 	if (PetTalkComp)
 	{

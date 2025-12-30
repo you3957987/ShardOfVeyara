@@ -21,7 +21,7 @@ class PET_API AConversationTrigger : public AActor
 	
 protected:
 	virtual void BeginPlay() override;
-
+	
 	// 트리거 범위 박스 컴포넌트
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* TriggerBox;
@@ -30,7 +30,8 @@ protected:
 	UFUNCTION()
 	void OnTriggerBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
+	
+	
 	// 감지할 태그를 에디터에서 지정 (기본값은 Player )
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	FName TargetTag = TEXT("Player");

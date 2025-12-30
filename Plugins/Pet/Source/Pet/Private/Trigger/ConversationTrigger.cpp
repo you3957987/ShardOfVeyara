@@ -6,7 +6,7 @@
 AConversationTrigger::AConversationTrigger()
 {
 	// 틱 비활성화
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	TriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
 	RootComponent = TriggerBox;
@@ -25,9 +25,8 @@ void AConversationTrigger::BeginPlay()
 }
 
 void AConversationTrigger::OnTriggerBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                                    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	
 	// 1. Actor와 OtherComp가 유효한지 확인
 	if (OtherActor && OtherComp && OtherActor->ActorHasTag(TargetTag))
 	{
@@ -57,6 +56,7 @@ void AConversationTrigger::OnTriggerBoxBeginOverlap(UPrimitiveComponent* Overlap
 		}
 	}
 }
+
 
 
 

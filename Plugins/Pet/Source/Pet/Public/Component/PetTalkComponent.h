@@ -36,6 +36,10 @@ public:
 	// 다음 대화 ID == 만약 대화의 끝이라면 None으로 둠(칸 다 비우면 자동으로 None 처리됨)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	FName NextDialogueID;
+
+	// 펫 말고 다른 캐릭터에게 말하는지 여부 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	bool bIsTalkToOtherCharacter = false;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -144,5 +148,8 @@ public:
 	// 대화 종료시 호출될 델리게이트 인스턴스
 	UPROPERTY(BlueprintAssignable)
 	FOnConversationEnded OnConversationEnded;
+
+	UFUNCTION(BlueprintCallable)
+	bool ReturnWhoTalk(bool bIsTalkToOtherCharacter) { return bIsTalkToOtherCharacter; }
 	
 };
