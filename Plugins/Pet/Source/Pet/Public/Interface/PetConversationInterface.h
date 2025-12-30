@@ -1,8 +1,8 @@
-﻿#pragma once
+﻿// PetConversationInterface.h
+#pragma once
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "Header/PetState.h"
 #include "PetConversationInterface.generated.h"
 
 // 언리얼 엔진 리플렉션용 클래스 (내용 없음)
@@ -18,12 +18,9 @@ class PET_API IPetConversationInterface
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void SetPetState(EPetState NewState);
-	
 	// 대화 시작을 요청하는 함수 (BlueprintNativeEvent로 선언하여 C++과 블루프린트 양쪽에서 구현 가능하게 함)
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void TriggerPetBigConversation(FName DialogueID);
+	void TriggerPetConversation(FName DialogueID);
 
 	// 추가할 함수: 펫 객체를 주인에게 등록합니다.
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
@@ -31,12 +28,6 @@ public:
 
 	// 주인 쪽에서 펫의 대화 시작함수를 호출하는 함수( 이상한거 맞음 )( Implementation 없이 펫 안의 StartConversation 다이렉트로 호출 )
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void MasterToPetBigConversation(FName DialogueID);
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void TriggerPetSmallConversation(FName DialogueID);
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void MasterToPetSmallConversation(FName DialogueID);
+	void MasterToPetConversation(FName DialogueID);
 	
 };

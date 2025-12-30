@@ -3,7 +3,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "Interface/PetConversationInterface.h"
-#include "Header/PetState.h"
 #include "BaseFlyingPet.generated.h"
 
 // 펫의 위치 설정을 관리하는 구조체
@@ -23,6 +22,18 @@ struct FPetPositionSettings
 	// 좌우 오프셋 (-는 왼쪽, +는 오른쪽)
 	UPROPERTY( EditAnywhere )
 	float SideOffset;;
+};
+
+// 펫의 위치랑 매칭시킬 펫의 상태 열거형
+UENUM(BlueprintType)
+enum class EPetState : uint8
+{
+	EPS_Follow UMETA(DisplayName = "Follow"),
+	EPS_Battle UMETA(DisplayName = "Battle"),
+	EPS_BossBattle UMETA(DisplayName = "Boss Battle"),
+	EPS_Conversation UMETA(DisplayName = "Conversation"),
+	
+	EPS_MAX UMETA(DisplayName = "Default") // 최대값, 추가적인 값을 위한 공간
 };
 
 // 델리게이트 선언 , 인자값은 FName DialogueID (대화 ID)
@@ -113,23 +124,19 @@ public:
 	ABaseFlyingPet();
 	virtual void Tick(float DeltaTime) override;
 	// 인터페이스 함수 구현
-	virtual void TriggerPetBigConversation_Implementation(FName DialogueID) override;
-	virtual void TriggerPetSmallConversation_Implementation(FName DialogueID) override;
-	virtual void SetPetState_Implementation(EPetState NewState) override;
-	
+	virtual void TriggerPetConversation_Implementation(FName DialogueID) override;
+
 	// ABP 에 서 사용할 현재 속도 변수
 	UPROPERTY(BlueprintReadOnly)
 	FVector CurrentVelocity;
 	
-	// 외부에서 바인딩할 델리게이트 인스턴스
+	// 2. 외부에서 바인딩할 델리게이트 인스턴스
 	UPROPERTY(BlueprintAssignable)
 	FConversationStart OnPetConversationStart;
 	
 	// 대화 상태로 전환하며 대화 시작 -> 펫 토크 컴포넌트로 실제 대화 로직 위임
 	UFUNCTION(BlueprintCallable)
-	void StartBigConversation(FName DialogueID);
-	UFUNCTION(BlueprintCallable)
-	void StartSmallConversation(FName DialogueID);
+	void StartConversation(FName DialogueID);
 	// 대화 종료 및 이전 상태로 복귀 로직 처리
 	UFUNCTION(BlueprintCallable)
 	void EndConversation();

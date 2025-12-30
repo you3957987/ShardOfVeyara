@@ -6,39 +6,42 @@
 
 void UTravelSubtitle::ShowSubtitle(FText InText, float Duration, UTexture2D* InPetIcon)
 {
-	// 1. [핵심] 기존의 모든 타이머와 애니메이션을 즉시 중지 및 초기화
-	GetWorld()->GetTimerManager().ClearTimer(DisplayTimerHandle);
-	GetWorld()->GetTimerManager().ClearTimer(FadeOutTimerHandle);
-
-	if (IsAnimationPlaying(FadeOutAnim)) StopAnimation(FadeOutAnim);
-	if (IsAnimationPlaying(FadeInAnim))  StopAnimation(FadeInAnim);
-
-	// 2. 위젯 상태를 강제로 '완전 불투명'하게 초기화
-	// 페이드 아웃 도중에 새로운 자막이 들어올 때 투명도를 1로 돌려야 합니다.
-	SetRenderOpacity(1.0f);
-	SetVisibility(ESlateVisibility::HitTestInvisible);
-
-	// 3. 텍스트 및 아이콘 설정
+	
 	if (Text_Subtitle)
 	{
 		Text_Subtitle->SetText(InText);
 	}
+
+	// 2. 펫 아이콘 이미지 설정 (이미지가 들어왔을 때만 변경)
 	if (Image_PetIcon && InPetIcon)
 	{
 		Image_PetIcon->SetBrushFromTexture(InPetIcon);
 	}
+	
+	// 1. 보이게 설정
+	SetVisibility(ESlateVisibility::HitTestInvisible);
 
-	// 4. FadeIn 재생
+	// 2. FadeIn 재생
 	if (FadeInAnim)
 	{
 		PlayAnimation(FadeInAnim);
 	}
 
-	// 보이스 길이(Duration)에 1~1.5초 정도 여유주기
-	float ExtraHoldTime = 1.0f; 
-	float TotalDisplayTime = Duration + ExtraHoldTime;
+	// 3. 기존 타이머가 있다면 초기화 (Retriggerable Delay 효과)
+	if (GetWorld()->GetTimerManager().IsTimerActive(DisplayTimerHandle))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(DisplayTimerHandle);
+	}
+	
+	// FadeOut 중이었다면 멈추고 다시 선명하게
+	if (IsAnimationPlaying(FadeOutAnim))
+	{
+		StopAnimation(FadeOutAnim);
+		// 필요하다면 Opacity를 1로 강제 설정하는 로직 추가 필요
+	}
 
-	GetWorld()->GetTimerManager().SetTimer(DisplayTimerHandle, this, &UTravelSubtitle::StartFadeOut, TotalDisplayTime, false);
+	// 4. Duration 후에 FadeOut 시작하도록 타이머 설정
+	GetWorld()->GetTimerManager().SetTimer(DisplayTimerHandle, this, &UTravelSubtitle::StartFadeOut, Duration, false);
 }
 
 void UTravelSubtitle::StartFadeOut()

@@ -36,10 +36,6 @@ public:
 	// 다음 대화 ID == 만약 대화의 끝이라면 None으로 둠(칸 다 비우면 자동으로 None 처리됨)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	FName NextDialogueID;
-
-	// 펫 말고 다른 캐릭터에게 말하는지 여부 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	bool bIsTalkToOtherCharacter = false;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -47,6 +43,8 @@ class PET_API UPetTalkComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
+	
+	
 protected:
 	virtual void BeginPlay() override;
 
@@ -80,10 +78,7 @@ protected:
 	
 	// 대화 데이터 테이블
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
-	class UDataTable* BigConversationDataTable;
-	// 탐험시 대화 데이터 테이블
-	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
-	class UDataTable* TravelSmallConversationDataTable;
+	class UDataTable* ConversationDataTable;
 	// 대화 자막 클래스
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	TSubclassOf<class UConversationSubtitle> ConversationSubtitleClass;
@@ -93,8 +88,6 @@ protected:
 	void EndConversation();
 	// 대화 지속 시간 타이머 핸들
 	FTimerHandle ConversationTimerHandle;
-	// 탐험용 연속 대화 타이머 핸들
-	FTimerHandle TravelSmallConversationTimerHandle;
 	// 현재 재생 중인 음성 오디오 컴포넌트 (필요시 중지용)
 	UPROPERTY()
 	UAudioComponent* CurrentConversationVoiceAudioComponent = nullptr;
@@ -130,9 +123,6 @@ public:
 	// 외부에서 Battle -> Follow 상태 전환 대사 호출
 	UFUNCTION(BlueprintCallable)
 	void Travel_BattleToFollow();
-	// 탐험시 대사. 다이얼로그 ID로 호출
-	UFUNCTION(BlueprintCallable)
-	void Travel_StartSmallConversation(FName DialogueID);
 	
 	// [추가] 대화 중에 교체할 컨텍스트 (빈 컨텍스트 혹은 스킵 키만 포함)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
@@ -148,8 +138,5 @@ public:
 	// 대화 종료시 호출될 델리게이트 인스턴스
 	UPROPERTY(BlueprintAssignable)
 	FOnConversationEnded OnConversationEnded;
-
-	UFUNCTION(BlueprintCallable)
-	bool ReturnWhoTalk(bool bIsTalkToOtherCharacter) { return bIsTalkToOtherCharacter; }
 	
 };
