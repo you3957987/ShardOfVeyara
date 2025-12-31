@@ -132,7 +132,7 @@ void ABaseEnemyProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedCompone
 	SetLifeSpan(2.0f);
 }
 
-
+#if WITH_EDITOR
 void ABaseEnemyProjectile::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
@@ -151,4 +151,4 @@ void ABaseEnemyProjectile::PostEditChangeProperty(FPropertyChangedEvent& Propert
 		}
 	}
 }
-
+#endif

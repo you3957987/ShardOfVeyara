@@ -56,6 +56,7 @@ void AConversationTrigger::OnTriggerBoxBeginOverlap(UPrimitiveComponent* Overlap
 	}
 }
 
+#if WITH_EDITOR
 void AConversationTrigger::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
@@ -74,5 +75,6 @@ void AConversationTrigger::PostEditChangeProperty(FPropertyChangedEvent& Propert
 		}
 	}
 }
+#endif
 
 

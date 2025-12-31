@@ -92,7 +92,7 @@ void AACultivationPlot::BeginPlay()
 	
 	FPlotSaveData LoadedData;
 	// 아까 만든 구조체 데이터를 통째로 넘겨서 저장합니다.
-	if (!GI->GetPlotData(GetActorGuid(), LoadedData)) return;
+	if (!GI->GetPlotData(GetName(), LoadedData)) return;
 	if (LoadedData.SeedName == NAME_None) return;
 
 	SeedName = LoadedData.SeedName;
@@ -198,7 +198,7 @@ void AACultivationPlot::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 	
 	FPlotSaveData SaveData;
-	SaveData.PlotGuid = GetActorGuid();
+	SaveData.PlotName = GetName();
 	SaveData.SeedName = SeedName;
 	SaveData.CurrentGrowStageIndex = CurrentGrowStageIndex;
 	SaveData.GrowthTimeCounter = GrowthTimeCounter;

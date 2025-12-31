@@ -40,6 +40,7 @@ void ABaseExploderEnemy::Explode()
 	Die(); // 폭발 후 죽음 처리
 }
 
+#if WITH_EDITOR
 void ABaseExploderEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
@@ -68,3 +69,4 @@ void ABaseExploderEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 		}
 	}
 }
+#endif

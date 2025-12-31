@@ -57,6 +57,7 @@ void ABaseMeleeEnemy::CheckMeleeAttackHit(float DeltaTime)
 	}
 }
 
+#if WITH_EDITOR
 void ABaseMeleeEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
@@ -77,3 +78,4 @@ void ABaseMeleeEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 		}
 	}
 }
+#endif
