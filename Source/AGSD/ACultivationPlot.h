@@ -81,9 +81,11 @@ protected:
 	AAGSDGameStateBase* GS = nullptr;
 	USOVGameInstance* GI = nullptr;
 
+	UFUNCTION()
+	void OnWeedRemoved();
 	void GrowthLogic();
 	void SpawnWeeds();
-	
+
 public:	
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	//오버랩 시작 시 작동할 함수

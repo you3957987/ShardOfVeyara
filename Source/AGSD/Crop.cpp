@@ -66,6 +66,7 @@ void ACrop::BeginPlay()
 
 	FHitResult HitResult;
 	FCollisionQueryParams Params;
+		
 	Params.AddIgnoredActor(this); // 내 자신(잡초 뭉치)은 무시
 
 	// 4. 레이저 발사!
@@ -73,24 +74,18 @@ void ACrop::BeginPlay()
 		HitResult,
 		TraceStart,
 		TraceEnd,
-		ECC_WorldStatic, // 지형(WorldStatic)만 체크
+		PlacementTraceChannel, // 지형(WorldStatic)만 체크
 		Params
 	);
 
 	if (bHit)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Hit Actor: %s, Component: %s"), 
+		*HitResult.GetActor()->GetName(), 
+		*HitResult.GetComponent()->GetName());		
+			
 		// 5. 땅에 닿았다면 위치 이동 (World Location 설정)
 		CropMesh->SetWorldLocation(HitResult.Location);
-
-		// (선택 사항) 경사면에 맞춰 기울이기
-		// 나무가 아니라 납작한 풀이라면 기울이는 게 자연스럽습니다.
-		// 필요 없다면 이 줄은 지우세요.
-		FRotator CurrentRot = CropMesh->GetComponentRotation();
-            
-		// 바닥의 기울기(Normal)를 회전값으로 변환하되, Z축 회전(Yaw)은 원래 랜덤하게 돌려놓은 값을 유지
-		FRotator TargetRot = HitResult.ImpactNormal.Rotation();
-		TargetRot.Yaw = CurrentRot.Yaw; // 원래 회전각 유지
-		TargetRot.Pitch -= 90.0f;       // Normal은 수직이 기준이라 눕혀줘야 할 수도 있음 (메쉬 축에 따라 다름)
             
 		// 간단하게는 위 코드 대신 아래처럼 Normal에 UpVector를 맞추는 방식을 많이 씁니다.
 		FRotator AlignRot = FRotationMatrix::MakeFromZ(HitResult.ImpactNormal).Rotator();

@@ -243,15 +243,6 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "PlayerState")
 	void TeleportToBed();
-	
-	// 펫 관련 추가( 인터페이스를 추가하고 인터페이스 함수중 하나인 SetMyPet 구현 )
-	//--
-
-	/*
-	#include "Interface/PetConversationInterface.h"
-	#include "BaseFlyingPet.h"
-	IPetConversationInterface::Execute_MasterToPetConversation(OtherActor, DialogueID); 캐릭터에서 실행하면 자동으로 대화 실행
-	 */
 
 	UPROPERTY( EditAnywhere, Category="Pet")
 	bool bHasPet = false;
@@ -272,11 +263,10 @@ public:
 	void DestroyPetBeforeTravel();
 	UFUNCTION(BlueprintCallable)
 	void SpawnMyPetAfterTravel();
-	
+
+	FORCEINLINE AActor* getCurrentInteractableActor() const { return CurrentInteractableActor; }
 	//--
 	// 펫 관련 추가
-	
-public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 

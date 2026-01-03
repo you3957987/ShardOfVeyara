@@ -26,8 +26,12 @@ AACultivationPlot::AACultivationPlot()
 
 void AACultivationPlot::HandleDayPassed(int32 CurrentDay)
 {
-	if (PlantedCrop) AdvanceGrowth();
-	if (FMath::FRand() <= weedsProb)
+	if (PlantedCrop)
+	{
+		if (bHasWeeds) ScheduledDay++;
+		else if (ScheduledDay <= CurrentDay) AdvanceGrowth();
+	}
+	if (!bHasWeeds && FMath::FRand() <= weedsProb)
 	{
 		bHasWeeds = true;
 		SpawnWeeds();
@@ -79,7 +83,10 @@ void AACultivationPlot::Interact_Implementation(AAGSDCharacter* player)
 		CurrentGrowStageIndex = 0;
 		GrowthTimeCounter = CropData->GrowthStages[CurrentGrowStageIndex].TimeToGrow;
 		FinishGrowStageIndex = CropData->GrowthStages.Num() - 1;
-
+		
+		int32 currentDay = GS->GetCurrentDay();
+		ScheduledDay =  currentDay + GrowthTimeCounter;
+		
 		PlantCrop();
 		PlantedCrop->MeshUpdate(CurrentGrowStageIndex);
 	}
@@ -176,7 +183,7 @@ void AACultivationPlot::PlantCrop()
 	{
 	    PlantedCrop->SetCropData(CropData);
 
-		PlantedCrop->OnHarvested.AddDynamic(this, &AACultivationPlot::OnPlantedCropDestroyed);
+		PlantedCrop->OnHarvested.AddDynamic(this, &AACultivationPlot::OnPlantedCropDestroyed);		
 		UGameplayStatics::FinishSpawningActor(PlantedCrop, SpawnTransform);
 	}
 }
@@ -209,6 +216,11 @@ void AACultivationPlot::GetSeedInfo(FName TargetRowName)
 	}
 }
 
+void AACultivationPlot::OnWeedRemoved()
+{
+	bHasWeeds = false;
+}
+
 void AACultivationPlot::GrowthLogic() {
 	if (CurrentGrowStageIndex < FinishGrowStageIndex)
 	{
@@ -238,6 +250,7 @@ void AACultivationPlot::SpawnWeeds()
 	ESpawnActorCollisionHandlingMethod::AlwaysSpawn
 	);
 	UGameplayStatics::FinishSpawningActor(WeedsActor, SpawnTransform);
+	WeedsActor->OnWeeding.AddDynamic(this, &AACultivationPlot::OnWeedRemoved);
 }
 
 void AACultivationPlot::AdvanceGrowth()

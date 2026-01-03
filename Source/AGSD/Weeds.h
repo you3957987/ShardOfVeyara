@@ -3,12 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AGSDCharacter.h"
 #include "Interaction.h"
 #include "GameFramework/Actor.h"
 #include "Weeds.generated.h"
 
 #define ECC_WeedPlace ECC_GameTraceChannel2
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWeedingDelegate);
 UCLASS()
 class AGSD_API AWeeds : public AActor, public IInteraction
 {
@@ -30,20 +32,33 @@ protected:
 	//오버랩 종료 시 작동할 함수
 	UFUNCTION()
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
-protected:
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn = "true"))
 	bool Holding = false;
 	
 	FText InteractActionText = FText::FromString(TEXT("잡초제거"));
+	bool bIsActionActive = false;
+	AAGSDPlayerController* PC;
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interact")
 	void WeedingInteract(AAGSDCharacter* player);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
+	TEnumAsByte<ECollisionChannel> PlacementTraceChannel;
+
+	void OnMontageEnded(UAnimMontage* AnimMontage, bool bArg);
+	void PlayPullPlant(AAGSDCharacter* Player);
 	
 public:
 	virtual void Interact_Implementation(AAGSDCharacter* player) override;
 	virtual void ShowWidget_Implementation(ACharacter* player) override;
 	virtual bool CanInteract_Implementation(AAGSDCharacter* player) override;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnWeedingDelegate OnWeeding;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Farming")
+	UAnimMontage* PullPlant;
 	
 private:
 	//콜리전 박스

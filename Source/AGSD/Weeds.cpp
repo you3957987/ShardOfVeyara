@@ -47,7 +47,7 @@ void AWeeds::SnapWeedsToGround()
 			HitResult,
 			TraceStart,
 			TraceEnd,
-			ECC_WeedPlace, // 지형(WorldStatic)만 체크
+			PlacementTraceChannel, // 지형(WorldStatic)만 체크
 			Params
 		);
 
@@ -92,9 +92,50 @@ void AWeeds::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActo
 	}
 }
 
+void AWeeds::OnMontageEnded(UAnimMontage* AnimMontage, bool bArg)
+{
+	bIsActionActive = false;
+
+	// 2. 이동(WASD) 입력 다시 받기
+	if (PC)
+	{
+		PC->SetIgnoreMoveInput(false);
+	}
+    
+	// 로그로 확인
+	UE_LOG(LogTemp, Warning, TEXT("몽타주 종료! 다시 움직일 수 있습니다."));
+	Destroy();
+}
+
+void AWeeds::PlayPullPlant(AAGSDCharacter* Player)
+{
+	if (bIsActionActive) return;
+	bIsActionActive = true;
+	
+	PC = Player->getPlayerController();
+	PC->SetIgnoreMoveInput(true);
+	
+	UAnimInstance* AnimInstance = Player->GetMesh()->GetAnimInstance();
+	if (AnimInstance && PullPlant)
+	{
+		AnimInstance->Montage_Play(PullPlant);
+
+		// 4. 몽타주가 끝나면 알려달라고 예약 (델리게이트 연결)
+		FOnMontageEnded EndDelegate;
+		EndDelegate.BindUObject(this, &AWeeds::OnMontageEnded);
+		AnimInstance->Montage_SetEndDelegate(EndDelegate, PullPlant);
+	}
+}
+
 void AWeeds::Interact_Implementation(AAGSDCharacter* player)
 {
-	WeedingInteract(player);
+	if (OnWeeding.IsBound())
+	{
+		OnWeeding.Broadcast();
+	}
+	player->SetHighLight(player->getCurrentInteractableActor(), false);
+	
+	PlayPullPlant(player);
 }
 
 void AWeeds::ShowWidget_Implementation(ACharacter* player)
