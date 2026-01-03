@@ -29,4 +29,7 @@ struct FPlotSaveData
 	//작물이 다 자랐는지
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
 	bool FullyGrown = false;
+	//잡초가 자랐는지
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
+	bool bHasWeeds = false;
 };

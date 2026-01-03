@@ -9,22 +9,44 @@
   <component name="ChangeListManager">
     <list default="true" id="4fb32fe1-2f7b-4ce4-b591-d5e38df0812d" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultGame.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultGame.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Death.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Death.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Bed.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Bed.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Crop.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Crop.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_CultivationPlot.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_CultivationPlot.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_FakePlot.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Farmer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Farmer.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_NoRegenItem.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_PickUpItemBase.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Tribute.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Tribute.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_field.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_field.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Harvest/BP_Beet_Harvest.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Harvest/BP_Beet_Harvest.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Harvest/BP_Carrot_Harvest.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Harvest/BP_Carrot_Harvest.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Harvest/BP_Corn_Harvest.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Harvest/BP_Corn_Harvest.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Harvest/BP_Lettuce_Harvest.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Harvest/BP_Lettuce_Harvest.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Harvest/BP_Pumpkin_Harvest.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Harvest/BP_Pumpkin_Harvest.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Harvest/BP_Rice_Harvest.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Harvest/BP_Rice_Harvest.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Harvest/BP_Tomato_Harvest.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Harvest/BP_Tomato_Harvest.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Harvest/BP_Watermelon_Harvest.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Harvest/BP_Watermelon_Harvest.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Harvest/BP_Wheat_Harvest.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Harvest/BP_Wheat_Harvest.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Seed/BP_NoRegenSeed.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Seed/BP_NoRegenSeed.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Seed/BP_Seed_Beet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Seed/BP_Seed_Beet.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Seed/BP_Seed_Carrot.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Seed/BP_Seed_Carrot.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Seed/BP_Seed_Corn.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Seed/BP_Seed_Corn.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Seed/BP_Seed_Lettuce.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Seed/BP_Seed_Lettuce.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Seed/BP_Seed_Pumpkin.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Seed/BP_Seed_Pumpkin.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Seed/BP_Seed_Rice.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Seed/BP_Seed_Rice.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Seed/BP_Seed_Tomato.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Seed/BP_Seed_Tomato.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Seed/BP_Seed_Watermelon.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Seed/BP_Seed_Watermelon.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Seed/BP_Seed_Wheat.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Seed/BP_Seed_Wheat.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_WeaponBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_WeaponBase.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Inventory/BPAC_InventoryComponent.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Inventory/BPAC_InventoryComponent.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/BP_ItemMaster.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/BP_ItemMaster.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Level/Farm_Sky_Island.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Level/Farm_Sky_Island.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Level/Forest_Sky_Island.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Level/Forest_Sky_Island.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/BTService/BTService_CheckSightAndDetect.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/BTService/BTService_CheckSightAndDetect.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/BaseExploderEnemy.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/BaseExploderEnemy.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/BaseMeleeEnemy.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/BaseMeleeEnemy.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/BaseTransparEnemy.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/BaseTransparEnemy.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BaseBossEnemy.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BaseBossEnemy.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyProjectile/BaseEnemyProjectile.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyProjectile/BaseEnemyProjectile.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/BaseFlyingPet.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/BaseFlyingPet.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/Trigger/ConversationTrigger.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/Trigger/ConversationTrigger.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Meshes/LP_Landscape/Field_3.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Meshes/LP_Landscape/Field_3.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGSD/ACultivationPlot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/ACultivationPlot.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/ACultivationPlot.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/ACultivationPlot.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/Crop.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/Crop.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGSD/PlotSaveData.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/PlotSaveData.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/SOVGameInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/SOVGameInstance.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/SOVGameInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/SOVGameInstance.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,6 +82,8 @@
     <setting file="file://$PROJECT_DIR$/Source/AGSD/Interaction.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/InteractionWidget.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/InteractionWidget.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/AGSD/Weeds.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/AGSD/Weeds.h" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -161,6 +185,14 @@
         <option name="Build" />
       </method>
     </configuration>
+    <configuration default="true" type="Uproject" factoryName="rider.uproject">
+      <option name="DEFAULT_PROJECT_PATH" value="" />
+      <option name="PROJECT_FILE_PATH" value="" />
+      <option name="AUTO_SELECT_PRIORITY" value="0" />
+      <method v="2">
+        <option name="Build" />
+      </method>
+    </configuration>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="디폴트 작업">
@@ -217,6 +249,7 @@
       <workItem from="1767092189337" duration="261000" />
       <workItem from="1767097081992" duration="7277000" />
       <workItem from="1767119823366" duration="2288000" />
+      <workItem from="1767407448311" duration="9183000" />
     </task>
     <servers />
   </component>
