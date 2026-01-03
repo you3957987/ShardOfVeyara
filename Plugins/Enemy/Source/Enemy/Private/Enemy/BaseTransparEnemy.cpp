@@ -163,6 +163,7 @@ void ABaseTransparEnemy::TestTransparencyLogic()
 	}
 }
 
+#if WITH_EDITOR
 void ABaseTransparEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
@@ -183,3 +184,4 @@ void ABaseTransparEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 		}
 	}
 }
+#endif

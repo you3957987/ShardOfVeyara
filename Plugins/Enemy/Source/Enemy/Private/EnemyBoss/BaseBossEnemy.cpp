@@ -216,6 +216,7 @@ void ABaseBossEnemy::TestDeadLogic()
 	}
 }
 
+#if	WITH_EDITOR
 void ABaseBossEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
@@ -252,4 +253,4 @@ void ABaseBossEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChang
 		}
 	}
 }
-
+#endif

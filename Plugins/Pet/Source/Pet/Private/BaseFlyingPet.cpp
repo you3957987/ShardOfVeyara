@@ -313,6 +313,7 @@ void ABaseFlyingPet::StartSmallConversation(FName DialogueID)
 	}
 }
 
+#if WITH_EDITOR
 void ABaseFlyingPet::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
@@ -349,5 +350,4 @@ void ABaseFlyingPet::PostEditChangeProperty(FPropertyChangedEvent& PropertyChang
 		}
 	}
 }
-
-
+#endif

@@ -32,7 +32,7 @@ public:
 	bool bHasPet = false;
 	
 	UPROPERTY(BlueprintReadWrite, Category = "Farming")
-	TMap<FGuid, FPlotSaveData> GlobalPlotDataMap;
+	TMap<FString, FPlotSaveData> GlobalPlotDataMap;
 
 	// 경작지로부터 데이터를 받아서 저장/갱신하는 함수
 	UFUNCTION(BlueprintCallable, Category = "Farming")
@@ -40,5 +40,5 @@ public:
     
 	// GUID로 데이터를 꺼내주는 함수 (나중에 로드할 때 씀)
 	UFUNCTION(BlueprintCallable, Category = "Farming")
-	bool GetPlotData(FGuid TargetGuid, FPlotSaveData& OutData);
+	bool GetPlotData(FString name, FPlotSaveData& OutData);
 };

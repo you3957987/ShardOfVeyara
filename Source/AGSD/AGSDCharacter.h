@@ -241,7 +241,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
 	
-
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "PlayerState")
+	void TeleportToBed();
+	
 	// 펫 관련 추가( 인터페이스를 추가하고 인터페이스 함수중 하나인 SetMyPet 구현 )
 	//--
 
