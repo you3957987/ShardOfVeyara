@@ -221,8 +221,10 @@ void AAGSDCharacter::BeginPlay()
 
 	PC = Cast<AAGSDPlayerController>(GetController());
 	GI = Cast<USOVGameInstance>(GetGameInstance());
-	
+
+	if (GI) bHasPet = GI->bHasPet;
 	SpawnMyPetAfterTravel(); // 펫 있으면 오픈 레벨 이후 펫 스폰
+	
 	HealthBar = getHealthBar();
 	if (HealthBar)
 	{
@@ -253,6 +255,7 @@ void AAGSDCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 	GI->PlayerHealth = Health;
 	GI->MaxPlayerHealth = MaxHealth;
+	GI->bHasPet = bHasPet;
 }
 
 AActor* AAGSDCharacter::MinDistActor()
