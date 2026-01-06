@@ -12,5 +12,5 @@ enum class EPetState : uint8
 	EPS_BossBattle UMETA(DisplayName = "Boss Battle"),
 	EPS_Conversation UMETA(DisplayName = "Conversation"),
 	
-	EPS_MAX UMETA(DisplayName = "Default") // 최대값, 추가적인 값을 위한 공간 헤더 왜 없어질까?
+	EPT_MAX UMETA(DisplayName = "Default") // 최대값, 추가적인 값을 위한 공간 헤더
 };

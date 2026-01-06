@@ -3,11 +3,13 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Components/AudioComponent.h"
+#include "FlyingPet/CuteWhalePet.h"
 #include "HUD/ConversationSubtitle.h"
 #include "HUD/TravelSubtitle.h"
 #include "Kismet/GameplayStatics.h"
 #include "Ping/PingActor.h"
 #include "Header/PetState.h"
+#include "Header/PetType.h"
 #include "Interface/PetConversationInterface.h"
 
 UPetTalkComponent::UPetTalkComponent()
@@ -164,6 +166,60 @@ void UPetTalkComponent::Travel_Say(FPetConversationData DialogueData, float Dura
 	}
 }
 
+// 탐험시 특수 대사 이외의 좌하단 대화
+void UPetTalkComponent::Travel_StartSmallConversation(FName DialogueID)
+{
+    // 1. 데이터 테이블 유효성 체크
+    UDataTable* TargetTable = TravelSmallConversationDataTable ? TravelSmallConversationDataTable : BigConversationDataTable;
+    if (!TargetTable || DialogueID.IsNone() || DialogueID == FName("0")) return;
+    
+    static const FString ContextString(TEXT("TravelSmallConversation_Context"));
+    FPetConversationData* RowData = TargetTable->FindRow<FPetConversationData>(DialogueID, ContextString);
+
+    if (RowData)
+    {
+        //  연속 대화를 위해 기존 음성이 있다면 중지시키고 진행
+        // 이렇게 해야 IsPlaying() 가드에 걸리지 않고 다음 대사가 재생됩니다.
+        if (CurrentFollowVoiceAudioComponent && CurrentFollowVoiceAudioComponent->IsPlaying())
+        {
+            CurrentFollowVoiceAudioComponent->Stop();
+        }
+
+        // 2. 지속 시간 계산 (보이스 우선, 없으면 5초)
+        float Duration = 5.0f;
+        if (RowData->VoiceAudio)
+        {
+            Duration = RowData->VoiceAudio->GetDuration();
+        }
+        if (Duration <= 0.0f) Duration = 5.0f;
+
+        // 3. 자막 표시 및 음성 재생 (준혁님이 요청하신 직접 구현 방식)
+        if (TravelSubtitleInstance)
+        {
+            TravelSubtitleInstance->ShowSubtitle(RowData->DialogueText, Duration, RowData->PetIcon);
+        }
+
+        if (RowData->VoiceAudio)
+        {
+            CurrentFollowVoiceAudioComponent = UGameplayStatics::SpawnSound2D(GetWorld(), RowData->VoiceAudio);
+        }
+
+        // 4. 다음 대사 예약 (체이닝)
+        if (!RowData->NextDialogueID.IsNone() && RowData->NextDialogueID != FName("0"))
+        {
+            FTimerDelegate TimerDel;
+            TimerDel.BindUObject(this, &UPetTalkComponent::Travel_StartSmallConversation, RowData->NextDialogueID);
+
+            // [수정 포인트 2] 대사 사이에 아주 짧은 간격(0.1~0.2초)을 주면 훨씬 자연스럽습니다.
+            float DelayBetweenLines = Duration + 0.1f; 
+
+            GetWorld()->GetTimerManager().ClearTimer(TravelSmallConversationTimerHandle);
+            GetWorld()->GetTimerManager().SetTimer(TravelSmallConversationTimerHandle, TimerDel, DelayBetweenLines, false);
+        }
+    }
+}
+
+// 화면 하단에 나오는 큰 대화
 void UPetTalkComponent::StartConversation(FName DialogueID)
 {
     //  데이터 테이블 유효성 체크
@@ -218,8 +274,20 @@ void UPetTalkComponent::StartConversation(FName DialogueID)
     		{
     			IPetConversationInterface::Execute_SetPetState(OwnerActor, EPetState::EPS_Conversation);
     		}
+
+    		// 귀여운 고래 펫일 경우
+			if ( IPetConversationInterface::Execute_GetMyPetType(OwnerActor) == EPetType::EPT_CuteWhale )
+			{
+				ACuteWhalePet* CuteWhalePet = Cast<ACuteWhalePet>(OwnerActor);
+				if ( CuteWhalePet && RowData->CuteWhale_ColorIndex != -1 && RowData->CuteWhale_FaceIndex != -1 )
+				{
+					CuteWhalePet->SetPetAppearance(
+						RowData->CuteWhale_ColorIndex,
+						RowData->CuteWhale_FaceIndex
+						);
+				}
+			}
     	}
-    	
         //  UI 업데이트
         if (ConversationSubtitleInstance)
         {
@@ -274,58 +342,6 @@ void UPetTalkComponent::StartConversation(FName DialogueID)
     {
         UE_LOG(LogTemp, Error, TEXT("Dialogue ID '%s' not found in DataTable."), *DialogueID.ToString());
         EndConversation();
-    }
-}
-
-void UPetTalkComponent::Travel_StartSmallConversation(FName DialogueID)
-{
-    // 1. 데이터 테이블 유효성 체크
-    UDataTable* TargetTable = TravelSmallConversationDataTable ? TravelSmallConversationDataTable : BigConversationDataTable;
-    if (!TargetTable || DialogueID.IsNone() || DialogueID == FName("0")) return;
-    
-    static const FString ContextString(TEXT("TravelSmallConversation_Context"));
-    FPetConversationData* RowData = TargetTable->FindRow<FPetConversationData>(DialogueID, ContextString);
-
-    if (RowData)
-    {
-        //  연속 대화를 위해 기존 음성이 있다면 중지시키고 진행
-        // 이렇게 해야 IsPlaying() 가드에 걸리지 않고 다음 대사가 재생됩니다.
-        if (CurrentFollowVoiceAudioComponent && CurrentFollowVoiceAudioComponent->IsPlaying())
-        {
-            CurrentFollowVoiceAudioComponent->Stop();
-        }
-
-        // 2. 지속 시간 계산 (보이스 우선, 없으면 5초)
-        float Duration = 5.0f;
-        if (RowData->VoiceAudio)
-        {
-            Duration = RowData->VoiceAudio->GetDuration();
-        }
-        if (Duration <= 0.0f) Duration = 5.0f;
-
-        // 3. 자막 표시 및 음성 재생 (준혁님이 요청하신 직접 구현 방식)
-        if (TravelSubtitleInstance)
-        {
-            TravelSubtitleInstance->ShowSubtitle(RowData->DialogueText, Duration, RowData->PetIcon);
-        }
-
-        if (RowData->VoiceAudio)
-        {
-            CurrentFollowVoiceAudioComponent = UGameplayStatics::SpawnSound2D(GetWorld(), RowData->VoiceAudio);
-        }
-
-        // 4. 다음 대사 예약 (체이닝)
-        if (!RowData->NextDialogueID.IsNone() && RowData->NextDialogueID != FName("0"))
-        {
-            FTimerDelegate TimerDel;
-            TimerDel.BindUObject(this, &UPetTalkComponent::Travel_StartSmallConversation, RowData->NextDialogueID);
-
-            // [수정 포인트 2] 대사 사이에 아주 짧은 간격(0.1~0.2초)을 주면 훨씬 자연스럽습니다.
-            float DelayBetweenLines = Duration + 0.1f; 
-
-            GetWorld()->GetTimerManager().ClearTimer(TravelSmallConversationTimerHandle);
-            GetWorld()->GetTimerManager().SetTimer(TravelSmallConversationTimerHandle, TimerDel, DelayBetweenLines, false);
-        }
     }
 }
 
@@ -387,6 +403,18 @@ void UPetTalkComponent::EndConversation()
 		}
 		// 이동 입력 차단 해제
 		PC->SetIgnoreMoveInput(false);
+	}
+
+	AActor* OwnerActor = GetOwner();
+	
+	// 귀여운 고래 펫일 경우
+	if ( IPetConversationInterface::Execute_GetMyPetType(OwnerActor) == EPetType::EPT_CuteWhale )
+	{
+		ACuteWhalePet* CuteWhalePet = Cast<ACuteWhalePet>(OwnerActor);
+		if ( CuteWhalePet )
+		{
+			CuteWhalePet->SetPetAppearance(0,0); // 디폴트 색상 및 표정으로 복귀
+		}
 	}
 	
 	// 이 컴포넌트를 가진 액터가 이 이벤트를 (Bind)하면 실행됨

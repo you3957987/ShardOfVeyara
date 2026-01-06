@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
 #include "Header/PetState.h"
+#include "Header/PetType.h"
 #include "PetConversationInterface.generated.h"
 
 // 언리얼 엔진 리플렉션용 클래스 (내용 없음)
@@ -30,6 +31,10 @@ public:
 	// 추가할 함수: 펫 객체를 주인에게 등록합니다.
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void SetMyPet(AActor* NewPet);
+
+	// 펫의 타입을 반환하는 함수
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	EPetType GetMyPetType() const;
 	
 	// 주인 쪽에서 펫의 대화 시작함수를 호출하는 함수( 이상한거 맞음 )( Implementation 없이 펫 안의 StartConversation 다이렉트로 호출 )
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)

@@ -5,7 +5,7 @@
 #include "BossSkeletonMage.generated.h"
 
 USTRUCT(BlueprintType)
-struct FAttackWeight
+struct FBossSkeletonMageAttackWeight
 {
 	GENERATED_BODY()
 
@@ -105,7 +105,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	FAttackWeight AttackWeight;
+	FBossSkeletonMageAttackWeight AttackWeight;
 	
 	// 텔레포트 최대 거리
 	UPROPERTY(EditAnywhere, Category = "자체설정")
@@ -122,9 +122,9 @@ public:
 	// 애님 노티파이에서 호출할 함수
 	UFUNCTION( BlueprintCallable )
 	void ShootFireBall();
-
+	// 소환하는 씬 컴포넌트 기준 소환 가능한 최대 거리
 	UPROPERTY(EditAnywhere, Category = "자체설정")
-	float MaxSummonDist = 300.f;
+	float MaxSummonDist = 600.f;
 	// 소환 기준 씬 컴포넌트 1, 2
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USceneComponent* SummonPointOne;
