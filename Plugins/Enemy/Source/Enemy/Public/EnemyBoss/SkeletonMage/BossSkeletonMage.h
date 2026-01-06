@@ -118,7 +118,7 @@ public:
 	UFUNCTION( BlueprintCallable )
 	void TeleportMoveToNextPoint();
 
-	void PlayFireBallmontage();
+	void PlayFireBallMontage();
 	// 애님 노티파이에서 호출할 함수
 	UFUNCTION( BlueprintCallable )
 	void ShootFireBall();

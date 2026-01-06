@@ -27,7 +27,7 @@ EBTNodeResult::Type UBTTask_FireBall::ExecuteTask(UBehaviorTreeComponent& OwnerC
 
 	if ( BossPawn )
 	{
-		BossPawn->PlayFireBallmontage();
+		BossPawn->PlayFireBallMontage();
 	}
 	
 	return EBTNodeResult::Succeeded;
