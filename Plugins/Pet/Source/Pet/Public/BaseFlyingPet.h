@@ -122,6 +122,7 @@ public:
 	virtual void TriggerPetSmallConversation_Implementation(FName DialogueID) override;
 	virtual void SetPetState_Implementation(EPetState NewState) override;
 	virtual EPetType GetMyPetType_Implementation() const override { return PetType; }
+	virtual void PlayPetMontageFromConversation_Implementation(UAnimMontage* MontageToPlay) override;
 	
 	// ABP 에 서 사용할 현재 속도 변수
 	UPROPERTY(BlueprintReadOnly)

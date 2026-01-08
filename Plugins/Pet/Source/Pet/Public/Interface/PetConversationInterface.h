@@ -20,7 +20,7 @@ class PET_API IPetConversationInterface
 	GENERATED_BODY()
 	
 public:
-
+	// 펫의 상태를 설정하는 함수 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void SetPetState(EPetState NewState);
 	
@@ -35,6 +35,10 @@ public:
 	// 펫의 타입을 반환하는 함수
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	EPetType GetMyPetType() const;
+
+	// 펫이 가진 애님 몽타주 재생 함수
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void PlayPetMontageFromConversation(UAnimMontage* MontageToPlay);
 	
 	// 주인 쪽에서 펫의 대화 시작함수를 호출하는 함수( 이상한거 맞음 )( Implementation 없이 펫 안의 StartConversation 다이렉트로 호출 )
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)

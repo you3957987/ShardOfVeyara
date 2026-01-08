@@ -275,6 +275,11 @@ void UPetTalkComponent::StartConversation(FName DialogueID)
     			IPetConversationInterface::Execute_SetPetState(OwnerActor, EPetState::EPS_Conversation);
     		}
 
+    		if ( RowData->MontageToPlay )
+    		{
+    			IPetConversationInterface::Execute_PlayPetMontageFromConversation(OwnerActor, RowData->MontageToPlay);
+    		}
+
     		// 귀여운 고래 펫일 경우
 			if ( IPetConversationInterface::Execute_GetMyPetType(OwnerActor) == EPetType::EPT_CuteWhale )
 			{
