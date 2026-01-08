@@ -73,7 +73,12 @@ protected:
 	// 죽음 후 일정 시간 뒤에 이펙트 생성 및 액터 제거를 위한 타이머 핸들
 	FTimerHandle DeathTimerHandle;
 	void SpawnDeadEffectAndDestroy();
-	
+	// 죽고 나서 떨어질 아이템 배열
+	UPROPERTY(EditAnywhere, Category="자체설정")
+	TArray<TSubclassOf<AActor>> DropItems;
+	// 아이템 드롭 함수
+	void DropItemsAfterDead();
+
 public:
 	ABaseBossEnemy();
 	virtual void Tick(float DeltaTime) override;

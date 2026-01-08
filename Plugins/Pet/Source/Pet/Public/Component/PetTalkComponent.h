@@ -37,9 +37,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	FName NextDialogueID;
 
-	// 펫 말고 다른 캐릭터에게 말하는지 여부 
+	// 펫 말고 다른 캐릭터가 말하는지 여부 == true면 펫이 앞으로 가서 마주보고 대화 X 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	bool bIsTalkToOtherCharacter = false;
+
+	// CuteWhale 에셋 전용! -1 이면 작동 안함 -- 0 ~ 25, 0은 디폴트
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CuteWhale전용")
+	int32 CuteWhale_ColorIndex = -1;
+	// CuteWhale 에셋 전용! -1 이면 작동 안함 -- 0 ~ 11, 0은 디폴트
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CuteWhale전용")
+	int32 CuteWhale_FaceIndex = -1;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
