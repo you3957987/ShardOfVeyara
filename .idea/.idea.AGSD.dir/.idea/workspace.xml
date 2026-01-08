@@ -9,25 +9,24 @@
   <component name="ChangeListManager">
     <list default="true" id="4fb32fe1-2f7b-4ce4-b591-d5e38df0812d" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AGSD.uproject.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/AGSD.uproject.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AM_Dying.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AM_EnhancedSickleAttack.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AM_EnhancedSpearAttack.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AM_SickleAttack.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AM_SpearAttack.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Farmer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Farmer.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_Crop.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_Crop.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_Weeds.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_Weeds.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Sickle.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Sickle.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_WeaponBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_WeaponBase.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/ACultivationPlot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/ACultivationPlot.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/ACultivationPlot.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/ACultivationPlot.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/Crop.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/Crop.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/Crop.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/Crop.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/Weeds.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/Weeds.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/Weeds.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/Weeds.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ChestUI/Blueprint/BP_Chest.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ChestUI/Blueprint/BP_Chest.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Assets/VARCO_3D/M_Mortar_and_Pestel.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Assets/VARCO_3D/M_Mortar_and_Pestel.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Assets/VARCO_3D/Mortar_and_Pestle.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Assets/VARCO_3D/Mortar_and_Pestle.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_Alchemy.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_Alchemy.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_Bubble.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_Bubble.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_Fire.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_Fire.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_FireExplosion.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_FireExplosion.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_Stove.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_Stove.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Level/Farm_Sky_Island.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Level/Farm_Sky_Island.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Level/Tutorial_Village.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Level/Tutorial_Village.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Materials/M_Package/M_LowPolyDungeons_MAIN.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Materials/M_Package/M_LowPolyDungeons_MAIN.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Meshes/LP_Props/Pot_1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Meshes/LP_Props/Pot_1.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/8/UI/W22MHJZR8XIBPUUG4YLSD2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/8/UI/W22MHJZR8XIBPUUG4YLSD2.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/9/GO/I85JKXET0BRBH1W9G38U2H.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/9/GO/I85JKXET0BRBH1W9G38U2H.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/A/RD/5K2IJNQJ6R28YRQWGYD6DY.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/A/RD/5K2IJNQJ6R28YRQWGYD6DY.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/B/M8/996XLQD7GT3AUJUWCAOB9W.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/B/M8/996XLQD7GT3AUJUWCAOB9W.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/Chest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/Chest.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/Chest.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/Chest.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +52,6 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="cidr-memory-view://6" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Classes/GameFramework/Actor.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/UMG/Public/Blueprint/UserWidget.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Pet/Source/Pet/Public/Header/PetState.h" root0="FORCE_HIGHLIGHTING" />
@@ -77,23 +75,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "Uproject.AGSD.executor": "Debug",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Uproject.AGSD.executor&quot;: &quot;Debug&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="AGSD" type="Uproject" factoryName="rider.uproject">
       <configuration_1 setup="1">
@@ -168,14 +166,6 @@
         <option name="Build" />
       </method>
     </configuration>
-    <configuration default="true" type="Uproject" factoryName="rider.uproject">
-      <option name="DEFAULT_PROJECT_PATH" value="" />
-      <option name="PROJECT_FILE_PATH" value="" />
-      <option name="AUTO_SELECT_PRIORITY" value="0" />
-      <method v="2">
-        <option name="Build" />
-      </method>
-    </configuration>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="디폴트 작업">
@@ -233,6 +223,7 @@
       <workItem from="1767097081992" duration="7277000" />
       <workItem from="1767119823366" duration="2288000" />
       <workItem from="1767407448311" duration="15287000" />
+      <workItem from="1767846252002" duration="713000" />
     </task>
     <servers />
   </component>

@@ -38,10 +38,14 @@ public:
 	
 private:
 	//루트 컴포넌트
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CultivationPlot, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chest", meta = (AllowPrivateAccess = "true"))
 	class USkeletalMeshComponent* SkeletalMesh;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chest", meta = (AllowPrivateAccess = "true"))
+    class UStaticMeshComponent* Mesh;
+    	
 	//콜리전 박스
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CultivationPlot, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Chest", meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* CollisionBox;
 
 	FText InteractActionText = FText::FromString(TEXT("열기"));
