@@ -3,6 +3,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Components/AudioComponent.h"
+#include "Components/ScrollBox.h"
 #include "FlyingPet/CuteWhalePet.h"
 #include "HUD/ConversationSubtitle.h"
 #include "HUD/TravelSubtitle.h"
@@ -10,6 +11,8 @@
 #include "Ping/PingActor.h"
 #include "Header/PetState.h"
 #include "Header/PetType.h"
+#include "HUD/ConversationLog.h"
+#include "HUD/DialogueEntry.h"
 #include "Interface/PetConversationInterface.h"
 
 UPetTalkComponent::UPetTalkComponent()
@@ -37,9 +40,26 @@ void UPetTalkComponent::BeginPlay()
 		ConversationSubtitleInstance = CreateWidget<UConversationSubtitle>(GetWorld(), ConversationSubtitleClass);
 		if (ConversationSubtitleInstance)
 		{
-			ConversationSubtitleInstance->AddToViewport();
+			ConversationSubtitleInstance->AddToViewport(10); // 최상위 레이어
 			// 처음엔 숨기기
 			ConversationSubtitleInstance->SetVisibility(ESlateVisibility::Hidden);
+
+			// 기존 연결 제거 (안전을 위해)
+			ConversationSubtitleInstance->OnSkipClicked.RemoveDynamic(this, &UPetTalkComponent::EndConversation);
+			ConversationSubtitleInstance->OnSkipClicked.AddDynamic(this, &UPetTalkComponent::EndConversation);
+
+			ConversationSubtitleInstance->OnLogClicked.RemoveDynamic(this, &UPetTalkComponent::OnPressedLogButton);
+			ConversationSubtitleInstance->OnLogClicked.AddDynamic(this, &UPetTalkComponent::OnPressedLogButton);
+			
+			if (ConversationSubtitleInstance->LogWidgetInstance)
+			{
+				// 기존 연결 제거 (중복 방지)
+				ConversationSubtitleInstance->LogWidgetInstance->OnCloseClicked.RemoveDynamic(this, &UPetTalkComponent::RestartConversationTimerHandle);
+        
+				// [수정된 부분] 델리게이트에 타이머 재시작 함수 연결
+				ConversationSubtitleInstance->LogWidgetInstance->OnCloseClicked.AddDynamic(this, &UPetTalkComponent::RestartConversationTimerHandle);
+			}
+			
 		}
 	}
 	BindInputForPet();
@@ -229,6 +249,13 @@ void UPetTalkComponent::StartConversation(FName DialogueID)
         return;
     }
 
+	// 인풋 게임 모드를 game and UI로 전환
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
+	{
+		PC->SetShowMouseCursor(true);
+		PC->SetInputMode(  FInputModeGameAndUI());
+	}
+	
 	// [컨텍스트 교체] 기본 -> 대화용
 	if (!bIsInputBound)
 	{
@@ -303,6 +330,14 @@ void UPetTalkComponent::StartConversation(FName DialogueID)
             }
             // 텍스트 갱신
             ConversationSubtitleInstance->SetConversationSubtitle(RowData->SpeakerName, RowData->DialogueText);
+        	// 대화 로그에 추가
+			AddDialogueToConversationLog(RowData->SpeakerName, RowData->DialogueText);
+        	AddDialogueToConversationLog(RowData->SpeakerName, RowData->DialogueText);
+        	AddDialogueToConversationLog(RowData->SpeakerName, RowData->DialogueText);
+        	AddDialogueToConversationLog(RowData->SpeakerName, RowData->DialogueText);
+        	AddDialogueToConversationLog(RowData->SpeakerName, RowData->DialogueText);
+        	AddDialogueToConversationLog(RowData->SpeakerName, RowData->DialogueText);
+        	AddDialogueToConversationLog(RowData->SpeakerName, RowData->DialogueText);
         }
 
     	//  음성 재생 및 지속 시간 계산
@@ -406,6 +441,10 @@ void UPetTalkComponent::EndConversation()
 				
 			}
 		}
+		// [추가] 마우스 커서 숨기기 및 인풋 모드 복구 (GameOnly)
+		PC->SetShowMouseCursor(false);
+		PC->SetInputMode(FInputModeGameOnly());
+		
 		// 이동 입력 차단 해제
 		PC->SetIgnoreMoveInput(false);
 	}
@@ -451,3 +490,65 @@ bool UPetTalkComponent::GetRandomDialogueFromTable(UDataTable* DataTable, FPetCo
 	return false;
 }
 
+void UPetTalkComponent::ResetConversationLogScrollBox()
+{
+	if (ConversationSubtitleInstance)
+	{
+		if ( ConversationSubtitleInstance->LogWidgetInstance )
+		{
+			ConversationSubtitleInstance->LogWidgetInstance->ScrollBox->ClearChildren();
+		}
+	}
+}
+
+void UPetTalkComponent::OnPressedLogButton()
+{
+	if (ConversationSubtitleInstance)
+	{
+		if ( ConversationSubtitleInstance->LogWidgetInstance )
+		{
+			ConversationSubtitleInstance->LogWidgetInstance->SetVisibility( ESlateVisibility::Visible );
+
+			// 대화 일시정지시켜서 다음으로 못 넘어가도록
+			GetWorld()->GetTimerManager().PauseTimer(ConversationTimerHandle);
+		}
+	}
+}
+
+void UPetTalkComponent::RestartConversationTimerHandle()
+{
+	GetWorld()->GetTimerManager().UnPauseTimer(ConversationTimerHandle);
+}
+
+void UPetTalkComponent::AddDialogueToConversationLog(const FText& SpeakerName, const FText& DialogueText)
+{
+	// 1. 유효성 검사 (서브타이틀 -> 로그창 -> 스크롤박스까지 연결 확인)
+	if (!ConversationSubtitleInstance ||
+		!ConversationSubtitleInstance->LogWidgetInstance ||
+		!ConversationSubtitleInstance->LogWidgetInstance->ScrollBox)
+	{
+		return;
+	}
+	// 2. 개별 로그 위젯 클래스가 설정되어 있는지 확인
+	if (!ConversationLogEntryClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ConversationLogEntryClass is not set in PetTalkComponent."));
+		return;
+	}
+
+	// 3. 개별 로그 위젯 생성
+	UDialogueEntry* NewLogEntry = CreateWidget<UDialogueEntry>(GetWorld(), ConversationLogEntryClass);
+
+	if (NewLogEntry)
+	{
+		// 4. 데이터 설정 (UConversationLog 안에 해당 함수 구현 필요)
+		// 예: 스피커 이름과 대사 내용 전달
+		NewLogEntry->SetLogData(SpeakerName, DialogueText);
+
+		// 5. 스크롤 박스에 자식으로 추가
+		ConversationSubtitleInstance->LogWidgetInstance->ScrollBox->AddChild(NewLogEntry);
+
+		// 6. 스크롤을 항상 최신 내용(맨 아래)으로 이동
+		ConversationSubtitleInstance->LogWidgetInstance->ScrollBox->ScrollToEnd();
+	}
+}

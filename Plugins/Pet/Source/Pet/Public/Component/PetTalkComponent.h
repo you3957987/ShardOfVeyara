@@ -97,6 +97,7 @@ protected:
 	UPROPERTY()
 	UConversationSubtitle* ConversationSubtitleInstance;
 	// 대화 종료 함수
+	UFUNCTION()
 	void EndConversation();
 	// 대화 지속 시간 타이머 핸들
 	FTimerHandle ConversationTimerHandle;
@@ -124,6 +125,16 @@ protected:
 	// 핑 액터를 생성하고 목표 지점으로 이동시키는 내부 함수
 	void SpawnItemPingEffectAtLocation(const FVector& TargetLocation, const FVector& PingSpawnLocation);
 
+
+	// 대화 로그창 보이게 하는 함수
+	UFUNCTION()
+	void OnPressedLogButton();
+	//대화 로그 창에 대화 내용 추가 함수
+	void AddDialogueToConversationLog(const FText& SpeakerName, const FText& DialogueText);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	TSubclassOf<class UDialogueEntry> ConversationLogEntryClass;
+	
 public:
 	UPetTalkComponent();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -158,5 +169,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool ReturnWhoTalk(bool bIsTalkToOtherCharacter) { return bIsTalkToOtherCharacter; }
-	
+
+	// 대화 로그창 스크롤 바 초기화함수
+	void ResetConversationLogScrollBox();
+	// 대화 타이머 다시 시작
+	UFUNCTION()
+	void RestartConversationTimerHandle();
 };

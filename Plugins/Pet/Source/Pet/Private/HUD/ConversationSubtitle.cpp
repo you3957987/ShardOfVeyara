@@ -1,7 +1,29 @@
 #include "HUD/ConversationSubtitle.h"
 
 #include "Animation/WidgetAnimation.h"
+#include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "HUD/ConversationLog.h"
+
+void UConversationSubtitle::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	if (SkipButton) SkipButton->OnClicked.AddDynamic(this, &UConversationSubtitle::OnPressedSkipButton);
+	if (LogButton) LogButton->OnClicked.AddDynamic(this, &UConversationSubtitle::OnPressedLogButton);
+
+	if (ConversationLogWidgetClass && !LogWidgetInstance)
+	{
+		LogWidgetInstance = CreateWidget<UConversationLog>(GetWorld(), ConversationLogWidgetClass);
+
+		if (LogWidgetInstance)
+		{
+			// 뷰포트에 추가는 해두지만, 당장은 안 보이게 숨김
+			LogWidgetInstance->AddToViewport(20); // ZOrder를 높게 설정하여 대화창보다 위에 뜨게 함 (선택사항)
+			LogWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
+}
 
 void UConversationSubtitle::SetConversationSubtitle(const FText& InName, const FText& InDialogue)
 {
@@ -20,7 +42,7 @@ void UConversationSubtitle::SetConversationSubtitle(const FText& InName, const F
 void UConversationSubtitle::PlayFadeInAnimation()
 {
 	//보이게 설정
-	SetVisibility(ESlateVisibility::HitTestInvisible);
+	SetVisibility(ESlateVisibility::Visible);
 	
 	if (FadeInAnim)
 	{
@@ -49,4 +71,24 @@ void UConversationSubtitle::PlayFadeOutAnimation()
 void UConversationSubtitle::OnFadeOutFinished()
 {
 	SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UConversationSubtitle::OnPressedSkipButton()
+{
+	UE_LOG(LogTemp, Warning, TEXT("OnPressedSkipButton"));
+
+	if (OnSkipClicked.IsBound())
+	{
+		OnSkipClicked.Broadcast(); 
+	}
+}
+
+void UConversationSubtitle::OnPressedLogButton()
+{
+	UE_LOG(LogTemp, Warning, TEXT("OnPressedLogButton"));
+
+	if (OnLogClicked.IsBound())
+	{
+		OnLogClicked.Broadcast();
+	}
 }
