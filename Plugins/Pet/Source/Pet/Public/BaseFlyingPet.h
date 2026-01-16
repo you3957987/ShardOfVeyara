@@ -4,6 +4,7 @@
 #include "GameFramework/Pawn.h"
 #include "Interface/PetConversationInterface.h"
 #include "Header/PetState.h"
+#include "Header/PetType.h"
 #include "BaseFlyingPet.generated.h"
 
 // 펫의 위치 설정을 관리하는 구조체
@@ -40,6 +41,10 @@ protected:
 	// 캐릭터 초기화 여부를 나타내는 변수
 	bool bTargetInitalize = false;
 	void PollInit(float DeltaTime); // 틱에서 하는 초기화
+
+	// 펫 종류 aka 사용할 에셋 
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	EPetType PetType;
 	
 	// 아이템 감지 콜리전 시작 함수
 	UFUNCTION()
@@ -116,8 +121,8 @@ public:
 	virtual void TriggerPetBigConversation_Implementation(FName DialogueID) override;
 	virtual void TriggerPetSmallConversation_Implementation(FName DialogueID) override;
 	virtual void SetPetState_Implementation(EPetState NewState) override;
-
-	// 왜 적용이 안됨?
+	virtual EPetType GetMyPetType_Implementation() const override { return PetType; }
+	virtual void PlayPetMontageFromConversation_Implementation(UAnimMontage* MontageToPlay) override;
 	
 	// ABP 에 서 사용할 현재 속도 변수
 	UPROPERTY(BlueprintReadOnly)
