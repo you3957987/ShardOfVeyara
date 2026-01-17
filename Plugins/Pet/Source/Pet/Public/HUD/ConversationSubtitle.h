@@ -27,6 +27,15 @@ protected:
 	class UButton* SkipButton;
 	UPROPERTY(meta = (BindWidget))
 	class UButton* LogButton;
+	
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* DialogueChoiceText_0;
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* DialogueChoiceText_1;
+	UPROPERTY(meta = (BindWidget))
+	class UButton* DialogueChoiceButton_0;
+	UPROPERTY(meta = (BindWidget))
+	class UButton* DialogueChoiceButton_1;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	UWidgetAnimation* FadeInAnim;
@@ -59,5 +68,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnPressedLogButton();
 	FOnSubtitleActionDelegate OnLogClicked;
+
+	// 0번은 기본 대사창, 1번은 선택지 대사창
+	UPROPERTY(meta = (BindWidget))
+	class UWidgetSwitcher* WidgetSwitcher;
+
+	void SetupChoiceDialogueText(const FText& Choice0Text, const FText& Choice1Text);
+	UFUNCTION(BlueprintCallable)
+	void OnClickDialogueChoice_0();
+	FOnSubtitleActionDelegate OnDialogueChoice_0Clicked;
+	UFUNCTION(BlueprintCallable)
+	void OnClickDialogueChoice_1();
+	FOnSubtitleActionDelegate OnDialogueChoice_1Clicked;
 	
 };

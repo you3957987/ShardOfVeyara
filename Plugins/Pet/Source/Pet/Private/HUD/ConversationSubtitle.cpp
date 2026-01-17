@@ -23,6 +23,15 @@ void UConversationSubtitle::NativeConstruct()
 			LogWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
+
+	if(DialogueChoiceButton_0)
+	{
+		DialogueChoiceButton_0->OnClicked.AddDynamic(this, &UConversationSubtitle::OnClickDialogueChoice_0);
+	}
+	if(DialogueChoiceButton_1)
+	{
+		DialogueChoiceButton_1->OnClicked.AddDynamic(this, &UConversationSubtitle::OnClickDialogueChoice_1);
+	}
 }
 
 void UConversationSubtitle::SetConversationSubtitle(const FText& InName, const FText& InDialogue)
@@ -90,5 +99,30 @@ void UConversationSubtitle::OnPressedLogButton()
 	if (OnLogClicked.IsBound())
 	{
 		OnLogClicked.Broadcast();
+	}
+}
+
+void UConversationSubtitle::SetupChoiceDialogueText(const FText& Choice0Text, const FText& Choice1Text)
+{
+	if ( DialogueChoiceText_0 && DialogueChoiceText_1 )
+	{
+		DialogueChoiceText_0->SetText( Choice0Text );
+		DialogueChoiceText_1->SetText( Choice1Text );
+	}
+}
+
+void UConversationSubtitle::OnClickDialogueChoice_0()
+{
+	if (OnDialogueChoice_0Clicked.IsBound())
+	{
+		OnDialogueChoice_0Clicked.Broadcast();
+	}
+}
+
+void UConversationSubtitle::OnClickDialogueChoice_1()
+{
+	if (OnDialogueChoice_1Clicked.IsBound())
+	{
+		OnDialogueChoice_1Clicked.Broadcast();
 	}
 }

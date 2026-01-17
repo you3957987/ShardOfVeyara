@@ -16,31 +16,41 @@ public:
 	// 대화 내용
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	FText DialogueText;
-
 	// 화자 이름
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	FText SpeakerName;
-
 	// 펫 아이콘 (비워두면 컴포넌트 기본값 사용 가능)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	class UTexture2D* PetIcon;
-	
 	// 함께 재생할 음성
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	USoundBase* VoiceAudio;
-
 	// [추가사항] 함께 재생할 애니메이션 몽타주
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	class UAnimMontage* MontageToPlay;
-	
 	// 다음 대화 ID == 만약 대화의 끝이라면 None으로 둠(칸 다 비우면 자동으로 None 처리됨)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	FName NextDialogueID;
-
 	// 펫 말고 다른 캐릭터가 말하는지 여부 == true면 펫이 앞으로 가서 마주보고 대화 X 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	bool bIsTalkToOtherCharacter = false;
 
+	// 대화 선택지 사용 여부 == 주인공이 말하는 대화에만 사용 + 선택지는 사용시 무조건 2개여야 함
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "선택지")
+	bool bUseDialogueChoices = false;
+	// [선택지 1] 버튼에 표시될 텍스트
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "선택지", meta=(EditCondition="bUseDialogueChoices"))
+	FText Choice1_Text;
+	// [선택지 1] 눌렀을 때 이동할 다음 대화 ID
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "선택지", meta=(EditCondition="bUseDialogueChoices"))
+	FName Choice1_NextID;
+	// [선택지 2] 버튼에 표시될 텍스트
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "선택지", meta=(EditCondition="bUseDialogueChoices"))
+	FText Choice2_Text;
+	// [선택지 2] 눌렀을 때 이동할 다음 대화 ID
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "선택지", meta=(EditCondition="bUseDialogueChoices"))
+	FName Choice2_NextID;
+	
 	// CuteWhale 에셋 전용! -1 이면 작동 안함 -- 0 ~ 25, 0은 디폴트
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CuteWhale전용")
 	int32 CuteWhale_ColorIndex = -1;
@@ -134,6 +144,17 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	TSubclassOf<class UDialogueEntry> ConversationLogEntryClass;
+
+	// 선택지 버튼 입력 처리 함수
+	UFUNCTION()
+	void OnDialogueChoiceSelect_0();
+	UFUNCTION()
+	void OnDialogueChoiceSelect_1();
+	FName PendingChoice1_ID;
+	FName PendingChoice2_ID;
+	FText SpeakerName_Text;
+	FText PendingChoice1_Text;
+	FText PendingChoice2_Text;
 	
 public:
 	UPetTalkComponent();

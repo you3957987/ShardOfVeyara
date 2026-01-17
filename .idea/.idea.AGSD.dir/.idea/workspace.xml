@@ -9,20 +9,11 @@
   <component name="ChangeListManager">
     <list default="true" id="4fb32fe1-2f7b-4ce4-b591-d5e38df0812d" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/NPC_Dialogue/Dialogue/Widgets/WBP_Dialogue.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/NPC_Dialogue/Dialogue/Widgets/WBP_Dialogue.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/TestMap/ThirdPerson/Level_EnemyTest.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/TestMap/ThirdPerson/Level_EnemyTest.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/7/0P/SEK1TR26C1PWRIIFCVWI79.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Pet/Config/DefaultPet.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Config/DefaultPet.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/DataTable/DT_BigConversation.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Content/DataTable/DT_BigConversation.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/HUD/IMG_Conversation.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/HUD/IMG_Cross.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/HUD/IMG_TravelSubtitle.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/HUD/WBP_ConversationLOG.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Content/HUD/WBP_ConversationLOG.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/HUD/WBP_ConversationSubtitle.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Content/HUD/WBP_ConversationSubtitle.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/HUD/WBP_TravelSubtitle.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Content/HUD/WBP_TravelSubtitle.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/Input/IMC_Conversation.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Content/Input/IMC_Conversation.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/Pet/CuteWhale_Fly/BP_WhalePet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Content/Pet/CuteWhale_Fly/BP_WhalePet.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/BaseFlyingPet.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/BaseFlyingPet.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/HUD/WBP_DialogueEntry.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Content/HUD/WBP_DialogueEntry.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/Component/PetTalkComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/Component/PetTalkComponent.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/HUD/ConversationSubtitle.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/HUD/ConversationSubtitle.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Public/Component/PetTalkComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Public/Component/PetTalkComponent.h" afterDir="false" />
@@ -32,6 +23,11 @@
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_C:/Users/YJH/Documents/GitHub/AGSD" value="33T5c7VBtciOnYkuLTNZtBTHFDy" />
+    </persistenceIdMap>
   </component>
   <component name="DpaMonitoringSettings">
     <option name="firstShow" value="false" />
@@ -240,6 +236,8 @@
       <workItem from="1768354694153" duration="6196000" />
       <workItem from="1768365425448" duration="3955000" />
       <workItem from="1768372102034" duration="1162000" />
+      <workItem from="1768615829975" duration="1208000" />
+      <workItem from="1768629562541" duration="6639000" />
     </task>
     <servers />
   </component>

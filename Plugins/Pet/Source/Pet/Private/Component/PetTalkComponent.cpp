@@ -4,6 +4,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Components/AudioComponent.h"
 #include "Components/ScrollBox.h"
+#include "Components/WidgetSwitcher.h"
 #include "FlyingPet/CuteWhalePet.h"
 #include "HUD/ConversationSubtitle.h"
 #include "HUD/TravelSubtitle.h"
@@ -43,8 +44,7 @@ void UPetTalkComponent::BeginPlay()
 			ConversationSubtitleInstance->AddToViewport(10); // 최상위 레이어
 			// 처음엔 숨기기
 			ConversationSubtitleInstance->SetVisibility(ESlateVisibility::Hidden);
-
-			// 기존 연결 제거 (안전을 위해)
+			
 			ConversationSubtitleInstance->OnSkipClicked.RemoveDynamic(this, &UPetTalkComponent::EndConversation);
 			ConversationSubtitleInstance->OnSkipClicked.AddDynamic(this, &UPetTalkComponent::EndConversation);
 
@@ -60,6 +60,11 @@ void UPetTalkComponent::BeginPlay()
 				ConversationSubtitleInstance->LogWidgetInstance->OnCloseClicked.AddDynamic(this, &UPetTalkComponent::RestartConversationTimerHandle);
 			}
 			
+			ConversationSubtitleInstance->OnDialogueChoice_0Clicked.RemoveDynamic(this, &UPetTalkComponent::OnDialogueChoiceSelect_0);
+			ConversationSubtitleInstance->OnDialogueChoice_0Clicked.AddDynamic(this, &UPetTalkComponent::OnDialogueChoiceSelect_0);
+			
+			ConversationSubtitleInstance->OnDialogueChoice_1Clicked.RemoveDynamic(this, &UPetTalkComponent::OnDialogueChoiceSelect_1);
+			ConversationSubtitleInstance->OnDialogueChoice_1Clicked.AddDynamic(this, &UPetTalkComponent::OnDialogueChoiceSelect_1);
 		}
 	}
 	BindInputForPet();
@@ -328,8 +333,45 @@ void UPetTalkComponent::StartConversation(FName DialogueID)
             {
                 ConversationSubtitleInstance->PlayFadeInAnimation();
             }
+        	
             // 텍스트 갱신
             ConversationSubtitleInstance->SetConversationSubtitle(RowData->SpeakerName, RowData->DialogueText);
+
+        	// 선택지 모드인지 체크
+        	if (RowData->bUseDialogueChoices)
+        	{
+        		// 위젯을 선택지 모드로 전환 (위젯 스위처 1번) 및 텍스트 설정 함수 호출 필요
+        		ConversationSubtitleInstance->SetupChoiceDialogueText(RowData->Choice1_Text, RowData->Choice2_Text);
+                
+        		// 만약 위젯 코드를 직접 접근한다면:
+        		if (ConversationSubtitleInstance->WidgetSwitcher)
+        		{
+        			ConversationSubtitleInstance->WidgetSwitcher->SetActiveWidgetIndex(1); // 선택지 화면
+        			// 버튼 텍스트 설정 로직 필요
+        		}
+        		// 대화 로그에 추가할 정보 저장
+        		SpeakerName_Text = RowData->SpeakerName;
+        		PendingChoice1_Text = RowData->Choice1_Text;
+        		PendingChoice2_Text = RowData->Choice2_Text;
+        		//  버튼 클릭 시 이동할 ID 저장
+        		PendingChoice1_ID = RowData->Choice1_NextID;
+        		PendingChoice2_ID = RowData->Choice2_NextID;
+
+        		//  중요: 대화 타이머(ConversationTimerHandle)를 실행하지 않음 (유저 입력 대기)
+        		GetWorld()->GetTimerManager().ClearTimer(ConversationTimerHandle);
+        		
+        		return; 
+        	}
+        	else
+        	{
+        		// [일반 대화] 위젯 스위처 0번 (기본 대화창)
+        		if (ConversationSubtitleInstance->WidgetSwitcher)
+        		{
+        			ConversationSubtitleInstance->WidgetSwitcher->SetActiveWidgetIndex(0);
+        		}
+        	}
+
+
         	// 대화 로그에 추가
 			AddDialogueToConversationLog(RowData->SpeakerName, RowData->DialogueText);
         	AddDialogueToConversationLog(RowData->SpeakerName, RowData->DialogueText);
@@ -550,5 +592,35 @@ void UPetTalkComponent::AddDialogueToConversationLog(const FText& SpeakerName, c
 
 		// 6. 스크롤을 항상 최신 내용(맨 아래)으로 이동
 		ConversationSubtitleInstance->LogWidgetInstance->ScrollBox->ScrollToEnd();
+	}
+}
+
+void UPetTalkComponent::OnDialogueChoiceSelect_0()
+{
+	AddDialogueToConversationLog(SpeakerName_Text, PendingChoice1_Text);
+
+	// 저장해둔 1번 선택지 ID로 대화 진행
+	if (!PendingChoice1_ID.IsNone())
+	{
+		StartConversation(PendingChoice1_ID);
+	}
+	else
+	{
+		EndConversation();
+	}
+}
+
+void UPetTalkComponent::OnDialogueChoiceSelect_1()
+{
+	AddDialogueToConversationLog(SpeakerName_Text, PendingChoice2_Text);
+
+	// 저장해둔 2번 선택지 ID로 대화 진행
+	if (!PendingChoice2_ID.IsNone())
+	{
+		StartConversation(PendingChoice2_ID);
+	}
+	else
+	{
+		EndConversation();
 	}
 }
