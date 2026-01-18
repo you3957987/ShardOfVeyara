@@ -1,0 +1,27 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "AlchemyUI.h"
+
+#include "Components/Button.h"
+
+void UAlchemyUI::NativeConstruct()
+{
+	Super::NativeConstruct();
+	if (CloseButton)
+	{
+		CloseButton->OnClicked.AddDynamic(this, &UAlchemyUI::OnCloseButtonClicked);
+	}
+}
+
+void UAlchemyUI::NativeDestruct()
+{
+	Super::NativeDestruct();
+	OnWidgetClosed.Broadcast();
+}
+
+void UAlchemyUI::OnCloseButtonClicked()
+{
+	// 스스로를 화면에서 제거합니다.
+	RemoveFromParent();
+}
