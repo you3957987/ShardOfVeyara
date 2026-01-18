@@ -148,6 +148,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool Mining = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool Weeding = false;
+
 	void Die();
 	UFUNCTION(BlueprintCallable)
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;

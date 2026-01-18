@@ -39,6 +39,8 @@ protected:
 	FText InteractActionText = FText::FromString(TEXT("잡초제거"));
 	bool bIsActionActive = false;
 	AAGSDPlayerController* PC;
+	
+	AAGSDCharacter* Player;
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interact")
 	void WeedingInteract(AAGSDCharacter* player);

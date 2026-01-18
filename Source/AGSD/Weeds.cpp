@@ -96,6 +96,9 @@ void AWeeds::OnMontageEnded(UAnimMontage* AnimMontage, bool bArg)
 {
 	bIsActionActive = false;
 
+	Player->Mining = false;
+	Player->Weeding = false;
+	
 	// 2. 이동(WASD) 입력 다시 받기
 	if (PC)
 	{
@@ -107,15 +110,15 @@ void AWeeds::OnMontageEnded(UAnimMontage* AnimMontage, bool bArg)
 	Destroy();
 }
 
-void AWeeds::PlayPullPlant(AAGSDCharacter* Player)
+void AWeeds::PlayPullPlant(AAGSDCharacter* player)
 {
 	if (bIsActionActive) return;
 	bIsActionActive = true;
 	
-	PC = Player->getPlayerController();
+	PC = player->getPlayerController();
 	PC->SetIgnoreMoveInput(true);
 	
-	UAnimInstance* AnimInstance = Player->GetMesh()->GetAnimInstance();
+	UAnimInstance* AnimInstance = player->GetMesh()->GetAnimInstance();
 	if (AnimInstance && PullPlant)
 	{
 		AnimInstance->Montage_Play(PullPlant);
@@ -129,6 +132,12 @@ void AWeeds::PlayPullPlant(AAGSDCharacter* Player)
 
 void AWeeds::Interact_Implementation(AAGSDCharacter* player)
 {
+	if (player->Mining) return;
+
+	Player = player;
+	Player->Mining = true;
+	Player->Weeding = true;
+	
 	if (OnWeeding.IsBound())
 	{
 		OnWeeding.Broadcast();
