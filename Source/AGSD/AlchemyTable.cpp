@@ -67,6 +67,14 @@ void AAlchemyTable::EndAlchemy()
 	}
 }
 
+void AAlchemyTable::OnCameraBlendFinished()
+{
+	if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(Player->GetController()))
+	{
+
+	}
+}
+
 void AAlchemyTable::Interact_Implementation(AAGSDCharacter* player)
 {
 	if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(player->GetController()))
@@ -87,12 +95,16 @@ void AAlchemyTable::Interact_Implementation(AAGSDCharacter* player)
 			AlchemyWidget->OnWidgetClosed.AddUniqueDynamic(this, &AAlchemyTable::EndAlchemy);
 			
 			AlchemyWidget->AddToViewport();
+
+			AlchemyWidget->PlayFadeIn();
 			
 			FInputModeUIOnly InputMode;
 			InputMode.SetWidgetToFocus(AlchemyWidget->TakeWidget());
 			PlayerController->SetInputMode(InputMode);
 			PlayerController->bShowMouseCursor = true;
 		}
+		//FTimerHandle TimerHandle;
+		//GetWorldTimerManager().SetTimer(TimerHandle, this, &AAlchemyTable::OnCameraBlendFinished, BlendTime, false);
 	}
 }
 

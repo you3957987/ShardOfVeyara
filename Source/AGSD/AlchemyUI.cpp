@@ -5,6 +5,14 @@
 
 #include "Components/Button.h"
 
+void UAlchemyUI::PlayFadeIn()
+{
+	if (FadeinAnim)
+	{
+		PlayAnimation(FadeinAnim);
+	}
+}
+
 void UAlchemyUI::NativeConstruct()
 {
 	Super::NativeConstruct();

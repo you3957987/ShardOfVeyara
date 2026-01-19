@@ -20,6 +20,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnWidgetClosed OnWidgetClosed;
 
+	void PlayFadeIn();
+
 protected:
 	virtual void NativeConstruct() override;
 	//위젯이 제거될 때 호출되는 엔진 함수 오버라이드
@@ -27,6 +29,9 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* CloseButton;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	class UWidgetAnimation* FadeinAnim;
 
 	UFUNCTION()
 	void OnCloseButtonClicked();
