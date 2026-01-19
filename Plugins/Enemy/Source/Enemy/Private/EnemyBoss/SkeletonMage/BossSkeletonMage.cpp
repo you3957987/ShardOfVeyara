@@ -258,7 +258,7 @@ void ABossSkeletonMage::SummonEnemy()
 			{
 				// 나이아가라 이펙트를 스폰합니다.
 				UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), SummonEffectFromEnemy,
-					SpawnLocation + FVector(0.f, 0.f, 5.f),
+					SpawnLocation + FVector(0.f, 0.f, 2.f),
 					FRotator::ZeroRotator, FVector(20.f));
 			}
 		}
@@ -287,7 +287,7 @@ void ABossSkeletonMage::SpawnSummonEffectAtLocation(const FVector& Location)
 
 	// 나이아가라 이펙트를 스폰합니다.
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), SummonEffectFromMage, SpawnLocation,
-		FRotator::ZeroRotator, FVector(20.f));
+		FRotator::ZeroRotator, FVector(10.f));
 }
 
 void ABossSkeletonMage::PlayGroundAreaAttackMontage()

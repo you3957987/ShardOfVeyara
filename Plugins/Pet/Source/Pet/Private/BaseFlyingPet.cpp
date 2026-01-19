@@ -329,6 +329,7 @@ void ABaseFlyingPet::StartBigConversation( FName DialogueID )
 	// 2. 대화 컴포넌트에 실제 대화 시작 요청
 	if (PetTalkComp)
 	{
+		PetTalkComp->ResetConversationLogScrollBox();
 		PetTalkComp->StartConversation(DialogueID);
 	}
 }
