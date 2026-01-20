@@ -18,7 +18,12 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* DialogueText;
 
+	UPROPERTY(meta = (BindWidget))
+	class UBorder* TextBorder;
+
+	UPROPERTY(meta = (BindWidget))
+	class UImage* TextBackColor;
 
 public:
-	void SetLogData(const FText& InSpeakerName, const FText& InDialogueText);
+	void SetLogData(const FText& InSpeakerName, const FText& InDialogueText, bool bIsSelection = false);
 };

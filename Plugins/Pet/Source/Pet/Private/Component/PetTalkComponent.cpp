@@ -562,7 +562,7 @@ void UPetTalkComponent::RestartConversationTimerHandle()
 	GetWorld()->GetTimerManager().UnPauseTimer(ConversationTimerHandle);
 }
 
-void UPetTalkComponent::AddDialogueToConversationLog(const FText& SpeakerName, const FText& DialogueText)
+void UPetTalkComponent::AddDialogueToConversationLog(const FText& SpeakerName, const FText& DialogueText, bool bIsSelection)
 {
 	// 1. 유효성 검사 (서브타이틀 -> 로그창 -> 스크롤박스까지 연결 확인)
 	if (!ConversationSubtitleInstance ||
@@ -585,8 +585,9 @@ void UPetTalkComponent::AddDialogueToConversationLog(const FText& SpeakerName, c
 	{
 		// 4. 데이터 설정 (UConversationLog 안에 해당 함수 구현 필요)
 		// 예: 스피커 이름과 대사 내용 전달
-		NewLogEntry->SetLogData(SpeakerName, DialogueText);
-
+		if ( bIsSelection == true ) NewLogEntry->SetLogData(SpeakerName, DialogueText, true);
+		else if ( bIsSelection == false ) NewLogEntry->SetLogData(SpeakerName, DialogueText, false);
+		
 		// 5. 스크롤 박스에 자식으로 추가
 		ConversationSubtitleInstance->LogWidgetInstance->ScrollBox->AddChild(NewLogEntry);
 
@@ -597,7 +598,7 @@ void UPetTalkComponent::AddDialogueToConversationLog(const FText& SpeakerName, c
 
 void UPetTalkComponent::OnDialogueChoiceSelect_0()
 {
-	AddDialogueToConversationLog(SpeakerName_Text, PendingChoice1_Text);
+	AddDialogueToConversationLog(SpeakerName_Text, PendingChoice1_Text, true);
 
 	// 저장해둔 1번 선택지 ID로 대화 진행
 	if (!PendingChoice1_ID.IsNone())
@@ -612,7 +613,7 @@ void UPetTalkComponent::OnDialogueChoiceSelect_0()
 
 void UPetTalkComponent::OnDialogueChoiceSelect_1()
 {
-	AddDialogueToConversationLog(SpeakerName_Text, PendingChoice2_Text);
+	AddDialogueToConversationLog(SpeakerName_Text, PendingChoice2_Text, true);
 
 	// 저장해둔 2번 선택지 ID로 대화 진행
 	if (!PendingChoice2_ID.IsNone())
