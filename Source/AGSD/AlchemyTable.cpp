@@ -5,6 +5,7 @@
 
 #include "AGSDCharacter.h"
 #include "AGSDPlayerController.h"
+#include "../../../../../../../Program Files/Epic Games/UE_5.6/Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -28,6 +29,17 @@ AAlchemyTable::AAlchemyTable()
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	CameraComp->SetupAttachment(RootComponent);
+
+	PotMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Pot"));
+	PotMeshComponent->SetupAttachment(RootComponent);
+	
+	SplashVFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("SplashVFX"));
+	SplashVFXComponent->SetupAttachment(PotMeshComponent);
+	SplashVFXComponent->bAutoActivate = false;
+
+	BubbleVFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("BubbleVFX"));
+	BubbleVFXComponent->SetupAttachment(PotMeshComponent);
+	BubbleVFXComponent->bAutoActivate = true;
 }
 
 // Called when the game starts or when spawned
@@ -35,6 +47,26 @@ void AAlchemyTable::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if (PotMeshComponent)
+	{
+		// 1번 인덱스의 머티리얼을 가져와 다이나믹 인스턴스로 생성합니다.
+		// CreateDynamicMaterialInstance(인덱스, 소스 머티리얼, 이름)
+		PotDynamicMaterial = PotMeshComponent->CreateDynamicMaterialInstance(1);
+	}
+}
+
+void AAlchemyTable::ApplyPotColor(FLinearColor NewColor)
+{
+	LiquidColor = NewColor; // 현재 색상 업데이트
+
+	if (PotDynamicMaterial)
+		PotDynamicMaterial->SetVectorParameterValue(TEXT("Color"), NewColor);
+
+	if (SplashVFXComponent)
+		SplashVFXComponent->SetNiagaraVariableLinearColor(TEXT("User.Color"), NewColor);
+
+	if (BubbleVFXComponent)
+		BubbleVFXComponent->SetNiagaraVariableLinearColor(TEXT("User.Color"), NewColor);
 }
 
 void AAlchemyTable::EndAlchemy()
@@ -67,6 +99,12 @@ void AAlchemyTable::EndAlchemy()
 	}
 }
 
+void AAlchemyTable::SplashPot()
+{
+	SplashVFXComponent->Activate(true);
+	LerpMixLiquidColor();
+}
+
 void AAlchemyTable::OnCameraBlendFinished()
 {
 	if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(Player->GetController()))
@@ -93,6 +131,7 @@ void AAlchemyTable::Interact_Implementation(AAGSDCharacter* player)
 		if (AlchemyWidget)
 		{
 			AlchemyWidget->OnWidgetClosed.AddUniqueDynamic(this, &AAlchemyTable::EndAlchemy);
+			AlchemyWidget->OnCropInserted.AddUniqueDynamic(this, &AAlchemyTable::SplashPot);
 			
 			AlchemyWidget->AddToViewport();
 

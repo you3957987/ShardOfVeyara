@@ -28,8 +28,17 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UFUNCTION(BlueprintCallable)
+	void ApplyPotColor(FLinearColor NewColor);
+
 	UFUNCTION()
 	void EndAlchemy();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void LerpMixLiquidColor();
+	
+	UFUNCTION()
+	void SplashPot();
 
 	FText InteractActionText = FText::FromString(TEXT("양조하기"));
 
@@ -59,8 +68,23 @@ public:
 	//오버랩 종료 시 작동할 함수
 	UFUNCTION()
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Niagara")
+	class UStaticMeshComponent* PotMeshComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Niagara")
+	class UNiagaraComponent* SplashVFXComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Niagara")
+	class UNiagaraComponent* BubbleVFXComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Niagara")
+	FLinearColor LiquidColor = FColor::FromHex("A5DDFFFF");
 	
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CultivationPlot, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* CollisionBox;
+
+	UPROPERTY()
+	class UMaterialInstanceDynamic* PotDynamicMaterial;
 };

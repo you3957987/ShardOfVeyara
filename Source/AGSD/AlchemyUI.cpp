@@ -5,6 +5,11 @@
 
 #include "Components/Button.h"
 
+void UAlchemyUI::CallOnCropInserted()
+{
+	OnCropInserted.Broadcast();
+}
+
 void UAlchemyUI::PlayFadeIn()
 {
 	if (FadeinAnim)

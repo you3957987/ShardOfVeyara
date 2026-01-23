@@ -9,28 +9,13 @@
   <component name="ChangeListManager">
     <list default="true" id="4fb32fe1-2f7b-4ce4-b591-d5e38df0812d" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ChestUI/Blueprint/BP_Chest.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ChestUI/Blueprint/BP_Chest.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ChestUI/Blueprint/WBP_ChestAndInventory.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ChestUI/Blueprint/WBP_ChestAndInventory.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BI_SaveGame.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BI_SaveGame.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Farmer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Farmer.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_PickUpItemBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_PickUpItemBase.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Structs/Struct_CropAddress.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/AlchemyWidget/CropSlot/WBP_BeetSlot.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/AlchemyWidget/WBP_AlchemyCropSlotBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/AlchemyWidget/WBP_AlchemyCropSlotBase.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/AlchemyWidget/WBP_AlchemyInventroyUI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/AlchemyWidget/WBP_AlchemyInventroyUI.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_AlchemyTable.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_AlchemyTable.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/AlchemyWidget/WBP_AlchemyUI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/AlchemyWidget/WBP_AlchemyUI.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/WBP_TributeUI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/WBP_TributeUI.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Inventory/BPAC_InventoryComponent.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Inventory/BPAC_InventoryComponent.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/BP_ItemMaster.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/BP_ItemMaster.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/DT_InventoryItemData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/DT_InventoryItemData.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/Enum_ItemCategory.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/Enum_ItemCategory.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/Hotbar/WBP_Hotbar.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/Hotbar/WBP_Hotbar.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/Hotbar/WBP_HotbarSlot.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/Hotbar/WBP_HotbarSlot.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_InventorySlot.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_InventorySlot.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_InventoryUI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_InventoryUI.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_PlayerHUD.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_PlayerHUD.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_SlotDragnDrop.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_SlotDragnDrop.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Materials/MI_Liquid_Red.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Materials/MI_Liquid_Red.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_Bubble.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_Bubble.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_Splash.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_Splash.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/9/GO/I85JKXET0BRBH1W9G38U2H.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/9/GO/I85JKXET0BRBH1W9G38U2H.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSD.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSD.Build.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGSD/AlchemyTable.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AlchemyTable.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGSD/AlchemyTable.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AlchemyTable.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGSD/AlchemyUI.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AlchemyUI.cpp" afterDir="false" />
@@ -98,23 +83,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "Uproject.AGSD.executor": "Run",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Uproject.AGSD.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="AGSD" type="Uproject" factoryName="rider.uproject">
       <configuration_1 setup="1">
@@ -256,6 +241,7 @@
       <workItem from="1768615829975" duration="1208000" />
       <workItem from="1768629562541" duration="6639000" />
       <workItem from="1768826328505" duration="4460000" />
+      <workItem from="1769181163351" duration="4514000" />
     </task>
     <servers />
   </component>

@@ -10,6 +10,7 @@
  * 
  */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWidgetClosed);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCropInserted);
 UCLASS()
 class AGSD_API UAlchemyUI : public UUserWidget
 {
@@ -20,6 +21,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnWidgetClosed OnWidgetClosed;
 
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnCropInserted OnCropInserted;
+
+	UFUNCTION(BlueprintCallable)
+	void CallOnCropInserted();
+	
 	void PlayFadeIn();
 
 protected:
