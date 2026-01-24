@@ -3,10 +3,12 @@
 
 #include "AlchemyUI.h"
 
+#include "AlchemyTable.h"
 #include "Components/Button.h"
 
 void UAlchemyUI::CallOnCropInserted()
 {
+	AlchemyTable->SplashPot();
 	OnCropInserted.Broadcast();
 }
 
@@ -30,6 +32,8 @@ void UAlchemyUI::NativeConstruct()
 void UAlchemyUI::NativeDestruct()
 {
 	Super::NativeDestruct();
+	CloseButton->OnClicked.RemoveAll(this);
+	AlchemyTable->EndAlchemy();
 	OnWidgetClosed.Broadcast();
 }
 

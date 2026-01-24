@@ -2,7 +2,6 @@
 
 
 #include "AlchemyTable.h"
-
 #include "AGSDCharacter.h"
 #include "AGSDPlayerController.h"
 #include "../../../../../../../Program Files/Epic Games/UE_5.6/Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h"
@@ -130,8 +129,7 @@ void AAlchemyTable::Interact_Implementation(AAGSDCharacter* player)
 		}
 		if (AlchemyWidget)
 		{
-			AlchemyWidget->OnWidgetClosed.AddUniqueDynamic(this, &AAlchemyTable::EndAlchemy);
-			AlchemyWidget->OnCropInserted.AddUniqueDynamic(this, &AAlchemyTable::SplashPot);
+			AlchemyWidget->SetAlchemyTable(this);
 			
 			AlchemyWidget->AddToViewport();
 

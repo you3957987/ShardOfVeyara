@@ -9,6 +9,8 @@
 /**
  * 
  */
+class AAlchemyTable;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWidgetClosed);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCropInserted);
 UCLASS()
@@ -29,6 +31,11 @@ public:
 	
 	void PlayFadeIn();
 
+	FORCEINLINE void SetAlchemyTable(AAlchemyTable* table) { AlchemyTable = table; }
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void InitInsertedSlot();
+	
 protected:
 	virtual void NativeConstruct() override;
 	//위젯이 제거될 때 호출되는 엔진 함수 오버라이드
@@ -42,4 +49,7 @@ protected:
 
 	UFUNCTION()
 	void OnCloseButtonClicked();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess))
+	class AAlchemyTable* AlchemyTable;
 };

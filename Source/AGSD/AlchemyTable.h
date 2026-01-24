@@ -31,14 +31,8 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void ApplyPotColor(FLinearColor NewColor);
 
-	UFUNCTION()
-	void EndAlchemy();
-
 	UFUNCTION(BlueprintImplementableEvent)
 	void LerpMixLiquidColor();
-	
-	UFUNCTION()
-	void SplashPot();
 
 	FText InteractActionText = FText::FromString(TEXT("양조하기"));
 
@@ -55,6 +49,13 @@ protected:
 	UAlchemyUI* AlchemyWidget;
 
 	AAGSDCharacter* Player;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TArray<FString> InsertedItemID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = CultivationPlot)
+	class UDataTable* AlchemyDataTable;
+	
 public:
 	void OnCameraBlendFinished();
 	
@@ -79,7 +80,16 @@ public:
 	class UNiagaraComponent* BubbleVFXComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Niagara")
-	FLinearColor LiquidColor = FColor::FromHex("A5DDFFFF");
+	FLinearColor BaseLiquidColor = FColor::FromHex("A5DDFFFF");
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Niagara")
+	FLinearColor LiquidColor = BaseLiquidColor;
+
+	UFUNCTION(BlueprintCallable)
+	void SplashPot();
+
+	UFUNCTION()
+	void EndAlchemy();
 	
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CultivationPlot, meta = (AllowPrivateAccess = "true"))
