@@ -6,6 +6,7 @@
 #include "AGSDCharacter.h"
 #include "AlchemyUI.h"
 #include "Interaction.h"
+#include "PotionDataTable.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Actor.h"
 #include "AlchemyTable.generated.h"
@@ -34,6 +35,9 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void LerpMixLiquidColor();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void TransmutationComplete();
+	
 	FText InteractActionText = FText::FromString(TEXT("양조하기"));
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -85,8 +89,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Niagara")
 	FLinearColor LiquidColor = BaseLiquidColor;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FPotionData TargetRecipe;
+	
 	UFUNCTION(BlueprintCallable)
-	void SplashPot();
+	void SplashPot(bool clear);
 
 	UFUNCTION()
 	void EndAlchemy();
@@ -95,6 +102,8 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CultivationPlot, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* CollisionBox;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UMaterialInstanceDynamic* PotDynamicMaterial;
+
+	TArray<FPotionData*> AlchemyRecipes;
 };
