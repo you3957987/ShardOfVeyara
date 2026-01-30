@@ -11,6 +11,7 @@ enum class EEnemyType : uint8
 	EET_Ranged UMETA(DisplayName = "Ranged Enemy"), // 원거리 공격 적
 	EET_Exploder UMETA(DisplayName = "Exploder Enemy"), // 폭발 적
 	EET_Transpar UMETA(DisplayName = "Transpar Enemy"), // 투명 몹
+	EET_Mimic UMETA(DisplayName = "Mimic Enemy"), // 위장 몹
 
 	EET_MAX UMETA(DisplayName = "Default") // 최대값, 추가적인 값을 위한 공간
 };

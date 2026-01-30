@@ -83,7 +83,10 @@ void ABaseEnemy::BeginPlay()
 	}
 	else
 	{
-		SpawnDefaultController();// 스폰 몽타주 사용 안하면 자동 빙의 설정
+		if ( EnemyType != EEnemyType::EET_Mimic ) // 미믹 타입이 아니면
+		{
+			SpawnDefaultController();// 스폰 몽타주 사용 안하면 자동 빙의 설정
+		}
 	}
 	TestDeadLogic(); // 죽음 로직 테스트 함수
 }

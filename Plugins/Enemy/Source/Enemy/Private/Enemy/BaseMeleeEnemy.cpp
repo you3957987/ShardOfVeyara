@@ -13,7 +13,9 @@ ABaseMeleeEnemy::ABaseMeleeEnemy()
 	AttackRangePointSphere->ShapeColor = FColor::Purple;
 	AttackRangePointSphere->SetVisibility(false);
 	AttackRangePointSphere->SetHiddenInGame(false); 
-	
+
+
+	EnemyType = EEnemyType::EET_Melee;
 }
 
 void ABaseMeleeEnemy::Tick(float DeltaTime)
