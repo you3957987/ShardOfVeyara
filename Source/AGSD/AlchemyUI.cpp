@@ -8,7 +8,7 @@
 
 void UAlchemyUI::CallOnCropInserted()
 {
-	//AlchemyTable->SplashPot();
+	AlchemyTable->SplashPot();
 	OnCropInserted.Broadcast();
 }
 
@@ -32,12 +32,13 @@ void UAlchemyUI::NativeConstruct()
 void UAlchemyUI::NativeDestruct()
 {
 	Super::NativeDestruct();
+	CloseButton->OnClicked.RemoveAll(this);
+	AlchemyTable->EndAlchemy();
+	OnWidgetClosed.Broadcast();
 }
 
 void UAlchemyUI::OnCloseButtonClicked()
 {
-	CloseButton->OnClicked.RemoveDynamic(this, &UAlchemyUI::OnCloseButtonClicked);
-	AlchemyTable->EndAlchemy();
 	// 스스로를 화면에서 제거합니다.
 	RemoveFromParent();
 }

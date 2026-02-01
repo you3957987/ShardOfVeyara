@@ -9,32 +9,7 @@
   <component name="ChangeListManager">
     <list default="true" id="4fb32fe1-2f7b-4ce4-b591-d5e38df0812d" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AGSD.uproject.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/AGSD.uproject.DotSettings.user" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Farmer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Farmer.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_AlchemyTable.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_AlchemyTable.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/AlchemyWidget/WBP_AlchemyCropSlotBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/AlchemyWidget/WBP_AlchemyCropSlotBase.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/AlchemyWidget/WBP_AlchemyInventroyUI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/AlchemyWidget/WBP_AlchemyInventroyUI.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/AlchemyWidget/WBP_AlchemyUI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/AlchemyWidget/WBP_AlchemyUI.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/DT_AlchemyData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/DT_AlchemyData.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Materials/M_Brew.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Materials/M_Brew.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_Bubble.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_Bubble.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_Splash.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_Splash.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/3/YX/0EGEJVFCP4PZ4KJ8Z1AC44.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/3/YX/0EGEJVFCP4PZ4KJ8Z1AC44.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/4/BY/HD2AH6G3TUCA1SOQS0VHK3.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/4/BY/HD2AH6G3TUCA1SOQS0VHK3.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/5/I8/DTMAPJQ28PRT0H2XL29O4Q.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/5/I8/DTMAPJQ28PRT0H2XL29O4Q.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/6/4X/2SS92YPWUTQQ9LNB109HM7.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/6/4X/2SS92YPWUTQQ9LNB109HM7.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/7/YY/S8ZRPCZ2JS6A6OT73KCKN3.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/7/YY/S8ZRPCZ2JS6A6OT73KCKN3.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/8/UN/GIBQBIX34BYIXL18X5XSXP.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/8/UN/GIBQBIX34BYIXL18X5XSXP.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/9/GO/I85JKXET0BRBH1W9G38U2H.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/9/GO/I85JKXET0BRBH1W9G38U2H.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/9/LY/0H7SAIDVIJPMOI0MXIK4N5.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/9/LY/0H7SAIDVIJPMOI0MXIK4N5.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/A/OG/HOURFDPM1ZK0KYB2QOJRVI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/A/OG/HOURFDPM1ZK0KYB2QOJRVI.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/B/M8/996XLQD7GT3AUJUWCAOB9W.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/B/M8/996XLQD7GT3AUJUWCAOB9W.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/D/9N/QMYQBBU0WUU7NN7Y2LOTTH.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/D/9N/QMYQBBU0WUU7NN7Y2LOTTH.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/E/JH/LSVDE6CB5DFFG793O317CH.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/E/JH/LSVDE6CB5DFFG793O317CH.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/AlchemyTable.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AlchemyTable.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/AlchemyTable.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AlchemyTable.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/AlchemyUI.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AlchemyUI.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/PotionDataTable.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/PotionDataTable.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,17 +40,11 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="cidr-memory-view://0" root0="FORCE_HIGHLIGHTING" />
-    <setting file="cidr-memory-view://1" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Core/Public/Algo/IntroSort.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Core/Public/Containers/Array.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Core/Public/Containers/UnrealString.h.inl" root0="FORCE_HIGHLIGHTING" />
+    <setting file="cidr-memory-view://4" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Core/Public/UObject/ScriptDelegates.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Classes/Engine/DataTable.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Classes/GameFramework/Actor.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/UMG/Private/Components/Widget.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/UMG/Public/Blueprint/UserWidget.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Intermediate/Build/Win64/UnrealEditor/Inc/AGSD/UHT/AlchemyTable.gen.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/BTService/BTService_FocusPlayerWhenWait.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/BTService/BTService_FocusPlayerWhenWait.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/FlyingPet/CuteWhalePet.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -270,9 +239,6 @@
       <workItem from="1769261333162" duration="4503000" />
       <workItem from="1769272031641" duration="3103000" />
       <workItem from="1769351271635" duration="1923000" />
-      <workItem from="1769438521100" duration="2534000" />
-      <workItem from="1769516690430" duration="6887000" />
-      <workItem from="1769525097709" duration="936000" />
     </task>
     <servers />
   </component>
