@@ -95,6 +95,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SplashPot(bool clear);
 
+	UFUNCTION(BlueprintCallable)
+	void SpawnPotion();
+	
 	UFUNCTION()
 	void EndAlchemy();
 	

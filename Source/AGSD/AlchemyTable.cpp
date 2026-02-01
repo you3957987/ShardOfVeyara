@@ -135,6 +135,11 @@ void AAlchemyTable::SplashPot(bool clear)
 	}
 }
 
+void AAlchemyTable::SpawnPotion()
+{
+	
+}
+
 void AAlchemyTable::OnCameraBlendFinished()
 {
 	if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(Player->GetController()))
