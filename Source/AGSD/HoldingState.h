@@ -13,8 +13,10 @@ enum class EHoldingState : uint8 // 클래스 이름이 아닌, ENUM 타입 이�
 {
     // ENUM 멤버 정의
     EHS_None        UMETA(DisplayName = "None (아무것도 들고 있지 않음)"),
+    EHS_Consumable  UMETA(DisplayName = "Consumable (소모품)"),
     EHS_Tool        UMETA(DisplayName = "Tool (도구)"),
     EHS_Seed        UMETA(DisplayName = "Seed (씨앗)"),
     EHS_Crop        UMETA(DisplayName = "Crop (작물)"),
+    EHS_Alchemy     UMETA(DisplayName = "Alchemy (연금술)"),
     EHS_OtherItem   UMETA(DisplayName = "Other Item (기타 아이템)")
 };
