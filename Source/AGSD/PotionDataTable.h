@@ -13,10 +13,16 @@ USTRUCT(BlueprintType)
 struct FPotionData : public FTableRowBase
 {
 	GENERATED_BODY()
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PotionData")
 	FString ItemID;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PotionData")
+	FString IngredientA;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PotionData")
+	FString IngredientB;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PotionData")
 	FLinearColor LiquidColor;
 };
