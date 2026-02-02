@@ -142,7 +142,7 @@ public:
 	void Die();
 	// 죽음 몽타주 끝난 후 호출되는 함수 - 애님 노티파이에서 호출
 	UFUNCTION(BlueprintCallable)
-	void AfterDieMontageEnd(); 
+	virtual void AfterDieMontageEnd(); 
 	// 죽고 나서 떨어질 아이템 배열
 	UPROPERTY(EditAnywhere, Category="자체설정")
 	TArray<TSubclassOf<AActor>> DropItems;

@@ -9,14 +9,11 @@
   <component name="ChangeListManager">
     <list default="true" id="cdd09aed-f1a4-4e89-b101-a57838b9ef37" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/AI/BT_EnemyAI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/AI/BT_EnemyAI.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/ChestMonster_Mimic/AM_ChestMonster_Dead.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/ChestMonster_Mimic/AM_ChestMonster_Dead.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/ChestMonster_Mimic/BP_ChestMonster.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/ChestMonster_Mimic/BP_ChestMonster.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Snake_Trans/AM_SnakeAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Snake_Trans/AM_SnakeAttack.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enum/EnemyType.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enum/EnemyType.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/8/X8/F7TB8K0302FQE8EDUPINN0.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonMinion_Melee/AM_SkeletonMinionDead.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonMinion_Melee/AM_SkeletonMinionDead.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Slime_Slime/AM_Slime_Dead.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Slime_Slime/AM_Slime_Dead.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/C/OV/MBQFA51SK74YQGZ3OY9RVS.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/BTTask/BTTask_EnemyDead.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/BTTask/BTTask_EnemyDead.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/BaseEnemy.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/BaseEnemy.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/BaseFlyingPet.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/BaseFlyingPet.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,6 +36,7 @@
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/BTTask/BTTask_BaseSlimeAttack.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Enemy/BaseMimicEnemy.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Enemy/BaseSlimeEnemy.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Enemy/Melee_RebirthEnemy.h" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -150,6 +148,8 @@
       <workItem from="1768975321406" duration="1394000" />
       <workItem from="1769749669815" duration="6672000" />
       <workItem from="1769825702294" duration="4258000" />
+      <workItem from="1769994587997" duration="5417000" />
+      <workItem from="1770000316035" duration="1973000" />
     </task>
     <servers />
   </component>
