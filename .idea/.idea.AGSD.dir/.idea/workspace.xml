@@ -10,25 +10,10 @@
     <list default="true" id="4fb32fe1-2f7b-4ce4-b591-d5e38df0812d" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_AlchemyTable.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_AlchemyTable.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Potions/BP_GreaterGrowthPromoter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Potions/BP_GreaterGrowthPromoter.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Potions/BP_GreaterHealingPotion.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Potions/BP_GreaterHealingPotion.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Potions/BP_GreaterRichFertilizer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Potions/BP_GreaterRichFertilizer.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Potions/BP_LesserGrowthPromoter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Potions/BP_LesserGrowthPromoter.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Potions/BP_LesserHealingPotion.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Potions/BP_LesserHealingPotion.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Potions/BP_LesserRichFertilizer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Potions/BP_LesserRichFertilizer.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Potions/BP_SuperiorHealingPotion.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Potions/BP_SuperiorHealingPotion.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/AlchemyWidget/WBP_AlchemyUI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/AlchemyWidget/WBP_AlchemyUI.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/DT_InventoryItemData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/DT_InventoryItemData.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/3/YX/0EGEJVFCP4PZ4KJ8Z1AC44.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/3/YX/0EGEJVFCP4PZ4KJ8Z1AC44.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/4/BY/HD2AH6G3TUCA1SOQS0VHK3.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/4/BY/HD2AH6G3TUCA1SOQS0VHK3.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/6/4X/2SS92YPWUTQQ9LNB109HM7.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/6/4X/2SS92YPWUTQQ9LNB109HM7.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/7/6I/ETSV6OBN58PNZVUU7ISXLC.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/7/6I/ETSV6OBN58PNZVUU7ISXLC.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/8/KZ/2S40WBLCHNC0CKFZHEQAH7.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/8/KZ/2S40WBLCHNC0CKFZHEQAH7.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/ACultivationPlot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/ACultivationPlot.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/AlchemyTable.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AlchemyTable.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGSD/AlchemyTable.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AlchemyTable.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGSD/AlchemyUI.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AlchemyUI.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/PotionDataTable.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/PotionDataTable.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/AlchemyUI.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AlchemyUI.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,64 +66,11 @@
     <setting file="file://$PROJECT_DIR$/Plugins/Pet/Source/Pet/Public/Interface/PetConversationInterface.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/AGSDGameStateBase.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/AGSDGameStateBase.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyTable.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.h" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.h" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.h" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.h" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.h" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/AlchemyUI.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/Anim_PullPlant.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/FarmingGameMode.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/Interaction.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/InteractionWidget.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/InteractionWidget.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/PotionDataTable.h" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/user/Documents/GitHub/AGSD/Source/AGSD/PotionDataTable.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/PotionDataTable.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/Weeds.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/Weeds.h" root0="FORCE_HIGHLIGHTING" />
@@ -244,14 +176,6 @@
         <option name="Build" />
       </method>
     </configuration>
-    <configuration default="true" type="Uproject" factoryName="rider.uproject">
-      <option name="DEFAULT_PROJECT_PATH" value="" />
-      <option name="PROJECT_FILE_PATH" value="" />
-      <option name="AUTO_SELECT_PRIORITY" value="0" />
-      <method v="2">
-        <option name="Build" />
-      </method>
-    </configuration>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="디폴트 작업">
@@ -330,6 +254,7 @@
       <workItem from="1769998765352" duration="845000" />
       <workItem from="1769999793307" duration="290000" />
       <workItem from="1770000145928" duration="1099000" />
+      <workItem from="1770038832536" duration="2951000" />
     </task>
     <servers />
   </component>

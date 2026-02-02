@@ -74,6 +74,9 @@ public:
 	UFUNCTION()
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void EmptyPot();
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Niagara")
 	class UStaticMeshComponent* PotMeshComponent;
 
