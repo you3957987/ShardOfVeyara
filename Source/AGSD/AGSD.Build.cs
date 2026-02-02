@@ -24,10 +24,7 @@ public class AGSD : ModuleRules
 			"Niagara"
 		});
 
-		PrivateDependencyModuleNames.AddRange(new string[]
-		{
-			"Niagara"
-		});
+		PrivateDependencyModuleNames.AddRange(new string[] { });
 
 		PublicIncludePaths.AddRange(new string[] {
 			"AGSD",
