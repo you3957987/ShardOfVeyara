@@ -12,6 +12,7 @@ enum class EEnemyType : uint8
 	EET_Exploder UMETA(DisplayName = "Exploder Enemy"), // 폭발 적
 	EET_Transpar UMETA(DisplayName = "Transpar Enemy"), // 투명 몹
 	EET_Mimic UMETA(DisplayName = "Mimic Enemy"), // 위장 몹
+	EET_Slime UMETA(DisplayName = "Slime Enemy"), // 슬라임 몹(분열)
 
 	EET_MAX UMETA(DisplayName = "Default") // 최대값, 추가적인 값을 위한 공간
 };
@@ -150,7 +151,7 @@ public:
 	
 	// 죽음 후 일정 시간 뒤에 이펙트 생성 및 액터 제거를 위한 타이머 핸들
 	FTimerHandle DeathTimerHandle;
-	void SpawnDeadEffectAndDestroy();
+	virtual void SpawnDeadEffectAndDestroy();
 	
 	// 스폰 효과 사용 여부. 기본은 트루이지만 스폰 몽타주 안넣으면 false랑 동일
 	UPROPERTY(EditAnywhere, Category = "자체설정")
