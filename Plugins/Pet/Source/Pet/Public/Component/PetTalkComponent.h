@@ -140,7 +140,7 @@ protected:
 	UFUNCTION()
 	void OnPressedLogButton();
 	//대화 로그 창에 대화 내용 추가 함수
-	void AddDialogueToConversationLog(const FText& SpeakerName, const FText& DialogueText);
+	void AddDialogueToConversationLog(const FText& SpeakerName, const FText& DialogueText, bool bIsSelection = false);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	TSubclassOf<class UDialogueEntry> ConversationLogEntryClass;

@@ -15,8 +15,20 @@
 #include "Interface/PetConversationInterface.h"
 헤더에 추가한 뒤
 
-if (OtherActor->Implements<UPetConversationInterface>())
-인터페이스 있는지 검사 혹시 모르니 하면 하고
-IPetConversationInterface::Execute_MasterToPetConversation(OtherActor, DialogueID);
+if (Actor->Implements<UPetConversationInterface>())
+인터페이스 있는지 검사( 오류 방지 및 검사 )
+
+IPetConversationInterface::Execute_MasterToPetConversation( Actor, DialogueID);
 호출하면 됨
 
+Actor 유형 : AActor* 
+
+DialogueID 유형 : FName 
+
+EX) 
+AActor* Character; <- 콜리전 오버랩 등 트리거를 통해 가져온 캐릭터 정보
+
+if( Character->Implements<UPetConversationInterface>() )
+{
+	IPetConversationInterface::Execute_MasterToPetBigConversation(Character, DialogueID);
+}

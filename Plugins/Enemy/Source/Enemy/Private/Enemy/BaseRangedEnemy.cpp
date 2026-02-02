@@ -6,6 +6,8 @@ ABaseRangedEnemy::ABaseRangedEnemy()
 {
 	RangedAttackPoint = CreateDefaultSubobject<USceneComponent>(TEXT("RangedAttackPoint"));
 	RangedAttackPoint->SetupAttachment(RootComponent); // 루트 컴포넌트
+
+	EnemyType = EEnemyType::EET_Ranged;
 }
 
 void ABaseRangedEnemy::Attack()

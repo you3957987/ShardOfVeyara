@@ -214,6 +214,7 @@ void ABaseFlyingPet::CheckSurroundingEnemy()
 		// 적 태그 확인 (혹은 인터페이스나 클래스 캐스팅 확인)
 		if (Actor->ActorHasTag("Enemy"))
 		{
+			if (Actor->ActorHasTag("Mimic")) continue;
 			// Boss 태그가 있다면 무시 
 			if (Actor->ActorHasTag("Boss"))
 			{
@@ -237,7 +238,7 @@ void ABaseFlyingPet::CheckSurroundingEnemy()
 		{
 			// 평상시 상태였는데 주변 적이 있다는 의미
 			PetState = EPetState::EPS_Battle;
-			bIsFolloingTarget = false; // 배틀 모드 진입 시 자유 이동 모드로 전환
+			//bIsFolloingTarget = false; // 배틀 모드 진입 시 자유 이동 모드로 전환
 			if ( PetTalkComp ) PetTalkComp->Travel_FollowToBattle();
 		}
 	}
@@ -245,7 +246,7 @@ void ABaseFlyingPet::CheckSurroundingEnemy()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BossBattleMode Ended - EnemyDetectRange Restore"));
 		bBossBattleMode = false;
-		bIsFolloingTarget = true; // 다시 따라다니기 모드로 전환
+		//bIsFolloingTarget = true; // 다시 따라다니기 모드로 전환
 		EnemyDetectSphere->SetSphereRadius(EnemyDetectRange); // 원래 범위으로 복귀	
 	}
 	else
@@ -255,7 +256,7 @@ void ABaseFlyingPet::CheckSurroundingEnemy()
 			// 배틀 모드에서 벗어나 평상시 상태로 복귀
 			PetState = EPetState::EPS_Follow;
 			if ( PetTalkComp ) PetTalkComp->Travel_BattleToFollow();
-			bIsFolloingTarget = true; // 다시 따라다니기 모드로 전환
+			//bIsFolloingTarget = true; // 다시 따라다니기 모드로 전환
 		}
 	}
 }

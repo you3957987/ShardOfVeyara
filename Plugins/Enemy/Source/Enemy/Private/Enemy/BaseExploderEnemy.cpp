@@ -9,7 +9,10 @@ ABaseExploderEnemy::ABaseExploderEnemy()
 	ExplosionRangeSphere->SetupAttachment(RootComponent); // 루트 컴포넌트
 	ExplosionRangeSphere->ShapeColor = FColor::Yellow;
 	ExplosionRangeSphere->SetVisibility(false);
-	ExplosionRangeSphere->SetHiddenInGame(false); 
+	ExplosionRangeSphere->SetHiddenInGame(false);
+
+
+	EnemyType = EEnemyType::EET_Exploder;
 }
 
 void ABaseExploderEnemy::Explode()
