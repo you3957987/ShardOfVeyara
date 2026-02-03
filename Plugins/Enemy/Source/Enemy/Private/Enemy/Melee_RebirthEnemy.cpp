@@ -20,8 +20,8 @@ AMelee_RebirthEnemy::AMelee_RebirthEnemy()
 	
 	SoulEffectNiagara = CreateDefaultSubobject<UNiagaraComponent>(TEXT("SoulEffectNiagara"));
 	SoulEffectNiagara->SetupAttachment(SoulCollisionSphere);
-	SoulEffectNiagara->SetVisibility(false);
-	SoulEffectNiagara->bAutoActivate = false; 
+
+	SoulEffectNiagara->bAutoActivate = false;
 }
 
 float AMelee_RebirthEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -61,7 +61,7 @@ void AMelee_RebirthEnemy::AfterDieMontageEnd()
 		GetMesh()->bPauseAnims = true;
 	}
 
-	if ( ReviveCount <= 0 )
+	if ( ReviveCount <= 0 ) // 부활 횟수 다 쓴 경우
 	{
 		// 0.3초 후에 SpawnEffectAndDestroy 함수를 호출합니다.
 		GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this,
@@ -82,8 +82,9 @@ void AMelee_RebirthEnemy::SpawnSoul()
 	// 1. 소울 이펙트 켜기
 	if (SoulEffectNiagara)
 	{
-		SoulEffectNiagara->SetVisibility(true);
 		SoulEffectNiagara->Activate(true); // 파티클 재생 시작
+
+		SoulEffectNiagara->SetVisibility(true);
 	}
 
 	// 2. 소울 충돌 감지 켜기 (오버랩)
@@ -130,7 +131,6 @@ void AMelee_RebirthEnemy::Revive()
 	
 	if (SoulEffectNiagara)
 	{
-		SoulEffectNiagara->SetVisibility(false);
 		SoulEffectNiagara->Deactivate(); // 파티클 정지
 	}
 
@@ -172,6 +172,8 @@ void AMelee_RebirthEnemy::AfterReviveMontageEnd()
 		HealthBarWidget->SetVisibility(true);
 	}
 }
+
+
 
 
 
