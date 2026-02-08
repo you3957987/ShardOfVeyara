@@ -78,13 +78,12 @@ protected:
 
 	UPROPERTY()
 	class UFadeWidget* FadeWidget;
-
+	
 private:
 	UFUNCTION(BlueprintCallable)
 	void HandleAttackInput(FName ActionName);
 	
 public:
-
 	/** Constructor */
 	AAGSDCharacter();	
 
@@ -201,8 +200,11 @@ protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
+	void StopMove();
+	
 	virtual void Jump() override;
 
+	
 	virtual void StopJumping() override;
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
@@ -225,6 +227,13 @@ protected:
 
 	UFUNCTION()
 	void WakeUp();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAudioComponent* Running;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAudioComponent* Jumping;
+
 	
 public:
 

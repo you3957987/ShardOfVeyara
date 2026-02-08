@@ -3,8 +3,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PortalSelectWidget.h"
 #include "GameFramework/Actor.h"
 #include "LevelSelectPortal.generated.h"
+
+USTRUCT(BlueprintType)
+struct FMapStruct
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* Texture;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName TeleTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSoftObjectPtr<UWorld> Level;
+};
 
 UCLASS()
 class AGSD_API ALevelSelectPortal : public AActor
@@ -14,15 +29,25 @@ class AGSD_API ALevelSelectPortal : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ALevelSelectPortal();
-
+	
+	void OnWidgetClosed();
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Portal")
+	
 	class UBoxComponent* CollisionBox;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Portal")
+	TArray<FMapStruct> MapStructs;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Portal")
+	TSubclassOf<UPortalSelectWidget> PortalSelectWidgetClass;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Portal")
+	UPortalSelectWidget* PortalSelectWidget;
+
+	class AAGSDCharacter* player;
 	
 public:	
 	//오버랩 시작 시 작동할 함수

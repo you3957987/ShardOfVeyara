@@ -14,4 +14,24 @@ class AGSD_API UPortalSelectWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
+	class ALevelSelectPortal* LevelSelectPortal;
+
+	FORCEINLINE class UButton* getCloseButton() { return CloseButton; }
+
+	UFUNCTION()
+	void OnCloseButtonClicked();
+
+	UFUNCTION()
+	void OnSelectButtonClicked();
+	
+protected:
+	virtual void NativeConstruct() override;
+	
+	UPROPERTY(meta = (BindWidget))
+	class UButton* CloseButton;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* SelectButton;
+	
 };
