@@ -413,7 +413,8 @@ void AAGSDCharacter::Move(const FInputActionValue& Value)
 	if (Running)
 	{
 		// 입력이 있고(움직임), 마이닝 중이 아닐 때
-		if (MovementVector.SizeSquared() > 0.f && !Mining)
+		if (MovementVector.SizeSquared() > 0.f && !Mining
+			&& !GetCharacterMovement()->IsFalling() && GetCharacterMovement()->Velocity.SizeSquared() > 9.f)
 		{
 			if (!Running->IsPlaying())
 			{
@@ -451,7 +452,7 @@ void AAGSDCharacter::StopMove()
 void AAGSDCharacter::Jump()
 {
 	if (Mining) return;
-	if (Jumping)
+ 	if (Jumping && !GetCharacterMovement()->IsFalling())
 	{
 		Jumping->Play();
 	}

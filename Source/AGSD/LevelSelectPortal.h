@@ -11,6 +11,10 @@ USTRUCT(BlueprintType)
 struct FMapStruct
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName MapName;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTexture2D* Texture;
 	
