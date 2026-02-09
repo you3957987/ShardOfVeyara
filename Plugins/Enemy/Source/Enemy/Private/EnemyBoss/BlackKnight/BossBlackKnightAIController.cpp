@@ -21,4 +21,5 @@ void ABossBlackKnightAIController::SetBlackboardKey()
 	BlackboardComp->SetValueAsFloat("AttackDelay", ControlledEnemy->AttackDelay);
 
 	BlackboardComp->SetValueAsObject(TEXT("TargetCharacter"), TargetPawn);
+	BlackboardComp->SetValueAsFloat(TEXT("W_RushAttack"), ControlledEnemy->AttackWeight.RushAttack);
 }

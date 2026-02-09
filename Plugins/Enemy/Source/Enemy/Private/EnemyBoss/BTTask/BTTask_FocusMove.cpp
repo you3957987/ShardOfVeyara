@@ -12,7 +12,6 @@ UBTTask_FocusMove::UBTTask_FocusMove()
 
 EBTNodeResult::Type UBTTask_FocusMove::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	ElapsedTime = 0.0f; // 시간 초기화
 	return EBTNodeResult::InProgress;
 }
 
@@ -46,14 +45,4 @@ void UBTTask_FocusMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 		// 4. 해당 방향으로 이동 입력 추가
 		Pawn->AddMovementInput(MoveDir, 1.0f);
 	}
-	
-	// 1. 시간 누적
-	ElapsedTime += DeltaSeconds;
-
-	// 2. 5초가 지나면 "성공(Succeeded)" 처리
-	if (ElapsedTime >= MoveDuration)
-	{
-		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-	}
-	
 }

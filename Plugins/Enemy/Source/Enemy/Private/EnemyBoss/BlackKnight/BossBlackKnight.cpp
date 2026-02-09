@@ -16,10 +16,8 @@ void ABossBlackKnight::BeginPlay()
 void ABossBlackKnight::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(),
-		GetActorLocation() + GetActorForwardVector() * 300.f, 100.f,
-		FColor::Red, false, -1.f, 0, 5.f);
+	
+	MoveForwardDuringRushAttack(DeltaTime);
 	
 	// BS 이동 테스트용 코드
 	/*
@@ -88,6 +86,83 @@ void ABossBlackKnight::Tick(float DeltaTime)
 		}
 	}
 	*/
+}
+
+void ABossBlackKnight::RushAttack()
+{
+	if ( RushAttackMontage )
+	{
+		PlayAnimMontage(RushAttackMontage);
+
+		RushTargetLocation = TargetCharacter->GetActorLocation();
+	}
+	
+}
+
+void ABossBlackKnight::StartRush()
+{
+	if (TargetCharacter == nullptr) return;
+
+	// 1. 목표 지점 계산
+	FVector StartLoc = GetActorLocation();
+	FVector TargetLoc = TargetCharacter->GetActorLocation();
+	TargetLoc.Z = StartLoc.Z; // 높이는 보스 높이로 고정
+
+	// 타겟 바로 앞(공격 사거리)까지만 가도록 보정
+	FVector Direction = (TargetLoc - StartLoc).GetSafeNormal();
+	float Dist = FVector::Dist(StartLoc, TargetLoc);
+	float StopDist = 100.0f; // 100cm 앞에서 멈춤
+    
+	// 최종 목표 위치 확정
+	RushTargetLocation = StartLoc + Direction * (Dist - StopDist);
+	RushStartLocation = StartLoc;
+
+	// 2. 시간 설정 (거리에 상관없이 무조건 0.5초 만에 도착)
+	RushDuration = 0.2f;
+	RushElapsedTime = 0.0f;
+
+	// 3. 타겟 바라보기
+	SetActorRotation(Direction.Rotation());
+
+	// 4. 돌진 시작 플래그 ON
+	bIsRushing = true;
+    
+	// (선택) 물리 효과 끄기: 돌진 중 다른 힘에 밀리지 않도록
+	GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+}
+
+void ABossBlackKnight::MoveForwardDuringRushAttack(float DeltaTime)
+{
+	if ( !bIsRushing ) return;
+
+	RushElapsedTime += DeltaTime;
+
+	// 0.0 ~ 1.0 사이의 진행률 계산 (0이면 시작점, 1이면 도착점)
+	float Alpha = FMath::Clamp(RushElapsedTime / RushDuration, 0.0f, 1.0f);
+
+	// 현재 위치 계산 (선형 보간: Lerp)
+	// 시작점과 목표점 사이를 Alpha 비율만큼 이동한 위치
+	FVector NewLocation = FMath::Lerp(RushStartLocation, RushTargetLocation, Alpha);
+
+	// 위치 적용 (Sweep: true로 해서 벽에 막히게 함)
+	if (!SetActorLocation(NewLocation, true))
+	{
+		// 벽에 부딪혔다면 돌진 중단
+		bIsRushing = false;
+		return;
+	}
+
+	// 시간이 다 됐으면 종료
+	if (Alpha >= 1.0f)
+	{
+		bIsRushing = false;
+		UE_LOG(LogTemp, Warning, TEXT("Rush Finished!"));
+
+		// (선택) 물리 효과 복구
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		
+		// 도착 후 처리 (예: 공격 판정, 몽타주 종료 등)
+	}
 }
 
 #if WITH_EDITOR
