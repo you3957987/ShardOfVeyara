@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -55,6 +53,10 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class USceneComponent* SpawnLocation;
 
+	// 스폰할 적 클래스 배열
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "자체설정")
+	TArray<TSubclassOf<class ABaseEnemy>> SpawningEnemyClasses;
+	
 	// 스폰 딜레이
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	float SpawnDelay = 7.0f;
@@ -63,13 +65,10 @@ protected:
 	FTimerHandle SpawnTimerHandle;
 	
 	void SpawnEnemy(); // 적 스폰 함수
-	
+
 public:	
 	AEnemySpawner();
 	virtual void Tick(float DeltaTime) override;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "자체설정")
-	TSubclassOf<class ABaseEnemy> SpawningEnemyClass;
 
 #if WITH_EDITOR
 	// 에디터에서 프로퍼티가 변경될 때 호출됩니다.

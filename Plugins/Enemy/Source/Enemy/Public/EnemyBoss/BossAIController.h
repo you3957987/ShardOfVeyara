@@ -19,7 +19,7 @@ protected:
 	
 	class AGameStateBase* GameState;
 	//class ABaseBossEnemy* ControlledEnemy; 이거는 자식에서 따로따로 해줘야함 !!!!!!!!!!!!!
-	class APawn* Targetpawn;
+	class APawn* TargetPawn;
 	// B 트리
 	UPROPERTY(EditAnywhere, Category="자체설정")
 	class UBehaviorTree* BehaviorTree; 

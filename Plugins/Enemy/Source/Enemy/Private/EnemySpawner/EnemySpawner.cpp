@@ -2,6 +2,8 @@
 
 #include "BaseEnemy.h"
 #include "NavigationSystem.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -149,11 +151,18 @@ void AEnemySpawner::SpawnEnemy()
 	// 0. 시야 체크: 플레이어가 보이지 않으면 스폰하지 않음
 	if (CanSeePlayer() == false) return;
 	
-	if (SpawningEnemyClass && SpawnLocation)
+	if (SpawningEnemyClasses.Num() > 0 && SpawnLocation)
 	{
 		UWorld* World = GetWorld();
 		if (World)
 		{
+			// 배열에서 랜덤하게 하나 선택
+			int32 RandomIndex = FMath::RandRange(0, SpawningEnemyClasses.Num() - 1);
+			TSubclassOf<ABaseEnemy> SelectedEnemyClass = SpawningEnemyClasses[RandomIndex];
+
+			// 선택된 클래스가 유효한지 확인
+			if (!SelectedEnemyClass) return;
+
 			// 기본 스폰 위치
 			FVector OriginLocation = SpawnLocation->GetComponentLocation();
 			FVector FinalSpawnLocation = OriginLocation;
@@ -171,33 +180,32 @@ void AEnemySpawner::SpawnEnemy()
 				{
 					FinalSpawnLocation = RandomPoint.Location;
 				}
+				
+				// 2. 캡슐 컴포넌트의 높이만큼 Z축 보정 (땅에 파묻히지 않게)
+				float SafeZOffset = 0.f;
+				ACharacter* EnemyCDO = Cast<ACharacter>(SelectedEnemyClass->GetDefaultObject());
+				if (EnemyCDO && EnemyCDO->GetCapsuleComponent())
+				{
+					SafeZOffset = EnemyCDO->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+				}
+
+				// 위치 보정 적용
+				FinalSpawnLocation.Z += SafeZOffset;
+
+				// 3. 스폰 파라미터 설정 및 스폰
+				FActorSpawnParameters SpawnParams;
+				SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+				World->SpawnActor<ABaseEnemy>(
+					SelectedEnemyClass,
+					FinalSpawnLocation,
+					SpawnRotation,
+					SpawnParams
+				);
 			}
-
-			// 2. 캡슐 컴포넌트의 높이만큼 Z축 보정 (땅에 파묻히지 않게)
-			float SafeZOffset = 0.f;
-			ACharacter* EnemyCDO = Cast<ACharacter>(SpawningEnemyClass->GetDefaultObject());
-			if (EnemyCDO && EnemyCDO->GetCapsuleComponent())
-			{
-				SafeZOffset = EnemyCDO->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
-			}
-
-			// 위치 보정 적용
-			FinalSpawnLocation.Z += SafeZOffset;
-
-			// 3. 스폰 파라미터 설정 및 스폰
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-
-			World->SpawnActor<ABaseEnemy>(
-				SpawningEnemyClass,
-				FinalSpawnLocation,
-				SpawnRotation,
-				SpawnParams
-			);
 		}
 	}
 }
-
 
 #if WITH_EDITOR
 void AEnemySpawner::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)

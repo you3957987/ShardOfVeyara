@@ -9,8 +9,30 @@
   <component name="ChangeListManager">
     <list default="true" id="cdd09aed-f1a4-4e89-b101-a57838b9ef37" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemySpawner/EnemySpaner.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemySpawner/EnemySpaner.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Config/DefaultEnemy.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Config/DefaultEnemy.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/BluePrint/BP_BaseBoss.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/BluePrint/Skeleton/BP_Boss_SkeletonMage.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/Anim/ABP_Boss_SkeletonMage.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/Anim/ABP_Boss_SkeletonMage.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/BP_Boss_SkeletonMage.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/BP_Boss_SkeletonMage.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Grave_Spawner/BP_Grave_Spawner.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Grave_Spawner/BP_Grave_Spawner.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonMinion_Melee/BP_SuumonSkeletonMinion.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonMinion_Melee/BP_SuumonSkeletonMinion.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRogue_Ranged/BP_SkeletonRogue.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRogue_Ranged/BP_SkeletonRogue.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRogue_Ranged/BP_SummonSkeletonRogue.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRogue_Ranged/BP_SummonSkeletonRogue.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/EnemyAsset/MonsterForEnemyBundlePBR/Wave02/Mesh/BlackKnight/BlackKnight_BP.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/EnemyAsset/MonsterForEnemyBundlePBR/Wave02/Mesh/BlackKnight/BlackKnight_BP.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/EnemyAsset/MonsterForEnemyBundlePBR/Wave02/Mesh/BlackKnight/BlackKnight_SK.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/EnemyAsset/MonsterForEnemyBundlePBR/Wave02/Mesh/BlackKnight/BlackKnight_SK.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/EnemyAsset/MonsterForEnemyBundlePBR/Wave03/Animation/DemonKing/DemonKing_SenseSomethingMaint_ANIM.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/EnemyAsset/MonsterForEnemyBundlePBR/Wave03/Animation/DemonKing/DemonKing_SenseSomethingMaint_ANIM.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/TestMap/ThirdPerson/Level_EnemyTest.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/TestMap/ThirdPerson/Level_EnemyTest.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/3/01/W2V0UCJQ8COH2AOCCDIQF6.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/3/01/W2V0UCJQ8COH2AOCCDIQF6.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/3/PO/FWWR4EUQAZ8PAQSJWSJ2IH.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/3/PO/FWWR4EUQAZ8PAQSJWSJ2IH.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/8/HU/FZOPGEOMGAQK0OQ1MEO60J.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/8/HU/FZOPGEOMGAQK0OQ1MEO60J.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/9/AG/CQEG1B5X4ZE3TN7YM2H5FK.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BaseBossEnemy.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BaseBossEnemy.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BossAIController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BossAIController.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/SkeletonMage/BossSkeletonMage.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/SkeletonMage/BossSkeletonMage.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemySpawner/EnemySpawner.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemySpawner/EnemySpawner.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/BTService/BTService_CheckSightAndDetect.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/BTService/BTService_CheckSightAndDetect.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/BossAIController.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/BossAIController.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemySpawner/EnemySpawner.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemySpawner/EnemySpawner.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +45,13 @@
       <entry key="_C:/Users/YJH/Documents/GitHub/AGSD" value="38YQ803iY0qP7GKInxgGp7QDgDL" />
     </persistenceIdMap>
   </component>
+  <component name="CopilotUserSelectedModel">
+    <selectedModels>
+      <entry key="edit-panel" value="GPT-5 mini" />
+      <entry key="chat-panel" value="Gemini 3 Pro (Preview)" />
+      <entry key="agent-panel" value="Gemini 3 Pro (Preview)" />
+    </selectedModels>
+  </component>
   <component name="DpaMonitoringSettings">
     <option name="firstShow" value="false" />
   </component>
@@ -32,12 +61,17 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/BaseSlimeEnemy.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/Ranged_RebirthEnemy.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BTTask/BTTask_FocusMove.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BlackKnight/BossBlackKnight.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BlackKnight/BossBlackKnightAIController.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemySpawner/EnemySpawner.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/BTTask/BTTask_BaseSlimeAttack.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Enemy/BaseMimicEnemy.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Enemy/BaseSlimeEnemy.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Enemy/Melee_RebirthEnemy.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Enemy/Ranged_RebirthEnemy.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/BTTask/BTTask_FocusMove.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/BlackKnight/BossBlackKnightAIController.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemySpawner/EnemySpawner.h" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
@@ -157,6 +191,10 @@
       <workItem from="1770100103780" duration="14000" />
       <workItem from="1770100593596" duration="1285000" />
       <workItem from="1770170503196" duration="4225000" />
+      <workItem from="1770432245283" duration="982000" />
+      <workItem from="1770435478246" duration="3480000" />
+      <workItem from="1770514486874" duration="12773000" />
+      <workItem from="1770598507680" duration="379000" />
     </task>
     <servers />
   </component>

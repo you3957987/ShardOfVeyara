@@ -49,7 +49,7 @@ void ABossSkeletonMage::Tick(float DeltaTime)
 	if (bIsAttacking == true ) // 공격 중일 때
 	{
 		TArray<AActor*> OverlappingActors;
-		// AttackRangePointSphere와 겹치는 모든 액터를 가져옵니다.
+		// 겹치는 모든 액터를 가져옵니다.
 		PushAreaSphere->GetOverlappingActors(OverlappingActors);
 		
 		for (AActor* OverlappingActor : OverlappingActors)

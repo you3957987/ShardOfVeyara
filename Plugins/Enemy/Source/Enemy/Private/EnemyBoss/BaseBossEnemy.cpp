@@ -39,6 +39,12 @@ ABaseBossEnemy::ABaseBossEnemy()
 	
 	// AI 컨트롤러가 자동 빙의 하는거 제한. 범위 안에 플레이어가 들어왔을 때 오버랩 이벤트로 빙의
 	AutoPossessAI = EAutoPossessAI::Disabled;
+
+	// 오리엔트 투 무브먼트 비활성화 == 
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+	// 컨트롤러 선호 회전 설정
+	GetCharacterMovement()->bUseControllerDesiredRotation = true;
+	
 }
 
 void ABaseBossEnemy::BeginPlay()
@@ -102,6 +108,7 @@ void ABaseBossEnemy::OnPlayerDetectOverlapBegin(UPrimitiveComponent* OverlappedC
 	if (OtherActor && OtherActor->ActorHasTag(FName("Player")))
 	{
 		SpawnDefaultController();// 스폰 몽타주 사용 안하면 자동 빙의 설정
+		PlayerDetectRangeSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision); // 한 번 감지되면 비활성화
 	}
 }
 

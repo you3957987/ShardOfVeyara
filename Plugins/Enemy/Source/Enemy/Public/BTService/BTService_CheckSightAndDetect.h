@@ -12,6 +12,7 @@ class ENEMY_API UBTService_CheckSightAndDetect : public UBTService_BlackboardBas
 	
 public:
 	UBTService_CheckSightAndDetect();
-
+	
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+	
 };
