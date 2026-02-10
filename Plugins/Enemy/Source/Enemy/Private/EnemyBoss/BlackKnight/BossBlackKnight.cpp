@@ -1,16 +1,28 @@
 #include "EnemyBoss/BlackKnight/BossBlackKnight.h"
 
+#include "Components/SphereComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ABossBlackKnight::ABossBlackKnight()
 {
-	GetCharacterMovement()->bOrientRotationToMovement = false; 
+	RushAttackSphere = CreateDefaultSubobject<USphereComponent>(TEXT("RushAttackSphere"));
+	RushAttackSphere ->SetupAttachment(GetRootComponent());
+	RushAttackSphere->ShapeColor = FColor::Blue;
+	RushAttackSphere->SetVisibility(false);
+	RushAttackSphere->SetHiddenInGame(false);
+	// 콜리전 끄기
+	RushAttackSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ABossBlackKnight::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if ( RushAttackSphere )
+	{
+		RushAttackSphere->OnComponentBeginOverlap.AddDynamic(this, &ABossBlackKnight::OnBeginOverlapRushAttackSphere);
+	}
 }
 
 void ABossBlackKnight::Tick(float DeltaTime)
@@ -88,6 +100,40 @@ void ABossBlackKnight::Tick(float DeltaTime)
 	*/
 }
 
+void ABossBlackKnight::OnBeginOverlapRushAttackSphere(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	// 오버랩된 액터가 플레이어인지 확인합니다.
+	if (OtherActor && OtherActor != this && OtherActor->ActorHasTag(FName("Player")))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Rush Attack Sphere Overlapped with Player!"));
+
+		// 대미지 적용
+		UGameplayStatics::ApplyDamage(OtherActor, RushAttackDamage, GetController(),
+			this, UDamageType::StaticClass());
+
+		// --- 플레이어 밀치기 효과 시작 ---
+		ACharacter* PlayerCharacter = Cast<ACharacter>(OtherActor);
+		if (PlayerCharacter)
+		{
+			// 1. 밀어낼 방향 계산 (보스 -> 플레이어)
+			FVector PushDirection = PlayerCharacter->GetActorLocation() - GetActorLocation();
+			PushDirection.Z = 0; // 수평 방향으로만 밀도록 Z값을 0으로 설정
+			PushDirection.Normalize();
+
+			// 2. 밀어낼 속도 계산 (방향 * 힘 + 위로 띄우는 힘)
+			const FVector LaunchVelocity = PushDirection * PushForce + FVector(0.f, 0.f, PushUpwardForce);
+
+			// 3. 플레이어 캐릭터를 밀어냄
+			// bXYOverride와 bZOverride를 true로 설정하여 현재 속도를 무시하고 새로운 속도를 적용합니다.
+			PlayerCharacter->LaunchCharacter(LaunchVelocity, true, true);
+		}
+		
+		// 다시 콜리전 끄기
+		RushAttackSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+}
+
 void ABossBlackKnight::RushAttack()
 {
 	if ( RushAttackMontage )
@@ -99,7 +145,7 @@ void ABossBlackKnight::RushAttack()
 	
 }
 
-void ABossBlackKnight::StartRush()
+void ABossBlackKnight::SetRushTargetLocation()
 {
 	if (TargetCharacter == nullptr) return;
 
@@ -112,21 +158,30 @@ void ABossBlackKnight::StartRush()
 	FVector Direction = (TargetLoc - StartLoc).GetSafeNormal();
 	float Dist = FVector::Dist(StartLoc, TargetLoc);
 	float StopDist = 100.0f; // 100cm 앞에서 멈춤
-    
-	// 최종 목표 위치 확정
+
+	// 최종 목표 위치 확정 및 저장
 	RushTargetLocation = StartLoc + Direction * (Dist - StopDist);
 	RushStartLocation = StartLoc;
 
-	// 2. 시간 설정 (거리에 상관없이 무조건 0.5초 만에 도착)
+	// 타겟 바라보기 (목표를 정하는 순간 회전)
+	SetActorRotation(Direction.Rotation());
+	
+	// [추가됨] 목표 지점에 디버그 스피어 그리기 (반지름 50, 빨간색, 1초 지속)
+	DrawDebugSphere(GetWorld(), RushTargetLocation, 50.0f, 12, FColor::Red, false, 1.0f);
+}
+
+void ABossBlackKnight::StartRush()
+{
+	// 콜리전 켜기: 돌진 중 플레이어와 충돌 감지
+	RushAttackSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	
+	// 2. 시간 설정 (거리에 상관없이 무조건 0.2초 만에 도착)
 	RushDuration = 0.2f;
 	RushElapsedTime = 0.0f;
 
-	// 3. 타겟 바라보기
-	SetActorRotation(Direction.Rotation());
-
-	// 4. 돌진 시작 플래그 ON
+	// 3. 돌진 시작 플래그 ON
 	bIsRushing = true;
-    
+
 	// (선택) 물리 효과 끄기: 돌진 중 다른 힘에 밀리지 않도록
 	GetCharacterMovement()->SetMovementMode(MOVE_Flying);
 }
@@ -156,7 +211,6 @@ void ABossBlackKnight::MoveForwardDuringRushAttack(float DeltaTime)
 	if (Alpha >= 1.0f)
 	{
 		bIsRushing = false;
-		UE_LOG(LogTemp, Warning, TEXT("Rush Finished!"));
 
 		// (선택) 물리 효과 복구
 		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
@@ -176,7 +230,14 @@ void ABossBlackKnight::PostEditChangeProperty(FPropertyChangedEvent& PropertyCha
 	// 디버그 모드에 따라 어택, 디텍트, 체이스 범위 구체의 가시성을 설정합니다.
 	if (PropertyName == GET_MEMBER_NAME_CHECKED(ABossBlackKnight, bDebugMode))
 	{
-		
+		if ( bDebugMode == true )
+		{
+			if ( RushAttackSphere ) RushAttackSphere->SetVisibility(true);
+		}
+		else
+		{
+			if ( RushAttackSphere ) RushAttackSphere->SetVisibility(false);
+		}
 	}
 }
 #endif

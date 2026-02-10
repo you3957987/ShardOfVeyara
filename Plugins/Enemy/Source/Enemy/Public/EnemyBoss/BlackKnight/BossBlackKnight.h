@@ -45,12 +45,30 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "자체설정")
 	bool bIsAttacking = false;
 
-
+	// 돌진 공격 범위
+	UPROPERTY(VisibleAnywhere)
+	class USphereComponent* RushAttackSphere;
+	// 돌진 공격 범위에 플레이어가 들어왔을 때 호출되는 함수
+	UFUNCTION()
+	void OnBeginOverlapRushAttackSphere(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	// 돌진 공격 대미지
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float RushAttackDamage = 30.f;
+	// 수평으로 밀어내는 힘
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	float PushForce = 1500.f;
+	// 위로 띄우는 힘
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	float PushUpwardForce = 200.f;
 	// 돌진 공격 몽타주
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "자체설정")
 	UAnimMontage* RushAttackMontage;
 	// 돌진 공격 함수
 	void RushAttack();
+	// 돌진 전 캐릭 위치 세팅
+	UFUNCTION(BlueprintCallable)
+	void SetRushTargetLocation();
 	// 애님 노티파이에서 호출해서 돌진 시작할 타이밍 정하는 함수
 	UFUNCTION(BlueprintCallable)
 	void StartRush();

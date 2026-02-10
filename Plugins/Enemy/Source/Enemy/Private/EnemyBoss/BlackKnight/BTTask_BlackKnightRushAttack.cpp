@@ -35,8 +35,7 @@ void UBTTask_BlackKnightRushAttack::TickTask(UBehaviorTreeComponent& OwnerComp, 
 
     // 공격 중이 아니면 틱을 돌 필요가 없음
     if (!bIsAttacking) return;
-
-	UE_LOG (LogTemp, Warning, TEXT("aaaaaa"));
+	
     AAIController* AIController = OwnerComp.GetAIOwner();
     ABossBlackKnight* Boss = Cast<ABossBlackKnight>(AIController->GetPawn());
 
@@ -46,7 +45,6 @@ void UBTTask_BlackKnightRushAttack::TickTask(UBehaviorTreeComponent& OwnerComp, 
     {
         // 3. 몽타주가 끝났으므로 태스크 종료를 선언합니다.
         bIsAttacking = false;
-    	UE_LOG (LogTemp, Warning, TEXT("UBTTask_BlackKnightRushAttack: Rush Attack Montage Ended, Finishing Task."));
         FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
     }
 }
