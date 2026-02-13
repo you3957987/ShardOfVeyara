@@ -22,4 +22,7 @@ void ABossBlackKnightAIController::SetBlackboardKey()
 
 	BlackboardComp->SetValueAsObject(TEXT("TargetCharacter"), TargetPawn);
 	BlackboardComp->SetValueAsFloat(TEXT("W_RushAttack"), ControlledEnemy->AttackWeight.RushAttack);
+	BlackboardComp->SetValueAsFloat(TEXT("W_Guard"), ControlledEnemy->AttackWeight.Guard);
+	BlackboardComp->SetValueAsFloat( TEXT("W_NormalAttack"), ControlledEnemy->AttackWeight.NormalAttack );
+	BlackboardComp->SetValueAsFloat( TEXT("W_ChargeAttack"), ControlledEnemy->AttackWeight.ChargeAttack);
 }

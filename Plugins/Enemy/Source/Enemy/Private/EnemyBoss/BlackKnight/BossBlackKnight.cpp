@@ -1,6 +1,9 @@
 #include "EnemyBoss/BlackKnight/BossBlackKnight.h"
 
+#include "NiagaraFunctionLibrary.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Components/SphereComponent.h"
+#include "Engine/OverlapResult.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -13,6 +16,9 @@ ABossBlackKnight::ABossBlackKnight()
 	RushAttackSphere->SetHiddenInGame(false);
 	// 콜리전 끄기
 	RushAttackSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
+	// 최대 걷기 속도 100
+	GetCharacterMovement()->MaxWalkSpeed = 100.0f;
 }
 
 void ABossBlackKnight::BeginPlay()
@@ -23,6 +29,22 @@ void ABossBlackKnight::BeginPlay()
 	{
 		RushAttackSphere->OnComponentBeginOverlap.AddDynamic(this, &ABossBlackKnight::OnBeginOverlapRushAttackSphere);
 	}
+
+	TArray<USphereComponent*> SphereComps;
+	GetComponents<USphereComponent>(SphereComps);
+	
+	// 반복문 돌면서 태그 확인
+	for (USphereComponent* Sphere : SphereComps)
+	{
+		if (Sphere && Sphere->ComponentHasTag(TEXT("Axe")))
+		{
+			AxeCollisionSphere = Sphere;
+			AxeCollisionSphere->OnComponentBeginOverlap.AddDynamic(this, &ABossBlackKnight::OnBeginOverlapAxeCollisionSphere);
+			// 콜리전 끄기
+			AxeCollisionSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			break; // 찾았으니 루프 종료
+		}
+	}
 }
 
 void ABossBlackKnight::Tick(float DeltaTime)
@@ -31,73 +53,52 @@ void ABossBlackKnight::Tick(float DeltaTime)
 	
 	MoveForwardDuringRushAttack(DeltaTime);
 	
-	// BS 이동 테스트용 코드
-	/*
-	static float DirectionTimer = 0.0f;
-	DirectionTimer += DeltaTime;
+}
 
-	// 1. 이동 속도 강제 설정 (> 300)
-	GetCharacterMovement()->MaxWalkSpeed = 200.0f; 
-
-	// 2. 회전 고정: 이동 방향으로 몸을 돌리면 Angle이 항상 0이 되므로, 강제로 앞을 보게 고정합니다.
-	GetCharacterMovement()->bOrientRotationToMovement = false; 
-	SetActorRotation(FRotator(0.f, 0.f, 0.f)); 
-
-	// 3. 2초마다 방향 전환 로직
-	int32 State = (int32)(DirectionTimer / 2.0f) % 4; 
-	FVector MoveDirection = FVector::ZeroVector;
-
-	switch (State)
+float ABossBlackKnight::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+	class AController* EventInstigator, AActor* DamageCauser)
+{
+	if ( bIsGuarding )
 	{
-	case 0:
-		MoveDirection = FVector::ForwardVector; // Angle 0
-		UE_LOG(LogTemp, Log, TEXT("Testing: Forward (0)"));
-		break;
-	case 1:
-		MoveDirection = FVector::RightVector;   // Angle 90
-		UE_LOG(LogTemp, Log, TEXT("Testing: Right (90)"));
-		break;
-	case 2:
-		MoveDirection = FVector::BackwardVector;// Angle 180 (or -180)
-		UE_LOG(LogTemp, Log, TEXT("Testing: Backward (180)"));
-		break;
-	case 3:
-		MoveDirection = FVector::LeftVector;    // Angle -90
-		UE_LOG(LogTemp, Log, TEXT("Testing: Left (-90)"));
-		break;
-	}
+		DamageWhileGuarding += DamageAmount;
 
-	// 결정된 방향으로 이동 입력 추가
-	AddMovementInput(MoveDirection, 1.0f);
-
-	*/
-	
-	/*
-	if (bIsAttacking == true ) // 공격 중일 때
-	{
-		TArray<AActor*> OverlappingActors;
-		// AttackRangePointSphere와 겹치는 모든 액터를 가져옵니다.
-		AxeMeshComponent->GetOverlappingActors(OverlappingActors);
-		
-		for (AActor* OverlappingActor : OverlappingActors)
+		// 아직 리액션 대미지에 도달하지 않았으면 가드 몽타주 재생
+		if ( DamageWhileGuarding < MaxDamageToReaction && GuardMontage )
 		{
-			// 액터가 유효하고 "Player" 태그를 가지고 있으며, 아직 공격한 목록에 없는지 확인합니다.
-			if (OverlappingActor && OverlappingActor->ActorHasTag(FName("Player"))
-				&& !HittedActors.Contains(OverlappingActor))
-			{
-				// 공격 로그를 출력합니다.
-				UE_LOG(LogTemp, Warning, TEXT("Attack Hit Detected on: %s"), *OverlappingActor->GetName());
-
-				// 공격한 목록에 추가하여 중복 피해를 방지합니다.
-				HittedActors.Add(OverlappingActor);
-
-				bIsAttacking = false; // 공격 상태를 종료합니다.
-
-				
-			}
+			PlayAnimMontage(GuardMontage);
 		}
+		
+		return 0.f; // 대미지 무효화
 	}
-	*/
+	
+	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+}
+
+void ABossBlackKnight::OnBeginOverlapAxeCollisionSphere(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor && OtherActor != this && OtherActor->ActorHasTag(FName("Player")))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Attack Sphere Overlapped with Player!"));
+
+		// 대미지 적용 ( 어택 대미지는 공격 전 가드 공격인지 아님 일반 공격인지에 따라 각각 함수에서 설정 )
+		UGameplayStatics::ApplyDamage(OtherActor, AttackDamage, GetController(),
+			this, UDamageType::StaticClass());
+
+
+		// 다시 콜리전 끄기
+		if ( AxeCollisionSphere ) AxeCollisionSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+}
+
+void ABossBlackKnight::AttackStart_AxeCollisionSphere()
+{
+	if ( AxeCollisionSphere ) AxeCollisionSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+}
+
+void ABossBlackKnight::AttackEnd_AxeCollisionSphere()
+{
+	if ( AxeCollisionSphere ) AxeCollisionSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ABossBlackKnight::OnBeginOverlapRushAttackSphere(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -141,8 +142,13 @@ void ABossBlackKnight::RushAttack()
 		PlayAnimMontage(RushAttackMontage);
 
 		RushTargetLocation = TargetCharacter->GetActorLocation();
-	}
+		
+		bFocusPlayerAfterAttack = false; // 돌진 공격 중에는 포커스 비활성화
+		
+		if ( BlackboardComp == nullptr ) return;
 	
+		BlackboardComp->SetValueAsFloat("AttackDelay", RushAttackDelay); // 행동 딜레이 설정
+	}
 }
 
 void ABossBlackKnight::SetRushTargetLocation()
@@ -217,6 +223,258 @@ void ABossBlackKnight::MoveForwardDuringRushAttack(float DeltaTime)
 		
 		// 도착 후 처리 (예: 공격 판정, 몽타주 종료 등)
 	}
+}
+
+void ABossBlackKnight::GuardAttack()
+{
+	if ( GuardAttackMontage )
+	{
+		PlayAnimMontage(GuardAttackMontage);
+		// 공격 데미지를 가드 공격 데미지로 설정
+		AttackDamage = GuardAttackDamage;
+		
+		bFocusPlayerAfterAttack = false; // 가드 공격 중에는 포커스 비활성화
+		
+		if ( BlackboardComp )
+		{
+			BlackboardComp->SetValueAsFloat("AttackDelay", GuardAttackDelay); // 행동 딜레이 설정
+		}
+	}
+}
+
+void ABossBlackKnight::StartWaveAttack()
+{
+	bIsHitZap = false; // 번개 공격 초기화
+	
+    const int32 TotalWaves = 4;
+    const float TimeBetweenWaves = 0.4f;
+    const float BaseDistance = 150.0f; 
+    const float DistanceStep = 200.0f;
+	
+    UWorld* World = GetWorld();
+    if (!World) return;
+
+    FVector StartLocation = (AxeCollisionSphere) ? AxeCollisionSphere->GetComponentLocation() : GetActorLocation();
+    FVector FixedForward = GetActorForwardVector();
+
+    TWeakObjectPtr<ABossBlackKnight> WeakThis(this);
+
+    for (int32 i = 0; i < TotalWaves; i++)
+    {
+        // 웨이브 로직을 별도의 람다로 정의
+        auto ExecuteWave = [WeakThis, i, BaseDistance, DistanceStep, World, StartLocation, FixedForward]()
+        {
+            if (!WeakThis.IsValid()) return;
+
+            float CurrentDistance = BaseDistance + (i * DistanceStep);
+            const TArray<float> Angles = { -30.0f, 0.0f, 30.0f };
+
+            for (float Angle : Angles)
+            {
+                FVector Direction = FixedForward.RotateAngleAxis(Angle, FVector::UpVector);
+                FVector TargetLocation = StartLocation + (Direction * CurrentDistance);
+
+                FHitResult HitResult;
+                FVector TraceStart = TargetLocation + FVector(0.f, 0.f, 1000.f);
+                FVector TraceEnd = TargetLocation - FVector(0.f, 0.f, 1000.f);
+
+                FVector FinalLocation = TargetLocation;
+                if (World->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_WorldStatic))
+                {
+                    FinalLocation = HitResult.Location;
+                }
+
+                DrawDebugSphere(World, FinalLocation, 80.0f, 16, FColor::Purple, false, 2.0f);
+            	// --- 플레이어 감지 로직 추가 ---
+            	TArray<FOverlapResult> OverlapResults;
+            	FCollisionShape SphereShape = FCollisionShape::MakeSphere(80.0f); // 디버그 스피어와 동일한 크기
+            	FCollisionQueryParams QueryParams;
+            	QueryParams.AddIgnoredActor(WeakThis.Get()); // 보스 자신은 제외
+
+            	// ECC_Pawn 채널을 사용하여 주변 액터 검출
+            	if (World->OverlapMultiByChannel(OverlapResults, FinalLocation, FQuat::Identity, ECC_Pawn, SphereShape, QueryParams))
+            	{
+            		for (const FOverlapResult& Result : OverlapResults)
+            		{
+            			AActor* OverlappedActor = Result.GetActor();
+            			if (OverlappedActor && OverlappedActor->ActorHasTag(TEXT("Player")))
+            			{
+            				if ( WeakThis->bIsHitZap == false )
+            				{
+            					// 여기서 플레이어에게 데미지를 주거나 로직 수행!
+            					UE_LOG(LogTemp, Warning, TEXT("Player Hit At Zap"));
+            					WeakThis->bIsHitZap = true;
+            					
+            					UGameplayStatics::ApplyDamage(
+									OverlappedActor,            // 데미지를 받을 대상
+									WeakThis->ZapDamage,        // 데미지 수치
+									WeakThis->GetController(),  // 가해자 컨트롤러
+									WeakThis.Get(),             // 가해자 액터 (보스)
+									UDamageType::StaticClass()  // 데미지 타입 클래스
+								);
+            				}
+            			}
+            		}
+            	}
+            	// 가드 어택 이펙트 있으면 재생
+            	if (WeakThis->ZapEffect)
+            	{
+            		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+						World, 
+						WeakThis->ZapEffect, 
+						FinalLocation, 
+						FixedForward.Rotation(), // 보스가 바라보는 정면 방향으로 이펙트 회전 설정
+						FVector(5.f)
+					);
+            	}
+            }
+        };
+        // 첫 번째 웨이브(i=0)는 즉시 실행, 나머지는 타이머 예약
+        if (i == 0)
+        {
+            ExecuteWave();
+        }
+        else
+        {
+            FTimerHandle WaveTimerHandle;
+            FTimerDelegate WaveDelegate;
+            WaveDelegate.BindLambda(ExecuteWave);
+            World->GetTimerManager().SetTimer(WaveTimerHandle, WaveDelegate, i * TimeBetweenWaves, false);
+        }
+    }
+}
+
+void ABossBlackKnight::NormalAttack()
+{
+	if ( NormalAttackMontage )
+	{
+		PlayAnimMontage(NormalAttackMontage);
+
+		AttackDamage = NormalAttackDamage;
+		
+		bFocusPlayerAfterAttack = false; // 차지 공격 중에는 포커스 비활성화
+		
+		if ( BlackboardComp )
+		{
+			BlackboardComp->SetValueAsFloat("AttackDelay", NormalAttackDelay); // 행동 딜레이 설정
+		}
+	}
+}
+
+void ABossBlackKnight::ChargeAttack()
+{
+	if ( ChargeAttackMontage )
+	{
+		PlayAnimMontage(ChargeAttackMontage);
+
+		AttackDamage = ChargeAttackDamage;
+		
+		bFocusPlayerAfterAttack = false; // 차지 공격 중에는 포커스 비활성화
+		
+		if ( BlackboardComp )
+		{
+			BlackboardComp->SetValueAsFloat("AttackDelay", ChargeAttackDelay); // 행동 딜레이 설정
+		}
+	}
+}
+
+void ABossBlackKnight::SpawnRandomZapEffect()
+{
+	// [설정] 헤더 변수 대신 함수 내부에서 값 정의
+    const int32  SpawnCount      = 15;      // 떨어질 번개 횟수
+    const float  SpawnRadius     = 800.0f;  // 보스 기준 생성 반경
+    const float  SpawnInterval   = 0.1f;   // 번개 생성 간격 (초)
+    const float  DamageRadius    = 50.0f;  // 대미지 판정 범위
+    const float  EffectScale     = 3.0f;    // 이펙트 크기 배율
+
+    UWorld* World = GetWorld();
+    if (!World) return;
+
+    // 타이머 람다에서 안전하게 접근하기 위해 Weak Pointer 사용
+    TWeakObjectPtr<ABossBlackKnight> WeakThis(this);
+
+    for (int32 i = 0; i < SpawnCount; i++)
+    {
+        // 순차적으로 터지도록 딜레이 설정
+        float Delay = i * SpawnInterval;
+
+        FTimerHandle ZapTimerHandle;
+        
+        // 람다 함수 내부에 로직 구현
+        World->GetTimerManager().SetTimer(ZapTimerHandle, [WeakThis, SpawnRadius, DamageRadius, EffectScale]()
+        {
+            if (!WeakThis.IsValid()) return;
+            UWorld* WorldContext = WeakThis->GetWorld();
+            if (!WorldContext) return;
+
+            // 1. 랜덤 위치 계산 (보스 주변 원형 범위)
+            FVector BossLocation = WeakThis->GetActorLocation();
+            FVector RandomDir = FMath::VRand();
+            RandomDir.Z = 0.0f; // 수평 방향만 고려
+            RandomDir.Normalize();
+
+            // 최소 150cm ~ 최대 SpawnRadius 사이 랜덤 거리
+            float RandomDist = FMath::FRandRange(150.0f, SpawnRadius); 
+            FVector TargetLocation = BossLocation + (RandomDir * RandomDist);
+
+            // 2. 바닥 위치 보정 (공중에 뜨지 않게 LineTrace)
+            FHitResult HitResult;
+            FVector TraceStart = TargetLocation + FVector(0.f, 0.f, 500.f);
+            FVector TraceEnd = TargetLocation - FVector(0.f, 0.f, 500.f);
+
+            if (WorldContext->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_WorldStatic))
+            {
+                TargetLocation = HitResult.Location;
+            }
+
+            // 3. 이펙트 재생 
+            if (WeakThis->ZapEffect)
+            {
+                UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+                    WorldContext,
+                    WeakThis->ZapEffect,
+                    TargetLocation,
+                    FRotator::ZeroRotator,
+                    FVector(EffectScale)
+                );
+            }
+
+            // (디버그용) 위치 표시
+            DrawDebugSphere(WorldContext, TargetLocation, DamageRadius, 12, FColor::Yellow, false, 1.0f);
+
+        	/*
+            // 4. 범위 대미지 판정
+            TArray<FOverlapResult> OverlapResults;
+            FCollisionShape SphereShape = FCollisionShape::MakeSphere(DamageRadius);
+            FCollisionQueryParams QueryParams;
+            QueryParams.AddIgnoredActor(WeakThis.Get()); // 보스 자신 제외
+
+            if (WorldContext->OverlapMultiByChannel(OverlapResults, TargetLocation, FQuat::Identity, ECC_Pawn, SphereShape, QueryParams))
+            {
+                for (const FOverlapResult& Result : OverlapResults)
+                {
+                    AActor* OverlappedActor = Result.GetActor();
+                    // 플레이어 태그 확인
+                    if (OverlappedActor && OverlappedActor->ActorHasTag(TEXT("Player")))
+                    {
+                        // ZapDamage 변수 재사용 (StartWaveAttack에 있는 변수)
+                        UGameplayStatics::ApplyDamage(
+                            OverlappedActor,
+                            WeakThis->ZapDamage, 
+                            WeakThis->GetController(),
+                            WeakThis.Get(),
+                            UDamageType::StaticClass()
+                        );
+                        
+                        // 로그 출력 (필요시 주석 해제)
+                        // UE_LOG(LogTemp, Warning, TEXT("Random Zap Hit Player!"));
+                    }
+                }
+            }
+            */
+
+        }, Delay, false);
+    }
 }
 
 #if WITH_EDITOR

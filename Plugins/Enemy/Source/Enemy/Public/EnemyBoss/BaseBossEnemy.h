@@ -96,6 +96,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AfterDieMontageEnd();
 	
+	// 공격 후 플레이어 주시 여부
+	bool bFocusPlayerAfterAttack = true;
+	// 공격 후 플레이어 주시 시작 함수
+	UFUNCTION(BlueprintCallable)
+	void StartFocusPlayerAfterAttack(); 
+	
 #if WITH_EDITOR
 	// 에디터에서 프로퍼티가 변경될 때 호출됩니다.
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
