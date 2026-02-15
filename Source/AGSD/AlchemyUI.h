@@ -44,11 +44,17 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* CloseButton;
 
+	UPROPERTY(meta = (BindWidget))
+	class UButton* EmptyButton;
+	
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	class UWidgetAnimation* FadeinAnim;
 
 	UFUNCTION()
 	void OnCloseButtonClicked();
+
+	UFUNCTION()
+	void OnEmptyButtonClicked();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess))
 	class AAlchemyTable* AlchemyTable;

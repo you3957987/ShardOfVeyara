@@ -278,6 +278,13 @@ void ABaseFlyingPet::OnItemDetectBeginOverlap(UPrimitiveComponent* OverlappedCom
 
 		if ( PetTalkComp ) PetTalkComp->Travel_ItemDetect(OtherActor, ItemDetectPingSpawnPoint->GetComponentLocation());
 	}
+	else if ( OtherActor && OtherActor != this && OtherActor->ActorHasTag("Mimic") )
+	{
+		// 하나의 아이템에 대해 여러 콜리전 컴포넌트가 있을 수 있으므로, 하나만 처리하도록 루트 컴포넌트 확인
+		if ( OtherActor->GetRootComponent() != OtherComp ) return;
+
+		if ( PetTalkComp ) PetTalkComp->Travel_ItemDetect(OtherActor, ItemDetectPingSpawnPoint->GetComponentLocation());
+	}
 }
 
 void ABaseFlyingPet::TriggerPetBigConversation_Implementation(FName DialogueID)

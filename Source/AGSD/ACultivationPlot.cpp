@@ -55,7 +55,8 @@ void AACultivationPlot::ShowWidget_Implementation(ACharacter* player)
 
 bool AACultivationPlot::CanInteract_Implementation(AAGSDCharacter* player)
 {
-	return player->HoldingState == EHoldingState::EHS_Seed;
+	if (PlantedCrop == nullptr)	return player->HoldingState == EHoldingState::EHS_Seed;
+	return false;
 }
 
 //오버랩 종료 함수 구현부
@@ -72,7 +73,7 @@ void AACultivationPlot::Interact_Implementation(AAGSDCharacter* player)
 	if (!SeedDataTable) return;
 	UE_LOG(LogTemp, Warning, TEXT("AACultivationPlot::OnBeginOverlap"));
 	
-	CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	if (PlantedCrop == nullptr)
 	{
@@ -119,7 +120,7 @@ void AACultivationPlot::BeginPlay()
 	bHasWeeds = LoadedData.bHasWeeds;
 
 	
-	CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 	GetSeedInfo(SeedName);
 	PlantCrop();
@@ -196,9 +197,11 @@ void AACultivationPlot::OnPlantedCropDestroyed()
 	FullyGrown = false;
 	ScheduledDay = 0;
 	SeedName = NAME_None;
-	
+
+	/*
 	if (CollisionBox)
 		CollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	*/
 }
 
 void AACultivationPlot::GetSeedInfo(FName TargetRowName)

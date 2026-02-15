@@ -8,7 +8,7 @@
 
 void UAlchemyUI::CallOnCropInserted()
 {
-	AlchemyTable->SplashPot();
+	//AlchemyTable->SplashPot();
 	OnCropInserted.Broadcast();
 }
 
@@ -27,18 +27,27 @@ void UAlchemyUI::NativeConstruct()
 	{
 		CloseButton->OnClicked.AddDynamic(this, &UAlchemyUI::OnCloseButtonClicked);
 	}
+	if (EmptyButton)
+	{
+		EmptyButton->OnClicked.AddDynamic(this, &UAlchemyUI::OnEmptyButtonClicked);
+	}
 }
 
 void UAlchemyUI::NativeDestruct()
 {
 	Super::NativeDestruct();
-	CloseButton->OnClicked.RemoveAll(this);
-	AlchemyTable->EndAlchemy();
-	OnWidgetClosed.Broadcast();
+	EmptyButton->OnClicked.RemoveDynamic(this, &UAlchemyUI::OnEmptyButtonClicked);
 }
 
 void UAlchemyUI::OnCloseButtonClicked()
 {
+	CloseButton->OnClicked.RemoveDynamic(this, &UAlchemyUI::OnCloseButtonClicked);
+	AlchemyTable->EndAlchemy();
 	// 스스로를 화면에서 제거합니다.
 	RemoveFromParent();
+}
+
+void UAlchemyUI::OnEmptyButtonClicked()
+{
+	AlchemyTable->EmptyPot();
 }

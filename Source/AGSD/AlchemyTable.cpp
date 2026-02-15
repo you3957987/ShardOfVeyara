@@ -4,7 +4,10 @@
 #include "AlchemyTable.h"
 #include "AGSDCharacter.h"
 #include "AGSDPlayerController.h"
-#include "../../../../../../../Program Files/Epic Games/UE_5.6/Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h"
+#include "PotionDataTable.h"
+// #include "../../../../../../../Program Files/Epic Games/UE_5.6/Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -52,6 +55,11 @@ void AAlchemyTable::BeginPlay()
 		// CreateDynamicMaterialInstance(인덱스, 소스 머티리얼, 이름)
 		PotDynamicMaterial = PotMeshComponent->CreateDynamicMaterialInstance(1);
 	}
+	if (AlchemyDataTable)
+	{
+		static const FString ContextString(TEXT("Alchemy Recipe Context"));
+		AlchemyDataTable->GetAllRows<FPotionData>(ContextString, AlchemyRecipes);
+	}
 }
 
 void AAlchemyTable::ApplyPotColor(FLinearColor NewColor)
@@ -98,10 +106,33 @@ void AAlchemyTable::EndAlchemy()
 	}
 }
 
-void AAlchemyTable::SplashPot()
+void AAlchemyTable::SplashPot(bool clear)
 {
 	SplashVFXComponent->Activate(true);
-	LerpMixLiquidColor();
+	if (InsertedItemID.Num() == 2)
+	{
+		TargetRecipe.ItemID = TEXT("Sludge");
+		TargetRecipe.LiquidColor = FLinearColor(0.1f, 0.05f, 0.1f, 1.0f); // 어두운 보라색 (찌꺼기 색상)
+
+		InsertedItemID.Sort();
+		
+		for (FPotionData* Recipe : AlchemyRecipes)
+		{
+			TArray<FString> RecipeMaterial = {Recipe->IngredientA, Recipe->IngredientB};
+			RecipeMaterial.Sort();
+			if (RecipeMaterial == InsertedItemID)
+			{
+				TargetRecipe = *Recipe;
+				break;
+			}
+		}
+		LerpMixLiquidColor();
+	}
+	if (clear)
+	{
+		TargetRecipe.LiquidColor = BaseLiquidColor;
+		TransmutationComplete();
+	}
 }
 
 void AAlchemyTable::SpawnPotion()
