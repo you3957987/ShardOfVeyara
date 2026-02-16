@@ -477,6 +477,93 @@ void ABossBlackKnight::SpawnRandomZapEffect()
     }
 }
 
+void ABossBlackKnight::ZapAttack()
+{
+	if ( ZapAttackMontage )
+	{
+		PlayAnimMontage(ZapAttackMontage);
+
+		AttackDamage = ZapDamage;
+		
+		bFocusPlayerAfterAttack = false; // 잽 공격 중에는 포커스 비활성화
+		
+		if ( BlackboardComp )
+		{
+			BlackboardComp->SetValueAsFloat("AttackDelay", ZapAttackDelay); // 행동 딜레이 설정 
+		}
+	}
+}
+
+void ABossBlackKnight::SetZapTargetLocation()
+{
+	if (TargetCharacter == nullptr) return;
+
+	// 1. 타겟의 현재 위치를 가져옵니다.
+	const FVector CharacterLocation = TargetCharacter->GetActorLocation();
+	FVector GoalLocation = CharacterLocation; // 기본 위치
+
+	// 2. 바닥을 찾기 위해 라인 트레이스를 수행합니다. (참고 코드 로직 적용)
+	FHitResult HitResult;
+	const FVector StartTrace = CharacterLocation;
+	const FVector EndTrace = CharacterLocation - FVector(0.f, 0.f, 1000.f); // 아래로 1000 유닛
+	
+	FCollisionQueryParams TraceParams;
+	TraceParams.AddIgnoredActor(TargetCharacter);
+	TraceParams.AddIgnoredActor(this);
+
+	// 라인 트레이스로 바닥 위치를 찾습니다.
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_WorldStatic, TraceParams))
+	{
+		// 충돌 지점을 목표 위치로 설정합니다.
+		GoalLocation = HitResult.Location;
+	}
+
+	// 3. 최종 계산된 바닥 위치 저장
+	ZapTargetLocation = GoalLocation;
+}
+
+void ABossBlackKnight::SpawnZapAttackEffect()
+{
+	// 저장된 위치 사용
+	FVector SpawnLocation = ZapTargetLocation;
+
+	if (ZapEffect)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ZapEffect, SpawnLocation, FRotator::ZeroRotator, FVector(5.f));
+	}
+
+	// 디버그 스피어 그리기
+	DrawDebugSphere(GetWorld(), SpawnLocation, 150.0f, 12, FColor::Blue, false, 2.0f);
+
+	// 대미지 판정 범위 설정
+	float DamageRadius = 150.0f; 
+
+	// 플레이어 감지 및 대미지 적용
+	TArray<FOverlapResult> OverlapResults;
+	FCollisionShape SphereShape = FCollisionShape::MakeSphere(DamageRadius);
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this); // 보스 자신 제외
+
+	if (GetWorld()->OverlapMultiByChannel(OverlapResults, SpawnLocation, FQuat::Identity, ECC_Pawn, SphereShape, QueryParams))
+	{
+		for (const FOverlapResult& Result : OverlapResults)
+		{
+			AActor* OverlappedActor = Result.GetActor();
+			if (OverlappedActor && OverlappedActor->ActorHasTag(TEXT("Player")))
+			{
+				UGameplayStatics::ApplyDamage(
+					OverlappedActor,
+					ZapDamage,         // 잽 공격 대미지
+					GetController(),
+					this,
+					UDamageType::StaticClass()
+				);
+				UE_LOG(LogTemp, Warning, TEXT("Zap Attack Hit Player!"));
+			}
+		}
+	}
+}
+
 #if WITH_EDITOR
 void ABossBlackKnight::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {

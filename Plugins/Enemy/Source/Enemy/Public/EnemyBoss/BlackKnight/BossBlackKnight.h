@@ -18,6 +18,8 @@ struct FBossBlackKnightAttackWeight
 	float NormalAttack = 5.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float ChargeAttack = 8.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float ZapAttack = 7.0f;
 };
 
 UCLASS()
@@ -37,7 +39,7 @@ protected:
 	
 	class USphereComponent* AxeCollisionSphere = nullptr;
 
-	// 공격시 줄 대미지
+	// 공격시 줄 대미지 == 공격 전에 함수에서 각각 변경
 	float AttackDamage = 0.f;
 	
 public:
@@ -156,6 +158,25 @@ public:
 	// 랜덤하게 번개 이펙트 생성 함수
 	UFUNCTION(BlueprintCallable)
 	void SpawnRandomZapEffect();
+	
+	// 잽 번개 공격 함수
+	void ZapAttack();
+	// 잽 번개 공격 몽타주
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "자체설정")	
+	UAnimMontage* ZapAttackMontage;
+	// 잽 번개 공격 대미지
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float ZapAttackDamage = 20.f;
+	// 잽 번개 공격 어택 딜레이
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	float ZapAttackDelay = 2.5f;
+	// 잽 공격 좌표 설정
+	UFUNCTION(BlueprintCallable)
+	void SetZapTargetLocation();
+	FVector ZapTargetLocation; // 잽 공격 목표 위치 저장 변수
+	// 잽 생성 타이밍
+	UFUNCTION(BlueprintCallable)
+	void SpawnZapAttackEffect();
 	
 #if WITH_EDITOR
 	// 에디터에서 프로퍼티가 변경될 때 호출됩니다.
