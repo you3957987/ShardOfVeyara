@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PortalSelectWidget.h"
 #include "GameFramework/Actor.h"
 #include "LevelSelectPortal.generated.h"
+
+class UPortalSelectWidget;
 
 USTRUCT(BlueprintType)
 struct FMapStruct
@@ -13,7 +14,7 @@ struct FMapStruct
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName MapName;
+	FText MapName;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTexture2D* Texture;
@@ -35,7 +36,8 @@ public:
 	ALevelSelectPortal();
 	
 	void OnWidgetClosed();
-	
+	FORCEINLINE int32 getMapNum() { return MapStructs.Num(); };
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -61,4 +63,6 @@ public:
 	//오버랩 종료 시 작동할 함수
 	UFUNCTION()
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	FORCEINLINE FMapStruct getMapStruct(int index) { return MapStructs[index]; }
 };

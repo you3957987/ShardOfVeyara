@@ -44,4 +44,6 @@ public:
 	virtual bool CanInteract_Implementation(AAGSDCharacter* player) override;
 	
 	FText InteractActionText = FText::FromString(TEXT("조각보기"));
+
+	FORCEINLINE int32 getShardsAmount() { return ShardsAmount; }
 };

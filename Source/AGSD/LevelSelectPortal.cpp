@@ -4,6 +4,7 @@
 #include "LevelSelectPortal.h"
 
 #include "AGSDCharacter.h"
+#include "PortalSelectWidget.h"
 #include "Components/BoxComponent.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
@@ -63,8 +64,8 @@ void ALevelSelectPortal::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AAc
 		//위젯이 생성되지 않으면 리턴
 		if (!PortalSelectWidget) return;
 		
+		PortalSelectWidget->LevelSelectPortal = this;		
 		PortalSelectWidget->AddToViewport();
-		PortalSelectWidget->LevelSelectPortal = this;
 		
 		//입력모드 변경
 		FInputModeUIOnly InputMode;

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "LevelSelectPortal.h"
 #include "Blueprint/UserWidget.h"
 #include "PortalSelectWidget.generated.h"
 
@@ -16,14 +17,23 @@ class AGSD_API UPortalSelectWidget : public UUserWidget
 	
 public:
 	class ALevelSelectPortal* LevelSelectPortal;
-
+	
 	FORCEINLINE class UButton* getCloseButton() { return CloseButton; }
 
 	UFUNCTION()
 	void OnCloseButtonClicked();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetTeleTag(FName teleTag);
+	
 	UFUNCTION()
 	void OnSelectButtonClicked();
+
+	UFUNCTION()
+	void OnNextMapButtonClicked();
+
+	UFUNCTION()
+	void OnPrevMapButtonClicked();
 	
 protected:
 	virtual void NativeConstruct() override;
@@ -34,4 +44,21 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* SelectButton;
 	
+	UPROPERTY(meta = (BindWidget))
+	class UButton* NextMapButton;
+	
+	UPROPERTY(meta = (BindWidget))
+	class UButton* PrevMapButton;
+
+	UPROPERTY(meta = (BindWidget))
+	class UImage* MapImage;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* MapName;
+	
+	int index = 0;
+
+	FMapStruct mapStruct;
+
+	class AShardsAltar* altar;
 };
