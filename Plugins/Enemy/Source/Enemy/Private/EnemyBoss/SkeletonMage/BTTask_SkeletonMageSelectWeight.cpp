@@ -34,7 +34,7 @@ EBTNodeResult::Type UBTTask_SkeletonMageSelectWeight::ExecuteTask(UBehaviorTreeC
 
 	//UE_LOG(LogTemp, Warning, TEXT("Distance: %f"), Distance );
 	
-	if (Distance <= 400.f) // 근거리
+	if (Distance <= CloseRangeDistance) // 근거리
 	{
 		BlackboardComp->SetValueAsFloat(WeightKeys[0].SelectedKeyName, 1.f); // W_Teleport
 		BlackboardComp->SetValueAsFloat(WeightKeys[1].SelectedKeyName, 0.f); // W_FireBall
@@ -43,7 +43,7 @@ EBTNodeResult::Type UBTTask_SkeletonMageSelectWeight::ExecuteTask(UBehaviorTreeC
 		BlackboardComp->SetValueAsFloat(WeightKeys[4].SelectedKeyName, 1.f); // W_PushTarget
 		//UE_LOG( LogTemp, Warning, TEXT("a") );
 	}
-	else if (Distance > 400.f && Distance <= 1500.f) // 중거리
+	else if (Distance > CloseRangeDistance && Distance <= MidRangeDistance) // 중거리
 	{
 		BlackboardComp->SetValueAsFloat(WeightKeys[0].SelectedKeyName, 3.f); // W_Teleport
 		BlackboardComp->SetValueAsFloat(WeightKeys[1].SelectedKeyName, 5.f); // W_FireBall

@@ -210,6 +210,11 @@ void ABaseBossEnemy::SpawnDeadEffectAndDestroy()
 	Destroy(); // 이펙트가 없으면 바로 액터 삭제
 }
 
+void ABaseBossEnemy::StartFocusPlayerAfterAttack()
+{
+	bFocusPlayerAfterAttack = true; // 공격 후 포커스 시작 플래그를 true로 설정
+}
+
 void ABaseBossEnemy::DropItemsAfterDead()
 {
 	for (const TSubclassOf<AActor>& ItemClassToSpawn : DropItems)

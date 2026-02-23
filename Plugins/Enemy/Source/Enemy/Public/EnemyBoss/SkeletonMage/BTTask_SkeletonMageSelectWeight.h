@@ -14,6 +14,14 @@ public:
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
+	// 근거리
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="자체설정")
+	float CloseRangeDistance = 400.f;
+	// 중거리	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="자체설정")
+	float MidRangeDistance = 1500.f;
+
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="자체설정")
 	FBlackboardKeySelector PlayerLocation;
 
