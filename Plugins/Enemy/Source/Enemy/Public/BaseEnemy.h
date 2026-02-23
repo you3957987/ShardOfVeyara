@@ -13,6 +13,7 @@ enum class EEnemyType : uint8
 	EET_Transpar UMETA(DisplayName = "Transpar Enemy"), // 투명 몹
 	EET_Mimic UMETA(DisplayName = "Mimic Enemy"), // 위장 몹
 	EET_Slime UMETA(DisplayName = "Slime Enemy"), // 슬라임 몹(분열)
+	EET_Burrow UMETA(DisplayName = "Burrow Enemy"), // 땅파는 몹
 
 	EET_MAX UMETA(DisplayName = "Default") // 최대값, 추가적인 값을 위한 공간
 };

@@ -6,7 +6,7 @@
 
 UBTTask_BlackKnightSelectWeight::UBTTask_BlackKnightSelectWeight()
 {
-	NodeName = "SkeletonMage_Select_Weight";
+	NodeName = "BlackKnight_Select_Weight";
 }
 
 EBTNodeResult::Type UBTTask_BlackKnightSelectWeight::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
