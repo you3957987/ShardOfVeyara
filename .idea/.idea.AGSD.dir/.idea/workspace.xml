@@ -7,35 +7,40 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cdd09aed-f1a4-4e89-b101-a57838b9ef37" name="변경" comment="">
+    <list default="true" id="61b1a24a-49d1-4972-9071-312c574aff7e" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/copilot.data.migration.agent.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/copilot.data.migration.ask.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/copilot.data.migration.ask2agent.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/copilot.data.migration.edit.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Assets/Ultimate_RPG_Items_Pack/FBX/Glass.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Assets/Ultimate_RPG_Items_Pack/FBX/Glass.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD/.idea/copilot.data.migration.agent.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD/.idea/copilot.data.migration.ask.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD/.idea/copilot.data.migration.ask2agent.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD/.idea/copilot.data.migration.edit.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD/.idea/indexLayout.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AGSD.uproject.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/AGSD.uproject.DotSettings.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Farmer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Farmer.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_ShardsAltar.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_ShardsAltar.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/DimensionMarble/BP_DimensionMarble_0.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/DimensionMarble/BP_DimensionMarble_0.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/DimensionMarble/BP_DimensionMarble_1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/DimensionMarble/BP_DimensionMarble_1.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/DimensionMarble/BP_DimensionMarble_2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/DimensionMarble/BP_DimensionMarble_2.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/DimensionMarble/BP_DimensionMarble_3.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/DimensionMarble/BP_DimensionMarble_3.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_DimensionMarble.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_DimensionMarble.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/DT_InventoryItemData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Item/DT_InventoryItemData.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Level/Farm_Sky_Island.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Level/Farm_Sky_Island.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Materials/M_Create/M_Core1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Materials/M_Create/M_Core1.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/LevelSelectPortal.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/LevelSelectPortal.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/PortalSelectWidget.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/PortalSelectWidget.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/HoldingState.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/HoldingState.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/ShardsAltar.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/ShardsAltar.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGSD/ShardsAltar.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/ShardsAltar.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
-  </component>
-  <component name="CopilotPersistence">
-    <persistenceIdMap>
-      <entry key="_C:/Users/JunHyeok/Documents/GitHub/AGSD" value="398vSqaU5trukVA1aZzBfxRkAZV" />
-      <entry key="_C:/Users/YJH/Documents/GitHub/AGSD" value="38YQ803iY0qP7GKInxgGp7QDgDL" />
-    </persistenceIdMap>
-  </component>
-  <component name="CopilotUserSelectedChatMode">
-    <option name="chatModeId" value="Ask" />
-  </component>
-  <component name="CopilotUserSelectedModel">
-    <selectedModels>
-      <entry key="edit-panel" value="GPT-5 mini" />
-      <entry key="chat-panel" value="Gemini 3 Pro (Preview)" />
-      <entry key="agent-panel" value="Gemini 3 Pro (Preview)" />
-    </selectedModels>
   </component>
   <component name="DpaMonitoringSettings">
     <option name="firstShow" value="false" />
@@ -44,55 +49,30 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/BaseSlimeEnemy.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/Ranged_RebirthEnemy.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BTService/BTService_BossFocusPlayer.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BTTask/BTTask_FocusMove.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BlackKnight/BTTask_BlackKnightChargeAttack.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BlackKnight/BTTask_BlackKnightRushAttack.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BlackKnight/BTTask_BlackKnightSelectWeight.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BlackKnight/BTTask_BlackKnightZap.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BlackKnight/BossBlackKnight.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BlackKnight/BossBlackKnightAIController.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemySpawner/EnemySpawner.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/BTTask/BTTask_BaseSlimeAttack.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Enemy/BaseMimicEnemy.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Enemy/BaseSlimeEnemy.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Enemy/Melee_RebirthEnemy.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Enemy/Ranged_RebirthEnemy.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/BTService/BTService_BossFocusPlayer.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/BTService/BTService_BossSetMoveSpeed.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/BTTask/BTTask_FocusMove.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/BTTask/BTTask_SetDistanceToCharacter.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/BlackKnight/BTTask_BlackKnightChargeAttack.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/BlackKnight/BTTask_BlackKnightRushAttack.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/BlackKnight/BTTask_BlackKnightSelectWeight.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/BlackKnight/BossBlackKnightAIController.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemySpawner/EnemySpawner.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="cidr-memory-view://6" root0="FORCE_HIGHLIGHTING" />
+    <setting file="cidr-memory-view://7" root0="FORCE_HIGHLIGHTING" />
   </component>
-  <component name="ProjectColorInfo">{
-  &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 2
-}</component>
-  <component name="ProjectId" id="38YQ803iY0qP7GKInxgGp7QDgDL" />
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 2
+}]]></component>
+  <component name="ProjectId" id="3A5K1qVR0m1G4o4ZuH6PSTUDzWQ" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "Uproject.AGSD.executor": "Run",
+    "Uproject.AGSD.executor": "Debug",
     "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -173,38 +153,12 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="디폴트 작업">
-      <changelist id="cdd09aed-f1a4-4e89-b101-a57838b9ef37" name="변경" comment="" />
-      <created>1768973864498</created>
+      <changelist id="61b1a24a-49d1-4972-9071-312c574aff7e" name="변경" comment="" />
+      <created>1771876780644</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1768973864498</updated>
-      <workItem from="1768973867687" duration="796000" />
-      <workItem from="1768975321406" duration="1394000" />
-      <workItem from="1769749669815" duration="6672000" />
-      <workItem from="1769825702294" duration="4258000" />
-      <workItem from="1769994587997" duration="5417000" />
-      <workItem from="1770000316035" duration="1973000" />
-      <workItem from="1770090511821" duration="2898000" />
-      <workItem from="1770095594251" duration="3422000" />
-      <workItem from="1770100103780" duration="14000" />
-      <workItem from="1770100593596" duration="1285000" />
-      <workItem from="1770170503196" duration="4225000" />
-      <workItem from="1770432245283" duration="982000" />
-      <workItem from="1770435478246" duration="3480000" />
-      <workItem from="1770514486874" duration="12773000" />
-      <workItem from="1770598507680" duration="379000" />
-      <workItem from="1770599373892" duration="10295000" />
-      <workItem from="1770695383774" duration="2815000" />
-      <workItem from="1770770876171" duration="259000" />
-      <workItem from="1770868828209" duration="298000" />
-      <workItem from="1770869539160" duration="230000" />
-      <workItem from="1770869884287" duration="271000" />
-      <workItem from="1770870247623" duration="87000" />
-      <workItem from="1770870439623" duration="136000" />
-      <workItem from="1770946056075" duration="5100000" />
-      <workItem from="1770951220241" duration="3137000" />
-      <workItem from="1771207377846" duration="3063000" />
-      <workItem from="1771809351343" duration="2240000" />
+      <updated>1771876780644</updated>
+      <workItem from="1771876780646" duration="4726000" />
     </task>
     <servers />
   </component>
@@ -212,12 +166,25 @@
     <option name="version" value="3" />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
-  <component name="github-copilot-workspace">
-    <instructionFileLocations>
-      <option value=".github/instructions" />
-    </instructionFileLocations>
-    <promptFileLocations>
-      <option value=".github/prompts" />
-    </promptFileLocations>
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.OperationCanceledException" breakIfHandledByOtherCode="false" displayValue="System.OperationCanceledException" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.Tasks.TaskCanceledException" breakIfHandledByOtherCode="false" displayValue="System.Threading.Tasks.TaskCanceledException" />
+          <option name="timeStamp" value="2" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
+          <option name="timeStamp" value="3" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

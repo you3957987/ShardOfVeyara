@@ -21,18 +21,29 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void Tick(float DeltaTime) override;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Altar")
 	class UStaticMeshComponent* Mesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Altar")
 	class USphereComponent* CollisionSphere;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Altar")
+	class USceneComponent* DimensionMarbleRoot;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Altar")
 	int32 ShardsAmount = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Altar")
 	TArray<UStaticMesh*> DimensionMarbleStructs;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Altar")
+	class UNiagaraSystem* ShardEffect;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Altar")
+	FRotator RotationSpeed = FRotator(0.f, -10.f, 0.f);
+
 public:	
 	//오버랩 시작 시 작동할 함수
 	UFUNCTION()
@@ -49,4 +60,6 @@ public:
 	FText InteractActionText = FText::FromString(TEXT("조각보기"));
 
 	FORCEINLINE int32 getShardsAmount() { return ShardsAmount; }
+
+	void SpawnShards(int32 i);
 };

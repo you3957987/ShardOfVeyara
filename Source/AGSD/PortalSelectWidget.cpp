@@ -85,7 +85,7 @@ void UPortalSelectWidget::OnPrevMapButtonClicked()
 		if (LevelSelectPortal)
 		{
 			int32 mapNum = altar->getShardsAmount() + 1;
-			index = (LevelSelectPortal->getMapNum() + (index - 1)) % mapNum;
+			index = (mapNum + (index - 1)) % mapNum;
 			mapStruct = LevelSelectPortal->getMapStruct(index);
 		}
 		MapImage->SetBrushFromTexture(mapStruct.Texture);
