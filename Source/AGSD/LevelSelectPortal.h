@@ -64,5 +64,9 @@ public:
 	UFUNCTION()
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	FORCEINLINE FMapStruct getMapStruct(int index) { return MapStructs[index]; }
+	FORCEINLINE FMapStruct getMapStruct(int index)
+	{
+		if (MapStructs.IsValidIndex(index))	return MapStructs[index];
+		else return FMapStruct();
+	}
 };

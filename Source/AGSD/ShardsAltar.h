@@ -29,6 +29,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Altar")
 	int32 ShardsAmount = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Altar")
+	TArray<UStaticMesh*> DimensionMarbleStructs;
 	
 public:	
 	//오버랩 시작 시 작동할 함수
