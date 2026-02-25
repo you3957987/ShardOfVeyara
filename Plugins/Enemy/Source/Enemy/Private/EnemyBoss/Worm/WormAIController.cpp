@@ -26,5 +26,7 @@ void AWormAIController::SetBlackboardKey()
 	BlackboardComp->SetValueAsFloat(TEXT("W_Unburrow"), ControlledEnemy->AttackWeight.Unburrow);	
 	BlackboardComp->SetValueAsFloat(TEXT("W_RangedAttack"), ControlledEnemy->AttackWeight.RangedAttack);
 	BlackboardComp->SetValueAsFloat(TEXT("W_LungeAttack"), ControlledEnemy->AttackWeight.LungeAttack);
-
+	BlackboardComp->SetValueAsFloat(TEXT("W_LinearFireBreath"), ControlledEnemy->AttackWeight.LinearFireBreath);
+	BlackboardComp->SetValueAsFloat(TEXT("W_FanFireBreath"), ControlledEnemy->AttackWeight.FanFireBreath);
+	BlackboardComp->SetValueAsFloat(TEXT("W_Suction"), ControlledEnemy->AttackWeight.SuctionAttack);
 }

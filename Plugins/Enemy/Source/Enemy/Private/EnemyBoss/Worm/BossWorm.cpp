@@ -1,14 +1,16 @@
 #include "EnemyBoss/Worm/BossWorm.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "EnemyProjectile/BaseEnemyProjectile.h"
+#include "EnemyProjectile/BaseStreamProjectile.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "PhysicsEngine/RadialForceComponent.h"
 
 ABossWorm::ABossWorm()
 {
@@ -25,6 +27,14 @@ ABossWorm::ABossWorm()
 	
 	RangedAttackPoint = CreateDefaultSubobject<USceneComponent>(TEXT("RangedAttackPoint"));
 	RangedAttackPoint->SetupAttachment(RootComponent); // 루트 컴포넌트
+	
+	SuctionRadialForceComp = CreateDefaultSubobject<URadialForceComponent>(TEXT("SuctionRadialForceComp"));
+	SuctionRadialForceComp->SetupAttachment(RootComponent);
+	
+	SuctionRadialForceComp->Radius = 10000.f;        // 영향을 미칠 범위
+	SuctionRadialForceComp->ForceStrength = SuctionForce; // 빨아들이는 힘 (음수)
+	SuctionRadialForceComp->bImpulseVelChange = false ; // 질량에 따른 힘 조정 여부 (false면 질량이 클수록 덜 빨려감)
+	SuctionRadialForceComp->bAutoActivate = false;
 }
 
 void ABossWorm::BeginPlay()
@@ -47,6 +57,17 @@ void ABossWorm::BeginPlay()
 		}
 	}
 	
+	// FireBreath 태그 있는 씬 컴포넌트 찾아서 FireBreathPoint에 할당
+	TArray<USceneComponent*> SceneComps;
+	GetComponents<USceneComponent>(SceneComps);
+	for (USceneComponent* SceneComp : SceneComps)
+	{
+		if (SceneComp && SceneComp->ComponentHasTag(TEXT("FireBreath")))
+		{
+			FireBreathPoint = SceneComp;
+			break; // 찾았으니 루프 종료
+		}
+	}
 }
 
 void ABossWorm::Tick(float DeltaTime)
@@ -63,6 +84,8 @@ void ABossWorm::Tick(float DeltaTime)
 		// 체력바 위젯 보이기
 		if ( HealthBarWidget ) HealthBarWidget->SetVisibility(true);
 	}
+	
+	HandleSuction(DeltaTime);
 }
 
 float ABossWorm::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -82,7 +105,7 @@ void ABossWorm::OnBeginOverlapAttackCollisionSphere(UPrimitiveComponent* Overlap
 		UGameplayStatics::ApplyDamage(OtherActor, AttackDamage, GetController(),
 			this, UDamageType::StaticClass());
 
-		if ( AttackDamage == LungeAttackDamage )
+		if ( AttackDamage == LungeAttackDamage || AttackDamage == SuctionAttackDamage )
 		{
 			ACharacter* PlayerCharacter = Cast<ACharacter>(OtherActor);
 			
@@ -158,7 +181,6 @@ void ABossWorm::FinishUnburrow()
 		BlackboardComp->SetValueAsFloat("AttackDelay", UnBurrowAttackDelay); // 행동 딜레이 설정
 	}
 }
-
 
 void ABossWorm::NormalAttack()
 {
@@ -311,11 +333,9 @@ void ABossWorm::RangedAttack()
 	}
 }
 
-void ABossWorm::ShootProjectile()
+void ABossWorm::ShootRangedProjectile()
 {
-	// 로그
-	UE_LOG(LogTemp, Warning, TEXT("ShootProjectile called!"));
-	if (ProjectileClass && RangedAttackPoint && TargetCharacter)
+	if (RangedProjectileClass && RangedAttackPoint && TargetCharacter)
 	{
 		const FVector SpawnLocation = RangedAttackPoint->GetComponentLocation();
 		FVector TargetLocation = TargetCharacter->GetActorLocation();
@@ -326,10 +346,10 @@ void ABossWorm::ShootProjectile()
 		}
 
 		FVector LaunchVelocity;
-		const float ProjectileSpeed = 1500.0f; // 발사체 속도 (너무 느리면 도달 못 할 수 있음)
+		const float ProjectileSpeed = 800.0f; // 발사체 속도 (너무 느리면 도달 못 할 수 있음)
 
-		// SuggestProjectileVelocity 사용 (일반 버전)
-		// bHighArc = false (Low Arc, 직선에 가까운 곡사)
+		// SuggestProjectileVelocity 함수를 사용하여 발사체가 타겟에 도달할 수 있는 궤적 계산
+		// 이거 곧 사라진다는데 FSuggestProjectileVelocityParameters Params; 이거 써야 하는데 왜 안 될까???????????
 		bool bHaveSolution = UGameplayStatics::SuggestProjectileVelocity(
 			this,
 			LaunchVelocity,
@@ -341,7 +361,9 @@ void ABossWorm::ShootProjectile()
 			0.0f,  // Gravity Override: 0이면 월드 중력 사용
 			ESuggestProjVelocityTraceOption::DoNotTrace // 트레이스 옵션
 		);
-
+		
+		// FSuggestProjectileVelocityParameters Params; 이거 써야 하는데 왜 안될까???????????
+		
 		// 해결책을 못 찾았을 경우 (속도가 부족하거나 각이 안 나옴)
 		if (!bHaveSolution)
 		{
@@ -363,7 +385,7 @@ void ABossWorm::ShootProjectile()
 		{
 			// 발사체 스폰
 			ABaseEnemyProjectile* SpawnedProjectile =
-				World->SpawnActor<ABaseEnemyProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+				World->SpawnActor<ABaseEnemyProjectile>(RangedProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
 
 			if (SpawnedProjectile)
 			{
@@ -382,6 +404,168 @@ void ABossWorm::ShootProjectile()
 	}
 }
 
+void ABossWorm::LinearFireBreathStart()
+{
+	if ( LinearFireBreathMontage )
+	{
+		PlayAnimMontage(LinearFireBreathMontage);
+		
+		bFocusPlayerAfterAttack = false; // 공격 중에는 포커스 비활성화
+		
+		if ( BlackboardComp )
+		{
+			BlackboardComp->SetValueAsFloat("AttackDelay", LinearFireBreathDelay); // 행동 딜레이 설정
+		}
+	}
+}
+
+void ABossWorm::FanFireBreathStart()
+{
+	if ( FanFireBreathMontage )
+	{
+		PlayAnimMontage(FanFireBreathMontage);
+		
+		bFocusPlayerAfterAttack = false; // 공격 중에는 포커스 비활성화
+		
+		if ( BlackboardComp )
+		{
+			BlackboardComp->SetValueAsFloat("AttackDelay", FanFireBreathDelay); // 행동 딜레이 설정
+		}
+	}
+}
+
+void ABossWorm::StartFireBreath()
+{
+	// 이미 발사 중이라면 중복 실행 방지
+	if (GetWorldTimerManager().IsTimerActive(FireBreathTimerHandle)) return;
+	
+	// 0.05초 간격으로 SpawnFireBreathProjectile 함수 반복 호출 (Loop = true)
+	GetWorldTimerManager().SetTimer(FireBreathTimerHandle, this, 
+		&ABossWorm::SpawnFireBreathProjectile, FireBreathInterval, true);
+}
+
+void ABossWorm::EndFireBreath()
+{
+	// 타이머 정지 (발사 중단)
+	GetWorldTimerManager().ClearTimer(FireBreathTimerHandle);
+}
+
+void ABossWorm::SpawnFireBreathProjectile()
+{
+	if (FireBreathPoint && StreamProjectileClass)
+	{
+		// FireBreathPoint는 머리 뼈에 붙어 있으므로, 애니메이션에 따라 위치와 회전이 실시간으로 변함
+		const FVector SpawnLocation = FireBreathPoint->GetComponentLocation();
+		
+		// 소켓의 회전을 가져오되, Pitch(위아래)와 Roll(좌우기울기)은 0으로 만들어 수평으로 발사
+		FRotator SpawnRotation = FireBreathPoint->GetComponentRotation();
+		SpawnRotation.Pitch = 0.0f; // 바닥으로 박히지 않게 수평 유지
+		SpawnRotation.Roll = 0.0f;  // 기울어지지 않게
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = this;
+
+		GetWorld()->SpawnActor<ABaseStreamProjectile>(StreamProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+	}
+}
+
+void ABossWorm::HandleSuction(float DeltaTime)
+{
+	if ( bIsSuctioning == true && TargetCharacter )
+	{
+		
+		// 만약 보스랑 타깃 캐릭터 사이 거리가가까워지면 흡입력 끄기
+		float DistanceToTarget = FVector::Dist(GetActorLocation(), TargetCharacter->GetActorLocation());
+		if (DistanceToTarget < 400.f)
+		{
+			bIsInSuctionAttackArea = true; // 흡입 공격 범위 안에 들어왔음을 표시
+			
+			BlackboardComp->SetValueAsBool("bIsInSuctionAttackArea", true); // 블랙보드에도 반영
+			
+			AttackDamage = SuctionAttackDamage; // 공격 대미지 설정
+			
+			EndSuction();
+			return;
+		}
+		
+		// 방향 벡터 계산 (플레이어 -> 보스)
+		FVector ToBoss = GetActorLocation() - TargetCharacter->GetActorLocation();
+		ToBoss.Normalize();
+
+		// [수정] 실제 속도(Velocity) 대신 플레이어가 바라보는 방향(ForwardVector)을 사용
+		// Velocity는 흡입력 때문에 뒤로 가려 해도 보스 쪽으로 끌려가면 양수가 나옵니다.
+		// 따라서 캐릭터가 등을 돌리고 있는지(ForwardVector)로 판단하는 게 정확합니다.
+		FVector PlayerForward = TargetCharacter->GetActorForwardVector();
+
+		// 내적(Dot Product) 계산
+		// 플레이어가 보스를 보고 있으면(공격 중) 양수, 등을 돌리고 있으면(도망 중) 음수
+		float Resistance = FVector::DotProduct(ToBoss, PlayerForward);
+
+		bool bIsMovingInput = false;
+		if (ACharacter* Char = Cast<ACharacter>(TargetCharacter))
+		{
+			if (UCharacterMovementComponent* Movement = Char->GetCharacterMovement())
+			{
+				// 작은 오차를 고려해 1.0f 이상이면 입력이 있는 것으로 간주
+				bIsMovingInput = Movement->GetCurrentAcceleration().SizeSquared() > 1.0f;
+			}
+		}
+	 	
+		float FinalForce = SuctionForce;
+
+		if (Resistance < 0.0f && bIsMovingInput) // 플레이어가 보스를 등지고 + 도망가려고 할 때
+		{
+			// 저항이 음수일 때 힘을 줄여서 플레이어가 도망갈 수 있도록 허용
+			FinalForce *= 0.8f;
+		}
+		
+		//UE_LOG(LogTemp, Warning, TEXT("Resistance Value: %f, FinalForce Value: %f"), Resistance, FinalForce);
+	 	
+		// 매 프레임 힘의 크기를 갱신하여 적용
+		SuctionRadialForceComp->ForceStrength = FinalForce;
+	} 
+}
+
+void ABossWorm::SuctionStartMontagePlay()
+{
+	if ( SuctionMontage )
+	{
+		PlayAnimMontage(SuctionMontage);
+		
+		bFocusPlayerAfterAttack = false; // 공격 중에는 포커스 비활성화
+		
+		if ( BlackboardComp )
+		{
+			BlackboardComp->SetValueAsFloat("AttackDelay", SuctionAttackDelay); // 행동 딜레이 설정
+		}
+	}
+}
+
+void ABossWorm::StartSuction()
+{	
+	if (SuctionRadialForceComp)
+	{
+		SuctionRadialForceComp->Activate(); // 빨아들이는 힘 활성화
+		
+		bIsSuctioning = true;
+		
+		if ( BlackboardComp )
+		{
+			BlackboardComp->SetValueAsBool("bIsInSuctionAttackArea", false); 
+		}
+		bIsSuctioning = true; // 빨아들이는 중임을 표시
+	}
+}
+
+void ABossWorm::EndSuction()
+{
+	if (SuctionRadialForceComp)
+	{
+		SuctionRadialForceComp->Deactivate(); // 빨아들이는 힘 비활성화
+		bIsSuctioning = false;
+	}
+}
 
 #if WITH_EDITOR
 void ABossWorm::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)

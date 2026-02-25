@@ -2,6 +2,7 @@
 
 #include "NiagaraFunctionLibrary.h"
 #include "Components/SphereComponent.h"
+#include "EnemyProjectile/DamageZoneOnGroundProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -111,5 +112,16 @@ void ABossWormProjectile::CreateDamageZoneOnGround()
 	{
 		// 충돌 지점에 파란색 디버그 스피어 그리기 (반지름 50, 12, 1초간 유지)
 		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 50.0f, 12, FColor::Blue, false, 1.0f);
+		
+		if ( DamageZoneProjectileClass )
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.Instigator = GetInstigator();
+			
+			// 충돌 지점에 장판 발사체 스폰
+			GetWorld()->SpawnActor<ADamageZoneOnGroundProjectile>(DamageZoneProjectileClass, 
+				HitResult.ImpactPoint, FRotator::ZeroRotator, SpawnParams);
+		}
 	}
 }
