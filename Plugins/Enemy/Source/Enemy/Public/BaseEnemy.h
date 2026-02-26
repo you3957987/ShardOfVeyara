@@ -4,6 +4,9 @@
 #include "GameFramework/Character.h"
 #include "BaseEnemy.generated.h"
 
+// 에너미 폴더 안의 ENUM 안에다가도 추가해줘야함!!!!!!!!!!!!!!!!!!!!!!!!
+// 에너미 폴더 안의 ENUM 안에다가도 추가해줘야함!!!!!!!!!!!!!!!!!!!!!!!!
+// 에너미 폴더 안의 ENUM 안에다가도 추가해줘야함!!!!!!!!!!!!!!!!!!!!!!!!
 UENUM(BlueprintType, Meta=(DisplayName="Enemy Type")) // 적 타입을 정의하는 열거형
 enum class EEnemyType : uint8
 {
@@ -13,7 +16,7 @@ enum class EEnemyType : uint8
 	EET_Transpar UMETA(DisplayName = "Transpar Enemy"), // 투명 몹
 	EET_Mimic UMETA(DisplayName = "Mimic Enemy"), // 위장 몹
 	EET_Slime UMETA(DisplayName = "Slime Enemy"), // 슬라임 몹(분열)
-	EET_Burrow UMETA(DisplayName = "Burrow Enemy"), // 땅파는 몹
+	EET_Mage UMETA(DisplayName = "Mage Enemy"), // 마법사 몹 - 일단 안에 가능한 모든 공격 만들고 애님 노티파이로 결정
 
 	EET_MAX UMETA(DisplayName = "Default") // 최대값, 추가적인 값을 위한 공간
 };
@@ -35,8 +38,6 @@ class ENEMY_API ABaseEnemy : public ACharacter
 	GENERATED_BODY()
 
 	friend class AEnemyAiController; // EnemyAiController에서 BaseEnemy의 protected 멤버에 접근할 수 있도록 합니다.
-	friend class UBTTask_BaseMeleeAttack; // BTTask_BaseMeleeAttack에서 BaseEnemy의 protected 멤버에 접근할 수 있도록 합니다.
-	friend class UBTTask_BaseRangedAttack; // BTTask_BaseRangedAttack에서 BaseEnemy의 protected 멤버에 접근할 수 있도록 합니다.
 
 protected:
 	virtual void BeginPlay() override;
@@ -99,9 +100,6 @@ protected:
 	// Tick에서 체력 바 위젯을 내 캐릭터 쪽으로 돌아보게 하는 함수
 	void UpdateHealthBarWidget(float DeltaTime);
 	
-	// 공격 애니메이션 몽타주
-	UPROPERTY(EditAnywhere, Category = "자체설정")
-	class UAnimMontage* AttackMontage; 
 	// 죽음 애니메이션 몽타주
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	class UAnimMontage* DeathMontage;
@@ -173,7 +171,10 @@ public:
 	TArray<TObjectPtr<class ATargetPoint>> PatrolPoints;
 	
 	virtual void Attack(); // 공격 함수. 
-
+	// 공격 애니메이션 몽타주
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	class UAnimMontage* AttackMontage;
+	
 	bool bFocusPlayerAfterAttack = true; // 공격 후 플레이어 주시 여부
 	UFUNCTION(BlueprintCallable)
 	void StartFocusPlayerAfterAttack(); // 공격 후 플레이어 주시 시작 함수

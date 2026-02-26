@@ -18,7 +18,7 @@ protected:
 	
 	// 장판 발사체 클래스
 	UPROPERTY(EditAnywhere, Category="자체설정")
-	TSubclassOf<class ADamageZoneOnGroundProjectile> DamageZoneProjectileClass;
+	TSubclassOf<class ADamageZoneProjectile> DamageZoneProjectileClass;
 	
 public:
 	ABossWormProjectile();

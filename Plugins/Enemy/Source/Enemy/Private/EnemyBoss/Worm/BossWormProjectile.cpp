@@ -2,7 +2,7 @@
 
 #include "NiagaraFunctionLibrary.h"
 #include "Components/SphereComponent.h"
-#include "EnemyProjectile/DamageZoneOnGroundProjectile.h"
+#include "EnemyProjectile/DamageZoneProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -120,7 +120,7 @@ void ABossWormProjectile::CreateDamageZoneOnGround()
 			SpawnParams.Instigator = GetInstigator();
 			
 			// 충돌 지점에 장판 발사체 스폰
-			GetWorld()->SpawnActor<ADamageZoneOnGroundProjectile>(DamageZoneProjectileClass, 
+			GetWorld()->SpawnActor<ADamageZoneProjectile>(DamageZoneProjectileClass, 
 				HitResult.ImpactPoint, FRotator::ZeroRotator, SpawnParams);
 		}
 	}

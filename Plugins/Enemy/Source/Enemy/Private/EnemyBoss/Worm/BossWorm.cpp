@@ -5,7 +5,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
-#include "EnemyProjectile/BaseEnemyProjectile.h"
+#include "EnemyBoss/Worm/BossWormProjectile.h"
 #include "EnemyProjectile/BaseStreamProjectile.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -335,73 +335,81 @@ void ABossWorm::RangedAttack()
 
 void ABossWorm::ShootRangedProjectile()
 {
-	if (RangedProjectileClass && RangedAttackPoint && TargetCharacter)
-	{
-		const FVector SpawnLocation = RangedAttackPoint->GetComponentLocation();
-		FVector TargetLocation = TargetCharacter->GetActorLocation();
-		const UCapsuleComponent* TargetCapsule = TargetCharacter->GetCapsuleComponent();
-		if (TargetCapsule)
-		{
-			TargetLocation.Z -= TargetCapsule->GetScaledCapsuleHalfHeight();
-		}
+    if (RangedProjectileClass && RangedAttackPoint && TargetCharacter)
+    {
+        const FVector SpawnLocation = RangedAttackPoint->GetComponentLocation();
 
-		FVector LaunchVelocity;
-		const float ProjectileSpeed = 800.0f; // 발사체 속도 (너무 느리면 도달 못 할 수 있음)
+        // 타겟 위치 보정 (발 밑)
+        FVector TargetLocation = TargetCharacter->GetActorLocation();
+        const UCapsuleComponent* TargetCapsule = TargetCharacter->GetCapsuleComponent();
+        if (TargetCapsule)
+        {
+            TargetLocation.Z -= TargetCapsule->GetScaledCapsuleHalfHeight();
+        }
 
-		// SuggestProjectileVelocity 함수를 사용하여 발사체가 타겟에 도달할 수 있는 궤적 계산
-		// 이거 곧 사라진다는데 FSuggestProjectileVelocityParameters Params; 이거 써야 하는데 왜 안 될까???????????
-		bool bHaveSolution = UGameplayStatics::SuggestProjectileVelocity(
-			this,
-			LaunchVelocity,
-			SpawnLocation,
-			TargetLocation,
-			ProjectileSpeed,
-			false, // bHighArc: false로 설정하여 낮게 날아가도록 함
-			0.0f,  // Radius: 충돌 검사 반지름 (0이면 검사 안함)
-			0.0f,  // Gravity Override: 0이면 월드 중력 사용
-			ESuggestProjVelocityTraceOption::DoNotTrace // 트레이스 옵션
-		);
-		
-		// FSuggestProjectileVelocityParameters Params; 이거 써야 하는데 왜 안될까???????????
-		
-		// 해결책을 못 찾았을 경우 (속도가 부족하거나 각이 안 나옴)
-		if (!bHaveSolution)
-		{
-			// 그냥 타겟 방향으로 직사로 쏨 + 약간 위로 보정
-			FVector Direction = (TargetLocation - SpawnLocation).GetSafeNormal();
-			Direction.Z += 0.2f; // 약간 위로 던져서 중력 보상 흉내
-			LaunchVelocity = Direction.GetSafeNormal() * ProjectileSpeed;
-		}
+        FVector LaunchVelocity;
 
-		// 회전값은 속도 벡터의 방향으로 설정
-		const FRotator SpawnRotation = LaunchVelocity.Rotation();
+        // [수정] 생성자는 4개의 인자만(World, Start, End, Speed) 받습니다.
+        UGameplayStatics::FSuggestProjectileVelocityParameters Params(GetWorld(), 
+        	SpawnLocation, TargetLocation, 2000.0f);
 
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
-		SpawnParams.Instigator = this;
+        // 나머지 옵션은 멤버 변수로 직접 설정
+        Params.CollisionRadius = 10.0f;
+        Params.TraceOption = ESuggestProjVelocityTraceOption::DoNotTrace;
+        Params.bFavorHighArc = false; // 여기서 곡사/직사 여부 설정
 
-		UWorld* World = GetWorld();
-		if (World)
-		{
-			// 발사체 스폰
-			ABaseEnemyProjectile* SpawnedProjectile =
-				World->SpawnActor<ABaseEnemyProjectile>(RangedProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+        // 함수 실행 (Reference로 LaunchVelocity를 받아옴)
+        bool bHaveSolution = UGameplayStatics::SuggestProjectileVelocity(Params, LaunchVelocity);
 
-			if (SpawnedProjectile)
-			{
-				UProjectileMovementComponent* ProjMoveComp =
-					SpawnedProjectile->FindComponentByClass<UProjectileMovementComponent>();
-				if (ProjMoveComp)
-				{
-					// 속도 적용
-					ProjMoveComp->Velocity = LaunchVelocity;
-					// [중요] 발사체의 속도가 여기서 설정한 Velocity 크기로 강제 조정되도록 설정할 수도 있음
-					// ProjMoveComp->InitialSpeed = LaunchVelocity.Size();
-					// ProjMoveComp->MaxSpeed = LaunchVelocity.Size();
-				}
-			}
-		}
-	}
+        // 해결책을 못 찾았을 경우
+        if (!bHaveSolution)
+        {
+            FVector Direction = (TargetLocation - SpawnLocation);
+            float Distance = Direction.Size();
+            float FallbackSpeed = FMath::Clamp(Distance * 1.5f, 1000.0f, 3000.0f);
+
+            // [수정] 동일하게 Fallback 파라미터도 생성자 인자 개수 맞춤
+            UGameplayStatics::FSuggestProjectileVelocityParameters FallbackParams(GetWorld(), 
+            	SpawnLocation, TargetLocation, FallbackSpeed);
+            FallbackParams.CollisionRadius = 10.0f;
+            FallbackParams.TraceOption = ESuggestProjVelocityTraceOption::DoNotTrace;
+            FallbackParams.bFavorHighArc = true; // 멀면 고각 발사 시도
+
+            if(!UGameplayStatics::SuggestProjectileVelocity(FallbackParams, LaunchVelocity))
+            {
+                 // 그래도 실패하면 그냥 타겟 방향으로 쏘기
+                 Direction.Normalize();
+                 Direction.Z += 0.5f;
+                 LaunchVelocity = Direction.GetSafeNormal() * FallbackSpeed;
+            }
+        }
+
+        // 회전값은 속도 벡터의 방향으로 설정
+        const FRotator SpawnRotation = LaunchVelocity.Rotation();
+
+        FActorSpawnParameters SpawnParams;
+        SpawnParams.Owner = this;
+        SpawnParams.Instigator = this;
+
+        UWorld* World = GetWorld();
+        if (World)
+        {
+            ABaseEnemyProjectile* SpawnedProjectile =
+                World->SpawnActor<ABaseEnemyProjectile>(RangedProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+
+            if (SpawnedProjectile)
+            {
+                UProjectileMovementComponent* ProjMoveComp =
+                    SpawnedProjectile->FindComponentByClass<UProjectileMovementComponent>();
+                if (ProjMoveComp)
+                {
+                    ProjMoveComp->Velocity = LaunchVelocity;
+                    ProjMoveComp->InitialSpeed = LaunchVelocity.Size();
+                    ProjMoveComp->MaxSpeed = LaunchVelocity.Size();
+                }
+            }
+        }
+    }
 }
 
 void ABossWorm::LinearFireBreathStart()

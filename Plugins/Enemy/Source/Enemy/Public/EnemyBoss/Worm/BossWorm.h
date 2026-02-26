@@ -123,7 +123,7 @@ public:
 	
 	// 원거리 공격 타입일 때 발사체 클래스
 	UPROPERTY(EditAnywhere, Category="자체설정")
-	TSubclassOf<class ABaseEnemyProjectile> RangedProjectileClass;
+	TSubclassOf<class ABossWormProjectile> RangedProjectileClass;
 	// 원거리 공격 지점 컴포넌트
 	UPROPERTY(VisibleAnywhere)
 	class USceneComponent* RangedAttackPoint;
