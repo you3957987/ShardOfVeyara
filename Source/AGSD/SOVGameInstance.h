@@ -27,11 +27,17 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float PlayerHealth = MaxPlayerHealth;
-	
+	/*
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	FVector2D PlayerLocation;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UWorld* World;
+	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bHasPet = false;
 	
-	UPROPERTY(BlueprintReadWrite, Category = "Farming")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Farming")
 	TMap<FString, FPlotSaveData> GlobalPlotDataMap;
 
 	// 경작지로부터 데이터를 받아서 저장/갱신하는 함수
