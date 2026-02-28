@@ -17,6 +17,9 @@ class AGSD_API USOVGameInstance : public UGameInstance
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FString> NoRegenItem;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int CurrentDay = 1.0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

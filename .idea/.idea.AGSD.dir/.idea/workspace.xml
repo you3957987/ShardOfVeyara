@@ -8,16 +8,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="61b1a24a-49d1-4972-9071-312c574aff7e" name="변경" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AGSD.uproject.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/AGSD.uproject.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ChestUI/Blueprint/BP_Chest.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ChestUI/Blueprint/BP_Chest.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BI_SaveGame.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Farmer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Farmer.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_FarmerController.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_FarmingGameMode.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_FarmingGameMode.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_GameStateBase.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/SG_SaveGame.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/Inventory/BPAC_InventoryComponent.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/Inventory/BPAC_InventoryComponent.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Structs/Struct_SaveGameData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Structs/Struct_SaveGameData.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/WorldSettings/SG_SaveGame.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/WorldSettings/SG_SaveGame.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/LevelDesign/BluePrint/BP_GameInstance.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/BluePrint/BP_GameInstance.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGSD/SOVGameInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/SOVGameInstance.h" afterDir="false" />
     </list>
@@ -144,6 +136,7 @@
       <updated>1771876780644</updated>
       <workItem from="1771876780646" duration="4726000" />
       <workItem from="1772201814431" duration="4337000" />
+      <workItem from="1772291120328" duration="479000" />
     </task>
     <servers />
   </component>
