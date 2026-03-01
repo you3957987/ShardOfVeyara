@@ -3,6 +3,11 @@
 
 #include "SOVGameInstance.h"
 
+USOVGameInstance::USOVGameInstance()
+{
+	TempHotbar.SetNum(10);
+}
+
 void USOVGameInstance::UpdatePlotData(FPlotSaveData NewData)
 {
 	// 장부에 기록 (이미 있으면 덮어쓰기, 없으면 추가)

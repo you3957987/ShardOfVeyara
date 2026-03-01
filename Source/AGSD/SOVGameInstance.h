@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "PlotSaveData.h"
+#include "Struct_InventorySlotData.h"
+#include "Struct_WorldChestData.h"
 #include "Engine/GameInstance.h"
 #include "SOVGameInstance.generated.h"
 
@@ -16,6 +18,8 @@ class AGSD_API USOVGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 public:
+	USOVGameInstance();
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SaveGame")
 	FString SaveGameSlot;
 	
@@ -30,6 +34,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WorldState")
 	float CurrentTime = 360.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WorldState")
+	TMap<FString, FStruct_WorldChestData> ChestMap;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
 	float MaxPlayerHealth = 0.f;
@@ -42,6 +49,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
 	int32 CurrentSelectedHotbar = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
+	TArray<FStruct_InventorySlotData> TempInventory;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
+	TArray<FStruct_InventorySlotData> TempHotbar;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "FarmingState")
 	TMap<FString, FPlotSaveData> GlobalPlotDataMap;
