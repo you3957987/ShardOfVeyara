@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/DataTable.h"
 #include "Struct_ItemData.h"
 #include "Struct_InventorySlotData.generated.h"
 
@@ -11,11 +12,18 @@ struct FStruct_InventorySlotData : public FTableRowBase
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Data")
-	bool isEmpty = true;
-	
+	bool IsEmpty;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Data")
 	FStruct_ItemData ItemData;
-	
+    
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Data")
 	int32 SlotIndex;
+	
+	FStruct_InventorySlotData()
+	{
+		IsEmpty = true;
+		ItemData = FStruct_ItemData();
+		SlotIndex = 0;
+	}
 };
