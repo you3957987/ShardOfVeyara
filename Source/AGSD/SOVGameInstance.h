@@ -16,31 +16,34 @@ class AGSD_API USOVGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FString> NoRegenItem;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SaveGame")
+	FString SaveGameSlot;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WorldState")
+	TArray<FString> NoRegenItem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WorldState")
+	FName TeleportationTag = FName("None");
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WorldState")
 	int CurrentDay = 1.0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WorldState")
 	float CurrentTime = 360.f;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
 	float MaxPlayerHealth = 0.f;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
 	float PlayerHealth = MaxPlayerHealth;
-	/*
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	FVector2D PlayerLocation;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	UWorld* World;
-	*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
 	bool bHasPet = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
+	int32 CurrentSelectedHotbar = 1;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Farming")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "FarmingState")
 	TMap<FString, FPlotSaveData> GlobalPlotDataMap;
 
 	// 경작지로부터 데이터를 받아서 저장/갱신하는 함수
