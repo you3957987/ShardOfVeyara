@@ -78,13 +78,12 @@ protected:
 
 	UPROPERTY()
 	class UFadeWidget* FadeWidget;
-
+	
 private:
 	UFUNCTION(BlueprintCallable)
 	void HandleAttackInput(FName ActionName);
 	
 public:
-
 	/** Constructor */
 	AAGSDCharacter();	
 
@@ -148,6 +147,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool Mining = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool Weeding = false;
+
 	void Die();
 	UFUNCTION(BlueprintCallable)
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
@@ -198,8 +200,11 @@ protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
+	void StopMove();
+	
 	virtual void Jump() override;
 
+	
 	virtual void StopJumping() override;
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
@@ -222,6 +227,13 @@ protected:
 
 	UFUNCTION()
 	void WakeUp();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAudioComponent* Running;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAudioComponent* Jumping;
+
 	
 public:
 
@@ -241,15 +253,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
 	
-
-	// 펫 관련 추가( 인터페이스를 추가하고 인터페이스 함수중 하나인 SetMyPet 구현 )
-	//--
-
-	/*
-	#include "Interface/PetConversationInterface.h"
-	#include "BaseFlyingPet.h"
-	IPetConversationInterface::Execute_MasterToPetConversation(OtherActor, DialogueID); 캐릭터에서 실행하면 자동으로 대화 실행
-	 */
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "PlayerState")
+	void TeleportToBed();
 
 	UPROPERTY( EditAnywhere, Category="Pet")
 	bool bHasPet = false;
@@ -263,18 +268,17 @@ public:
 
 	// 인터페이스 함수 구현
 	virtual void SetMyPet_Implementation(AActor* NewPet) override;
-	virtual void MasterToPetConversation_Implementation(FName DialogueID) override;
+	virtual void MasterToPetBigConversation_Implementation(FName DialogueID) override;
 
 	// 레벨 이동 전 펫 파괴 및 이동 후 펫 스폰 함수
 	UFUNCTION(BlueprintCallable)
 	void DestroyPetBeforeTravel();
 	UFUNCTION(BlueprintCallable)
 	void SpawnMyPetAfterTravel();
-	
+
+	FORCEINLINE AActor* getCurrentInteractableActor() const { return CurrentInteractableActor; }
 	//--
 	// 펫 관련 추가
-	
-public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 

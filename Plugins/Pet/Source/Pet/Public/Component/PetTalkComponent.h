@@ -16,26 +16,47 @@ public:
 	// 대화 내용
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	FText DialogueText;
-
 	// 화자 이름
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	FText SpeakerName;
-
 	// 펫 아이콘 (비워두면 컴포넌트 기본값 사용 가능)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	class UTexture2D* PetIcon;
-	
 	// 함께 재생할 음성
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	USoundBase* VoiceAudio;
-
 	// [추가사항] 함께 재생할 애니메이션 몽타주
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	class UAnimMontage* MontageToPlay;
-	
 	// 다음 대화 ID == 만약 대화의 끝이라면 None으로 둠(칸 다 비우면 자동으로 None 처리됨)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	FName NextDialogueID;
+	// 펫 말고 다른 캐릭터가 말하는지 여부 == true면 펫이 앞으로 가서 마주보고 대화 X 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	bool bIsTalkToOtherCharacter = false;
+
+	// 대화 선택지 사용 여부 == 주인공이 말하는 대화에만 사용 + 선택지는 사용시 무조건 2개여야 함
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "선택지")
+	bool bUseDialogueChoices = false;
+	// [선택지 1] 버튼에 표시될 텍스트
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "선택지", meta=(EditCondition="bUseDialogueChoices"))
+	FText Choice1_Text;
+	// [선택지 1] 눌렀을 때 이동할 다음 대화 ID
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "선택지", meta=(EditCondition="bUseDialogueChoices"))
+	FName Choice1_NextID;
+	// [선택지 2] 버튼에 표시될 텍스트
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "선택지", meta=(EditCondition="bUseDialogueChoices"))
+	FText Choice2_Text;
+	// [선택지 2] 눌렀을 때 이동할 다음 대화 ID
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "선택지", meta=(EditCondition="bUseDialogueChoices"))
+	FName Choice2_NextID;
+	
+	// CuteWhale 에셋 전용! -1 이면 작동 안함 -- 0 ~ 25, 0은 디폴트
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CuteWhale전용")
+	int32 CuteWhale_ColorIndex = -1;
+	// CuteWhale 에셋 전용! -1 이면 작동 안함 -- 0 ~ 11, 0은 디폴트
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CuteWhale전용")
+	int32 CuteWhale_FaceIndex = -1;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -43,8 +64,6 @@ class PET_API UPetTalkComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-	
-	
 protected:
 	virtual void BeginPlay() override;
 
@@ -78,16 +97,22 @@ protected:
 	
 	// 대화 데이터 테이블
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
-	class UDataTable* ConversationDataTable;
+	class UDataTable* BigConversationDataTable;
+	// 탐험시 대화 데이터 테이블
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	class UDataTable* TravelSmallConversationDataTable;
 	// 대화 자막 클래스
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	TSubclassOf<class UConversationSubtitle> ConversationSubtitleClass;
 	UPROPERTY()
 	UConversationSubtitle* ConversationSubtitleInstance;
 	// 대화 종료 함수
+	UFUNCTION()
 	void EndConversation();
 	// 대화 지속 시간 타이머 핸들
 	FTimerHandle ConversationTimerHandle;
+	// 탐험용 연속 대화 타이머 핸들
+	FTimerHandle TravelSmallConversationTimerHandle;
 	// 현재 재생 중인 음성 오디오 컴포넌트 (필요시 중지용)
 	UPROPERTY()
 	UAudioComponent* CurrentConversationVoiceAudioComponent = nullptr;
@@ -110,6 +135,27 @@ protected:
 	// 핑 액터를 생성하고 목표 지점으로 이동시키는 내부 함수
 	void SpawnItemPingEffectAtLocation(const FVector& TargetLocation, const FVector& PingSpawnLocation);
 
+
+	// 대화 로그창 보이게 하는 함수
+	UFUNCTION()
+	void OnPressedLogButton();
+	//대화 로그 창에 대화 내용 추가 함수
+	void AddDialogueToConversationLog(const FText& SpeakerName, const FText& DialogueText, bool bIsSelection = false);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	TSubclassOf<class UDialogueEntry> ConversationLogEntryClass;
+
+	// 선택지 버튼 입력 처리 함수
+	UFUNCTION()
+	void OnDialogueChoiceSelect_0();
+	UFUNCTION()
+	void OnDialogueChoiceSelect_1();
+	FName PendingChoice1_ID;
+	FName PendingChoice2_ID;
+	FText SpeakerName_Text;
+	FText PendingChoice1_Text;
+	FText PendingChoice2_Text;
+	
 public:
 	UPetTalkComponent();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -123,6 +169,9 @@ public:
 	// 외부에서 Battle -> Follow 상태 전환 대사 호출
 	UFUNCTION(BlueprintCallable)
 	void Travel_BattleToFollow();
+	// 탐험시 대사. 다이얼로그 ID로 호출
+	UFUNCTION(BlueprintCallable)
+	void Travel_StartSmallConversation(FName DialogueID);
 	
 	// [추가] 대화 중에 교체할 컨텍스트 (빈 컨텍스트 혹은 스킵 키만 포함)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
@@ -138,5 +187,13 @@ public:
 	// 대화 종료시 호출될 델리게이트 인스턴스
 	UPROPERTY(BlueprintAssignable)
 	FOnConversationEnded OnConversationEnded;
-	
+
+	UFUNCTION(BlueprintCallable)
+	bool ReturnWhoTalk(bool bIsTalkToOtherCharacter) { return bIsTalkToOtherCharacter; }
+
+	// 대화 로그창 스크롤 바 초기화함수
+	void ResetConversationLogScrollBox();
+	// 대화 타이머 다시 시작
+	UFUNCTION()
+	void RestartConversationTimerHandle();
 };

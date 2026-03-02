@@ -37,6 +37,9 @@ protected:
 	FText InteractActionText = FText::FromString(TEXT("수확하기"));
 
 	bool bIsHarvested = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
+	TEnumAsByte<ECollisionChannel> PlacementTraceChannel;
 	
 public:	
 	//작물이 경작지에 심길 때 실행할 함수

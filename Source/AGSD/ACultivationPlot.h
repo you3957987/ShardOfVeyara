@@ -8,6 +8,7 @@
 #include "UCropData.h"
 #include "Interaction.h"
 #include "Crop.h"
+#include "Weeds.h"
 #include "ACultivationPlot.generated.h"
 
 UCLASS()
@@ -20,6 +21,7 @@ public:
 	AACultivationPlot();
 
 protected:
+	void HandleDayPassed(int32 CurrentDay);
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -35,6 +37,18 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
 	class ACrop* PlantedCrop = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Farming")
+	bool bHasWeeds = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Farming")
+	float weedsProb = 0.1f;
+	
+	UPROPERTY(EditAnywhere, Category = "Farming")
+	TSubclassOf<AWeeds> WeedsActorClass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Farming")
+	class AWeeds* WeedsActor = nullptr;
 
 	void PlantCrop();
 
@@ -63,14 +77,16 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Farming")
 	FName SeedName = NAME_None;
-	
-    void RegisterCropToManager(int32 CurrentDay);
 
-	AAGSDGameStateBase* GS;
-	USOVGameInstance* GI;
+	AAGSDGameStateBase* GS = nullptr;
+	USOVGameInstance* GI = nullptr;
+
+	UFUNCTION()
+	void OnWeedRemoved();
+	void GrowthLogic();
+	void SpawnWeeds();
+
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	//오버랩 시작 시 작동할 함수
 	UFUNCTION()

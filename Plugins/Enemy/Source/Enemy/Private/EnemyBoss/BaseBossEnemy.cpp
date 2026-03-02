@@ -39,6 +39,12 @@ ABaseBossEnemy::ABaseBossEnemy()
 	
 	// AI 컨트롤러가 자동 빙의 하는거 제한. 범위 안에 플레이어가 들어왔을 때 오버랩 이벤트로 빙의
 	AutoPossessAI = EAutoPossessAI::Disabled;
+
+	// 오리엔트 투 무브먼트 비활성화 == 
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+	// 컨트롤러 선호 회전 설정
+	GetCharacterMovement()->bUseControllerDesiredRotation = true;
+	
 }
 
 void ABaseBossEnemy::BeginPlay()
@@ -102,6 +108,7 @@ void ABaseBossEnemy::OnPlayerDetectOverlapBegin(UPrimitiveComponent* OverlappedC
 	if (OtherActor && OtherActor->ActorHasTag(FName("Player")))
 	{
 		SpawnDefaultController();// 스폰 몽타주 사용 안하면 자동 빙의 설정
+		PlayerDetectRangeSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision); // 한 번 감지되면 비활성화
 	}
 }
 
@@ -129,7 +136,6 @@ void ABaseBossEnemy::UpdateHealthBarWidget(float DeltaTime)
 		}
 	}
 }
-
 
 float ABaseBossEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 	class AController* EventInstigator, AActor* DamageCauser)
@@ -198,7 +204,48 @@ void ABaseBossEnemy::SpawnDeadEffectAndDestroy()
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DeathEffectCascade,
 		 SpawnLocation, SpawnRotation, SpawnScale);
 	}
+
+	DropItemsAfterDead(); // 아이템 드롭
+	
 	Destroy(); // 이펙트가 없으면 바로 액터 삭제
+}
+
+void ABaseBossEnemy::StartFocusPlayerAfterAttack()
+{
+	bFocusPlayerAfterAttack = true; // 공격 후 포커스 시작 플래그를 true로 설정
+}
+
+void ABaseBossEnemy::DropItemsAfterDead()
+{
+	for (const TSubclassOf<AActor>& ItemClassToSpawn : DropItems)
+	{
+		if ( !ItemClassToSpawn ) continue;
+
+		// 적의 현재 위치 (발 밑)
+		FVector SpawnLocation = GetActorLocation();
+
+		// 캡슐의 절반 높이만큼 올려서 아이템이 땅에 닿도록 조정
+		AActor* ItemCDO = ItemClassToSpawn->GetDefaultObject<AActor>();
+		if ( ItemCDO )
+		{
+			UCapsuleComponent* ItemCapsule = ItemCDO->FindComponentByClass<UCapsuleComponent>();
+			if ( ItemCapsule )
+			{
+				SpawnLocation.Z += ItemCapsule->GetScaledCapsuleHalfHeight();
+			}
+		}
+
+		// 여러 아이템이 완전히 겹치지 않도록 X, Y 주변에 약간의 랜덤 오프셋 주기
+		const float RandomXY = 40.f;
+		SpawnLocation.X += FMath::RandRange(-RandomXY, RandomXY);
+		SpawnLocation.Y += FMath::RandRange(-RandomXY, RandomXY);
+
+		// 회전도 랜덤하게 설정
+		FRotator SpawnRotation = FRotator(0.f, FMath::RandRange(0.f, 360.f), 0.f);
+
+		// 월드에 아이템 액터 스폰
+		GetWorld()->SpawnActor<AActor>(ItemClassToSpawn, SpawnLocation, SpawnRotation);
+	}
 }
 
 void ABaseBossEnemy::TestDeadLogic()
@@ -216,6 +263,7 @@ void ABaseBossEnemy::TestDeadLogic()
 	}
 }
 
+#if	WITH_EDITOR
 void ABaseBossEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
@@ -252,4 +300,4 @@ void ABaseBossEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChang
 		}
 	}
 }
-
+#endif

@@ -13,8 +13,8 @@ AChest::AChest()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	//루트 컴포넌트 설정
-	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
-	RootComponent = SkeletalMesh;
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SkeletalMesh"));
+	RootComponent = Mesh;
 	//콜리전 박스 설정
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision Box"));
 	CollisionBox->SetupAttachment(RootComponent);

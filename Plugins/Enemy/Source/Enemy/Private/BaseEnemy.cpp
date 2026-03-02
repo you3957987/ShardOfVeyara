@@ -83,7 +83,10 @@ void ABaseEnemy::BeginPlay()
 	}
 	else
 	{
-		SpawnDefaultController();// 스폰 몽타주 사용 안하면 자동 빙의 설정
+		if ( EnemyType != EEnemyType::EET_Mimic ) // 미믹 타입이 아니면
+		{
+			SpawnDefaultController();// 스폰 몽타주 사용 안하면 자동 빙의 설정
+		}
 	}
 	TestDeadLogic(); // 죽음 로직 테스트 함수
 }
@@ -119,6 +122,13 @@ void ABaseEnemy::Attack()
 	{
 		PlayAnimMontage(AttackMontage); // 공격 애니메이션 재생
 	}
+
+	bFocusPlayerAfterAttack = false; // 공격 후 포커스 시작 플래그를 false로 설정
+}
+
+void ABaseEnemy::StartFocusPlayerAfterAttack()
+{
+	bFocusPlayerAfterAttack = true; // 공격 후 포커스 시작 플래그를 true로 설정
 }
 
 float ABaseEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -192,7 +202,44 @@ void ABaseEnemy::SpawnDeadEffectAndDestroy()
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DeathEffectCascade,
 			SpawnLocation, SpawnRotation, SpawnScale);
 	}
+
+	// 액터 삭제 전에 아이템 드롭 함수 호출
+	DropItemsAfterDead();
+	
 	Destroy(); // 이펙트가 없으면 바로 액터 삭제
+}
+
+void ABaseEnemy::DropItemsAfterDead()
+{
+	for (const TSubclassOf<AActor>& ItemClassToSpawn : DropItems)
+	{
+		if ( !ItemClassToSpawn ) continue;
+
+		// 적의 현재 위치 (발 밑)
+		FVector SpawnLocation = GetActorLocation();
+
+		// 캡슐의 절반 높이만큼 올려서 아이템이 땅에 닿도록 조정
+		AActor* ItemCDO = ItemClassToSpawn->GetDefaultObject<AActor>();
+		if ( ItemCDO )
+		{
+			UCapsuleComponent* ItemCapsule = ItemCDO->FindComponentByClass<UCapsuleComponent>();
+			if ( ItemCapsule )
+			{
+				SpawnLocation.Z += ItemCapsule->GetScaledCapsuleHalfHeight();
+			}
+		}
+
+		// 여러 아이템이 완전히 겹치지 않도록 X, Y 주변에 약간의 랜덤 오프셋 주기
+		const float RandomXY = 40.f;
+		SpawnLocation.X += FMath::RandRange(-RandomXY, RandomXY);
+		SpawnLocation.Y += FMath::RandRange(-RandomXY, RandomXY);
+
+		// 회전도 랜덤하게 설정
+		FRotator SpawnRotation = FRotator(0.f, FMath::RandRange(0.f, 360.f), 0.f);
+
+		// 월드에 아이템 액터 스폰
+		GetWorld()->SpawnActor<AActor>(ItemClassToSpawn, SpawnLocation, SpawnRotation);
+	}
 }
 
 void ABaseEnemy::SpawnAndPossessAIController()

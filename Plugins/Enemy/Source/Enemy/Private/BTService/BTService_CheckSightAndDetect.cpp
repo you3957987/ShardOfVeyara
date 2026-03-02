@@ -2,7 +2,6 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "EnemyAiController.h"
-#include "ToolWidgetsSlateTypes.h"
 
 
 UBTService_CheckSightAndDetect::UBTService_CheckSightAndDetect()

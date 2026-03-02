@@ -2,7 +2,6 @@
 
 
 #include "ACultivationPlot.h"
-#include "CropManager.h"
 #include "Components/BoxComponent.h"
 #include "AGSDPlayerController.h"
 #include "AGSDCharacter.h"
@@ -25,6 +24,20 @@ AACultivationPlot::AACultivationPlot()
 	CollisionBox->OnComponentEndOverlap.AddDynamic(this, &AACultivationPlot::OnEndOverlap);
 }
 
+void AACultivationPlot::HandleDayPassed(int32 CurrentDay)
+{
+	if (PlantedCrop)
+	{
+		if (bHasWeeds) ScheduledDay++;
+		else if (ScheduledDay <= CurrentDay) AdvanceGrowth();
+	}
+	if (!bHasWeeds && FMath::FRand() <= weedsProb)
+	{
+		bHasWeeds = true;
+		SpawnWeeds();
+	}
+}
+
 //오버랩 시작 함수 구현부
 void AACultivationPlot::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -42,7 +55,8 @@ void AACultivationPlot::ShowWidget_Implementation(ACharacter* player)
 
 bool AACultivationPlot::CanInteract_Implementation(AAGSDCharacter* player)
 {
-	return player->HoldingState == EHoldingState::EHS_Seed;
+	if (PlantedCrop == nullptr)	return player->HoldingState == EHoldingState::EHS_Seed;
+	return false;
 }
 
 //오버랩 종료 함수 구현부
@@ -59,7 +73,7 @@ void AACultivationPlot::Interact_Implementation(AAGSDCharacter* player)
 	if (!SeedDataTable) return;
 	UE_LOG(LogTemp, Warning, TEXT("AACultivationPlot::OnBeginOverlap"));
 	
-	CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	if (PlantedCrop == nullptr)
 	{
@@ -70,13 +84,11 @@ void AACultivationPlot::Interact_Implementation(AAGSDCharacter* player)
 		CurrentGrowStageIndex = 0;
 		GrowthTimeCounter = CropData->GrowthStages[CurrentGrowStageIndex].TimeToGrow;
 		FinishGrowStageIndex = CropData->GrowthStages.Num() - 1;
-
-		PlantCrop();
 		
-		if (!GS) return;
-		int32 CurrentDay = GS->GetCurrentDay();
-
-		RegisterCropToManager(CurrentDay);
+		int32 currentDay = GS->GetCurrentDay();
+		ScheduledDay =  currentDay + GrowthTimeCounter;
+		
+		PlantCrop();
 		PlantedCrop->MeshUpdate(CurrentGrowStageIndex);
 	}
 }
@@ -87,12 +99,16 @@ void AACultivationPlot::BeginPlay()
 	Super::BeginPlay();
 	GI = Cast<USOVGameInstance>(GetGameInstance());
 	GS = Cast<AAGSDGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
-	
+
+	if (AAGSDGameStateBase* GameState = Cast<AAGSDGameStateBase>(UGameplayStatics::GetGameState(GetWorld())))
+	{
+		GameState->OnDayChangedDelegate.AddUObject(this, &AACultivationPlot::HandleDayPassed);
+	}
 	if (!GI) return;
 	
 	FPlotSaveData LoadedData;
 	// 아까 만든 구조체 데이터를 통째로 넘겨서 저장합니다.
-	if (!GI->GetPlotData(GetActorGuid(), LoadedData)) return;
+	if (!GI->GetPlotData(GetName(), LoadedData)) return;
 	if (LoadedData.SeedName == NAME_None) return;
 
 	SeedName = LoadedData.SeedName;
@@ -101,27 +117,49 @@ void AACultivationPlot::BeginPlay()
 	FinishGrowStageIndex = LoadedData.FinishGrowStageIndex;
 	FullyGrown = LoadedData.FullyGrown;
 	ScheduledDay = LoadedData.ScheduledDay;
+	bHasWeeds = LoadedData.bHasWeeds;
 
 	
-	CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 	GetSeedInfo(SeedName);
 	PlantCrop();
+	if (bHasWeeds) SpawnWeeds();
 
 	int32 CurrentDay = GI->CurrentDay;
-	while (ScheduledDay <= CurrentDay && !FullyGrown)
+	while (ScheduledDay <= CurrentDay && !FullyGrown && !bHasWeeds)
 	{
-		AdvanceGrowth();
+		GrowthLogic();
 	}
 	
 	PlantedCrop->MeshUpdate(CurrentGrowStageIndex);
+
 	if (CurrentGrowStageIndex >= FinishGrowStageIndex)
 	{
 		FullyGrown = true;
 		PlantedCrop->SetCollisionEnable();
 	}
+}
 
-	if (!FullyGrown) RegisterCropToManager(ScheduledDay);
+void AACultivationPlot::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	
+	FPlotSaveData SaveData;
+	SaveData.PlotName = GetName();
+	SaveData.SeedName = SeedName;
+	SaveData.CurrentGrowStageIndex = CurrentGrowStageIndex;
+	SaveData.GrowthTimeCounter = GrowthTimeCounter;
+	SaveData.FinishGrowStageIndex = FinishGrowStageIndex;
+	SaveData.FullyGrown = FullyGrown;
+	SaveData.ScheduledDay = ScheduledDay;
+	SaveData.bHasWeeds = bHasWeeds;
+
+	if (GI)
+	{
+		// 아까 만든 구조체 데이터를 통째로 넘겨서 저장합니다.
+		GI->UpdatePlotData(SaveData);
+	}
 }
 
 void AACultivationPlot::PlantCrop()
@@ -134,14 +172,7 @@ void AACultivationPlot::PlantCrop()
 	}
 	
 	FTransform SpawnTransform = GetTransform();
-	SpawnTransform.SetLocation(GetActorLocation() + FVector(0.f, 0.f, 15.f));
 
-	/*
-	float RandomYaw = FMath::RandRange(0.f, 360.f);
-	FQuat RandomRotation = FQuat(FRotator(0.f, RandomYaw, 0.0f));
-	SpawnTransform.SetRotation(RandomRotation);
-	*/
-	
 	PlantedCrop = GetWorld()->SpawnActorDeferred<ACrop>(
 	CropClassToPlant,
 	SpawnTransform,
@@ -153,7 +184,7 @@ void AACultivationPlot::PlantCrop()
 	{
 	    PlantedCrop->SetCropData(CropData);
 
-		PlantedCrop->OnHarvested.AddDynamic(this, &AACultivationPlot::OnPlantedCropDestroyed);
+		PlantedCrop->OnHarvested.AddDynamic(this, &AACultivationPlot::OnPlantedCropDestroyed);		
 		UGameplayStatics::FinishSpawningActor(PlantedCrop, SpawnTransform);
 	}
 }
@@ -166,9 +197,11 @@ void AACultivationPlot::OnPlantedCropDestroyed()
 	FullyGrown = false;
 	ScheduledDay = 0;
 	SeedName = NAME_None;
-	
+
+	/*
 	if (CollisionBox)
 		CollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	*/
 }
 
 void AACultivationPlot::GetSeedInfo(FName TargetRowName)
@@ -186,40 +219,16 @@ void AACultivationPlot::GetSeedInfo(FName TargetRowName)
 	}
 }
 
-// Called every frame
-void AACultivationPlot::Tick(float DeltaTime)
+void AACultivationPlot::OnWeedRemoved()
 {
-	Super::Tick(DeltaTime);
-
+	bHasWeeds = false;
 }
 
-void AACultivationPlot::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	Super::EndPlay(EndPlayReason);
-	
-	FPlotSaveData SaveData;
-	SaveData.PlotGuid = GetActorGuid();
-	SaveData.SeedName = SeedName;
-	SaveData.CurrentGrowStageIndex = CurrentGrowStageIndex;
-	SaveData.GrowthTimeCounter = GrowthTimeCounter;
-	SaveData.FinishGrowStageIndex = FinishGrowStageIndex;
-	SaveData.FullyGrown = FullyGrown;
-	SaveData.ScheduledDay = ScheduledDay;
-
-	if (GI)
-	{
-		// 아까 만든 구조체 데이터를 통째로 넘겨서 저장합니다.
-		GI->UpdatePlotData(SaveData);
-	}
-}
-
-void AACultivationPlot::AdvanceGrowth()
-{
+void AACultivationPlot::GrowthLogic() {
 	if (CurrentGrowStageIndex < FinishGrowStageIndex)
 	{
 		CurrentGrowStageIndex++;
 		GrowthTimeCounter = CropData->GrowthStages[CurrentGrowStageIndex].TimeToGrow;
-		PlantedCrop->MeshUpdate(CurrentGrowStageIndex);
 		
 		ScheduledDay += GrowthTimeCounter;
 	}
@@ -230,13 +239,26 @@ void AACultivationPlot::AdvanceGrowth()
 	}
 }
 
-void AACultivationPlot::RegisterCropToManager(int32 CurrentDay)
+void AACultivationPlot::SpawnWeeds()
 {
-    ScheduledDay = CurrentDay + GrowthTimeCounter;
-        
-    if (ACropManager* Manager = Cast<ACropManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACropManager::StaticClass())))
-    {
-        Manager->RegisterCrop(this, ScheduledDay);
-    }
+	if (!WeedsActorClass) return;
+
+	FTransform SpawnTransform = GetTransform();
+	
+	WeedsActor = GetWorld()->SpawnActorDeferred<AWeeds>(
+	WeedsActorClass,
+	SpawnTransform,
+	this,
+	nullptr,
+	ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+	);
+	UGameplayStatics::FinishSpawningActor(WeedsActor, SpawnTransform);
+	WeedsActor->OnWeeding.AddDynamic(this, &AACultivationPlot::OnWeedRemoved);
+}
+
+void AACultivationPlot::AdvanceGrowth()
+{
+	GrowthLogic();
+	PlantedCrop->MeshUpdate(CurrentGrowStageIndex);
 }
 

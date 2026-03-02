@@ -12,54 +12,50 @@ EBTNodeResult::Type UBTTask_SkeletonMageSelectWeight::ExecuteTask(UBehaviorTreeC
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	// AI 컨트롤러 가져오기
 	AAIController* AIController = OwnerComp.GetAIOwner();
-	if (!AIController) return EBTNodeResult::Failed;
+	if (!AIController) return EBTNodeResult::Failed;	
 	
-	// 컨트롤러가 제어하는 폰을 ABossSkeletonMage로 캐스팅
-	ABossSkeletonMage* BossPawn = Cast<ABossSkeletonMage>(AIController->GetPawn());
-	if (!BossPawn) return EBTNodeResult::Failed;
+	APawn* ControlledPawn = AIController->GetPawn();
+	if (!ControlledPawn) return EBTNodeResult::Failed;
 	
-	// 블랙보드 컴포넌트 가져오기
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComp) return EBTNodeResult::Failed;
-	
-	// 블랙보드에서 플레이어 위치 가져오기
-	FVector PlayerPos = BlackboardComp->GetValueAsVector(PlayerLocation.SelectedKeyName);
-	// 보스 위치 가져오기
-	FVector BossPos = BossPawn->GetActorLocation();
 
-	// 보스와 플레이어 사이의 거리 계산
+	// 거리 계산
+	FVector PlayerPos = BlackboardComp->GetValueAsVector(PlayerLocation.SelectedKeyName);
+	FVector BossPos = ControlledPawn->GetActorLocation();
 	float Distance = FVector::Dist(PlayerPos, BossPos);
 
-	//UE_LOG(LogTemp, Warning, TEXT("Distance: %f"), Distance );
-	
-	if (Distance <= 400.f) // 근거리
+	// 설정 적용을 위한 람다 함수 (중복 제거용)
+	auto ApplyWeights = [&](const TArray<FSkeletonMageWeightConfig>& Settings)
 	{
-		BlackboardComp->SetValueAsFloat(WeightKeys[0].SelectedKeyName, 1.f); // W_Teleport
-		BlackboardComp->SetValueAsFloat(WeightKeys[1].SelectedKeyName, 0.f); // W_FireBall
-		BlackboardComp->SetValueAsFloat(WeightKeys[2].SelectedKeyName, 0.f); // W_Summon
-		BlackboardComp->SetValueAsFloat(WeightKeys[3].SelectedKeyName, 0.f); // W_GroundAttack
-		BlackboardComp->SetValueAsFloat(WeightKeys[4].SelectedKeyName, 1.f); // W_PushTarget
-		//UE_LOG( LogTemp, Warning, TEXT("a") );
+		for (const FSkeletonMageWeightConfig& Config : Settings)
+		{
+			if (Config.Key.SelectedKeyName != NAME_None)
+			{
+				BlackboardComp->SetValueAsFloat(Config.Key.SelectedKeyName, Config.Value);
+			}
+		}
+	};
+
+	// 거리별 분기 처리
+	if (Distance <= CloseRangeDistance) // 근거리
+	{
+		ApplyWeights(CloseRangeWeights);
+		// 로그
+		UE_LOG(LogTemp, Warning, TEXT("Distance: %f - Close Range Weights Applied"), Distance);
 	}
-	else if (Distance > 400.f && Distance <= 1500.f) // 중거리
+	else if (Distance > CloseRangeDistance && Distance <= MidRangeDistance) // 중거리
 	{
-		BlackboardComp->SetValueAsFloat(WeightKeys[0].SelectedKeyName, 3.f); // W_Teleport
-		BlackboardComp->SetValueAsFloat(WeightKeys[1].SelectedKeyName, 5.f); // W_FireBall
-		BlackboardComp->SetValueAsFloat(WeightKeys[2].SelectedKeyName, 0.f); // W_Summon
-		BlackboardComp->SetValueAsFloat(WeightKeys[3].SelectedKeyName, 2.f); // W_GroundAttack
-		BlackboardComp->SetValueAsFloat(WeightKeys[4].SelectedKeyName, 0.f); // W_PushTarget
-		//UE_LOG( LogTemp, Warning, TEXT("b") );
+		ApplyWeights(MidRangeWeights);
+		// 로그
+		UE_LOG(LogTemp, Warning, TEXT("Distance: %f - Mid Range Weights Applied"), Distance);
 	}
 	else // 원거리
 	{
-		BlackboardComp->SetValueAsFloat(WeightKeys[0].SelectedKeyName, 0.f); // W_Teleport
-		BlackboardComp->SetValueAsFloat(WeightKeys[1].SelectedKeyName, 2.f); // W_FireBall
-		BlackboardComp->SetValueAsFloat(WeightKeys[2].SelectedKeyName, 4.f); // W_Summon
-		BlackboardComp->SetValueAsFloat(WeightKeys[3].SelectedKeyName, 5.f); // W_GroundAttack
-		BlackboardComp->SetValueAsFloat(WeightKeys[4].SelectedKeyName, 0.f); // W_PushTarget
-		//UE_LOG( LogTemp, Warning, TEXT("c") );
+		ApplyWeights(FarRangeWeights);
+		// 로그
+		UE_LOG(LogTemp, Warning, TEXT("Distance: %f - Far Range Weights Applied"), Distance);
 	}
 
 	return EBTNodeResult::Succeeded;

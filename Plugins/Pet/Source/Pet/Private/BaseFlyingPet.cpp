@@ -6,6 +6,7 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Header/PetState.h"
 
 ABaseFlyingPet::ABaseFlyingPet()
 {
@@ -66,7 +67,7 @@ void ABaseFlyingPet::BeginPlay()
 	}
 
 	// [추가] 외부에서 OnPetConversationStart를 Broadcast하면 자동으로 StartConversation이 실행되도록 연결
-	OnPetConversationStart.AddDynamic(this, &ABaseFlyingPet::StartConversation);
+	OnPetConversationStart.AddDynamic(this, &ABaseFlyingPet::StartBigConversation);
 	
 	// 일정 주기마다 주변 적 감지 함수 호출 설정
 	GetWorld()->GetTimerManager().SetTimer(
@@ -151,8 +152,8 @@ void ABaseFlyingPet::FollowingTarget(float DeltaTime)
 	// [수정] 거리에 따른 선형 가속 적용
 	float DistanceToTarget = FVector::Dist(CurrentLocation, DesiredLocation);
 	
-	// 거리가 멀수록 이동 속도 선형 증가 (예: 1000단위로 5% 증가 등)
-	float MoveSpeedMultiplier = 1.0f + (DistanceToTarget * 0.005f);
+	// !!!!!!!!!!! 거리가 멀수록 이동 속도 선형 증가 DistanceToTarget 에 곱하는 값을 조정해서 속도 조정!!!
+	float MoveSpeedMultiplier = 1.0f + (DistanceToTarget * 0.040f);
 	float FinalInterpSpeed = MoveInterpSpeed * MoveSpeedMultiplier;
 	
 	// 위치 보간 (부드럽게 이동) - 수정된 FinalInterpSpeed 사용
@@ -186,8 +187,8 @@ void ABaseFlyingPet::FollowingTarget(float DeltaTime)
 	FRotator CurrentRotation = GetActorRotation();
 	float DeltaYaw = FMath::Abs(FMath::FindDeltaAngleDegrees(CurrentRotation.Yaw, TargetRotation.Yaw));
 
-	// 각도 차이가 클수록 회전 속도 선형 증가 (예: 10도 차이날 때마다 0.5배씩 증가 등)
-	float RotSpeedMultiplier = 1.0f + (DeltaYaw * 0.05f);
+	// !!!!!!!!!!!! 각도 차이가 클수록 회전 속도 선형 증가 (예: 10도 차이날 때마다 0.5배씩 증가 등)
+	float RotSpeedMultiplier = 1.0f + (DeltaYaw * 0.10f);
 	float FinalRotationSpeed = MoveInterpSpeed * RotSpeedMultiplier;
 
 	FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, FinalRotationSpeed);
@@ -213,11 +214,13 @@ void ABaseFlyingPet::CheckSurroundingEnemy()
 		// 적 태그 확인 (혹은 인터페이스나 클래스 캐스팅 확인)
 		if (Actor->ActorHasTag("Enemy"))
 		{
+			if (Actor->ActorHasTag("Mimic")) continue;
 			// Boss 태그가 있다면 무시 
 			if (Actor->ActorHasTag("Boss"))
 			{
 				if ( bBossBattleMode == true ) return; // 이미 보스전 모드라면 무시
 				bBossBattleMode = true;
+				bIsFolloingTarget = false; // 보스전 모드 진입 시 자유 이동 모드로 전환
 				UE_LOG(LogTemp, Warning, TEXT("BossBattleMode Detected - EnemyDetectRange Maximize"));
 				EnemyDetectSphere->SetSphereRadius(30000.f); // 매우 넓은 범위로 설정
 				return; // 
@@ -235,6 +238,7 @@ void ABaseFlyingPet::CheckSurroundingEnemy()
 		{
 			// 평상시 상태였는데 주변 적이 있다는 의미
 			PetState = EPetState::EPS_Battle;
+			//bIsFolloingTarget = false; // 배틀 모드 진입 시 자유 이동 모드로 전환
 			if ( PetTalkComp ) PetTalkComp->Travel_FollowToBattle();
 		}
 	}
@@ -242,6 +246,7 @@ void ABaseFlyingPet::CheckSurroundingEnemy()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BossBattleMode Ended - EnemyDetectRange Restore"));
 		bBossBattleMode = false;
+		//bIsFolloingTarget = true; // 다시 따라다니기 모드로 전환
 		EnemyDetectSphere->SetSphereRadius(EnemyDetectRange); // 원래 범위으로 복귀	
 	}
 	else
@@ -251,6 +256,7 @@ void ABaseFlyingPet::CheckSurroundingEnemy()
 			// 배틀 모드에서 벗어나 평상시 상태로 복귀
 			PetState = EPetState::EPS_Follow;
 			if ( PetTalkComp ) PetTalkComp->Travel_BattleToFollow();
+			//bIsFolloingTarget = true; // 다시 따라다니기 모드로 전환
 		}
 	}
 }
@@ -272,21 +278,66 @@ void ABaseFlyingPet::OnItemDetectBeginOverlap(UPrimitiveComponent* OverlappedCom
 
 		if ( PetTalkComp ) PetTalkComp->Travel_ItemDetect(OtherActor, ItemDetectPingSpawnPoint->GetComponentLocation());
 	}
+	else if ( OtherActor && OtherActor != this && OtherActor->ActorHasTag("Mimic") )
+	{
+		// 하나의 아이템에 대해 여러 콜리전 컴포넌트가 있을 수 있으므로, 하나만 처리하도록 루트 컴포넌트 확인
+		if ( OtherActor->GetRootComponent() != OtherComp ) return;
+
+		if ( PetTalkComp ) PetTalkComp->Travel_ItemDetect(OtherActor, ItemDetectPingSpawnPoint->GetComponentLocation());
+	}
 }
 
-void ABaseFlyingPet::TriggerPetConversation_Implementation(FName DialogueID)
+void ABaseFlyingPet::TriggerPetBigConversation_Implementation(FName DialogueID)
 {
-	StartConversation(DialogueID);
+	StartBigConversation(DialogueID);
 }
 
-void ABaseFlyingPet::StartConversation( FName DialogueID )
+void ABaseFlyingPet::TriggerPetSmallConversation_Implementation(FName DialogueID)
 {
-	// 대화 상태로 전환
-	PetState = EPetState::EPS_Conversation;
+	StartSmallConversation(DialogueID);
+}
 
+void ABaseFlyingPet::SetPetState_Implementation(EPetState NewState)
+{
+	PetState = NewState;
+}
+
+void ABaseFlyingPet::PlayPetMontageFromConversation_Implementation(UAnimMontage* MontageToPlay)
+{
+	// MeshComp와 몽타주가 유효한지 확인
+	if (MeshComp && MontageToPlay)
+	{
+		// 스켈레톤 일치 여부 확인
+		// 몽타주가 사용하는 스켈레톤과 현재 펫 메쉬의 스켈레톤이 다르면 재생하지 않도록 방어 코드 추가
+		USkeletalMesh* CurrentMeshAsset = MeshComp->GetSkeletalMeshAsset();
+		if (CurrentMeshAsset)
+		{
+			USkeleton* MeshSkeleton = CurrentMeshAsset->GetSkeleton();
+			USkeleton* MontageSkeleton = MontageToPlay->GetSkeleton();
+
+			if (MeshSkeleton != MontageSkeleton)
+			{
+				// 스켈레톤이 다르면 경고 로그를 남기고 함수 종료
+				UE_LOG(LogTemp, Error, TEXT(" NotMatch Skeleton - Montage cannot be played on this pet. "));
+				return;
+			}
+		}
+		
+		// pawn은 애님 인스턴스를 직접 가져와서 재생해야 함
+		UAnimInstance* AnimInstance = MeshComp->GetAnimInstance();
+		if (AnimInstance)
+		{
+			AnimInstance->Montage_Play(MontageToPlay);
+		}
+	}
+}
+
+void ABaseFlyingPet::StartBigConversation( FName DialogueID )
+{
 	// 2. 대화 컴포넌트에 실제 대화 시작 요청
 	if (PetTalkComp)
 	{
+		PetTalkComp->ResetConversationLogScrollBox();
 		PetTalkComp->StartConversation(DialogueID);
 	}
 }
@@ -297,6 +348,15 @@ void ABaseFlyingPet::EndConversation()
 	PetState = EPetState::EPS_Follow;
 }
 
+void ABaseFlyingPet::StartSmallConversation(FName DialogueID)
+{
+	if (PetTalkComp)
+	{
+		PetTalkComp->Travel_StartSmallConversation(DialogueID);
+	}
+}
+
+#if WITH_EDITOR
 void ABaseFlyingPet::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
@@ -333,5 +393,4 @@ void ABaseFlyingPet::PostEditChangeProperty(FPropertyChangedEvent& PropertyChang
 		}
 	}
 }
-
-
+#endif

@@ -13,7 +13,9 @@ ABaseTransparEnemy::ABaseTransparEnemy()
 	AttackRangePointSphere->SetupAttachment(MeleeAttackPoint); // AttackPoint에 부착
 	AttackRangePointSphere->ShapeColor = FColor::Purple;
 	AttackRangePointSphere->SetVisibility(false);
-	AttackRangePointSphere->SetHiddenInGame(false); 
+	AttackRangePointSphere->SetHiddenInGame(false);
+
+	EnemyType = EEnemyType::EET_Transpar;
 }
 
 void ABaseTransparEnemy::BeginPlay()
@@ -163,6 +165,7 @@ void ABaseTransparEnemy::TestTransparencyLogic()
 	}
 }
 
+#if WITH_EDITOR
 void ABaseTransparEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
@@ -183,3 +186,4 @@ void ABaseTransparEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 		}
 	}
 }
+#endif

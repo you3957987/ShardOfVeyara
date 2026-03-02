@@ -10,7 +10,7 @@ struct FPlotSaveData
 
 	// 1. 누구인가?
 	UPROPERTY(BlueprintReadWrite)
-	FGuid PlotGuid;
+	FString PlotName;
 	// 2. 무엇을 심었는가? (빈 땅이면 None)
 	UPROPERTY(BlueprintReadWrite)
 	FName SeedName;
@@ -29,4 +29,7 @@ struct FPlotSaveData
 	//작물이 다 자랐는지
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
 	bool FullyGrown = false;
+	//잡초가 자랐는지
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
+	bool bHasWeeds = false;
 };

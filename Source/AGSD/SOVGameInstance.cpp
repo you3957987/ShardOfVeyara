@@ -3,15 +3,20 @@
 
 #include "SOVGameInstance.h"
 
+USOVGameInstance::USOVGameInstance()
+{
+	TempHotbar.SetNum(10);
+}
+
 void USOVGameInstance::UpdatePlotData(FPlotSaveData NewData)
 {
 	// 장부에 기록 (이미 있으면 덮어쓰기, 없으면 추가)
-	GlobalPlotDataMap.Add(NewData.PlotGuid, NewData);
+	GlobalPlotDataMap.Add(NewData.PlotName, NewData);
 }
 
-bool USOVGameInstance::GetPlotData(FGuid TargetGuid, FPlotSaveData& OutData)
+bool USOVGameInstance::GetPlotData(FString name, FPlotSaveData& OutData)
 {
-	if (FPlotSaveData* FoundData = GlobalPlotDataMap.Find(TargetGuid))
+	if (FPlotSaveData* FoundData = GlobalPlotDataMap.Find(name))
 	{
 		OutData = *FoundData;
 		return true;

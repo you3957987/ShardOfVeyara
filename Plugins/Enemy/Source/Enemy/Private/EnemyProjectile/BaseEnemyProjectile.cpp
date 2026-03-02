@@ -25,7 +25,8 @@ ABaseEnemyProjectile::ABaseEnemyProjectile()
 	// 특정 채널에 대한 반응을 '블록(Block)'으로 설정
 	CollisionComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Overlap);
 	CollisionComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
-	CollisionComp->SetCollisionResponseToChannel(ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
+	CollisionComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
+	CollisionComp->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Overlap);
 	// 스케탈 메시 설정은 에디터에서 하기
 
 	// 외형을 표시할 스태틱 메시 컴포넌트 생성
@@ -132,7 +133,7 @@ void ABaseEnemyProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedCompone
 	SetLifeSpan(2.0f);
 }
 
-
+#if WITH_EDITOR
 void ABaseEnemyProjectile::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
@@ -151,4 +152,4 @@ void ABaseEnemyProjectile::PostEditChangeProperty(FPropertyChangedEvent& Propert
 		}
 	}
 }
-
+#endif

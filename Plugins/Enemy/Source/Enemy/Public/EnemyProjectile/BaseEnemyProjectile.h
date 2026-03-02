@@ -14,7 +14,7 @@ protected:
 	// 발사체 파괴시 나오는 이펙트 처리는 자식에서 각도 조정 팔요
 	virtual void CreateHitEffect();
 	UFUNCTION()
-	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
 	UPROPERTY(EditAnywhere, Category="자체설정")

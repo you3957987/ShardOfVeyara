@@ -24,7 +24,7 @@ void ABossAIController::PollInit()
 	{
 		if ( GameState && GameState->HasMatchStarted() ) // 매치 시작되고 생성되는 플레이어 생성 시점에 플레이어한테 포커스
 		{
-			Targetpawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0); // 타깃 폰 설정
+			TargetPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0); // 타깃 폰 설정
 			
 			if ( BehaviorTree )
 			{

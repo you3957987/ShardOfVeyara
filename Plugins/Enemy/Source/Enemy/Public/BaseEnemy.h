@@ -4,6 +4,9 @@
 #include "GameFramework/Character.h"
 #include "BaseEnemy.generated.h"
 
+// 에너미 폴더 안의 ENUM 안에다가도 추가해줘야함!!!!!!!!!!!!!!!!!!!!!!!!
+// 에너미 폴더 안의 ENUM 안에다가도 추가해줘야함!!!!!!!!!!!!!!!!!!!!!!!!
+// 에너미 폴더 안의 ENUM 안에다가도 추가해줘야함!!!!!!!!!!!!!!!!!!!!!!!!
 UENUM(BlueprintType, Meta=(DisplayName="Enemy Type")) // 적 타입을 정의하는 열거형
 enum class EEnemyType : uint8
 {
@@ -11,6 +14,9 @@ enum class EEnemyType : uint8
 	EET_Ranged UMETA(DisplayName = "Ranged Enemy"), // 원거리 공격 적
 	EET_Exploder UMETA(DisplayName = "Exploder Enemy"), // 폭발 적
 	EET_Transpar UMETA(DisplayName = "Transpar Enemy"), // 투명 몹
+	EET_Mimic UMETA(DisplayName = "Mimic Enemy"), // 위장 몹
+	EET_Slime UMETA(DisplayName = "Slime Enemy"), // 슬라임 몹(분열)
+	EET_Mage UMETA(DisplayName = "Mage Enemy"), // 마법사 몹 - 일단 안에 가능한 모든 공격 만들고 애님 노티파이로 결정
 
 	EET_MAX UMETA(DisplayName = "Default") // 최대값, 추가적인 값을 위한 공간
 };
@@ -32,8 +38,6 @@ class ENEMY_API ABaseEnemy : public ACharacter
 	GENERATED_BODY()
 
 	friend class AEnemyAiController; // EnemyAiController에서 BaseEnemy의 protected 멤버에 접근할 수 있도록 합니다.
-	friend class UBTTask_BaseMeleeAttack; // BTTask_BaseMeleeAttack에서 BaseEnemy의 protected 멤버에 접근할 수 있도록 합니다.
-	friend class UBTTask_BaseRangedAttack; // BTTask_BaseRangedAttack에서 BaseEnemy의 protected 멤버에 접근할 수 있도록 합니다.
 
 protected:
 	virtual void BeginPlay() override;
@@ -96,9 +100,6 @@ protected:
 	// Tick에서 체력 바 위젯을 내 캐릭터 쪽으로 돌아보게 하는 함수
 	void UpdateHealthBarWidget(float DeltaTime);
 	
-	// 공격 애니메이션 몽타주
-	UPROPERTY(EditAnywhere, Category = "자체설정")
-	class UAnimMontage* AttackMontage; 
 	// 죽음 애니메이션 몽타주
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	class UAnimMontage* DeathMontage;
@@ -140,11 +141,16 @@ public:
 	void Die();
 	// 죽음 몽타주 끝난 후 호출되는 함수 - 애님 노티파이에서 호출
 	UFUNCTION(BlueprintCallable)
-	void AfterDieMontageEnd(); 
-
+	virtual void AfterDieMontageEnd(); 
+	// 죽고 나서 떨어질 아이템 배열
+	UPROPERTY(EditAnywhere, Category="자체설정")
+	TArray<TSubclassOf<AActor>> DropItems;
+	// 아이템 드롭 함수
+	void DropItemsAfterDead();
+	
 	// 죽음 후 일정 시간 뒤에 이펙트 생성 및 액터 제거를 위한 타이머 핸들
 	FTimerHandle DeathTimerHandle;
-	void SpawnDeadEffectAndDestroy();
+	virtual void SpawnDeadEffectAndDestroy();
 	
 	// 스폰 효과 사용 여부. 기본은 트루이지만 스폰 몽타주 안넣으면 false랑 동일
 	UPROPERTY(EditAnywhere, Category = "자체설정")
@@ -165,7 +171,14 @@ public:
 	TArray<TObjectPtr<class ATargetPoint>> PatrolPoints;
 	
 	virtual void Attack(); // 공격 함수. 
-
+	// 공격 애니메이션 몽타주
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	class UAnimMontage* AttackMontage;
+	
+	bool bFocusPlayerAfterAttack = true; // 공격 후 플레이어 주시 여부
+	UFUNCTION(BlueprintCallable)
+	void StartFocusPlayerAfterAttack(); // 공격 후 플레이어 주시 시작 함수
+	
 #if WITH_EDITOR
 	// 에디터에서 프로퍼티가 변경될 때 호출됩니다.
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;

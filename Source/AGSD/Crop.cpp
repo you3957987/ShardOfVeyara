@@ -57,6 +57,40 @@ void ACrop::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor
 void ACrop::BeginPlay()
 {
 	Super::BeginPlay();
+	// 현재 메쉬의 월드 좌표 (X, Y는 유지하고 Z만 바꿀 것임)
+	FVector MeshLoc = CropMesh->GetComponentLocation();
+
+	// 3. 레이저 쏘기 설정 (내 머리 위 500 ~ 내 발 밑 500)
+	FVector TraceStart = FVector(MeshLoc.X, MeshLoc.Y, MeshLoc.Z + 500.0f);
+	FVector TraceEnd   = FVector(MeshLoc.X, MeshLoc.Y, MeshLoc.Z - 500.0f);
+
+	FHitResult HitResult;
+	FCollisionQueryParams Params;
+		
+	Params.AddIgnoredActor(this); // 내 자신(잡초 뭉치)은 무시
+
+	// 4. 레이저 발사!
+	bool bHit = GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		TraceStart,
+		TraceEnd,
+		PlacementTraceChannel, // 지형(WorldStatic)만 체크
+		Params
+	);
+
+	if (bHit)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hit Actor: %s, Component: %s"), 
+		*HitResult.GetActor()->GetName(), 
+		*HitResult.GetComponent()->GetName());		
+			
+		// 5. 땅에 닿았다면 위치 이동 (World Location 설정)
+		CropMesh->SetWorldLocation(HitResult.Location);
+            
+		// 간단하게는 위 코드 대신 아래처럼 Normal에 UpVector를 맞추는 방식을 많이 씁니다.
+		FRotator AlignRot = FRotationMatrix::MakeFromZ(HitResult.ImpactNormal).Rotator();
+		CropMesh->SetWorldRotation(AlignRot);
+	}
 }
 
 //작물 수확 구현부

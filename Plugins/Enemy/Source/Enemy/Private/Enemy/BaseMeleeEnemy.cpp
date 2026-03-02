@@ -13,7 +13,9 @@ ABaseMeleeEnemy::ABaseMeleeEnemy()
 	AttackRangePointSphere->ShapeColor = FColor::Purple;
 	AttackRangePointSphere->SetVisibility(false);
 	AttackRangePointSphere->SetHiddenInGame(false); 
-	
+
+
+	EnemyType = EEnemyType::EET_Melee;
 }
 
 void ABaseMeleeEnemy::Tick(float DeltaTime)
@@ -57,6 +59,7 @@ void ABaseMeleeEnemy::CheckMeleeAttackHit(float DeltaTime)
 	}
 }
 
+#if WITH_EDITOR
 void ABaseMeleeEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
@@ -77,3 +80,4 @@ void ABaseMeleeEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 		}
 	}
 }
+#endif

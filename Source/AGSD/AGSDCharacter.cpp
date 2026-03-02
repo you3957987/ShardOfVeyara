@@ -19,6 +19,8 @@
 #include "Components/ProgressBar.h"
 #include "Kismet/GameplayStatics.h"
 #include "BaseFlyingPet.h"
+#include "AssetTypeActions/AssetDefinition_SoundBase.h"
+#include "Components/AudioComponent.h"
 
 AAGSDCharacter::AAGSDCharacter()
 {
@@ -56,6 +58,15 @@ AAGSDCharacter::AAGSDCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	//오디오 컴포넌트
+	Running = CreateDefaultSubobject<UAudioComponent>(TEXT("RunningAudio"));
+	Running->SetupAttachment(RootComponent);
+	Running->bAutoActivate = false;
+
+	Jumping = CreateDefaultSubobject<UAudioComponent>(TEXT("JumpingAudio"));
+	Jumping->SetupAttachment(RootComponent);
+	Jumping->bAutoActivate = false;
 }
 
 void AAGSDCharacter::HandleAttackInput(FName ActionName)
@@ -221,8 +232,10 @@ void AAGSDCharacter::BeginPlay()
 
 	PC = Cast<AAGSDPlayerController>(GetController());
 	GI = Cast<USOVGameInstance>(GetGameInstance());
-	
+
+	if (GI) bHasPet = GI->bHasPet;
 	SpawnMyPetAfterTravel(); // 펫 있으면 오픈 레벨 이후 펫 스폰
+	
 	HealthBar = getHealthBar();
 	if (HealthBar)
 	{
@@ -253,6 +266,7 @@ void AAGSDCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 	GI->PlayerHealth = Health;
 	GI->MaxPlayerHealth = MaxHealth;
+	GI->bHasPet = bHasPet;
 }
 
 AActor* AAGSDCharacter::MinDistActor()
@@ -298,8 +312,7 @@ void AAGSDCharacter::WakeUp()
 {
 	FadeWidget->OnFadeFinished.RemoveDynamic(this, &AAGSDCharacter::WakeUp);
 	HealthRecovery(10.f);
-	UWorld* World = GetWorld();
-	UGameplayStatics::OpenLevel(World, FName(*World->GetMapName()));
+	TeleportToBed();
 }
 
 void AAGSDCharacter::Die()
@@ -377,6 +390,7 @@ void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAGSDCharacter::Move);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &AAGSDCharacter::StopMove);
 		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &AAGSDCharacter::Look);
 
 		// Looking
@@ -395,15 +409,53 @@ void AAGSDCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
+
+	if (Running)
+	{
+		// 입력이 있고(움직임), 마이닝 중이 아닐 때
+		if (MovementVector.SizeSquared() > 0.f && !Mining
+			&& !GetCharacterMovement()->IsFalling() && GetCharacterMovement()->Velocity.SizeSquared() > 9.f)
+		{
+			if (!Running->IsPlaying())
+			{
+				Running->Play();
+			}
+		}
+		else
+		{
+			// 입력이 없거나 마이닝 중이면 사운드 정지
+			if (Running->IsPlaying())
+			{
+				Running->Stop();
+			}
+		}
+	}
+	
+	// 전진 키를 누르고 있을 때 콤보 입력
 	if (MovementVector.Y > 0.0f) HandleAttackInput(FName("Forward"));
-	if (Mining) return;
+
+	// 움직이면 안될 때
+	if (Mining)	return;
+	
 	// route the input
 	DoMove(MovementVector.X, MovementVector.Y);
+}
+
+void AAGSDCharacter::StopMove()
+{
+	if (Running && Running->IsPlaying())
+	{
+		Running->Stop();
+	}
 }
 
 void AAGSDCharacter::Jump()
 {
 	if (Mining) return;
+ 	if (Jumping && !GetCharacterMovement()->IsFalling())
+	{
+		Jumping->Play();
+	}
 	Super::Jump();
 }
 
@@ -489,11 +541,11 @@ void AAGSDCharacter::SetMyPet_Implementation(AActor* NewPet)
 	}
 }
 
-void AAGSDCharacter::MasterToPetConversation_Implementation(FName DialogueID)
+void AAGSDCharacter::MasterToPetBigConversation_Implementation(FName DialogueID)
 {
 	if ( Pet )
 	{
-		Pet->StartConversation(DialogueID);
+		Pet->StartBigConversation(DialogueID);
 	}
 }
 

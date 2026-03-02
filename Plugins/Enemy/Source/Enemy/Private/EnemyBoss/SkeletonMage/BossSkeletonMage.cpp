@@ -7,7 +7,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h" // 헤더 파일 추가
-#include "Kismet/GameplayStatics.h"
+#include "Components/CapsuleComponent.h" 
 
 ABossSkeletonMage::ABossSkeletonMage()
 {
@@ -49,7 +49,7 @@ void ABossSkeletonMage::Tick(float DeltaTime)
 	if (bIsAttacking == true ) // 공격 중일 때
 	{
 		TArray<AActor*> OverlappingActors;
-		// AttackRangePointSphere와 겹치는 모든 액터를 가져옵니다.
+		// 겹치는 모든 액터를 가져옵니다.
 		PushAreaSphere->GetOverlappingActors(OverlappingActors);
 		
 		for (AActor* OverlappingActor : OverlappingActors)
@@ -152,7 +152,7 @@ void ABossSkeletonMage::SpawnTeleportEffectAtLocation(const FVector& Location)
 		FRotator::ZeroRotator, FVector(7.f));
 }
 
-void ABossSkeletonMage::PlayFireBallmontage()
+void ABossSkeletonMage::PlayFireBallMontage()
 {
 	if ( BlackboardComp == nullptr ) return;
 	
@@ -221,9 +221,9 @@ void ABossSkeletonMage::SummonEnemy()
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	SpawnParams.Instigator = GetInstigator();
-	// 스폰 시 충돌 처리 방법을 설정합니다.
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
+	
 	// 저장된 각 소환 위치에 대해 반복합니다.
 	for (const FVector& SpawnLocation : SummonLocations)
 	{
@@ -238,11 +238,19 @@ void ABossSkeletonMage::SummonEnemy()
 				UKismetMathLibrary::FindLookAtRotation(SpawnLocation, TargetCharacter->GetActorLocation());
 			// 수평으로만 바라보도록 Yaw 값만 사용합니다.
 			const FRotator SpawnRotation = FRotator(0.f, LookAtRotation.Yaw, 0.f);
+
+			// 적의 캡슐 컴포넌트 높이만큼 Z 오프셋을 적용하여 땅에 정확히 스폰되도록 합니다.
+			float SafeZOffset = 0.f;
+			ACharacter* EnemyCDO = Cast<ACharacter>(EnemyClassToSummon->GetDefaultObject());
+			if (EnemyCDO && EnemyCDO->GetCapsuleComponent())
+			{
+				SafeZOffset = EnemyCDO->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+			}
 			
 			ABaseEnemy* SpawnedEnemy = 
 				World->SpawnActor<ABaseEnemy>(
 				EnemyClassToSummon, 
-				SpawnLocation, 
+				SpawnLocation + FVector(0.f, 0.f, SafeZOffset), 
 				SpawnRotation, 
 				SpawnParams);
 
@@ -250,7 +258,7 @@ void ABossSkeletonMage::SummonEnemy()
 			{
 				// 나이아가라 이펙트를 스폰합니다.
 				UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), SummonEffectFromEnemy,
-					SpawnLocation + FVector(0.f, 0.f, 5.f),
+					SpawnLocation + FVector(0.f, 0.f, 2.f),
 					FRotator::ZeroRotator, FVector(20.f));
 			}
 		}
@@ -279,7 +287,7 @@ void ABossSkeletonMage::SpawnSummonEffectAtLocation(const FVector& Location)
 
 	// 나이아가라 이펙트를 스폰합니다.
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), SummonEffectFromMage, SpawnLocation,
-		FRotator::ZeroRotator, FVector(20.f));
+		FRotator::ZeroRotator, FVector(10.f));
 }
 
 void ABossSkeletonMage::PlayGroundAreaAttackMontage()

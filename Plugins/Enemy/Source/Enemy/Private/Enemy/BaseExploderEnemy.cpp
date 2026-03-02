@@ -1,6 +1,7 @@
 #include "Enemy/BaseExploderEnemy.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ABaseExploderEnemy::ABaseExploderEnemy()
 {
@@ -8,7 +9,10 @@ ABaseExploderEnemy::ABaseExploderEnemy()
 	ExplosionRangeSphere->SetupAttachment(RootComponent); // 루트 컴포넌트
 	ExplosionRangeSphere->ShapeColor = FColor::Yellow;
 	ExplosionRangeSphere->SetVisibility(false);
-	ExplosionRangeSphere->SetHiddenInGame(false); 
+	ExplosionRangeSphere->SetHiddenInGame(false);
+
+
+	EnemyType = EEnemyType::EET_Exploder;
 }
 
 void ABaseExploderEnemy::Explode()
@@ -24,6 +28,15 @@ void ABaseExploderEnemy::Explode()
 			if (Actor && Actor->ActorHasTag(FName("Player")))
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Explode overlap with Player: %s"), *Actor->GetName());
+
+				//액터에게 데미지 적용
+				UGameplayStatics::ApplyDamage(
+					Actor,
+					ExplosionDamage,
+					GetController(),
+					this,
+					UDamageType::StaticClass());
+				
 			}
 		}
 	}
@@ -40,6 +53,7 @@ void ABaseExploderEnemy::Explode()
 	Die(); // 폭발 후 죽음 처리
 }
 
+#if WITH_EDITOR
 void ABaseExploderEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
@@ -68,3 +82,4 @@ void ABaseExploderEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 		}
 	}
 }
+#endif
