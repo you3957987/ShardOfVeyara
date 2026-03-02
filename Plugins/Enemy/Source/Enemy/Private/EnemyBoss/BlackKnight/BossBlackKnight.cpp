@@ -2,6 +2,7 @@
 
 #include "NiagaraFunctionLibrary.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "Engine/OverlapResult.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -190,6 +191,15 @@ void ABossBlackKnight::StartRush()
 
 	// (선택) 물리 효과 끄기: 돌진 중 다른 힘에 밀리지 않도록
 	GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+	
+	// [추가됨] 장애물 무시 설정
+	// 캡슐 컴포넌트가 WorldStatic(벽, 장애물)과 WorldDynamic을 무시하도록 설정
+	if (GetCapsuleComponent())
+	{
+		GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Ignore);
+		GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+		// 필요하다면 Pawn(플레이어 등)은 블록하거나 겹치게 유지해야 함. 여기서는 기존 설정 유지.
+	}
 }
 
 void ABossBlackKnight::MoveForwardDuringRushAttack(float DeltaTime)
@@ -220,6 +230,13 @@ void ABossBlackKnight::MoveForwardDuringRushAttack(float DeltaTime)
 
 		// (선택) 물리 효과 복구
 		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		
+		// [추가됨] 장애물 콜리전 복구
+		if (GetCapsuleComponent())
+		{
+			GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+			GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
+		}
 		
 		// 도착 후 처리 (예: 공격 판정, 몽타주 종료 등)
 	}
