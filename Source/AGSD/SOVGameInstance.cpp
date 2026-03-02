@@ -34,6 +34,7 @@ FSaveData USOVGameInstance::GetSaveData()
 	SaveData.CurrentDay = CurrentDay;
 	SaveData.CurrentTime = CurrentTime;
 	SaveData.ChestMap = ChestMap;
+	SaveData.Coin = Coin;
 	SaveData.MaxPlayerHealth = MaxPlayerHealth;
 	SaveData.PlayerHealth = PlayerHealth;
 	SaveData.bHasPet = bHasPet;
@@ -50,6 +51,7 @@ void USOVGameInstance::SetSaveData(FSaveData SaveData)
 	CurrentDay = SaveData.CurrentDay;
 	CurrentTime = SaveData.CurrentTime;
 	ChestMap = SaveData.ChestMap;
+	Coin = SaveData.Coin;
 	MaxPlayerHealth = SaveData.MaxPlayerHealth;
 	PlayerHealth = SaveData.PlayerHealth;
 	bHasPet = SaveData.bHasPet;

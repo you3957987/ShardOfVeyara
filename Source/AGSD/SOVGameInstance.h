@@ -39,6 +39,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WorldState")
 	TMap<FString, FStruct_WorldChestData> ChestMap;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
+	int Coin = 0;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
 	float MaxPlayerHealth = 200.f;

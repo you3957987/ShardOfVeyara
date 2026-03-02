@@ -20,6 +20,9 @@ struct FSaveData : public FTableRowBase
 
 	UPROPERTY()
 	TMap<FString, FStruct_WorldChestData> ChestMap;
+
+	UPROPERTY()
+	int Coin;
 	
 	UPROPERTY()
 	float MaxPlayerHealth;
@@ -43,6 +46,7 @@ struct FSaveData : public FTableRowBase
 	{
 		CurrentDay = 1;
 		CurrentTime = 360.f;
+		Coin = 0;
 		MaxPlayerHealth = 200.f;	
 		PlayerHealth = MaxPlayerHealth;
 		bHasPet = false;
