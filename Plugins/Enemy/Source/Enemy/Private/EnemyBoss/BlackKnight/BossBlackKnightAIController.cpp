@@ -6,8 +6,6 @@
 void ABossBlackKnightAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-
-	Super::OnPossess(InPawn);
 	ControlledEnemy = Cast<ABossBlackKnight>(GetPawn());
 }
 
