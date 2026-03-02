@@ -22,9 +22,13 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 	
 	void NextDay(float time);
+	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Time")
 	float TimeScale = 48.f;
+
+	UPROPERTY(EditAnywhere, Category = "Time")
+	float NextDayStartTime = 360.f;
 
 	const float GameHoursPerDay = (24.f * 60.f);
 	const float ResetHour = (6.f * 60.f);
