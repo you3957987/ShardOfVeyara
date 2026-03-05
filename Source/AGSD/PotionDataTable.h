@@ -25,4 +25,9 @@ struct FPotionData : public FTableRowBase
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PotionData")
 	FLinearColor LiquidColor;
+
+	FPotionData()
+	{
+		LiquidColor = FColor::FromHex("A5DDFFFF");
+	}
 };
