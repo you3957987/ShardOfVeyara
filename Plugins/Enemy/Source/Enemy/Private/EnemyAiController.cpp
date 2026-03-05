@@ -38,6 +38,7 @@ void AEnemyAiController::PollInit()
 				BlackboardComp = GetBlackboardComponent();
 				if ( BlackboardComp && Targetpawn )
 				{
+					BlackboardComp->SetValueAsObject(TEXT("TargetCharacter"), Targetpawn);
 					BlackboardComp->SetValueAsVector("StartLocation", ControlledEnemy->GetActorLocation());
 					BlackboardComp->SetValueAsFloat("AttackRange", ControlledEnemy->AttackRange);
 					BlackboardComp->SetValueAsFloat("DetectRange", ControlledEnemy->DetectRange);

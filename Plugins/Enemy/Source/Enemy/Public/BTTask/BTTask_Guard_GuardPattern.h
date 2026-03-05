@@ -1,11 +1,12 @@
-#pragma once
+ #pragma once
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "BTTask_BlackKnightGuard.generated.h"
+#include "BTTask_Guard_GuardPattern.generated.h"
+
 
 UCLASS()
-class ENEMY_API UBTTask_BlackKnightGuard : public UBTTask_BlackboardBase
+class ENEMY_API UBTTask_Guard_GuardPattern : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 	
@@ -21,7 +22,5 @@ protected:
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 	
 public:
-	UBTTask_BlackKnightGuard();
-	
-	
+	UBTTask_Guard_GuardPattern();
 };

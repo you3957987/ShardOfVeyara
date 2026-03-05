@@ -11,6 +11,7 @@ class ENEMY_API ABaseMageEnemy : public ABaseEnemy
 	GENERATED_BODY()
 	
 	
+	
 	// 안개 공격 함수 - 애님 노티파이에서 호출
 	UFUNCTION(BlueprintCallable)
 	void CastFogAttack();
@@ -18,5 +19,8 @@ class ENEMY_API ABaseMageEnemy : public ABaseEnemy
 	UPROPERTY(EditAnywhere, Category="자체설정")
 	TSubclassOf<class ADamageZoneProjectile> DamageZoneProjectileClass;
 	
+	
+public:
+	ABaseMageEnemy();
 	
 };

@@ -17,6 +17,7 @@ enum class EEnemyType : uint8
 	EET_Mimic UMETA(DisplayName = "Mimic Enemy"), // 위장 몹
 	EET_Slime UMETA(DisplayName = "Slime Enemy"), // 슬라임 몹(분열)
 	EET_Mage UMETA(DisplayName = "Mage Enemy"), // 마법사 몹 - 일단 안에 가능한 모든 공격 만들고 애님 노티파이로 결정
+	EET_Guard UMETA(DisplayName = "Guard Enemy"), // 방패병 몹
 
 	EET_MAX UMETA(DisplayName = "Default") // 최대값, 추가적인 값을 위한 공간
 };

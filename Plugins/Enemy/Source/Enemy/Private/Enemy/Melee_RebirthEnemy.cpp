@@ -22,6 +22,8 @@ AMelee_RebirthEnemy::AMelee_RebirthEnemy()
 	SoulEffectNiagara->SetupAttachment(SoulCollisionSphere);
 
 	SoulEffectNiagara->bAutoActivate = false;
+	
+	EnemyType = EEnemyType::EET_Melee; // 근접 공격 적으로 설정
 }
 
 float AMelee_RebirthEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,

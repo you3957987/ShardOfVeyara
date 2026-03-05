@@ -2,6 +2,12 @@
 
 #include "EnemyProjectile/DamageZoneProjectile.h"
 
+ABaseMageEnemy::ABaseMageEnemy()
+{
+	EnemyType = EEnemyType::EET_Mage; // 마법사 타입으로 설정
+}
+
+
 void ABaseMageEnemy::CastFogAttack()
 {
 	// TargetCharacter가 유효한지 확인 (부모 클래스 ABaseEnemy의 멤버 변수)
@@ -16,3 +22,4 @@ void ABaseMageEnemy::CastFogAttack()
 			TargetCharacter->GetActorLocation(), FRotator::ZeroRotator, SpawnParams);
 	}
 }
+
