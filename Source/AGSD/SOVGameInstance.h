@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PlotSaveData.h"
+#include "AlchemySaveData.h"
 #include "SaveData.h"
 #include "Struct_InventorySlotData.h"
 #include "Struct_WorldChestData.h"
@@ -64,13 +65,22 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "FarmingState")
 	TMap<FString, FPlotSaveData> GlobalPlotDataMap;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AlchemyTableState")
+	TMap<FString, FAlchemySaveData> AlchemyTableDataMap;
+
 	// 경작지로부터 데이터를 받아서 저장/갱신하는 함수
 	UFUNCTION(BlueprintCallable, Category = "Farming")
 	void UpdatePlotData(FPlotSaveData NewData);
-    
+
+	UFUNCTION(BlueprintCallable, Category = "Farming")
+	void UpdateTableData(FAlchemySaveData NewData);
+	
 	// GUID로 데이터를 꺼내주는 함수 (나중에 로드할 때 씀)
 	UFUNCTION(BlueprintCallable, Category = "Farming")
 	bool GetPlotData(FString name, FPlotSaveData& OutData);
+
+	UFUNCTION(BlueprintCallable, Category = "Alchemy")
+	bool GetAlchemyData(FString name, FAlchemySaveData& OutData);
 
 	UFUNCTION(BlueprintCallable, Category = "SaveGame")
 	FSaveData GetSaveData();

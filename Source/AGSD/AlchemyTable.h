@@ -29,6 +29,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
 	UFUNCTION(BlueprintCallable)
 	void ApplyPotColor(FLinearColor NewColor);
 
@@ -59,10 +61,11 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = CultivationPlot)
 	class UDataTable* AlchemyDataTable;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class USOVGameInstance* GI;
 	
 public:
-	void OnCameraBlendFinished();
-	
 	virtual void Interact_Implementation(AAGSDCharacter* player) override;
 	virtual void ShowWidget_Implementation(ACharacter* player) override;
 	virtual bool CanInteract_Implementation(AAGSDCharacter* player) override;
@@ -97,9 +100,6 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void SplashPot(bool clear);
-
-	UFUNCTION(BlueprintCallable)
-	void SpawnPotion();
 	
 	UFUNCTION()
 	void EndAlchemy();

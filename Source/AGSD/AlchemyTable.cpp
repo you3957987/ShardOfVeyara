@@ -8,6 +8,7 @@
 // #include "../../../../../../../Program Files/Epic Games/UE_5.6/Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Commandlets/WorldPartitionCommandletHelpers.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -48,6 +49,8 @@ AAlchemyTable::AAlchemyTable()
 void AAlchemyTable::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GI = Cast<USOVGameInstance>(GetGameInstance());
 	
 	if (PotMeshComponent)
 	{
@@ -55,10 +58,52 @@ void AAlchemyTable::BeginPlay()
 		// CreateDynamicMaterialInstance(인덱스, 소스 머티리얼, 이름)
 		PotDynamicMaterial = PotMeshComponent->CreateDynamicMaterialInstance(1);
 	}
+	
 	if (AlchemyDataTable)
 	{
 		static const FString ContextString(TEXT("Alchemy Recipe Context"));
 		AlchemyDataTable->GetAllRows<FPotionData>(ContextString, AlchemyRecipes);
+	}
+	
+	FAlchemySaveData ItemIDData;
+	if (GI->GetAlchemyData(GetName(), ItemIDData))
+	{
+		InsertedItemID = ItemIDData.ItemID;
+
+		if (InsertedItemID.Num() == 2)
+		{
+			TargetRecipe.ItemID = TEXT("Sludge");
+			TargetRecipe.LiquidColor = FLinearColor(0.1f, 0.05f, 0.1f, 1.0f); // 어두운 보라색 (찌꺼기 색상)
+
+			TArray<FString> TempItemID = InsertedItemID;
+			TempItemID.Sort();
+		
+			for (FPotionData* Recipe : AlchemyRecipes)
+			{
+				TArray<FString> RecipeMaterial = {Recipe->IngredientA, Recipe->IngredientB};
+				RecipeMaterial.Sort();
+				if (RecipeMaterial == TempItemID)
+				{
+					TargetRecipe = *Recipe;
+					break;
+				}
+			}
+			LerpMixLiquidColor();
+		}
+	}
+}
+
+void AAlchemyTable::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	FAlchemySaveData SaveData;
+	SaveData.TableName = GetName();
+	SaveData.ItemID = InsertedItemID;
+
+	if (GI)
+	{
+		GI->UpdateTableData(SaveData);
 	}
 }
 
@@ -114,13 +159,14 @@ void AAlchemyTable::SplashPot(bool clear)
 		TargetRecipe.ItemID = TEXT("Sludge");
 		TargetRecipe.LiquidColor = FLinearColor(0.1f, 0.05f, 0.1f, 1.0f); // 어두운 보라색 (찌꺼기 색상)
 
-		InsertedItemID.Sort();
+		TArray<FString> TempItemID = InsertedItemID;
+		TempItemID.Sort();
 		
 		for (FPotionData* Recipe : AlchemyRecipes)
 		{
 			TArray<FString> RecipeMaterial = {Recipe->IngredientA, Recipe->IngredientB};
 			RecipeMaterial.Sort();
-			if (RecipeMaterial == InsertedItemID)
+			if (RecipeMaterial == TempItemID)
 			{
 				TargetRecipe = *Recipe;
 				break;
@@ -132,19 +178,6 @@ void AAlchemyTable::SplashPot(bool clear)
 	{
 		TargetRecipe.LiquidColor = BaseLiquidColor;
 		TransmutationComplete();
-	}
-}
-
-void AAlchemyTable::SpawnPotion()
-{
-	
-}
-
-void AAlchemyTable::OnCameraBlendFinished()
-{
-	if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(Player->GetController()))
-	{
-
 	}
 }
 
