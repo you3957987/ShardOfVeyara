@@ -8,12 +8,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="61b1a24a-49d1-4972-9071-312c574aff7e" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/$movedMarker" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/SOVGameInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/SOVGameInstance.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/SOVGameInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/SOVGameInstance.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/SaveData.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/SaveData.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AGSD.uproject" beforeDir="false" afterPath="$PROJECT_DIR$/AGSD.uproject" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Config/DefaultEnemy.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Config/DefaultEnemy.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/Worm/BT_Worm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/Worm/BT_Worm.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/8/ZN/POW38389EEDEGQ9QTC1SV0.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Enemy.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Enemy.Build.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/BaseGuardEnemy.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/BaseGuardEnemy.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/BlackKnight/BossBlackKnight.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/BlackKnight/BossBlackKnight.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,7 +60,7 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
     &quot;Uproject.AGSD.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Enemt__Pet&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -74,7 +77,7 @@
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
         <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Binaries/Win64/UnrealEditor-Win64-DebugGame.exe" />
-        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\user\Documents\GitHub\AGSD\AGSD.uproject&quot;" />
+        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\JunHyeok\Documents\GitHub\AGSD\AGSD.uproject&quot;" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.6" />
         <option name="PASS_PARENT_ENVS" value="1" />
@@ -100,7 +103,7 @@
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
         <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Binaries/Win64/UnrealEditor.exe" />
-        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\user\Documents\GitHub\AGSD\AGSD.uproject&quot;" />
+        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\JunHyeok\Documents\GitHub\AGSD\AGSD.uproject&quot;" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.6" />
         <option name="PASS_PARENT_ENVS" value="1" />
@@ -141,6 +144,14 @@
         <option name="Build" />
       </method>
     </configuration>
+    <configuration default="true" type="Uproject" factoryName="rider.uproject">
+      <option name="DEFAULT_PROJECT_PATH" value="" />
+      <option name="PROJECT_FILE_PATH" value="" />
+      <option name="AUTO_SELECT_PRIORITY" value="0" />
+      <method v="2">
+        <option name="Build" />
+      </method>
+    </configuration>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="디폴트 작업">
@@ -156,6 +167,12 @@
       <workItem from="1772414719983" duration="236000" />
       <workItem from="1772415006991" duration="1679000" />
       <workItem from="1772421038344" duration="517000" />
+      <workItem from="1772761730833" duration="939000" />
+      <workItem from="1772763598383" duration="230000" />
+      <workItem from="1772764341486" duration="40000" />
+      <workItem from="1772764400914" duration="641000" />
+      <workItem from="1772765071863" duration="649000" />
+      <workItem from="1772770967646" duration="7728000" />
     </task>
     <servers />
   </component>

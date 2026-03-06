@@ -52,7 +52,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	FBossBlackKnightAttackWeight AttackWeight;
 	
-	// 도끼 공격 범위에 플레이어가 들어왔을 때 호출되는 함수
+	// 무기 공격 범위에 플레이어가 들어왔을 때 호출되는 함수
 	UFUNCTION()
 	void OnBeginOverlapAxeCollisionSphere(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
