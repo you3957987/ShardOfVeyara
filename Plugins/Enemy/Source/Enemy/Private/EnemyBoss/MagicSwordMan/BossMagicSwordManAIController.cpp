@@ -20,4 +20,9 @@ void ABossMagicSwordManAIController::SetBlackboardKey()
 	BlackboardComp->SetValueAsObject(TEXT("TargetCharacter"), TargetPawn);
 	
 	BlackboardComp->SetValueAsFloat("W_CloseAttack", ControlledEnemy->AttackWeight.CloseAttack);
+	BlackboardComp->SetValueAsFloat("W_DashAttack", ControlledEnemy->AttackWeight.DashAttack);
+	BlackboardComp->SetValueAsBool("bAirAttack", false);
+	BlackboardComp->SetValueAsFloat("W_CloseJumpUpAttack", ControlledEnemy->AttackWeight.CloseJumpUpAttack);
+	BlackboardComp->SetValueAsFloat("W_DashJumpUpAttack", ControlledEnemy->AttackWeight.DashJumpUpAttack);
+	BlackboardComp->SetValueAsFloat("W_JumpAttack", ControlledEnemy->AttackWeight.JumpAttack);
 }

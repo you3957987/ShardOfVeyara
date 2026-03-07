@@ -12,8 +12,30 @@ struct FBossMagicSwordManAttackWeight
 	// 근점 공격 - 3개중 랜덤
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float CloseAttack = 10.0f;
+	// 대시 공격 - 3개중 랜덤
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float DashAttack = 10.0f;
+	// 근점 띄우기 공격
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float CloseJumpUpAttack = 10.0f;
+	// 대시 띄우기 공격
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float DashJumpUpAttack = 10.0f;
+	// 점프 공격
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")	
+	float JumpAttack = 10.0f;
 	
 };
+
+// 어택 타입 구분용 열거형
+UENUM(BlueprintType)
+enum class EMagicSwordManAttackType : uint8
+{
+	SimpleAttack UMETA(DisplayName = "SimpleAttack"), 
+	JumpUpAttack UMETA(DisplayName = "JumpUpAttack"),
+	AirAttack UMETA(DisplayName = "AirAttack")
+};
+
 UCLASS()
 class ENEMY_API ABossMagicSwordMan : public ABaseBossEnemy
 {
@@ -32,6 +54,8 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, 
 		class AController* EventInstigator, AActor* DamageCauser) override;
 	
+	
+	
 	UFUNCTION()
 	void OnBeginOverlapWeaponCollisionSphere(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -44,12 +68,17 @@ public:
 	// 모션 워핑할 타깃 캐릭터 좌표 찍기
 	UFUNCTION(BlueprintCallable)
 	void UpdateMotionWarpTarget();
+	// 모션 워핑 타깃 - 타깃 캐릭터의 앞쪽
+	UFUNCTION(BlueprintCallable)
+	void UpdateMotionWarpTargetToFront();
 	// 애님 노티파이에서 공격 대미지 설정
 	UFUNCTION(BlueprintCallable)
 	void SetAttackDamage(float DamageToApply);
 	// 공격 가중치 구조체
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	FBossMagicSwordManAttackWeight AttackWeight;
+	
+	EMagicSwordManAttackType AttackType = EMagicSwordManAttackType::SimpleAttack;
 	
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsGuarding = false;
@@ -69,12 +98,51 @@ public:
 
 	// 근점 공격 시작 함수 - 랜덤 3개. 선택된 몽타주 반환
 	UAnimMontage* StartCloseAttack();
-	// 근접 공격 함수 배열
+	// 근접 공격 몽타주 배열
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	TArray<UAnimMontage*> CloseAttackMontages;
 	
-
+	// 대시 공격 시작 함수 - 랜덤 3개. 선택된 몽타주 반환
+	UAnimMontage* StartDashAttack();
+	// 대시 공격 몽타주 배열
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	TArray<UAnimMontage*> DashAttackMontages;
 	
+	// 근점 띄우기 공격 시작 함수
+	UAnimMontage* StartCloseJumpUpAttack();
+	// 근점 띄우기 공격 몽타주
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	UAnimMontage* CloseJumpUpAttackMontage;
+	
+	// 대시 띄우기 공격 시작 함수
+	UAnimMontage* StartDashJumpUpAttack();
+	// 대시 띄우기 공격 몽타주
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	UAnimMontage* DashJumpUpAttackMontage;
+	
+	bool bSuccessJumpUpAttack = false;
+	// 띄우거 성공 여부에 따른 이후 행동 결정 함수
+	UFUNCTION(BlueprintCallable)
+	void JumpUpAttackCheck();
+	// 공중 공격 시작 함수
+	UAnimMontage* StartAirAttack();
+	// 공중 공격 몽타주 
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	UAnimMontage* AirAttackMontage;
+	// 공중 공격 끝났을떄 처리 함수
+	UFUNCTION(BlueprintCallable)
+	void AirAttackEnd();
+	float BossGravityScaleBeforeAirAttack; // 공중 공격 시작 전 보스의 중력 스케일 저장용 변수
+	float TargetCharacterGravityScaleBeforeAirAttack; // 공중 공격 시작 전 타깃 캐릭터의 중력 스케일 저장용 변수
+	
+	// 점프 공격 함수
+	UAnimMontage* StartJumpAttack();
+	// 점프 공격 몽타주 배열
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	TArray<UAnimMontage*> JumpAttackMontages;
+	UFUNCTION(BlueprintCallable)
+	void JumpStart();
+
 #if WITH_EDITOR
 	// 에디터에서 프로퍼티가 변경될 때 호출됩니다.
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
