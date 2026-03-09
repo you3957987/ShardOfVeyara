@@ -1,17 +1,17 @@
-#include "EnemyBoss/BlackKnight/BTTask_BlackKnightGuard.h"
+#include "EnemyBoss/MagicSwordMan/BTTask_MagicSwordManGuardPattern.h"
 
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "EnemyBoss/BlackKnight/BossBlackKnight.h"
+#include "EnemyBoss/MagicSwordMan/BossMagicSwordMan.h"
 
-UBTTask_BlackKnightGuard::UBTTask_BlackKnightGuard()
+UBTTask_MagicSwordManGuardPattern::UBTTask_MagicSwordManGuardPattern()
 {
-	NodeName = "BlackKnight Guard Pattern";
+	NodeName = "MagicSwordMan Guard Pattern";
 	// TickTask를 사용하려면 반드시 true로 설정해야 함
 	bNotifyTick = true; 
 }
 
-EBTNodeResult::Type UBTTask_BlackKnightGuard::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_MagicSwordManGuardPattern::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	UBlackboardComponent* Blackboard = OwnerComp.GetBlackboardComponent();
 	if (!Blackboard) return EBTNodeResult::Failed;
@@ -23,7 +23,7 @@ EBTNodeResult::Type UBTTask_BlackKnightGuard::ExecuteTask(UBehaviorTreeComponent
 	Blackboard->SetValueAsBool("GuardAttack", false);
 
 	AAIController* AIController = OwnerComp.GetAIOwner();
-	ABossBlackKnight* Boss = Cast<ABossBlackKnight>(AIController->GetPawn());
+	ABossMagicSwordMan* Boss = Cast<ABossMagicSwordMan>(AIController->GetPawn());
 	if ( Boss )
 	{
 		GuardDuration = Boss->GuardDuration;
@@ -37,7 +37,7 @@ EBTNodeResult::Type UBTTask_BlackKnightGuard::ExecuteTask(UBehaviorTreeComponent
 	return EBTNodeResult::InProgress;
 }
 
-void UBTTask_BlackKnightGuard::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UBTTask_MagicSwordManGuardPattern::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
@@ -49,7 +49,7 @@ void UBTTask_BlackKnightGuard::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 	}
 
 	AAIController* AIController = OwnerComp.GetAIOwner();
-	ABossBlackKnight* Boss = Cast<ABossBlackKnight>(AIController->GetPawn());
+	ABossMagicSwordMan* Boss = Cast<ABossMagicSwordMan>(AIController->GetPawn());
 
 	// [추가] 보스가 없으면 그냥 실패 처리하고 리턴 (안전장치)
 	if (!Boss)

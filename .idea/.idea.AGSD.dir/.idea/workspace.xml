@@ -9,32 +9,36 @@
   <component name="ChangeListManager">
     <list default="true" id="61b1a24a-49d1-4972-9071-312c574aff7e" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/NPC_Dialogue/Demo/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/NPC_Dialogue/Demo/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Config/DefaultEnemy.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Config/DefaultEnemy.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/BlackKnight/AI/EQ_BlackKnight_BackAway.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/BlackKnight/AI/EQ_BlackKnight_BackAway.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AI/BB_MagicSwordMan.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AI/BB_MagicSwordMan.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AI/BT_MagicSwordMan.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AI/BT_MagicSwordMan.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/ABP_MagicSwordMan.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/ABP_MagicSwordMan.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_AirAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_AirAttack.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_CloseJumpUpAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_CloseJumpUpAttack.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_CloseRushAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_CloseRushAttack.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_CloseSimpleAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_CloseSimpleAttack.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_CloseSlowAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_CloseSlowAttack.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Attack_Air_to_Floor_03_Loop_V02_Seq.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Attack_Air_to_Floor_03_Loop_V02_Seq.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Attack_Up_Air_To_Air_02_V02_Seq.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Attack_Up_Air_To_Air_02_V02_Seq.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Attack_Up_Floor_To_Air_02_V02_Seq.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Attack_Up_Floor_To_Air_02_V02_Seq.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Combo_Attack_Air_All_V02_Seq.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Combo_Attack_Air_All_V02_Seq.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Dodge_Combat_Air_F_0_Seq.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Dodge_Combat_Air_F_0_Seq.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Jump_End_F_0_Seq.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Jump_End_F_0_Seq.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Run_Attack_01_V02_Seq.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Run_Attack_01_V02_Seq.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Run_Attack_02_V02_Seq.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Run_Attack_02_V02_Seq.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_DashChargeAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_DashChargeAttack.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_DashJumpUpAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_DashJumpUpAttack.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_DashSimpleAttackOne.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_DashSimpleAttackOne.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_DashSimpleAttackTwo.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_DashSimpleAttackTwo.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_JumpAirAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_JumpAirAttack.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/BS_MagicSwordMan.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/BS_MagicSwordMan.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Knock_Down_Combat_Start_Seq.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Knock_Down_Combat_Start_Seq.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Knock_Down_Death_Combat_B_Seq.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Knock_Down_Death_Combat_B_Seq.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Knock_Down_Loop_Seq.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Knock_Down_Loop_Seq.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Parry_Counter_Attack_L_V02_Seq.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Parry_Counter_Attack_L_V02_Seq.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Parry_Counter_Attack_R_V02_Seq.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Parry_Counter_Attack_R_V02_Seq.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Walk_Loop_B_L_45_Seq.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Walk_Loop_B_L_45_Seq.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Walk_Loop_B_R_45_Seq.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Walk_Loop_B_R_45_Seq.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Walk_Start_B_L_90_Seq.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Walk_Start_B_L_90_Seq.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/BP_MagicSwordMan.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/BP_MagicSwordMan.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Katana_sheath.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Katana_sword.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Material/M_Floor.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Material/M_Floor_Sub.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Material/M_Katana.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/TestMap/ThirdPerson/Level_EnemyTest.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/TestMap/ThirdPerson/Level_EnemyTest.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/1/8V/N6NQKJ9L67SF5T7N2SSD8L.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/A/5T/YRTRP5LJYDEC0497KNNKR9.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/A/5T/YRTRP5LJYDEC0497KNNKR9.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/ETC/Katana_sword.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/EnemyAsset/BattleWizardPolyart/Meshes/MagicStaffs/Staff01SM.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/EnemyAsset/BattleWizardPolyart/Meshes/MagicStaffs/Staff01SM.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/EnemyAsset/ST_Characters_JC/Models/SK/SK_StylizedMale.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/EnemyAsset/ST_Characters_JC/Models/SK/SK_StylizedMale.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/3/AP/CRUZF0BJYBET6WIH2IX7HW.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/A/5T/YRTRP5LJYDEC0497KNNKR9.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BlackKnight/BTTask_BlackKnightGuard.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BlackKnight/BTTask_BlackKnightGuard.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/MagicSwordMan/BossMagicSwordMan.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/MagicSwordMan/BossMagicSwordMan.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/MagicSwordMan/BossMagicSwordManAIController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/MagicSwordMan/BossMagicSwordManAIController.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/MagicSwordMan/BossMagicSwordMan.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/MagicSwordMan/BossMagicSwordMan.h" afterDir="false" />
@@ -65,9 +69,12 @@
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/MagicSwordMan/BTTask_MagicSwordManAirAttack.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/MagicSwordMan/BTTask_MagicSwordManDashAttack.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/MagicSwordMan/BTTask_MagicSwordManDashJumpUp.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/MagicSwordMan/BTTask_MagicSwordManGuardCounter.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/MagicSwordMan/BTTask_MagicSwordManGuardPattern.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/MagicSwordMan/BTTask_MagicSwordManAirAttack.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/MagicSwordMan/BTTask_MagicSwordManCloseJumpUp.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/MagicSwordMan/BTTask_MagicSwordManDashAttack.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/MagicSwordMan/BTTask_MagicSwordManGuardPattern.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/Struct_InventorySlotData.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/Struct_WorldChestData.h" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -195,6 +202,7 @@
       <workItem from="1772781617394" duration="137000" />
       <workItem from="1772790579175" duration="2806000" />
       <workItem from="1772849891804" duration="16265000" />
+      <workItem from="1772946278927" duration="6713000" />
     </task>
     <servers />
   </component>

@@ -24,6 +24,9 @@ struct FBossMagicSwordManAttackWeight
 	// 점프 공격
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")	
 	float JumpAttack = 10.0f;
+	// 가드 패턴
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float Guard = 10.0f;
 	
 };
 
@@ -80,7 +83,7 @@ public:
 	
 	EMagicSwordManAttackType AttackType = EMagicSwordManAttackType::SimpleAttack;
 	
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
 	bool bIsGuarding = false;
 	float DamageWhileGuarding = 0.f;
 	// 가드 유지 시간
@@ -89,13 +92,22 @@ public:
 	// 반격 발동에 필요한 최대 대미지
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float MaxDamageToReaction = 10.f;
-	// 가드시 몽타주
+	// 가드시 히트 몽타주
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "자체설정")
-	UAnimMontage* GuardMontage;
-	// 단순 가드 패턴 어택 딜레이
+	UAnimMontage* GuardHitMontage;
+	// 가드시 가드 풀리는 몽타주
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "자체설정")
+	UAnimMontage* GuardBreakMontage;
+	// 가드 후 딜레이 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float GuardDelay = 2.f;
+	
+	// 가드 반경 시작 함수
+	UAnimMontage* StartGuardReactionAttack();
+	// 가드 반격 몽타주 배열
 	UPROPERTY(EditAnywhere, Category = "자체설정")
-	float GuardDelay = 4.0f;
-
+	TArray<UAnimMontage*> GuardReactionMontages;
+	
 	// 근점 공격 시작 함수 - 랜덤 3개. 선택된 몽타주 반환
 	UAnimMontage* StartCloseAttack();
 	// 근접 공격 몽타주 배열

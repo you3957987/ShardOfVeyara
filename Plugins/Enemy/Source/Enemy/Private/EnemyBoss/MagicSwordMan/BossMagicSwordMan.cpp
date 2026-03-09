@@ -47,9 +47,9 @@ float ABossMagicSwordMan::TakeDamage(float DamageAmount, struct FDamageEvent con
 		DamageWhileGuarding += DamageAmount;
 
 		// 아직 리액션 대미지에 도달하지 않았으면 가드 몽타주 재생
-		if ( DamageWhileGuarding < MaxDamageToReaction && GuardMontage )
+		if ( DamageWhileGuarding < MaxDamageToReaction && GuardHitMontage )
 		{
-			PlayAnimMontage(GuardMontage);
+			PlayAnimMontage(GuardHitMontage);
 		}
 		
 		return 0.f; // 대미지 무효화
@@ -238,7 +238,7 @@ UAnimMontage* ABossMagicSwordMan::StartCloseJumpUpAttack()
 		// 플라잉 모드로 전환
 		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
 		bSuccessJumpUpAttack = false; // 공격 시작 시점에는 띄우기 성공 여부를 false로 초기화
-		BlackboardComp->SetValueAsBool("bAirAttack", false);
+		BlackboardComp->SetValueAsBool("AirAttack", false);
 		return CloseJumpUpAttackMontage;
 	}
 	return nullptr;
@@ -253,7 +253,7 @@ UAnimMontage* ABossMagicSwordMan::StartDashJumpUpAttack()
 		// 플라잉 모드로 전환
 		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
 		bSuccessJumpUpAttack = false; // 공격 시작 시점에는 띄우기 성공 여부를 false로 초기화
-		BlackboardComp->SetValueAsBool("bAirAttack", false);
+		BlackboardComp->SetValueAsBool("AirAttack", false);
 		return DashJumpUpAttackMontage;
 	}
 	return nullptr;
@@ -265,7 +265,7 @@ void ABossMagicSwordMan::JumpUpAttackCheck()
 	if ( bSuccessJumpUpAttack == true )
 	{
 		// 띄우기 성공 시 공중 공격 패턴으로 전환
-		BlackboardComp->SetValueAsBool("bAirAttack", true);
+		BlackboardComp->SetValueAsBool("AirAttack", true);
 	}
 }
 
@@ -331,6 +331,22 @@ UAnimMontage* ABossMagicSwordMan::StartJumpAttack()
 void ABossMagicSwordMan::JumpStart()
 {
 	LaunchCharacter( FVector(0.f, 0.f, 800.f), false, true);
+}
+
+UAnimMontage* ABossMagicSwordMan::StartGuardReactionAttack()
+{
+	if (GuardReactionMontages.Num() > 0)
+	{
+		int32 RandomIndex = FMath::RandRange(0, GuardReactionMontages.Num() - 1);
+		
+		if (GuardReactionMontages[RandomIndex])
+		{
+			PlayAnimMontage(GuardReactionMontages[RandomIndex]);
+			AttackType = EMagicSwordManAttackType::SimpleAttack;
+			return GuardReactionMontages[RandomIndex];
+		}
+	}
+	return nullptr;
 }
 
 #if WITH_EDITOR
