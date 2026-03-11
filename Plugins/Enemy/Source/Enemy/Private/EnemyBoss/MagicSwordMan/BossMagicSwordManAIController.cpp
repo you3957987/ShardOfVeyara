@@ -26,5 +26,6 @@ void ABossMagicSwordManAIController::SetBlackboardKey()
 	BlackboardComp->SetValueAsFloat("W_DashJumpUpAttack", ControlledEnemy->AttackWeight.DashJumpUpAttack);
 	BlackboardComp->SetValueAsFloat("W_JumpAttack", ControlledEnemy->AttackWeight.JumpAttack);	
 	BlackboardComp->SetValueAsFloat("W_Guard", ControlledEnemy->AttackWeight.Guard);
+	BlackboardComp->SetValueAsFloat("W_PowerAttack", ControlledEnemy->AttackWeight.PowerAttack);
 	
 }

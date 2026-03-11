@@ -4,12 +4,21 @@
 #include "Kismet/GameplayStatics.h"
 #include "MotionWarpingComponent.h" 
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Components/SphereComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
 ABossMagicSwordMan::ABossMagicSwordMan()
 {
 	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpingComp"));
+	
+	PowerAttackCollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("PowerAttackCollisionSphere"));
+	PowerAttackCollisionSphere->SetupAttachment(GetRootComponent());
+	PowerAttackCollisionSphere->SetSphereRadius( 540.f ); // 궁극기 공격 범위
+	PowerAttackCollisionSphere->ShapeColor = FColor::Red;
+	PowerAttackCollisionSphere->SetVisibility(false);
+	PowerAttackCollisionSphere->SetHiddenInGame(false); 
+	
 }
 
 void ABossMagicSwordMan::BeginPlay()
@@ -30,6 +39,13 @@ void ABossMagicSwordMan::BeginPlay()
 			WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			break; // 찾았으니 루프 종료
 		}
+	}
+	
+	if ( PowerAttackCollisionSphere )
+	{
+		PowerAttackCollisionSphere->OnComponentBeginOverlap.AddDynamic(this, 
+			&ABossMagicSwordMan::OnBeginOverlapPowerAttackCollisionSphere);
+		PowerAttackCollisionSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 }
 
@@ -91,7 +107,7 @@ void ABossMagicSwordMan::OnBeginOverlapWeaponCollisionSphere(UPrimitiveComponent
 				//HitCharacter->LaunchCharacter(FVector(0.f, 0.f, 10.f), false, true);
 			}
 		}
-
+		
 		// 다시 콜리전 끄기
 		if ( WeaponCollision ) WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		AttackDamage = 0.f; // 대미지 초기화
@@ -203,6 +219,7 @@ UAnimMontage* ABossMagicSwordMan::StartCloseAttack()
 		{
 			PlayAnimMontage(CloseAttackMontages[RandomIndex]);
 			AttackType = EMagicSwordManAttackType::SimpleAttack;
+			if (BlackboardComp) BlackboardComp->SetValueAsFloat("AttackDelay", CloseAttackDelay);
 			return CloseAttackMontages[RandomIndex];
 		}
 	}
@@ -221,6 +238,7 @@ UAnimMontage* ABossMagicSwordMan::StartDashAttack()
 		{
 			PlayAnimMontage(DashAttackMontages[RandomIndex]);
 			AttackType = EMagicSwordManAttackType::SimpleAttack;
+			if (BlackboardComp) BlackboardComp->SetValueAsFloat("AttackDelay", DashAttackDelay);
 			return DashAttackMontages[RandomIndex];
 		}
 	}
@@ -238,7 +256,11 @@ UAnimMontage* ABossMagicSwordMan::StartCloseJumpUpAttack()
 		// 플라잉 모드로 전환
 		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
 		bSuccessJumpUpAttack = false; // 공격 시작 시점에는 띄우기 성공 여부를 false로 초기화
-		BlackboardComp->SetValueAsBool("AirAttack", false);
+		if (BlackboardComp)
+		{
+			BlackboardComp->SetValueAsBool("AirAttack", false);
+			BlackboardComp->SetValueAsFloat("AttackDelay", CloseJumpUpAttackDelay);
+		}
 		return CloseJumpUpAttackMontage;
 	}
 	return nullptr;
@@ -253,7 +275,11 @@ UAnimMontage* ABossMagicSwordMan::StartDashJumpUpAttack()
 		// 플라잉 모드로 전환
 		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
 		bSuccessJumpUpAttack = false; // 공격 시작 시점에는 띄우기 성공 여부를 false로 초기화
-		BlackboardComp->SetValueAsBool("AirAttack", false);
+		if (BlackboardComp)
+		{
+			BlackboardComp->SetValueAsBool("AirAttack", false);
+			BlackboardComp->SetValueAsFloat("AttackDelay", DashJumpUpAttackDelay);
+		}
 		return DashJumpUpAttackMontage;
 	}
 	return nullptr;
@@ -320,6 +346,7 @@ UAnimMontage* ABossMagicSwordMan::StartJumpAttack()
 		{
 			PlayAnimMontage(JumpAttackMontages[RandomIndex]);
 			AttackType = EMagicSwordManAttackType::SimpleAttack;
+			if (BlackboardComp) BlackboardComp->SetValueAsFloat("AttackDelay", JumpAttackDelay);
 			return JumpAttackMontages[RandomIndex];
 		}
 	}
@@ -349,6 +376,141 @@ UAnimMontage* ABossMagicSwordMan::StartGuardReactionAttack()
 	return nullptr;
 }
 
+UAnimMontage* ABossMagicSwordMan::StartPowerAttack()
+{
+	if (PowerAttackMontage)
+	{
+		PlayAnimMontage(PowerAttackMontage);
+		AttackType = EMagicSwordManAttackType::SimpleAttack;
+		bIsPowerAttackHit = false; // 공격 시작 시점에는 궁극기 공격이 적중했는지 여부를 false로 초기화
+		if (BlackboardComp) BlackboardComp->SetValueAsFloat("AttackDelay", PowerAttackDelay);
+		return PowerAttackMontage;
+	}
+	return nullptr;
+}
+
+void ABossMagicSwordMan::OnBeginOverlapPowerAttackCollisionSphere(UPrimitiveComponent* OverlappedComp,
+	AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+	const FHitResult& SweepResult)
+{
+	if (OtherActor && OtherActor != this && OtherActor->ActorHasTag(FName("Player")))
+	{
+		HandlePowerAttackDamage(OtherActor);
+		
+		bIsPowerAttackHit = true; // 궁극기 공격이 적중했음을 표시하는 플래그를 true로 설정
+		
+		// 타겟 정지 및 입력 차단 로직 시작 
+		if (ACharacter* HitCharacter = Cast<ACharacter>(OtherActor))
+		{
+			//  플레이어 컨트롤러를 가져와서 입력을 비활성화
+			if (APlayerController* PlayerController = Cast<APlayerController>(HitCharacter->GetController()))
+			{
+				HitCharacter->DisableInput(PlayerController);
+			}
+
+			//무브먼트 컴포넌트를 가져와서 움직임을 정지
+			if (UCharacterMovementComponent* MovementComp = HitCharacter->GetCharacterMovement())
+			{
+				MovementComp->StopMovementImmediately(); // 현재 속도와 가속도를 0으로 만듦
+				MovementComp->SetMovementMode(EMovementMode::MOVE_None); // 이동 모드를 끄면 중력 영향을 받지 않고 그 자리에 멈춤
+			}
+			// 애니메이션도 멈추기 
+			if (USkeletalMeshComponent* StopMesh = HitCharacter->GetMesh())
+			{
+				StopMesh->bPauseAnims = true;
+			}
+		}
+		
+		// 궁극기 공격이 한 번 적중하면 콜리전 비활성화 
+		PowerAttackCollisionSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+}
+
+void ABossMagicSwordMan::HandlePowerAttackDamage(AActor* OtherActor)
+{
+	if (!OtherActor) return;
+
+	// 1. 반응성을 위해 즉시 1회 대미지 적용 (선택 사항)
+	UGameplayStatics::ApplyDamage(OtherActor, AttackDamage, GetController(), this, UDamageType::StaticClass());
+
+	// 2. 파라미터(OtherActor)를 전달하기 위해 델리게이트 생성
+	FTimerDelegate TimerCallback;
+	TimerCallback.BindUObject(this, &ABossMagicSwordMan::OnPowerAttackTimerTick, OtherActor);
+
+	// 3. 0.3초 간격으로 반복(true) 실행되는 타이머 설정
+	GetWorld()->GetTimerManager().SetTimer(PowerAttackTimerHandle, TimerCallback, 0.05f, true);
+}
+
+void ABossMagicSwordMan::StartPowerAttackCollision()
+{
+	if ( PowerAttackCollisionSphere )
+	{
+		PowerAttackCollisionSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	}
+}
+
+void ABossMagicSwordMan::EndPowerAttackCollision()
+{
+	if ( PowerAttackCollisionSphere )
+	{
+		PowerAttackCollisionSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+	// 공격이 끝나면 타이머를 해제하여 대미지를 멈춤
+	GetWorld()->GetTimerManager().ClearTimer(PowerAttackTimerHandle);
+}
+
+void ABossMagicSwordMan::OnPowerAttackTimerTick(AActor* TargetActor)
+{
+	// 타겟이 유효한지(파괴되지 않았는지) 확인
+	if (IsValid(TargetActor))
+	{
+		// 주기적 대미지 적용
+		UGameplayStatics::ApplyDamage(TargetActor, PowerAttackTickDamage, 
+			GetController(), this, UDamageType::StaticClass());
+		// 대미지 로그
+		UE_LOG(LogTemp, Warning, TEXT("Boss Power Attack Tick Damage : %f"), PowerAttackTickDamage);
+	}
+	else
+	{
+		// 타겟이 유효하지 않으면 타이머 정지
+		GetWorld()->GetTimerManager().ClearTimer(PowerAttackTimerHandle);
+	}
+}
+
+void ABossMagicSwordMan::FinishPowerAttack()
+{
+	if ( bIsPowerAttackHit )
+	{
+		UGameplayStatics::ApplyDamage(TargetCharacter, PowerAttackFinishDamage, 
+			GetController(), this, UDamageType::StaticClass());
+		
+		// 피니쉬 대미지 로그
+		UE_LOG(LogTemp, Warning, TEXT("Boss Power Attack Finish Damage : %f"), PowerAttackFinishDamage);
+		
+		// 타겟 움직임 및 입력 복구 
+		if (ACharacter* HitCharacter = Cast<ACharacter>(TargetCharacter))
+		{
+			// 이동 모드 복구 
+			if (UCharacterMovementComponent* MovementComp = HitCharacter->GetCharacterMovement())
+			{
+				MovementComp->SetMovementMode(EMovementMode::MOVE_Walking);
+			}
+
+			// 플레이어 입력 다시 활성화
+			if (APlayerController* PlayerController = Cast<APlayerController>(HitCharacter->GetController()))
+			{
+				HitCharacter->EnableInput(PlayerController);
+			}
+			
+			// 애니메이션 재생 다시 활성화
+			if (USkeletalMeshComponent* StopMesh = HitCharacter->GetMesh())
+			{
+				StopMesh->bPauseAnims = false;
+			}
+		}
+	}
+}
+
 #if WITH_EDITOR
 void ABossMagicSwordMan::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
@@ -362,11 +524,11 @@ void ABossMagicSwordMan::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 	{
 		if ( bDebugMode == true )
 		{
-			
+			if ( PowerAttackCollisionSphere ) PowerAttackCollisionSphere->SetVisibility(true);
 		}
 		else
 		{
-			
+			if ( PowerAttackCollisionSphere ) PowerAttackCollisionSphere->SetVisibility(false);
 		}
 	}
 }

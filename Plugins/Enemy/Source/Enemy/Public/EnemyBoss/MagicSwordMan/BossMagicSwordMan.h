@@ -27,6 +27,9 @@ struct FBossMagicSwordManAttackWeight
 	// 가드 패턴
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float Guard = 10.0f;
+	// 궁극기 패턴
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float PowerAttack = 10.0f;
 	
 };
 
@@ -113,24 +116,36 @@ public:
 	// 근접 공격 몽타주 배열
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	TArray<UAnimMontage*> CloseAttackMontages;
+	// 근접 공격 딜레이	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float CloseAttackDelay = 6.f;
 	
 	// 대시 공격 시작 함수 - 랜덤 3개. 선택된 몽타주 반환
 	UAnimMontage* StartDashAttack();
 	// 대시 공격 몽타주 배열
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	TArray<UAnimMontage*> DashAttackMontages;
+	// 대시 공격 딜레이
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float DashAttackDelay = 6.f;
 	
 	// 근점 띄우기 공격 시작 함수
 	UAnimMontage* StartCloseJumpUpAttack();
 	// 근점 띄우기 공격 몽타주
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	UAnimMontage* CloseJumpUpAttackMontage;
+	// 근점 띄우기 공격 딜레이
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float CloseJumpUpAttackDelay = 6.f;
 	
 	// 대시 띄우기 공격 시작 함수
 	UAnimMontage* StartDashJumpUpAttack();
 	// 대시 띄우기 공격 몽타주
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	UAnimMontage* DashJumpUpAttackMontage;
+	// 대시 띄우기 공격 딜레이
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float DashJumpUpAttackDelay = 6.f;
 	
 	bool bSuccessJumpUpAttack = false;
 	// 띄우거 성공 여부에 따른 이후 행동 결정 함수
@@ -154,7 +169,49 @@ public:
 	TArray<UAnimMontage*> JumpAttackMontages;
 	UFUNCTION(BlueprintCallable)
 	void JumpStart();
-
+	// 점프 공격 딜레이
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float JumpAttackDelay = 6.f;
+	
+	// 궁극기 시전 함수
+	UAnimMontage* StartPowerAttack();
+	// 궁극기 몽타주
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	UAnimMontage* PowerAttackMontage;
+	// 궁극기 피격 범위 스피어 콜리전 컴포넌트
+	UPROPERTY(VisibleAnywhere)
+	class USphereComponent* PowerAttackCollisionSphere;
+	// 궁극기 피격 처리 함수
+	UFUNCTION() 
+	void OnBeginOverlapPowerAttackCollisionSphere(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	// 궁극기 공격 시작
+	UFUNCTION(BlueprintCallable)
+	void StartPowerAttackCollision();
+	// 궁극기 공격 종료
+	UFUNCTION(BlueprintCallable)
+	void EndPowerAttackCollision();
+	// 궁극기 대미지 로직 처리 함수
+	void HandlePowerAttackDamage(AActor* OtherActor);
+	// 주기적인 대미지 적용을 위한 타이머 핸들
+    FTimerHandle PowerAttackTimerHandle;
+	// 타이머에 의해 호출될 함수 (대상 액터를 인자로 받음)
+	void OnPowerAttackTimerTick(AActor* TargetActor);
+	// 궁극기 틱 대미지
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float PowerAttackTickDamage = 8.f;
+	// 궁극기 딜레이
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float PowerAttackDelay = 2.f;
+	// 궁극기 적중 여부
+	bool bIsPowerAttackHit = false;
+	// 궁극기 마무리 공격 처리 함수
+	UFUNCTION(BlueprintCallable)
+	void FinishPowerAttack();
+	// 궁극기 마무리 대미지
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float PowerAttackFinishDamage = 30.f;
+	
 #if WITH_EDITOR
 	// 에디터에서 프로퍼티가 변경될 때 호출됩니다.
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
