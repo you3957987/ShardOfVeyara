@@ -58,6 +58,7 @@ FSaveData USOVGameInstance::GetSaveData()
 	SaveData.TempHotbar = TempHotbar;
 	SaveData.GlobalPlotDataMap = GlobalPlotDataMap;
 	SaveData.AlchemyTableDataMap = AlchemyTableDataMap;
+	SaveData.LastSaveTime = FDateTime::Now();
 	
 	return SaveData; 
 }
@@ -119,13 +120,6 @@ void USOVGameInstance::Init()
 
 	// 월드가 정리될 때 호출되는 델리게이트에 HandleWorldCleanup 함수를 연결(Bind)합니다.
 	FWorldDelegates::OnWorldCleanup.AddUObject(this, &USOVGameInstance::HandleWorldCleanup);
-
-	// 만약 기본 슬롯 이름이 정해져 있다면 여기서 즉시 로드 시도
-	// (예: SaveGameSlot = TEXT("SaveSlot_01");)
-	if (!SaveGameSlot.IsEmpty())
-	{
-		LoadGame();
-	}
 }
 
 void USOVGameInstance::HandleWorldCleanup(UWorld* World, bool bSessionEnded, bool bCleanupResources)

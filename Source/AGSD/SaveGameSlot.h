@@ -15,6 +15,7 @@ class AGSD_API USaveGameSlot : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SaveGameSlot")
 	int32 SlotIndex;
 	
@@ -25,14 +26,35 @@ public:
 	bool bIsEmpty = true;
 
 	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
-	class UTextBlock* SlotNum;
-
+	class UButton* SlotButton;
+	
 	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
-	class UTextBlock* EmptyText;
+	class UTextBlock* SlotNum;
 	
 	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
 	class UHorizontalBox* SaveDataPanel;
+	
+	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
+	class UTextBlock* PlayMap;
+
+	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
+	class UTextBlock* PlayDay;
+
+	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
+	class UTextBlock* PlayTime;
+
+	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
+	class UTextBlock* LastSaveTime;
+
+	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
+	class UTextBlock* EmptyText;
 
 protected:
 	virtual void NativeConstruct() override;
+
+	UFUNCTION()
+	void OnClickEmptySlotButton();
+
+	UFUNCTION()
+	void OnClickSavedSlotButton();
 };

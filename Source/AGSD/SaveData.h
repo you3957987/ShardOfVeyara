@@ -45,6 +45,9 @@ struct FSaveData : public FTableRowBase
 
 	UPROPERTY()
 	TMap<FString, FAlchemySaveData> AlchemyTableDataMap;
+
+	UPROPERTY()
+	FDateTime LastSaveTime;
 	
 	FSaveData()
 	{

@@ -24,7 +24,7 @@ public:
 	USOVGameInstance();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SaveGame")
-	FString SaveGameSlot = FString(TEXT("Temp"));
+	FString SaveGameSlot;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WorldState")
 	TArray<FString> NoRegenItem;
