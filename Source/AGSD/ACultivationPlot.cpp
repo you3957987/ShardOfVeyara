@@ -109,7 +109,6 @@ void AACultivationPlot::BeginPlay()
 	FPlotSaveData LoadedData;
 	// 아까 만든 구조체 데이터를 통째로 넘겨서 저장합니다.
 	if (!GI->GetPlotData(GetName(), LoadedData)) return;
-	if (LoadedData.SeedName == NAME_None) return;
 
 	SeedName = LoadedData.SeedName;
 	CurrentGrowStageIndex = LoadedData.CurrentGrowStageIndex;
@@ -121,11 +120,12 @@ void AACultivationPlot::BeginPlay()
 
 	
 	//CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	if (bHasWeeds) SpawnWeeds();
+	if (SeedName == NAME_None) return;
 	
 	GetSeedInfo(SeedName);
 	PlantCrop();
-	if (bHasWeeds) SpawnWeeds();
-
+	
 	int32 CurrentDay = GI->CurrentDay;
 	while (ScheduledDay <= CurrentDay && !FullyGrown && !bHasWeeds)
 	{

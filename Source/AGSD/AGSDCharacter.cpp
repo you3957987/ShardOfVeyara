@@ -235,6 +235,8 @@ void AAGSDCharacter::BeginPlay()
 
 	if (GI) bHasPet = GI->bHasPet;
 	SpawnMyPetAfterTravel(); // 펫 있으면 오픈 레벨 이후 펫 스폰
+
+	Coin = GI->Coin;
 	
 	HealthBar = getHealthBar();
 	if (HealthBar)
@@ -264,6 +266,7 @@ void AAGSDCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	DestroyPetBeforeTravel();
 	Super::EndPlay(EndPlayReason);
 
+	GI->Coin = Coin;
 	GI->PlayerHealth = Health;
 	GI->MaxPlayerHealth = MaxHealth;
 	GI->bHasPet = bHasPet;

@@ -43,7 +43,7 @@ void AFarmingGameMode::HandleTimeIncrement(float time)
 		GameState->InitCurrentTime();
 		Reset = true;
 	}
-	if (GameState->GetCurrentTime() > 360.f && Reset)
+	if (GameState->GetCurrentTime() > NextDayStartTime && Reset)
 	{
 		NextDay(GameState->GetCurrentTime());
 	}

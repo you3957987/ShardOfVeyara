@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "PlotSaveData.h"
+#include "AlchemySaveData.h"
+#include "SaveData.h"
 #include "Struct_InventorySlotData.h"
 #include "Struct_WorldChestData.h"
 #include "Engine/GameInstance.h"
@@ -12,6 +14,7 @@
 /**
  * 
  */
+
 UCLASS()
 class AGSD_API USOVGameInstance : public UGameInstance
 {
@@ -21,7 +24,7 @@ public:
 	USOVGameInstance();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SaveGame")
-	FString SaveGameSlot;
+	FString SaveGameSlot = FString(TEXT("Temp"));
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WorldState")
 	TArray<FString> NoRegenItem;
@@ -30,16 +33,19 @@ public:
 	FName TeleportationTag = FName("None");
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WorldState")
-	int CurrentDay = 1.0;
+	int CurrentDay = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WorldState")
 	float CurrentTime = 360.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WorldState")
 	TMap<FString, FStruct_WorldChestData> ChestMap;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
+	int Coin = 0;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
-	float MaxPlayerHealth = 0.f;
+	float MaxPlayerHealth = 200.f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
 	float PlayerHealth = MaxPlayerHealth;
@@ -59,11 +65,39 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "FarmingState")
 	TMap<FString, FPlotSaveData> GlobalPlotDataMap;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AlchemyTableState")
+	TMap<FString, FAlchemySaveData> AlchemyTableDataMap;
+
 	// 경작지로부터 데이터를 받아서 저장/갱신하는 함수
 	UFUNCTION(BlueprintCallable, Category = "Farming")
 	void UpdatePlotData(FPlotSaveData NewData);
-    
+
+	UFUNCTION(BlueprintCallable, Category = "Farming")
+	void UpdateTableData(FAlchemySaveData NewData);
+	
 	// GUID로 데이터를 꺼내주는 함수 (나중에 로드할 때 씀)
 	UFUNCTION(BlueprintCallable, Category = "Farming")
 	bool GetPlotData(FString name, FPlotSaveData& OutData);
+
+	UFUNCTION(BlueprintCallable, Category = "Alchemy")
+	bool GetAlchemyData(FString name, FAlchemySaveData& OutData);
+
+	UFUNCTION(BlueprintCallable, Category = "SaveGame")
+	FSaveData GetSaveData();
+
+	UFUNCTION(BlueprintCallable, Category = "SaveGame")
+	void SetSaveData(FSaveData SaveData);
+
+	UFUNCTION(BlueprintCallable, Category = "SaveGame")
+	void SaveGame();
+
+	UFUNCTION(BlueprintCallable, Category = "SaveGame")
+	void LoadGame();
+protected:
+	// 게임 인스턴스가 초기화될 때 호출되는 함수 오버라이드
+	virtual void Init() override;
+
+	// 클린업 시 실행될 실제 로직 함수
+	// 델리게이트 형식을 맞추기 위해 파라미터 구성을 동일하게 해야 합니다.
+	void HandleWorldCleanup(UWorld* World, bool bSessionEnded, bool bCleanupResources);
 };

@@ -78,6 +78,9 @@ protected:
 
 	UPROPERTY()
 	class UFadeWidget* FadeWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PlayerState")
+	int Coin;
 	
 private:
 	UFUNCTION(BlueprintCallable)

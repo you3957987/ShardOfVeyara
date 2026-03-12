@@ -30,7 +30,7 @@ void ABed::WakeUp()
 	AFarmingGameMode* GM = Cast<AFarmingGameMode>(GetWorld()->GetAuthGameMode());
 	if (GM)
 	{
-		GM->NextDay(360.f);
+		GM->NextDay(WakeUpTime);
 	}
 	TargetPlayer->HealthRecovery(TargetPlayer->getPlayerMaxhealth());
 	TargetPlayer->EnableInput(TargetPlayer->getPlayerController());
