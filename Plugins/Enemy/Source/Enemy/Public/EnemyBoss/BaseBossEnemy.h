@@ -87,6 +87,17 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, AActor* DamageCauser) override;
 	
+	UPROPERTY(VisibleAnywhere)
+	class UMotionWarpingComponent* MotionWarpingComponent;
+	
+	// 모션 워핑할 타깃 캐릭터 좌표 찍기
+	UFUNCTION(BlueprintCallable)
+	void UpdateMotionWarpTarget();
+	// 모션 워핑 타깃 - 타깃 캐릭터의 앞쪽
+	UFUNCTION(BlueprintCallable)
+	void UpdateMotionWarpTargetToFront();
+	
+	
 	// 공격 지연 시간. 블랙보드 태스크에서 재지정
 	float AttackDelay = 0.0f;
 	

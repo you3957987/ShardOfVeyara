@@ -2,16 +2,12 @@
 
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "MotionWarpingComponent.h" 
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Kismet/KismetMathLibrary.h"
 
 ABossMagicSwordMan::ABossMagicSwordMan()
 {
-	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpingComp"));
-	
 	PowerAttackCollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("PowerAttackCollisionSphere"));
 	PowerAttackCollisionSphere->SetupAttachment(GetRootComponent());
 	PowerAttackCollisionSphere->SetSphereRadius( 540.f ); // 궁극기 공격 범위
@@ -122,86 +118,6 @@ void ABossMagicSwordMan::AttackStart_WeaponCollision()
 void ABossMagicSwordMan::AttackEnd_WeaponCollision()
 {
 	if ( WeaponCollision ) WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-}
-
-// 공격 전에 한번씩 호출
-void ABossMagicSwordMan::UpdateMotionWarpTarget()
-{
-	if (MotionWarpingComponent && TargetCharacter)
-	{
-		FVector BossLocation = GetActorLocation();
-		FVector TargetLocation = TargetCharacter->GetActorLocation();
-
-		// 1. 보스에서 타겟을 바라보는 회전값 계산
-		// 단순히 TargetCharacter->GetActorRotation()을 쓰면 플레이어의 등 뒤를 보게 됩니다.
-		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(BossLocation, TargetLocation);
-        
-		// 2. 평면 회전만 원한다면 Pitch와 Roll은 0으로 고정 (Ignore Z Axis와 같은 효과)
-		LookAtRotation.Pitch = 0.f;
-		LookAtRotation.Roll = 0.f;
-
-		// 3. 계산된 회전값으로 워프 타겟 업데이트
-		MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation(
-			FName("WarpTarget"), 
-			TargetLocation, 
-			LookAtRotation
-		);
-		
-		DrawDebugSphere(
-			GetWorld(),
-			TargetLocation,   // 위치
-			50.0f,            // 반지름 (크기)
-			12,               // 세그먼트 (구의 부드러움)
-			FColor::Purple,      // 색상
-			false,            // 지속 여부 (true면 영구 지속)
-			2.0f,             // 화면에 표시될 시간 (초)
-			0,                // 깊이 우선순위
-			2.0f              // 선 두께
-		);
-	}
-}
-
-void ABossMagicSwordMan::UpdateMotionWarpTargetToFront()
-{
-	if (MotionWarpingComponent && TargetCharacter)
-	{
-		FVector BossLocation = GetActorLocation();
-		FVector TargetLocation = TargetCharacter->GetActorLocation();
-
-		// 1. 보스에서 타겟으로 향하는 방향 벡터 구하기 (Unit Vector)
-		FVector DirectionToTarget = (TargetLocation - BossLocation).GetSafeNormal();
-
-		// 2. 타겟 위치에서 보스 쪽으로 80만큼 뺀 위치 계산
-		// 수식: 타겟위치 - (보스->타겟방향 * 80)
-		// 이렇게 하면 타겟 바로 앞 80 거리의 지점이 구해집니다.
-		const float FrontDistance = 150.0f;
-		FVector WarpLocation = TargetLocation - (DirectionToTarget * FrontDistance);
-
-		// 3. 회전값 계산 (보스가 타겟을 바라보도록 설정)
-		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(BossLocation, TargetLocation);
-		LookAtRotation.Pitch = 0.f;
-		LookAtRotation.Roll = 0.f;
-
-		// 4. 워프 타겟 업데이트
-		MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation(
-			FName("WarpTarget"),
-			WarpLocation,
-			LookAtRotation
-		);
-
-		// 계산된 위치에 디버그 구체 그리기 (초록색)
-		DrawDebugSphere(
-			GetWorld(),
-			WarpLocation,
-			50.0f,
-			12,
-			FColor::Purple,
-			false,
-			2.0f,
-			0,
-			2.0f
-		);
-	}
 }
 
 void ABossMagicSwordMan::SetAttackDamage(float DamageToApply)

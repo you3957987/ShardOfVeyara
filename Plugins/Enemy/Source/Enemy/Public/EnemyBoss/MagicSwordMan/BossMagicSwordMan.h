@@ -48,8 +48,6 @@ class ENEMY_API ABossMagicSwordMan : public ABaseBossEnemy
 	GENERATED_BODY()
 	UPROPERTY(VisibleAnywhere)
 	class UCapsuleComponent* WeaponCollision = nullptr;
-	UPROPERTY(VisibleAnywhere)
-	class UMotionWarpingComponent* MotionWarpingComponent;
 	
 	float AttackDamage;
 	
@@ -71,12 +69,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AttackEnd_WeaponCollision();
 	
-	// 모션 워핑할 타깃 캐릭터 좌표 찍기
-	UFUNCTION(BlueprintCallable)
-	void UpdateMotionWarpTarget();
-	// 모션 워핑 타깃 - 타깃 캐릭터의 앞쪽
-	UFUNCTION(BlueprintCallable)
-	void UpdateMotionWarpTargetToFront();
 	// 애님 노티파이에서 공격 대미지 설정
 	UFUNCTION(BlueprintCallable)
 	void SetAttackDamage(float DamageToApply);

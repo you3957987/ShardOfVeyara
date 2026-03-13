@@ -30,13 +30,6 @@ class ENEMY_API ABossBlackKnight : public ABaseBossEnemy
 
 protected:
 	
-	bool bIsRushing = false;        // 돌진 중인가?
-	FVector RushTargetLocation;     // 목표 위치
-	float RushDuration = 0.0f;      // 돌진 총 시간
-	float RushElapsedTime = 0.0f;   // 경과 시간
-	FVector RushStartLocation;      // 시작 위치
-	void MoveForwardDuringRushAttack(float DeltaTime);
-	
 	class USphereComponent* AxeCollisionSphere = nullptr;
 
 	// 공격시 줄 대미지 == 공격 전에 함수에서 각각 변경
@@ -84,12 +77,12 @@ public:
 	UAnimMontage* RushAttackMontage;
 	// 돌진 공격 함수
 	void RushAttack();
-	// 돌진 전 캐릭 위치 세팅
-	UFUNCTION(BlueprintCallable)
-	void SetRushTargetLocation();
 	// 애님 노티파이에서 호출해서 돌진 시작할 타이밍 정하는 함수
 	UFUNCTION(BlueprintCallable)
 	void StartRush();
+	// 애님 노티파이에서 호출해서 돌진 끝날 타이밍 정하는 함수
+	UFUNCTION(BlueprintCallable)
+	void EndRush();
 	// 돌진 공격 어택 딜레이
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	float RushAttackDelay = 3.0f;
