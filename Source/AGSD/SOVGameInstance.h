@@ -30,6 +30,9 @@ public:
 	TArray<FString> NoRegenItem;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WorldState")
+	TSoftObjectPtr<UWorld> Level;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WorldState")
 	FName TeleportationTag = FName("None");
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WorldState")
@@ -40,6 +43,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WorldState")
 	TMap<FString, FStruct_WorldChestData> ChestMap;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WorldState")
+	int32 ShardsAmount = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
 	int Coin = 0;
@@ -100,4 +106,6 @@ protected:
 	// 클린업 시 실행될 실제 로직 함수
 	// 델리게이트 형식을 맞추기 위해 파라미터 구성을 동일하게 해야 합니다.
 	void HandleWorldCleanup(UWorld* World, bool bSessionEnded, bool bCleanupResources);
+
+	void HandleWorldInitialized(UWorld* World, const UWorld::InitializationValues IVS);
 };

@@ -26,7 +26,7 @@ void UPortalSelectWidget::NativeConstruct()
 	
 	if (LevelSelectPortal)
 	{
-		mapStruct = LevelSelectPortal->getMapStruct(index);
+		mapStruct = LevelSelectPortal->getMapStruct(0);
 	}
 	if (!altar)
 	{
@@ -34,6 +34,15 @@ void UPortalSelectWidget::NativeConstruct()
 		{
 			altar = *It;
 		}
+	}
+	if(MapImage)
+	{
+		if (LevelSelectPortal)
+		{
+			mapStruct = LevelSelectPortal->getMapStruct(index);
+		}
+		MapImage->SetBrushFromTexture(mapStruct.MapImage);
+		MapName->SetText(mapStruct.MapName);
 	}
 }
 
@@ -52,14 +61,14 @@ void UPortalSelectWidget::OnCloseButtonClicked()
 
 void UPortalSelectWidget::OnSelectButtonClicked()
 {
-	SetTeleTag(mapStruct.TeleTag);
-	// IsNull() 대신 경로가 실제로 존재하는지 체크
-	FString PathName = mapStruct.Level.GetLongPackageName();
+	USOVGameInstance* GI = Cast<USOVGameInstance>(GetGameInstance());
 
-	// 경로가 "None"이 아니고 비어있지 않다면 실행
-	if (!PathName.IsEmpty() && PathName != TEXT("None"))
+	if (GI)
 	{
-		UGameplayStatics::OpenLevel(GetWorld(), FName(*PathName), true);
+		GI->TeleportationTag = mapStruct.TeleTag;
+		GI->Level = mapStruct.Level;
+		FName LevelName = FName(*mapStruct.Level.GetAssetName());
+		UGameplayStatics::OpenLevel(this, LevelName);
 	}
 }
 
@@ -73,7 +82,7 @@ void UPortalSelectWidget::OnNextMapButtonClicked()
 			index = (index + 1) % mapNum;
 			mapStruct = LevelSelectPortal->getMapStruct(index);
 		}
-		MapImage->SetBrushFromTexture(mapStruct.Texture);
+		MapImage->SetBrushFromTexture(mapStruct.MapImage);
 		MapName->SetText(mapStruct.MapName);
 	}
 }
@@ -88,7 +97,7 @@ void UPortalSelectWidget::OnPrevMapButtonClicked()
 			index = (mapNum + (index - 1)) % mapNum;
 			mapStruct = LevelSelectPortal->getMapStruct(index);
 		}
-		MapImage->SetBrushFromTexture(mapStruct.Texture);
+		MapImage->SetBrushFromTexture(mapStruct.MapImage);
 		MapName->SetText(mapStruct.MapName);
 	}
 }

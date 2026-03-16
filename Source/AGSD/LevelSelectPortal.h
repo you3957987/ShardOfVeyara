@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Struct_MapData.h"
 #include "GameFramework/Actor.h"
 #include "LevelSelectPortal.generated.h"
 
@@ -36,7 +37,6 @@ public:
 	ALevelSelectPortal();
 	
 	void OnWidgetClosed();
-	FORCEINLINE int32 getMapNum() { return MapStructs.Num(); };
 
 protected:
 	// Called when the game starts or when spawned
@@ -45,7 +45,7 @@ protected:
 	class UBoxComponent* CollisionBox;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Portal")
-	TArray<FMapStruct> MapStructs;
+	UDataTable* MapStructs;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Portal")
 	TSubclassOf<UPortalSelectWidget> PortalSelectWidgetClass;
@@ -64,9 +64,15 @@ public:
 	UFUNCTION()
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	FORCEINLINE FMapStruct getMapStruct(int index)
+	FORCEINLINE FStruct_MapData getMapStruct(int index)
 	{
-		if (MapStructs.IsValidIndex(index))	return MapStructs[index];
-		else return FMapStruct();
+		TArray<FName> RowNames = MapStructs->GetRowNames();
+		if (RowNames.IsValidIndex(index + 1))
+		{
+			FName TargetRowName = RowNames[index + 1];
+			return *MapStructs->FindRow<FStruct_MapData>(TargetRowName, TEXT("ContextString"));
+		}
+		else return FStruct_MapData();
+
 	}
 };

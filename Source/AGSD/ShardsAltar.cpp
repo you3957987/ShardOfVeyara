@@ -31,6 +31,12 @@ void AShardsAltar::BeginPlay()
 {
 	Super::BeginPlay();
 
+	GI = Cast<USOVGameInstance>(GetGameInstance());
+
+	if (GI)
+	{
+		ShardsAmount = GI->ShardsAmount;
+	}
 	// 1. 유효성 검사: 루트 컴포넌트가 있는지 확인
 	if (!DimensionMarbleRoot) return;
 
@@ -45,6 +51,13 @@ void AShardsAltar::BeginPlay()
 		
 		SpawnShards(i);
 	}
+}
+
+void AShardsAltar::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	GI->ShardsAmount = ShardsAmount;
 }
 
 void AShardsAltar::Tick(float DeltaTime)
@@ -80,6 +93,7 @@ void AShardsAltar::Interact_Implementation(AAGSDCharacter* player)
 {
 	player->SubItemAmount();
 	SpawnShards(ShardsAmount++);
+	GI->ShardsAmount = ShardsAmount;
 }
 
 void AShardsAltar::ShowWidget_Implementation(ACharacter* player)

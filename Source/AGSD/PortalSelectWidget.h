@@ -22,9 +22,6 @@ public:
 
 	UFUNCTION()
 	void OnCloseButtonClicked();
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void SetTeleTag(FName teleTag);
 	
 	UFUNCTION()
 	void OnSelectButtonClicked();
@@ -58,7 +55,7 @@ protected:
 	
 	int index = 0;
 
-	FMapStruct mapStruct;
+	FStruct_MapData mapStruct;
 
 	class AShardsAltar* altar;
 };

@@ -47,9 +47,12 @@ FSaveData USOVGameInstance::GetSaveData()
 {
 	FSaveData SaveData;
 	SaveData.NoRegenItem = NoRegenItem;
+	SaveData.Level = Level;
+	SaveData.TeleportationTag = TeleportationTag;
 	SaveData.CurrentDay = CurrentDay;
 	SaveData.CurrentTime = CurrentTime;
 	SaveData.ChestMap = ChestMap;
+	SaveData.ShardsAmount = ShardsAmount;
 	SaveData.Coin = Coin;
 	SaveData.MaxPlayerHealth = MaxPlayerHealth;
 	SaveData.PlayerHealth = PlayerHealth;
@@ -66,9 +69,12 @@ FSaveData USOVGameInstance::GetSaveData()
 void USOVGameInstance::SetSaveData(FSaveData SaveData)
 {
 	NoRegenItem = SaveData.NoRegenItem;
+	Level = SaveData.Level;
+	TeleportationTag = SaveData.TeleportationTag;
 	CurrentDay = SaveData.CurrentDay;
 	CurrentTime = SaveData.CurrentTime;
 	ChestMap = SaveData.ChestMap;
+	ShardsAmount = SaveData.ShardsAmount;
 	Coin = SaveData.Coin;
 	MaxPlayerHealth = SaveData.MaxPlayerHealth;
 	PlayerHealth = SaveData.PlayerHealth;
@@ -119,10 +125,23 @@ void USOVGameInstance::Init()
 	Super::Init();
 
 	// 월드가 정리될 때 호출되는 델리게이트에 HandleWorldCleanup 함수를 연결(Bind)합니다.
-	FWorldDelegates::OnWorldCleanup.AddUObject(this, &USOVGameInstance::HandleWorldCleanup);
+	//FWorldDelegates::OnWorldCleanup.AddUObject(this, &USOVGameInstance::HandleWorldCleanup);
+
+	// 2. 월드 초기화가 완료된 후 호출되는 델리게이트에 바인딩 (맵이 열릴 때)
+	FWorldDelegates::OnPostWorldInitialization.AddUObject(this, &USOVGameInstance::HandleWorldInitialized);
 }
 
 void USOVGameInstance::HandleWorldCleanup(UWorld* World, bool bSessionEnded, bool bCleanupResources)
+{
+	// 실제 게임 월드이거나 에디터 플레이(PIE) 중일 때만 자동 저장 실행
+	if (World && (World->IsGameWorld() || World->IsPlayInEditor()))
+	{
+		// 현재 설정된 스트링(SaveGameSlot)으로 저장 실행
+		SaveGame();
+	}
+}
+
+void USOVGameInstance::HandleWorldInitialized(UWorld* World, const UWorld::InitializationValues IVS)
 {
 	// 실제 게임 월드이거나 에디터 플레이(PIE) 중일 때만 자동 저장 실행
 	if (World && (World->IsGameWorld() || World->IsPlayInEditor()))

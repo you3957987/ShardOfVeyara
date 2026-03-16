@@ -6,9 +6,13 @@
 #include "SOVGameInstance.h"
 #include "SOVSaveGame.h"
 #include "Components/Button.h"
+#include "Components/CanvasPanel.h"
 #include "Components/HorizontalBox.h"
 #include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h"
+#include "ConfirmationDialog.h"
+#include "Struct_MapData.h"
+#include "Components/Image.h"
 
 void USaveGameSlot::NativeConstruct()
 {
@@ -16,8 +20,12 @@ void USaveGameSlot::NativeConstruct()
 	{
 		SlotNum->SetText(FText::AsNumber(SlotIndex));
 	}
+	if (DeleteButton != nullptr)
+	{
+		DeleteButton->OnClicked.AddDynamic(this, &USaveGameSlot::OnClickDeleteButton);
+	}
 	if (SlotName.IsEmpty()) return;
-	
+
 	// 해당 슬롯에 세이브 파일이 있는지 확인
 	if (UGameplayStatics::DoesSaveGameExist(SlotName, 0))
 	{
@@ -33,9 +41,16 @@ void USaveGameSlot::NativeConstruct()
 			bIsEmpty = false;
 			EmptyText->SetVisibility(ESlateVisibility::Collapsed);
 
-			if (PlayMap)
+			FName LevelName = FName(*LoadedInstance->SaveData.Level.GetAssetName());
+			static const FString ContextString(TEXT("Item Look Up Context"));
+			FStruct_MapData* Row = MapDataTable->FindRow<FStruct_MapData>(LevelName, ContextString);
+			if (PlayMapImage && Row)
 			{
-				
+				PlayMapImage->SetBrushFromTexture(Row->MapImage);
+			}
+			if (PlayMap && Row)
+			{
+				PlayMap->SetText(Row->MapName);
 			}
 			if (PlayDay)
 			{
@@ -96,8 +111,66 @@ void USaveGameSlot::OnClickSavedSlotButton()
 	{
 		GI->SaveGameSlot = SlotName;
 		GI->LoadGame();
+		FName LevelName = FName(*GI->Level.GetAssetName());
+    
+		UGameplayStatics::OpenLevel(this, LevelName);
 	}
-	UGameplayStatics::OpenLevel(GetWorld(), FName("Farm_Sky_Island"));
+}
+
+void USaveGameSlot::OnClickDeleteButton()
+{
+	if (!ConfirmationDialog && ConfirmationDialogClass)
+	{
+		ConfirmationDialog = CreateWidget<UConfirmationDialog>(GetWorld(), ConfirmationDialogClass);
+	}
+	if (ConfirmationDialog)
+	{
+		ConfirmationDialog->YesButton->OnClicked.AddDynamic(this, &USaveGameSlot::OnDeleteSlot);
+		ConfirmationDialog->AddToViewport();
+	}
+}
+
+void USaveGameSlot::OnDeleteSlot()
+{
+	if (UGameplayStatics::DoesSaveGameExist(SlotName, 0))
+	{
+		// 2. 세이브 파일 삭제
+		UGameplayStatics::DeleteGameInSlot(SlotName, 0);
+	}
+	
+	SaveDataPanel->SetVisibility(ESlateVisibility::Collapsed);
+	EmptyText->SetVisibility(ESlateVisibility::Visible);
+	bIsEmpty = true;
+	
+	if (SlotButton)
+	{
+		SlotButton->OnClicked.AddDynamic(this, &USaveGameSlot::OnClickEmptySlotButton);
+	}
+	if (ConfirmationDialog)
+	{
+		ConfirmationDialog->YesButton->OnClicked.RemoveAll(this);
+		ConfirmationDialog->RemoveFromParent();
+	}
+}
+
+void USaveGameSlot::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
+
+	if (!bIsEmpty && DeleteButtonPanel)
+	{
+		DeleteButtonPanel->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void USaveGameSlot::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseLeave(InMouseEvent);
+
+	if (DeleteButtonPanel)
+	{
+		DeleteButtonPanel->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
 
 

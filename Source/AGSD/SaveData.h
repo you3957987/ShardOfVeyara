@@ -12,6 +12,12 @@ struct FSaveData : public FTableRowBase
 
 	UPROPERTY()
 	TArray<FString> NoRegenItem;
+
+	UPROPERTY()
+	TSoftObjectPtr<UWorld> Level;
+
+	UPROPERTY()
+	FName TeleportationTag = FName("None");
 	
 	UPROPERTY()
 	int CurrentDay;
@@ -22,6 +28,9 @@ struct FSaveData : public FTableRowBase
 	UPROPERTY()
 	TMap<FString, FStruct_WorldChestData> ChestMap;
 
+	UPROPERTY()
+	int32 ShardsAmount;
+	
 	UPROPERTY()
 	int Coin;
 	
@@ -53,6 +62,7 @@ struct FSaveData : public FTableRowBase
 	{
 		CurrentDay = 1;
 		CurrentTime = 360.f;
+		ShardsAmount = 0;
 		Coin = 0;
 		MaxPlayerHealth = 200.f;	
 		PlayerHealth = MaxPlayerHealth;
