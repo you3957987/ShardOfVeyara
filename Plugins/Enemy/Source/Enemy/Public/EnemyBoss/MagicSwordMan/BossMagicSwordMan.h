@@ -30,7 +30,9 @@ struct FBossMagicSwordManAttackWeight
 	// 궁극기 패턴
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float PowerAttack = 10.0f;
-	
+	// 원거리 검기 공격 패턴
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float BladeWaveAttack = 10.0f;
 };
 
 // 어택 타입 구분용 열거형
@@ -203,6 +205,21 @@ public:
 	// 궁극기 마무리 대미지
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float PowerAttackFinishDamage = 30.f;
+	
+	// 원거리 검기 공격 시작 함수	
+	UAnimMontage* StartBladeWaveAttack();
+	// 원거리 검기 공격 몽타주
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	UAnimMontage* BladeWaveAttackMontage;
+	// 원거리 검기 공격 딜레이
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float BladeWaveAttackDelay = 1.0f;
+	// 애님 노티파이로 검기 날아가는 함수
+	UFUNCTION(BlueprintCallable)
+	void StartBladeWave();
+	// 검기 발사체 클래스 
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	TSubclassOf<class ABaseEnemyProjectile> BladeWaveProjectileClass;
 	
 #if WITH_EDITOR
 	// 에디터에서 프로퍼티가 변경될 때 호출됩니다.

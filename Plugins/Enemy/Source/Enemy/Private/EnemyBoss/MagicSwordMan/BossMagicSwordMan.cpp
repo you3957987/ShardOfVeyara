@@ -4,6 +4,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/SphereComponent.h"
+#include "EnemyProjectile/BaseEnemyProjectile.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 ABossMagicSwordMan::ABossMagicSwordMan()
@@ -203,6 +204,7 @@ UAnimMontage* ABossMagicSwordMan::StartDashJumpUpAttack()
 
 void ABossMagicSwordMan::JumpUpAttackCheck()
 {
+	UE_LOG( LogTemp, Warning, TEXT("JumpUpAttackCheck called. bSuccessJumpUpAttack: %s"), bSuccessJumpUpAttack ? TEXT("true") : TEXT("false") );
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	if ( bSuccessJumpUpAttack == true )
 	{
@@ -424,6 +426,29 @@ void ABossMagicSwordMan::FinishPowerAttack()
 				StopMesh->bPauseAnims = false;
 			}
 		}
+	}
+}
+
+UAnimMontage* ABossMagicSwordMan::StartBladeWaveAttack()
+{
+	if (BladeWaveAttackMontage)
+	{
+		PlayAnimMontage(BladeWaveAttackMontage);
+		AttackType = EMagicSwordManAttackType::SimpleAttack;
+		if (BlackboardComp) BlackboardComp->SetValueAsFloat("AttackDelay", BladeWaveAttackDelay);
+		return BladeWaveAttackMontage;
+	}
+	return nullptr;
+}
+
+void ABossMagicSwordMan::StartBladeWave()
+{
+	if (BladeWaveProjectileClass)
+	{
+		// 정면으로 발사체 스폰 . 약간 앞에서만
+		FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 150.f;
+		FRotator SpawnRotation = GetActorRotation();
+		GetWorld()->SpawnActor<ABaseEnemyProjectile>(BladeWaveProjectileClass, SpawnLocation, SpawnRotation);
 	}
 }
 
