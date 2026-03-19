@@ -18,6 +18,7 @@ enum class EEnemyType : uint8
 	EET_Slime UMETA(DisplayName = "Slime Enemy"), // 슬라임 몹(분열)
 	EET_Mage UMETA(DisplayName = "Mage Enemy"), // 마법사 몹 - 일단 안에 가능한 모든 공격 만들고 애님 노티파이로 결정
 	EET_Guard UMETA(DisplayName = "Guard Enemy"), // 방패병 몹
+	EET_Passive UMETA(DisplayName = "Passive Enemy"), // 패시브 몹 - 공격 안하는 몹 == 비선공 , 플레이어가 공격해야 반응하는 몹 등등
 
 	EET_MAX UMETA(DisplayName = "Default") // 최대값, 추가적인 값을 위한 공간
 };
@@ -119,6 +120,9 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, AActor* DamageCauser) override;
 
+	class UBlackboardComponent* BlackboardComp; // 블랙보드 컴포넌트 포인터
+	bool bBlackboardInitialized = false;
+	
 	// 현재 적 상태 변수
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "자체설정")
 	EEnemyState CurrentState = EEnemyState::EES_Patrol; 
@@ -171,10 +175,11 @@ public:
 	UPROPERTY(EditAnywhere, Category = "자체설정", meta=(DisplayName="Patrol Points"))
 	TArray<TObjectPtr<class ATargetPoint>> PatrolPoints;
 	
-	virtual void Attack(); // 공격 함수. 
-	// 공격 애니메이션 몽타주
-	UPROPERTY(EditAnywhere, Category = "자체설정")
-	class UAnimMontage* AttackMontage;
+	virtual UAnimMontage* Attack(); // 공격 함수. 
+	// 공격 애니메이션 몽타주 배열
+	UPROPERTY(EditAnywhere, Category="자체설정")
+	TArray<TObjectPtr<class UAnimMontage>> AttackMontages;
+	
 	
 	bool bFocusPlayerAfterAttack = true; // 공격 후 플레이어 주시 여부
 	UFUNCTION(BlueprintCallable)

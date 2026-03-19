@@ -13,7 +13,7 @@ class ENEMY_API ABaseGuardEnemy : public ABaseEnemy
 public:
 	ABaseGuardEnemy();
 	virtual void BeginPlay() override;
-	virtual void Attack() override;
+	virtual UAnimMontage* Attack() override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, AActor* DamageCauser) override;
 	

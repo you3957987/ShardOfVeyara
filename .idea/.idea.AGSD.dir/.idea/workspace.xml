@@ -9,24 +9,121 @@
   <component name="ChangeListManager">
     <list default="true" id="61b1a24a-49d1-4972-9071-312c574aff7e" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AI/BB_MagicSwordMan.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AI/BB_MagicSwordMan.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AI/BT_MagicSwordMan.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AI/BT_MagicSwordMan.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/ABP_MagicSwordMan.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/ABP_MagicSwordMan.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_GuardCounterOne.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_GuardCounterOne.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_GuardCounterTwo.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_GuardCounterTwo.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_PowerAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/AM_PowerAttack.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/DashAttack/AM_DashChargeAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/DashAttack/AM_DashChargeAttack.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/DashAttack/AM_DashSimpleAttackOne.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/DashAttack/AM_DashSimpleAttackOne.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/DashAttack/AM_DashSimpleAttackTwo.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/DashAttack/AM_DashSimpleAttackTwo.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/JumpUpAttack/AM_CloseJumpUpAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/JumpUpAttack/AM_CloseJumpUpAttack.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/JumpUpAttack/AM_DashJumpUpAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/Anim/JumpUpAttack/AM_DashJumpUpAttack.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Combo_Attack_02_01_V02_Seq.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Combo_Attack_02_01_V02_Seq.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Combo_Attack_02_02_V02_Seq.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/AnimAsset/AS_Combo_Attack_02_02_V02_Seq.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/BP_MagicSwordMan.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/MagicSwordMan/BP_MagicSwordMan.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/9/7N/KNH7C8G5S0SE1BW64T95V1.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/MagicSwordMan/BossMagicSwordMan.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/MagicSwordMan/BossMagicSwordMan.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/MagicSwordMan/BossMagicSwordManAIController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/MagicSwordMan/BossMagicSwordManAIController.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/MagicSwordMan/BossMagicSwordMan.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/MagicSwordMan/BossMagicSwordMan.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Level/Dungeon_Sky_Island.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Level/Dungeon_Sky_Island.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Level/Tutorial_Sky_Island.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Level/Tutorial_Sky_Island.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/AI/BB_EnemyAI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/AI/BB_EnemyAI.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/AI/BT_EnemyAI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/AI/BT_EnemyAI.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Base_BluePrint/Anim/Base/ABP_Base.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Base_BluePrint/Anim/Base/ABP_Base.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/BP_Boss_SkeletonMage.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/BP_Boss_SkeletonMage.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/BP_Boss_SkeletonMage_LowPoly.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/BP_Boss_SkeletonMage_LowPoly.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Beholder_Explode/ABP_Beholder.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Beholder_Explode/AM_BeholderDead.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Beholder_Explode/AM_BeholderExplode.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Beholder_Explode/BP_Beholder.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Beholder_Explode/BS_Beholder.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/BishopKnight_Guard/ABP_Bishop.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/BishopKnight_Guard/AM_BishopAttack.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/BishopKnight_Guard/AM_BishopDead.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/BishopKnight_Guard/AM_BishopGuardReactionAttack.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/BishopKnight_Guard/AM_BishopGuard_Guard.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/BishopKnight_Guard/BP_Bishop.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/BishopKnight_Guard/BS_Bishop.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/ChestMonster_Mimic/BP_ChestMonster.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/ChestMonster_Mimic/BP_ChestMonster.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Frog_Explode/ABP_Frog.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Frog_Explode/AM_FrogAttack.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Frog_Explode/AM_FrogDead.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Frog_Explode/BP_Frog.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Frog_Explode/BS_Frog.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Grave_Spawner/BP_Grave_Spawner.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Grave_Spawner/BP_Grave_Spawner.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/NagaMage_Mage/BP_NagaMage.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/NagaMage_Mage/BP_NagaMage.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Rat_Melee/ABP_Rat.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Rat_Melee/AM_RatAttack.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Rat_Melee/AM_RatDead.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Rat_Melee/BP_Rat.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Rat_Melee/BS_Rat.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonMinion_Melee/ABP_SkeletomMinion.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonMinion_Melee/AM_SkeletonMinionAttack.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonMinion_Melee/AM_SkeletonMinionDead.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonMinion_Melee/BP_SkeletonMinion.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonMinion_Melee/BP_SkeletonMinion_LowPoly.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonMinion_Melee/BP_SuumonSkeletonMinion.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonMinion_Melee/BP_SuumonSkeletonMinion_LowPoly.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonMinion_Melee_Revive/ABP_SkeletomMinion_Revive.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonMinion_Melee_Revive/AM_SkeletonMinionRevive_Attack.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonMinion_Melee_Revive/AM_SkeletonMinionRevive_Dead.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonMinion_Melee_Revive/AM_SkeletonMinionRevive_Revive.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonMinion_Melee_Revive/BP_SkeletonMinion_Revive.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRogue_Ranged/ABP_SkeletonRouge.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRogue_Ranged/AM_SkeletonRogue_RangedAttack.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRogue_Ranged/AM_SkeletonRougeDead.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRogue_Ranged/AM_SkeletonRougeSpawnGround.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRogue_Ranged/BP_CrossBowArrow.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRogue_Ranged/BP_SkeletonRogue.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRogue_Ranged/BP_SkeletonRogue_LowPoly.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRogue_Ranged/BP_SummonSkeletonRogue.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRogue_Ranged/BP_SummonSkeletonRogue_LowPoly.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRogue_Ranged/BS_SkeletonRouge.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRogue_Ranged/Ref_Spawn.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRouge_Ranged_Revive/ABP_SkeletonRouge_Revive.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRouge_Ranged_Revive/AM_SkeletonRouge_Revive_Dead.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRouge_Ranged_Revive/AM_SkeletonRouge_Revive_Revive.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRouge_Ranged_Revive/BP_SkeletonRogue.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonRouge_Ranged_Revive/BP_SkeletonRogue_Revive.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonWarrior_Melee/ABP_SkeletonWarrior.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonWarrior_Melee/AM_SkeletomWarriorDead.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonWarrior_Melee/AM_SkeletonWarriorSpawnGround.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonWarrior_Melee/AM_SkeletonWarrior_Attack.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonWarrior_Melee/AM_SkeletonWarrior_SpinAttack.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonWarrior_Melee/BP_SkeletonWarrior.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonWarrior_Melee/BP_SkeletonWarrior_LowPoly.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonWarrior_Melee/BP_SummonSkeletonWarrior.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonWarrior_Melee/BP_SummonSkeletonWarrior_LowPoly.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonWarrior_Melee/BS_SkeletonWarrior.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/SkeletonWarrior_Melee/RefPose.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Slime_Slime/ABP_Slime.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Slime_Slime/ABP_Slime.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Slime_Slime/AM_Slime_Attack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Slime_Slime/AM_Slime_Attack.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Slime_Slime/AM_Slime_Dead.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Slime_Slime/AM_Slime_Dead.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Slime_Slime/BP_Slime.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Slime_Slime/BP_Slime.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Slime_Slime/BS_Slime.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Slime_Slime/BS_Slime.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Snake_Trans/ABP_Snake.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Snake_Trans/AM_SnakeAttack.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Snake_Trans/AM_SnakeDead.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Snake_Trans/BP_Snake.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Snake_Trans/BS_Snake.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Specter_Trans/ABP_Specter.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Specter_Trans/AM_SpecterAttack.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Specter_Trans/AM_SpecterDead.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Specter_Trans/BP_Specter.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Specter_Trans/BS_Specter.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Spider_Melee/ABP_Spider.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Spider_Melee/AM_SpiderAttack.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Spider_Melee/AM_SpiderDead.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Spider_Melee/BP_Spider.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Spider_Melee/BS_Spider.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Wasp_Ranged/ABP_Wasp.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Wasp_Ranged/AM_WaspAttack.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Wasp_Ranged/AM_WaspDead.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Wasp_Ranged/BP_Wasp.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Wasp_Ranged/BP_WaspProjectile.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Wasp_Ranged/BS_Wasp.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Wasp_Ranged/SM_WaspProjectile.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/EnemyAsset/MonsterForEnemyBundlePBR/Wave03/Mesh/Cyclops/Cyclops_SK.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/EnemyAsset/MonsterForEnemyBundlePBR/Wave03/Mesh/Cyclops/Cyclops_SK.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enum/EnemyType.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enum/EnemyType.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/TestMap/BP_EnemyTestGameMode.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/TestMap/BP_EnemyTestGameMode.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/TestMap/ThirdPerson/Level_EnemyTest.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/TestMap/ThirdPerson/Level_EnemyTest.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest/3/KB/3KKY8XNU9HXOEJW78PON33.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/BTTask/BTTask_BaseMageAttack.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/BTTask/BTTask_BaseMageAttack.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/BaseEnemy.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/BaseEnemy.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/BaseGuardEnemy.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/BaseGuardEnemy.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/BaseRangedEnemy.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/BaseRangedEnemy.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/BaseTransparEnemy.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/BaseTransparEnemy.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/Melee_RebirthEnemy.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/Melee_RebirthEnemy.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/Ranged_RebirthEnemy.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/Ranged_RebirthEnemy.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/BTTask/BTTask_BaseMageAttack.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/BTTask/BTTask_BaseMageAttack.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/BaseEnemy.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/BaseEnemy.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Enemy/BaseGuardEnemy.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Enemy/BaseGuardEnemy.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Enemy/BaseRangedEnemy.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Enemy/BaseRangedEnemy.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Enemy/BaseTransparEnemy.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Enemy/BaseTransparEnemy.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,8 +141,8 @@
   </component>
   <component name="CopilotUserSelectedModel">
     <selectedModels>
-      <entry key="chat-panel" value="Gemini 3 Pro (Preview)" />
-      <entry key="agent-panel" value="Gemini 3 Pro (Preview)" />
+      <entry key="chat-panel" value="Gemini 3 Flash (Preview)" />
+      <entry key="agent-panel" value="Gemini 3 Flash (Preview)" />
     </selectedModels>
   </component>
   <component name="DpaMonitoringSettings">
@@ -55,6 +152,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/BasePassiveEnemy.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/MagicSwordMan/BTTask_MagicSwordManAirAttack.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/MagicSwordMan/BTTask_MagicSwordManDashAttack.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/MagicSwordMan/BTTask_MagicSwordManDashJumpUp.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -62,6 +160,8 @@
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/MagicSwordMan/BTTask_MagicSwordManGuardPattern.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/MagicSwordMan/BTTask_MagicSwordManPowerAttack.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/MagicSwordMan/BTTask_MagicSwordManWaveAttack.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/BTTask/BTTask_BasePassiveAttack.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Enemy/BasePassiveEnemy.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/MagicSwordMan/BTTask_MagicSwordManAirAttack.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/MagicSwordMan/BTTask_MagicSwordManCloseJumpUp.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/MagicSwordMan/BTTask_MagicSwordManDashAttack.h" root0="FORCE_HIGHLIGHTING" />
@@ -206,6 +306,7 @@
       <workItem from="1773371196314" duration="1000000" />
       <workItem from="1773381834965" duration="3307000" />
       <workItem from="1773624297930" duration="3654000" />
+      <workItem from="1773882335262" duration="10227000" />
     </task>
     <servers />
   </component>

@@ -156,16 +156,11 @@ void AMelee_RebirthEnemy::AfterReviveMontageEnd()
 	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 
 	// 4. AI 로직 재개 (빙의는 유지한 채 신호만 줌)
-	AAIController* AIController = Cast<AAIController>(GetController());
-	if (AIController)
+	if (BlackboardComp)
 	{
-		UBlackboardComponent* BlackboardComp = AIController->GetBlackboardComponent();
-		if (BlackboardComp)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Enemy Revived!"));
-			// 비헤이비어 트리가 다시 작동하도록 신호 변경
-			BlackboardComp->SetValueAsBool(TEXT("IsDead"), false);
-		}
+		UE_LOG(LogTemp, Warning, TEXT("Enemy Revived!"));
+		// 비헤이비어 트리가 다시 작동하도록 신호 변경
+		BlackboardComp->SetValueAsBool(TEXT("IsDead"), false);
 	}
 
 	// 5. 체력바 다시 보이기

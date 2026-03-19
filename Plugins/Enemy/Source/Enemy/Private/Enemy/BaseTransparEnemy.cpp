@@ -33,7 +33,7 @@ void ABaseTransparEnemy::Tick(float DeltaTime)
 	CheckMeleeAttackHit(DeltaTime);
 }
 
-void ABaseTransparEnemy::Attack()
+UAnimMontage* ABaseTransparEnemy::Attack()
 {
 	// 공격 시 투명 상태라면 투명화 해제
 	if ( bIsTransparent == true ) SetCharacterTransparency(false);
@@ -41,9 +41,10 @@ void ABaseTransparEnemy::Attack()
 	FTimerHandle DelayTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(DelayTimerHandle, [this]()
 	{
-		Super::Attack();
+		return Super::Attack();
 	}, 0.3f, false); // 특정 지연 후에 실행
 	
+	return nullptr;
 }
 
 float ABaseTransparEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,

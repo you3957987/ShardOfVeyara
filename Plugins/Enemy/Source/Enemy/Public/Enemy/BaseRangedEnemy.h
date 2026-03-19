@@ -22,7 +22,6 @@ protected:
 	
 public:
 	ABaseRangedEnemy();
-	virtual void Attack() override;
 
 	UFUNCTION(BlueprintCallable)
 	void ShootProjectile();

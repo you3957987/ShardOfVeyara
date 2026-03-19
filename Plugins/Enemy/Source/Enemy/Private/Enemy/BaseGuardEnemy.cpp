@@ -55,10 +55,10 @@ void ABaseGuardEnemy::BeginPlay()
 	}
 }
 
-void ABaseGuardEnemy::Attack()
+UAnimMontage* ABaseGuardEnemy::Attack()
 {
 	AttackDamage = NormalAttackDamage; // 공격 대미지를 일반 공격 대미지로 설정
-	Super::Attack();
+	return Super::Attack();
 }
 
 float ABaseGuardEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,

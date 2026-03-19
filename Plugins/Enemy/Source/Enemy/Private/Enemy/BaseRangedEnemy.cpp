@@ -10,13 +10,6 @@ ABaseRangedEnemy::ABaseRangedEnemy()
 	EnemyType = EEnemyType::EET_Ranged;
 }
 
-void ABaseRangedEnemy::Attack()
-{
-	Super::Attack();
-
-	//UE_LOG(LogTemp, Warning, TEXT("RangedEnemyAttackCall") );
-}
-
 // 발사체 발사 함수
 void ABaseRangedEnemy::ShootProjectile()
 {
