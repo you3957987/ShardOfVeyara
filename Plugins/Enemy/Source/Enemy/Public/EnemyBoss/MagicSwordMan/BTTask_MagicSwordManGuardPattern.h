@@ -2,22 +2,25 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "BTTask_MagicSwordManWaveAttack.generated.h"
+#include "BTTask_MagicSwordManGuardPattern.generated.h"
 
 // 깃 추가 확인용
 UCLASS()
-class ENEMY_API UBTTask_MagicSwordManWaveAttack : public UBTTask_BlackboardBase
+class ENEMY_API UBTTask_MagicSwordManGuardPattern : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
+
+	float CurrentTime = 0.0f;
+
+	float GuardDuration = 3.0f;
 	
-	bool bIsAttacking = false;
-	
-	UAnimMontage* CurrentAttackMontage;
+protected:
+	// 태스크 시작 시 실행
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+    
+	// 태스크가 InProgress 상태일 때 매 프레임 실행
+	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 	
 public:
-	UBTTask_MagicSwordManWaveAttack();
-
-	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
-	// 틱 태스크
-	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+	UBTTask_MagicSwordManGuardPattern();
 };

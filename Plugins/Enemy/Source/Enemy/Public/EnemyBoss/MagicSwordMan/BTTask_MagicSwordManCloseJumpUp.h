@@ -2,20 +2,20 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "BTTask_MagicSwordManWaveAttack.generated.h"
+#include "BTTask_MagicSwordManCloseJumpUp.generated.h"
 
 // 깃 추가 확인용
 UCLASS()
-class ENEMY_API UBTTask_MagicSwordManWaveAttack : public UBTTask_BlackboardBase
+class ENEMY_API UBTTask_MagicSwordManCloseJumpUp : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
-	
+
 	bool bIsAttacking = false;
 	
 	UAnimMontage* CurrentAttackMontage;
 	
 public:
-	UBTTask_MagicSwordManWaveAttack();
+	UBTTask_MagicSwordManCloseJumpUp();
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	// 틱 태스크
