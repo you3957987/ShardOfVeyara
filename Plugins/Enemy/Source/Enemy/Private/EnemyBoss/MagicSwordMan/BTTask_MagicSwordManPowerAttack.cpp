@@ -3,6 +3,7 @@
 #include "AIController.h"
 #include "EnemyBoss/MagicSwordMan/BossMagicSwordMan.h"
 
+// 깃 추가 확인용
 UBTTask_MagicSwordManPowerAttack::UBTTask_MagicSwordManPowerAttack()
 {
 	NodeName = "MagicSwordMan Power Attack";

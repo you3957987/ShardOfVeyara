@@ -4,6 +4,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "EnemyBoss/MagicSwordMan/BossMagicSwordMan.h"
 
+// 깃 추가 확인용
 UBTTask_MagicSwordManGuardPattern::UBTTask_MagicSwordManGuardPattern()
 {
 	NodeName = "MagicSwordMan Guard Pattern";
