@@ -19,6 +19,7 @@ enum class EEnemyType : uint8
 	EET_Mage UMETA(DisplayName = "Mage Enemy"), // 마법사 몹 - 일단 안에 가능한 모든 공격 만들고 애님 노티파이로 결정
 	EET_Guard UMETA(DisplayName = "Guard Enemy"), // 방패병 몹
 	EET_Passive UMETA(DisplayName = "Passive Enemy"), // 패시브 몹 - 공격 안하는 몹 == 비선공 , 플레이어가 공격해야 반응하는 몹 등등
+	EET_Burrow UMETA(DisplayName = "Burrow Enemy"), // 버로우 지렁이 몹
 
 	EET_MAX UMETA(DisplayName = "Default") // 최대값, 추가적인 값을 위한 공간
 };
