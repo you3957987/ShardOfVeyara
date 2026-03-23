@@ -53,14 +53,13 @@ class ENEMY_API ABossMagicSwordMan : public ABaseBossEnemy
 	
 	float AttackDamage;
 	
+	// 깃 수정 확인용 
 public:
 	ABossMagicSwordMan();
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, 
 		class AController* EventInstigator, AActor* DamageCauser) override;
-	
-	
 	
 	UFUNCTION()
 	void OnBeginOverlapWeaponCollisionSphere(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -221,6 +220,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	TSubclassOf<class ABaseEnemyProjectile> BladeWaveProjectileClass;
 	
+	// 깃 수정 확인
 #if WITH_EDITOR
 	// 에디터에서 프로퍼티가 변경될 때 호출됩니다.
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
