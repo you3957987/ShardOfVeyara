@@ -32,6 +32,8 @@ ABaseBurrowEnemy::ABaseBurrowEnemy()
 	BurrowAttackCollisionSphere->ShapeColor = FColor::Black;
 	BurrowAttackCollisionSphere->SetVisibility(false);
 	BurrowAttackCollisionSphere->SetHiddenInGame(false);
+	
+	EnemyType = EEnemyType::EET_Burrow;
 }
 
 void ABaseBurrowEnemy::BeginPlay()
