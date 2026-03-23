@@ -21,7 +21,7 @@ EBTNodeResult::Type UBTTask_BaseMageAttack::ExecuteTask(UBehaviorTreeComponent& 
 	}
 
 	// 1. 공격 함수 실행 (몽타주 재생 시작)
-	Enemy->Attack();
+	CurrentAttackMontage = Enemy->Attack();
 	bIsAttacking = true;
 
 	// 2. 중요: "성공(Succeeded)"을 바로 리턴하면 안 됩니다!
@@ -41,7 +41,7 @@ void UBTTask_BaseMageAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* 
 
 	// Boss가 유효하고, 몽타주 재생이 끝났는지 확인
 	// (Montage_IsPlaying은 지정한 몽타주가 재생 중이면 true, 아니면 false)
-	if (Enemy && !Enemy->GetMesh()->GetAnimInstance()->Montage_IsPlaying(Enemy->AttackMontage))
+	if (Enemy && !Enemy->GetMesh()->GetAnimInstance()->Montage_IsPlaying(CurrentAttackMontage) )
 	{
 		// 3. 몽타주가 끝났으므로 태스크 종료를 선언합니다.
 		bIsAttacking = false;

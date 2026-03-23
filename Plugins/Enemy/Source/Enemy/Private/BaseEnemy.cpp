@@ -74,6 +74,7 @@ void ABaseEnemy::BeginPlay()
 	
 	if ( bUseSpawnMontage == true && SpawnMontage ) // 스폰 몽타주 사용 시
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Spawn Montage Play"));
 		PlayAnimMontage(SpawnMontage);
 		// 체력바 안보이게
 		if ( HealthBarWidget )
@@ -111,19 +112,43 @@ void ABaseEnemy::PollInit()
 			bTargetInitalize = true; // 캐릭터가 유효하면 초기화 플래그를 true로 설정합니다.
 		}
 	}
+	// 블랙보드 컴포넌트	
+	if (bBlackboardInitialized == false)
+	{
+		if (AAIController* AIController = Cast<AAIController>(GetController()))
+		{
+			BlackboardComp = AIController->GetBlackboardComponent();
+		}
+		if (BlackboardComp)
+		{
+			// 패시브 몹은 일단 패시브한 상태(비선공)로 시작. 나머지는 아님
+			if ( EnemyType == EEnemyType::EET_Passive ) BlackboardComp->SetValueAsBool(TEXT("Passive"), true); 
+			else BlackboardComp->SetValueAsBool(TEXT("Passive"), false); 
+			bBlackboardInitialized = true;
+		}
+	}
 }
 
 // 포커스, 사운드, 애니메이션, 이펙트 등
-void ABaseEnemy::Attack()
+UAnimMontage* ABaseEnemy::Attack()
 {
 	// 여기서 SetFoucs 하면 나중에 ClearFocus 도 해줘야함. 일단 커찮아서 안함.
 
-	if ( AttackMontage ) // 공격 애니메이션 몽타주가 설정되어 있는지 확인
+	// 어택 몽타주 배열중 랜덤하게 하나 실행
+	if ( AttackMontages.Num() > 0 )
 	{
-		PlayAnimMontage(AttackMontage); // 공격 애니메이션 재생
+		int32 RandomIndex = FMath::RandRange(0, AttackMontages.Num() - 1);
+		UAnimMontage* RandomAttackMontage = AttackMontages[RandomIndex];
+		if ( RandomAttackMontage )
+		{
+			PlayAnimMontage(RandomAttackMontage);
+			bFocusPlayerAfterAttack = false; // 공격 후 포커스 시작 플래그를 false로 설정
+			
+			return RandomAttackMontage;
+		}
 	}
 
-	bFocusPlayerAfterAttack = false; // 공격 후 포커스 시작 플래그를 false로 설정
+	return nullptr;
 }
 
 void ABaseEnemy::StartFocusPlayerAfterAttack()
@@ -159,14 +184,9 @@ void ABaseEnemy::Die()
 	GetCharacterMovement()->DisableMovement();
 
 	// AI 로직 중지
-	AAIController* AIController = Cast<AAIController>(GetController());
-	if (AIController)
+	if (BlackboardComp)
 	{
-		UBlackboardComponent* BlackboardComp = AIController->GetBlackboardComponent();
-		if (BlackboardComp)
-		{
-			BlackboardComp->SetValueAsBool(TEXT("IsDead"), true);
-		}
+		BlackboardComp->SetValueAsBool(TEXT("IsDead"), true);
 	}
 	
 	if (HealthBarWidget)

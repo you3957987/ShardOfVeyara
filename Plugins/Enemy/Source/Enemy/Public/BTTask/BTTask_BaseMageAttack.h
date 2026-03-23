@@ -12,6 +12,7 @@ class ENEMY_API UBTTask_BaseMageAttack : public UBTTask_BlackboardBase
 	
 	bool bIsAttacking = false;
 
+	UAnimMontage* CurrentAttackMontage;
 public:
 	UBTTask_BaseMageAttack();
 

@@ -81,7 +81,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	// 공격시 투명화 해제
-	virtual void Attack() override;
+	virtual UAnimMontage* Attack() override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, AActor* DamageCauser) override;
 	
