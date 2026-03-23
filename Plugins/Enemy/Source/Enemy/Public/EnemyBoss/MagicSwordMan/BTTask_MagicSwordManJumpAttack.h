@@ -4,7 +4,7 @@
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "BTTask_MagicSwordManJumpAttack.generated.h"
 
-
+// 깃 추가 확인용
 UCLASS()
 class ENEMY_API UBTTask_MagicSwordManJumpAttack : public UBTTask_BlackboardBase
 {

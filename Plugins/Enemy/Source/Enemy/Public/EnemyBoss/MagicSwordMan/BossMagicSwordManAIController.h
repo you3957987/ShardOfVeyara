@@ -5,6 +5,7 @@
 #include "BossMagicSwordManAIController.generated.h"
 
 
+// 깃 추가 확인용
 UCLASS()
 class ENEMY_API ABossMagicSwordManAIController : public ABossAIController
 {

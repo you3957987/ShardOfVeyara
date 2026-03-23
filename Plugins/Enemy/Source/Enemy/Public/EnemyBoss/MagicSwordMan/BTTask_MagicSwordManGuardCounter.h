@@ -4,6 +4,7 @@
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "BTTask_MagicSwordManGuardCounter.generated.h"
 
+// 깃 추가 확인용
 UCLASS()
 class ENEMY_API UBTTask_MagicSwordManGuardCounter : public UBTTask_BlackboardBase
 {
