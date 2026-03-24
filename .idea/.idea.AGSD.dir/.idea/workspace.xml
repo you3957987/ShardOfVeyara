@@ -8,8 +8,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="61b1a24a-49d1-4972-9071-312c574aff7e" name="변경" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/MagicSwordMan/BossMagicSwordMan.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/MagicSwordMan/BossMagicSwordMan.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Level/Forest_Boss_Room.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Level/Forest_Boss_Room.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Level/Forest_Sky_Island.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Level/Forest_Sky_Island.umap" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +38,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Core/Public/Containers/Array.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/Enemy/BasePassiveEnemy.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/MagicSwordMan/BTTask_MagicSwordManAirAttack.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/MagicSwordMan/BTTask_MagicSwordManDashAttack.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -67,23 +68,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;Uproject.AGSD.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Enemt__Pet&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "Uproject.AGSD.executor": "Run",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="AGSD" type="Uproject" factoryName="rider.uproject">
       <configuration_1 setup="1">
@@ -91,7 +92,7 @@
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
         <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Binaries/Win64/UnrealEditor-Win64-DebugGame.exe" />
-        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\YJH\Documents\GitHub\AGSD\AGSD.uproject&quot;" />
+        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\user\Documents\GitHub\AGSD\AGSD.uproject&quot;" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.6" />
         <option name="PASS_PARENT_ENVS" value="1" />
@@ -117,7 +118,7 @@
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
         <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Binaries/Win64/UnrealEditor.exe" />
-        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\YJH\Documents\GitHub\AGSD\AGSD.uproject&quot;" />
+        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\user\Documents\GitHub\AGSD\AGSD.uproject&quot;" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.6" />
         <option name="PASS_PARENT_ENVS" value="1" />
@@ -195,6 +196,7 @@
       <workItem from="1773882335262" duration="10227000" />
       <workItem from="1774067812786" duration="3727000" />
       <workItem from="1774227737245" duration="770000" />
+      <workItem from="1774343679789" duration="399000" />
     </task>
     <servers />
   </component>
