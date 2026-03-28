@@ -4,7 +4,9 @@
 #include "Tribute.h"
 
 #include "AGSDCharacter.h"
+#include "AlchemyUI.h"
 #include "TributeUI.h"
+#include "Camera/CameraComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 
@@ -24,6 +26,9 @@ ATribute::ATribute()
 	CollisionSphere->SetupAttachment(RootComponent);
 	CollisionSphere->OnComponentBeginOverlap.AddDynamic(this, &ATribute::OnBeginOverlap);
 	CollisionSphere->OnComponentEndOverlap.AddDynamic(this, &ATribute::OnEndOverlap);
+
+	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
+	CameraComp->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -56,6 +61,7 @@ void ATribute::Tick(float DeltaTime)
 
 void ATribute::Interact_Implementation(AAGSDCharacter* player)
 {
+	/*
 	PlayFireNiagara();
 	FString ItemID = player->SubItemAmount();
 	int* FoundAmount = CurrentLevelTributeItems.Find(ItemID);
@@ -82,6 +88,37 @@ void ATribute::Interact_Implementation(AAGSDCharacter* player)
 		player->AddDamage(10.0f);
 		SetNextTributeUI();
 	}
+	*/
+	if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(player->GetController()))
+	{
+		Player = player;
+		Player->Mining = true;
+		bCanUseTribute = false;
+		
+		PlayerController->SetViewTargetWithBlend(this, BlendTime);
+		
+		// 위젯이 아직 없다면 여기서 생성
+		if (!TributeWidget && TributeWidgetClass)
+		{
+			TributeWidget = CreateWidget<UAlchemyUI>(GetWorld(), TributeWidgetClass);
+		}
+		if (TributeWidget)
+		{
+			//TributeWidget->SetAlchemyTable(this);
+			
+			TributeWidget->AddToViewport();
+
+			TributeWidget->PlayFadeIn();
+			
+			FInputModeUIOnly InputMode;
+			InputMode.SetWidgetToFocus(TributeWidget->TakeWidget());
+			PlayerController->SetInputMode(InputMode);
+			PlayerController->bShowMouseCursor = true;
+		}
+		
+		//FTimerHandle TimerHandle;
+		//GetWorldTimerManager().SetTimer(TimerHandle, this, &AAlchemyTable::OnCameraBlendFinished, BlendTime, false);
+	}
 }
 
 void ATribute::ShowWidget_Implementation(ACharacter* player)
@@ -92,11 +129,14 @@ void ATribute::ShowWidget_Implementation(ACharacter* player)
 
 bool ATribute::CanInteract_Implementation(AAGSDCharacter* player)
 {
+	/*
 	if (int* FoundAmount = CurrentLevelTributeItems.Find(player->getPlayerHoidingItemID()))
 	{
 		if (*FoundAmount > 0) return true;
 	}
 	return false;
+	*/
+	return bCanUseTribute;
 }
 
 void ATribute::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,

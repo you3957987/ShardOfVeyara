@@ -3,10 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AGSDCharacter.h"
 #include "Interaction.h"
 #include "TributeUI.h"
 #include "GameFramework/Actor.h"
 #include "Tribute.generated.h"
+
+class UAlchemyUI;
+class UCameraComponent;
 
 UCLASS()
 class AGSD_API ATribute : public AActor, public IInteraction
@@ -27,6 +31,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tribute")
 	class USphereComponent* CollisionSphere;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UCameraComponent* CameraComp;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tribute")
 	class UTributeUI* TributeUIInstance;
 
@@ -40,6 +47,20 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tribute")
 	TMap<FString, int32> CurrentLevelTributeItems = {};
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tribute")
+	AAGSDCharacter* Player;
+
+	bool bCanUseTribute = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tribute")
+	float BlendTime = 0.8f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	TSubclassOf<UAlchemyUI> TributeWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
+	UAlchemyUI* TributeWidget;
 
 	void SetNextTributeUI();
 	
