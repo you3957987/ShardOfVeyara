@@ -17,6 +17,7 @@ AMelee_RebirthEnemy::AMelee_RebirthEnemy()
 	SoulCollisionSphere->SetupAttachment(SoulPoint); 
 	SoulCollisionSphere->ShapeColor = FColor::Cyan;
 	SoulCollisionSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision); 
+	SoulCollisionSphere->SetCollisionObjectType(ECollisionChannel::ECC_Pawn);
 	
 	SoulEffectNiagara = CreateDefaultSubobject<UNiagaraComponent>(TEXT("SoulEffectNiagara"));
 	SoulEffectNiagara->SetupAttachment(SoulCollisionSphere);
@@ -27,6 +28,7 @@ AMelee_RebirthEnemy::AMelee_RebirthEnemy()
 float AMelee_RebirthEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 	class AController* EventInstigator, AActor* DamageCauser)
 {
+	
 	// 소울 상태인지 먼저 확인하
 	if (bIsActiveSoul)
 	{
@@ -90,7 +92,7 @@ void AMelee_RebirthEnemy::SpawnSoul()
 	// 2. 소울 충돌 감지 켜기 (오버랩)
 	if (SoulCollisionSphere)
 	{
-		SoulCollisionSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		SoulCollisionSphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	}
 	
 	// [추가] 지정된 시간이(ReviveDelayTime) 지나면 Revive 함수 호출

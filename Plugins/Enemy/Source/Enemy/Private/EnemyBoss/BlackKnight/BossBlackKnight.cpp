@@ -301,7 +301,8 @@ void ABossBlackKnight::StartWaveAttack()
                     FinalLocation = HitResult.Location;
                 }
 
-                DrawDebugSphere(World, FinalLocation, 80.0f, 16, FColor::Purple, false, 2.0f);
+            	if ( WeakThis->bDebugMode == true ) DrawDebugSphere(World, FinalLocation, 80.0f, 16, FColor::Purple, false, 2.0f);
+            	
             	// --- 플레이어 감지 로직 추가 ---
             	TArray<FOverlapResult> OverlapResults;
             	FCollisionShape SphereShape = FCollisionShape::MakeSphere(80.0f); // 디버그 스피어와 동일한 크기
@@ -457,7 +458,7 @@ void ABossBlackKnight::SpawnRandomZapEffect()
             }
 
             // (디버그용) 위치 표시
-            DrawDebugSphere(WorldContext, TargetLocation, DamageRadius, 12, FColor::Yellow, false, 1.0f);
+            if ( WeakThis->bDebugMode == true )  DrawDebugSphere(WorldContext, TargetLocation, DamageRadius, 12, FColor::Yellow, false, 1.0f);
 
         	/*
             // 4. 범위 대미지 판정
@@ -550,7 +551,7 @@ void ABossBlackKnight::SpawnZapAttackEffect()
 	}
 
 	// 디버그 스피어 그리기
-	DrawDebugSphere(GetWorld(), SpawnLocation, 150.0f, 12, FColor::Blue, false, 2.0f);
+	if ( bDebugMode == true ) DrawDebugSphere(GetWorld(), SpawnLocation, 150.0f, 12, FColor::Blue, false, 2.0f);
 
 	// 대미지 판정 범위 설정
 	float DamageRadius = 150.0f; 
