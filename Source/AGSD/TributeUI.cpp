@@ -3,6 +3,7 @@
 
 #include "TributeUI.h"
 
+#include "Components/Button.h"
 #include "Components/UniformGridPanel.h"
 #include "Dataflow/DataflowContent.h"
 
@@ -50,28 +51,31 @@ void UTributeUI::SetNextTributeItem(const TMap<FString, int32>& ItemMap)
 	}
 }
 
-void UTributeUI::SetTargetOpacity(float NewOpacity)
-{
-	TargetOpacity = FMath::Clamp(NewOpacity, 0.0f, 1.0f);
-}
-
-void UTributeUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
-{
-	Super::NativeTick(MyGeometry, InDeltaTime);
-
-	float CurrentOpacity = GetRenderOpacity();
-
-	// 1. [보간] 현재 투명도에서 목표 투명도로 부드럽게 이동합니다.
-	// FInterpTo는 Target에 가까워질수록 속도가 줄어들어 자연스러운 감속 효과를 줍니다.
-	float NextOpacity = FMath::FInterpTo(CurrentOpacity, TargetOpacity, InDeltaTime, FadeSpeed);
-
-	// Render Opacity 적용
-	SetRenderOpacity(NextOpacity);
-}
-
 void UTributeUI::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	SetRenderOpacity(0.0f);
+	if (CloseButton)
+	{
+		CloseButton->OnClicked.AddDynamic(this, &UTributeUI::OnCloseButtonClicked);
+	}
+}
+
+void UTributeUI::PlayFadeIn()
+{
+	if (FadeinAnim)
+	{
+		PlayAnimation(FadeinAnim);
+	}
+}
+
+void UTributeUI::NativeDestruct()
+{
+	Super::NativeDestruct();
+}
+
+void UTributeUI::OnCloseButtonClicked()
+{
+	// 스스로를 화면에서 제거합니다.
+	RemoveFromParent();
 }

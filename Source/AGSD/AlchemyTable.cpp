@@ -145,6 +145,8 @@ void AAlchemyTable::EndAlchemy()
 	// 6. 위젯 제거
 	if (AlchemyWidget)
 	{
+		AlchemyWidget->getCloseButton()->OnClicked.RemoveDynamic(this, &AAlchemyTable::EndAlchemy);
+		AlchemyWidget->getEmptyButton()->OnClicked.AddDynamic(this, &AAlchemyTable::EmptyPot);
 		AlchemyWidget->RemoveFromParent();
 		// 메모리 관리를 위해 필요하다면 AlchemyWidget = nullptr; 를 해줄 수도 있지만, 
 		// 다시 열 때를 대비해 유지하는 것이 일반적입니다.
@@ -198,8 +200,13 @@ void AAlchemyTable::Interact_Implementation(AAGSDCharacter* player)
 		}
 		if (AlchemyWidget)
 		{
-			AlchemyWidget->SetAlchemyTable(this);
+			AlchemyWidget->setOwnerActor(this);
+			AlchemyWidget->getCloseButton()->OnClicked.AddDynamic(this, &AAlchemyTable::EndAlchemy);
 			
+			if (UButton* EmptyButton = AlchemyWidget->getEmptyButton())
+			{
+				EmptyButton->OnClicked.AddDynamic(this, &AAlchemyTable::EmptyPot);
+			}
 			AlchemyWidget->AddToViewport();
 
 			AlchemyWidget->PlayFadeIn();

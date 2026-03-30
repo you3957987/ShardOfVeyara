@@ -34,8 +34,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UCameraComponent* CameraComp;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tribute")
-	class UTributeUI* TributeUIInstance;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tribute")
+	//class UTributeUI* TributeUIInstance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tribute")
 	UDataTable* TributeDataTable;
@@ -57,10 +57,10 @@ protected:
 	float BlendTime = 0.8f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
-	TSubclassOf<UAlchemyUI> TributeWidgetClass;
+	TSubclassOf<UTributeUI> TributeWidgetClass;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
-	UAlchemyUI* TributeWidget;
+	UTributeUI* TributeWidget;
 
 	void SetNextTributeUI();
 	
@@ -85,4 +85,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Tribute")
 	void PlayFireExplosionNiagara();
+
+	UFUNCTION()
+	void EndTribute();
 };

@@ -4,11 +4,11 @@
 #include "Tribute.h"
 
 #include "AGSDCharacter.h"
-#include "AlchemyUI.h"
 #include "TributeUI.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ATribute::ATribute()
@@ -37,8 +37,8 @@ void ATribute::BeginPlay()
 	Super::BeginPlay();
 
 	if (!TributeUI) return;
-	TributeUIInstance = Cast<UTributeUI>(TributeUI->GetUserWidgetObject());
-	if (!TributeUIInstance || !TributeDataTable) return;
+	//TributeUIInstance = Cast<UTributeUI>(TributeUI->GetUserWidgetObject());
+	//if (!TributeUIInstance || !TributeDataTable) return;
 	SetNextTributeUI();
 }
 
@@ -49,7 +49,7 @@ void ATribute::SetNextTributeUI()
 	{
 		CurrentLevelTributeItems = CurrentLevelRow->TributeItems;
 	}
-	TributeUIInstance->SetNextTributeItem(CurrentLevelTributeItems);
+	//TributeUIInstance->SetNextTributeItem(CurrentLevelTributeItems);
 }
 
 // Called every frame
@@ -100,11 +100,12 @@ void ATribute::Interact_Implementation(AAGSDCharacter* player)
 		// 위젯이 아직 없다면 여기서 생성
 		if (!TributeWidget && TributeWidgetClass)
 		{
-			TributeWidget = CreateWidget<UAlchemyUI>(GetWorld(), TributeWidgetClass);
+			TributeWidget = CreateWidget<UTributeUI>(GetWorld(), TributeWidgetClass);
 		}
 		if (TributeWidget)
 		{
-			//TributeWidget->SetAlchemyTable(this);
+			TributeWidget->setOwnerActor(this);
+			TributeWidget->getCloseButton()->OnClicked.AddDynamic(this, &ATribute::EndTribute);
 			
 			TributeWidget->AddToViewport();
 
@@ -144,7 +145,7 @@ void ATribute::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other
 {
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
 	{
-		TributeUIInstance->SetTargetOpacity(1.0f);
+		//TributeUIInstance->SetTargetOpacity(1.0f);
 		player->AddInteractableActor(this);
 	}
 }
@@ -154,8 +155,39 @@ void ATribute::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 {
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
 	{
-		TributeUIInstance->SetTargetOpacity(0.0f);
+		//TributeUIInstance->SetTargetOpacity(0.0f);
 		player->RemoveInteractableActor(this);
+	}
+}
+
+void ATribute::EndTribute()
+{
+	// 1. 플레이어 컨트롤러 가져오기
+	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (!PC) return;
+    
+	// 3. 카메라를 다시 캐릭터에게로 (부드럽게 복구)
+	PC->SetViewTargetWithBlend(Player, BlendTime);
+
+	// 4. 입력 모드를 다시 게임 전용으로 변경
+	FInputModeGameOnly InputMode;
+	PC->SetInputMode(InputMode);
+	PC->bShowMouseCursor = false;
+
+	// 5. 캐릭터 상태 및 테이블 상태 복구
+	if (Player)
+	{
+		Player->Mining = false; // 이동 가능하게 변경
+	}
+	bCanUseTribute = true; // 다시 상호작용 가능하게
+
+	// 6. 위젯 제거
+	if (TributeWidget)
+	{
+		TributeWidget->getCloseButton()->OnClicked.RemoveDynamic(this, &ATribute::EndTribute);
+		TributeWidget->RemoveFromParent();
+		// 메모리 관리를 위해 필요하다면 AlchemyWidget = nullptr; 를 해줄 수도 있지만, 
+		// 다시 열 때를 대비해 유지하는 것이 일반적입니다.
 	}
 }
 

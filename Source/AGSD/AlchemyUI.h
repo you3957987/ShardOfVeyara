@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/Button.h"
 #include "AlchemyUI.generated.h"
 
 /**
@@ -31,10 +32,20 @@ public:
 	
 	void PlayFadeIn();
 
-	FORCEINLINE void SetAlchemyTable(AAlchemyTable* table) { AlchemyTable = table; }
-
 	UFUNCTION(BlueprintImplementableEvent)
 	void InitInsertedSlot();
+
+	UFUNCTION()
+	void OnCloseButtonClicked();
+
+	UFUNCTION()
+	FORCEINLINE UButton* getCloseButton() const {return CloseButton;};
+
+	UFUNCTION()
+	FORCEINLINE UButton* getEmptyButton() const {return EmptyButton;};
+
+	UFUNCTION()
+	FORCEINLINE void setOwnerActor(AActor* owner) {OwnerActor = owner;};
 	
 protected:
 	virtual void NativeConstruct() override;
@@ -50,12 +61,6 @@ protected:
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	class UWidgetAnimation* FadeinAnim;
 
-	UFUNCTION()
-	void OnCloseButtonClicked();
-
-	UFUNCTION()
-	void OnEmptyButtonClicked();
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess))
-	class AAlchemyTable* AlchemyTable;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	AActor* OwnerActor;
 };
