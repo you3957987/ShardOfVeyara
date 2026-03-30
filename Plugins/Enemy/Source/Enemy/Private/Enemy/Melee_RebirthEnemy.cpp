@@ -24,7 +24,7 @@ AMelee_RebirthEnemy::AMelee_RebirthEnemy()
 
 	SoulEffectNiagara->bAutoActivate = false;
 	
-	EnemyType = EEnemyType::EET_Melee; // 근접 공격 적으로 설정
+	EnemyType = EEnemyType::EET_Revive; // 근접 공격 적으로 설정
 }
 
 float AMelee_RebirthEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -139,6 +139,17 @@ void AMelee_RebirthEnemy::Revive()
 	}
 
 	bIsActiveSoul = false;
+	
+	// 로그 기록 로직
+	if (GetMesh()) 
+	{
+		// 스켈레탈 메쉬 에셋 이름 가져오기
+		FString MeshName = GetMesh()->GetSkeletalMeshAsset() ? GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
+					
+		UEnemyLogManager::EnemyLog( EEnemyLogType::Revive,
+			FString::Printf(TEXT("적 [%s]가 부활"), 
+				*MeshName));
+	}
 }
 
 void AMelee_RebirthEnemy::AfterReviveMontageEnd()

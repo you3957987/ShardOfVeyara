@@ -2,10 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "BTTask_WormSelectWeight.generated.h"
+#include "BTTask_BossSelectWeight.generated.h"
+
 
 USTRUCT(BlueprintType)
-struct FWormWeightConfig
+struct FBossSelectWeightConfig
 {
 	GENERATED_BODY()
 
@@ -17,12 +18,13 @@ struct FWormWeightConfig
 };
 
 UCLASS()
-class ENEMY_API UBTTask_WormSelectWeight : public UBTTask_BlackboardBase
+class ENEMY_API UBTTask_BossSelectWeight : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 	
 public:
-	UBTTask_WormSelectWeight();
+	UBTTask_BossSelectWeight();
+
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 	// 근거리
@@ -35,17 +37,16 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="자체설정")
 	FBlackboardKeySelector PlayerLocation;
-	
+
 	// 근거리일 때 적용할 키-값 목록
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정", meta=(TitleProperty="Key"))
-	TArray<FWormWeightConfig> CloseRangeWeights;
+	TArray<FBossSelectWeightConfig> CloseRangeWeights;
 
 	// 중거리일 때 적용할 키-값 목록
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정", meta=(TitleProperty="Key"))
-	TArray<FWormWeightConfig> MidRangeWeights;
+	TArray<FBossSelectWeightConfig> MidRangeWeights;
 
 	// 원거리일 때 적용할 키-값 목록
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정", meta=(TitleProperty="Key"))
-	TArray<FWormWeightConfig> FarRangeWeights;
-
+	TArray<FBossSelectWeightConfig> FarRangeWeights;
 };

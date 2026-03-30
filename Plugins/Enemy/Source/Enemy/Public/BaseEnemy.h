@@ -1,14 +1,13 @@
-// 가나다라
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "EnemyLogManager.h"
 #include "BaseEnemy.generated.h"
 
-// 에너미 폴더 안의 ENUM 안에다가도 추가해줘야함!!!!!!!!!!!!!!!!!!!!!!!!
-// 에너미 폴더 안의 ENUM 안에다가도 추가해줘야함!!!!!!!!!!!!!!!!!!!!!!!!
-// 에너미 폴더 안의 ENUM 안에다가도 추가해줘야함!!!!!!!!!!!!!!!!!!!!!!!!
-// 깃 추가 확인용
+// 에디터 에너미 폴더 안의 ENUM 안에다가도 추가해줘야함!!!!!!!!!!!!!!!!!!!!!!!!
+// 에디터 에너미 폴더 안의 ENUM 안에다가도 추가해줘야함!!!!!!!!!!!!!!!!!!!!!!!!
+// 에디터 에너미 폴더 안의 ENUM 안에다가도 추가해줘야함!!!!!!!!!!!!!!!!!!!!!!!!
 UENUM(BlueprintType, Meta=(DisplayName="Enemy Type")) // 적 타입을 정의하는 열거형
 enum class EEnemyType : uint8
 {
@@ -22,7 +21,9 @@ enum class EEnemyType : uint8
 	EET_Guard UMETA(DisplayName = "Guard Enemy"), // 방패병 몹
 	EET_Passive UMETA(DisplayName = "Passive Enemy"), // 패시브 몹 - 공격 안하는 몹 == 비선공 , 플레이어가 공격해야 반응하는 몹 등등
 	EET_Burrow UMETA(DisplayName = "Burrow Enemy"), // 버로우 지렁이 몹
+	EET_Revive UMETA(DisplayName = "Revive Enemy"), // 부활 몹
 	// 스포너형은 따로 있음
+	// 부활은 밀리랑 레인지드 기반
 
 	EET_MAX UMETA(DisplayName = "Default") // 최대값, 추가적인 값을 위한 공간
 };
@@ -119,6 +120,7 @@ public:
 	
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE bool IsSpawnEnd() const { return !bUseSpawnMontage; }; // 스폰 몽타주 끝났는지 여부 반환
+	FORCEINLINE EEnemyType GetEnemyType() const { return EnemyType; }; // 적 타입 반환
 
 	// 데미지 처리 함수 재정의
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -188,6 +190,14 @@ public:
 	bool bFocusPlayerAfterAttack = true; // 공격 후 플레이어 주시 여부
 	UFUNCTION(BlueprintCallable)
 	void StartFocusPlayerAfterAttack(); // 공격 후 플레이어 주시 시작 함수
+	
+	// 로그 관리 함수
+	float BattleStartTime = 0.f;
+	bool bIsInBattle = false;
+	void StartBattleLog();
+	void EndBattleLog();
+	EEnemyLogType GetLogTypeFromEnemyType() const;
+	
 	
 #if WITH_EDITOR
 	// 에디터에서 프로퍼티가 변경될 때 호출됩니다.

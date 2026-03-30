@@ -137,6 +137,17 @@ void ARanged_RebirthEnemy::Revive()
 	}
 
 	bIsActiveSoul = false;
+	
+	// 로그 기록 로직
+	if (GetMesh()) 
+	{
+		// 스켈레탈 메쉬 에셋 이름 가져오기
+		FString MeshName = GetMesh()->GetSkeletalMeshAsset() ? GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
+					
+		UEnemyLogManager::EnemyLog( EEnemyLogType::Revive,
+			FString::Printf(TEXT("적 [%s]가 부활"), 
+				*MeshName));
+	}
 }
 
 void ARanged_RebirthEnemy::AfterReviveMontageEnd()

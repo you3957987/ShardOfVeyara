@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "EnemyLogManager.h"
 #include "BaseBossEnemy.generated.h"
 
 UCLASS()
@@ -98,7 +99,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateMotionWarpTargetToFront();
 	
-	
 	// 공격 지연 시간. 블랙보드 태스크에서 재지정
 	float AttackDelay = 0.0f;
 	
@@ -113,6 +113,15 @@ public:
 	// 공격 후 플레이어 주시 시작 함수
 	UFUNCTION(BlueprintCallable)
 	void StartFocusPlayerAfterAttack(); 
+	
+	// 로그 관리 
+	float BattleStartTime = 0.f;
+	bool bIsInBattle = false;
+	void StartBattleLog();
+	void EndBattleLog();
+	void AttackPatternLog(FString PatternName) const;
+	FString SelectedRangeName = "플레이어 첫 조우";
+	EEnemyLogType GetLogTypeFromEnemyType() const;
 	
 #if WITH_EDITOR
 	// 에디터에서 프로퍼티가 변경될 때 호출됩니다.

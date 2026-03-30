@@ -1,23 +1,24 @@
-#include "EnemyBoss/SkeletonMage/BTTask_SkeletonMageSelectWeight.h"
+#include "EnemyBoss/BTTask/BTTask_BossSelectWeight.h"
+
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "EnemyBoss/SkeletonMage/BossSkeletonMage.h"
+#include "EnemyBoss/BaseBossEnemy.h"
 
-UBTTask_SkeletonMageSelectWeight::UBTTask_SkeletonMageSelectWeight()
+UBTTask_BossSelectWeight::UBTTask_BossSelectWeight()
 {
-	NodeName = "SkeletonMage_Select_Weight";
+	NodeName = "Boss_Select_Weight";
 }
 
-EBTNodeResult::Type UBTTask_SkeletonMageSelectWeight::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_BossSelectWeight::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	AAIController* AIController = OwnerComp.GetAIOwner();
-	if (!AIController) return EBTNodeResult::Failed;	
-	
+	if (!AIController) return EBTNodeResult::Failed;
+
 	APawn* ControlledPawn = AIController->GetPawn();
 	if (!ControlledPawn) return EBTNodeResult::Failed;
-	
+
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComp) return EBTNodeResult::Failed;
 
@@ -27,9 +28,9 @@ EBTNodeResult::Type UBTTask_SkeletonMageSelectWeight::ExecuteTask(UBehaviorTreeC
 	float Distance = FVector::Dist(PlayerPos, BossPos);
 
 	// 설정 적용을 위한 람다 함수 (중복 제거용)
-	auto ApplyWeights = [&](const TArray<FSkeletonMageWeightConfig>& Settings)
+	auto ApplyWeights = [&](const TArray<FBossSelectWeightConfig>& Settings)
 	{
-		for (const FSkeletonMageWeightConfig& Config : Settings)
+		for (const FBossSelectWeightConfig& Config : Settings)
 		{
 			if (Config.Key.SelectedKeyName != NAME_None)
 			{
@@ -38,24 +39,37 @@ EBTNodeResult::Type UBTTask_SkeletonMageSelectWeight::ExecuteTask(UBehaviorTreeC
 		}
 	};
 
+	// 보스 객체 가져오기
+	ABaseBossEnemy* Boss = Cast<ABaseBossEnemy>(ControlledPawn);
+	FString SelectedRangeName;
+	
 	// 거리별 분기 처리
 	if (Distance <= CloseRangeDistance) // 근거리
 	{
 		ApplyWeights(CloseRangeWeights);
 		// 로그
 		UE_LOG(LogTemp, Warning, TEXT("Distance: %f - Close Range Weights Applied"), Distance);
+		SelectedRangeName = TEXT("근거리");
 	}
 	else if (Distance > CloseRangeDistance && Distance <= MidRangeDistance) // 중거리
 	{
 		ApplyWeights(MidRangeWeights);
 		// 로그
 		UE_LOG(LogTemp, Warning, TEXT("Distance: %f - Mid Range Weights Applied"), Distance);
+		SelectedRangeName = TEXT("중거리");
 	}
 	else // 원거리
 	{
 		ApplyWeights(FarRangeWeights);
 		// 로그
 		UE_LOG(LogTemp, Warning, TEXT("Distance: %f - Far Range Weights Applied"), Distance);
+		SelectedRangeName = TEXT("원거리");
+	}
+	
+	// 보스에게 로그 전송
+	if (Boss)
+	{
+		Boss->SelectedRangeName = SelectedRangeName; // 선택된 거리 범주 이름 저장
 	}
 
 	return EBTNodeResult::Succeeded;

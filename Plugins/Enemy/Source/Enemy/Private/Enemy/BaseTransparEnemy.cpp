@@ -1,4 +1,6 @@
 #include "Enemy/BaseTransparEnemy.h"
+
+#include "EnemyLogManager.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
@@ -85,6 +87,18 @@ void ABaseTransparEnemy::CheckMeleeAttackHit(float DeltaTime)
 					this,
 					UDamageType::StaticClass()
 				);
+				
+				// 로그 기록 로직
+				if (GetMesh()) 
+				{
+					// 스켈레탈 메쉬 에셋 이름 가져오기
+					FString MeshName = GetMesh()->GetSkeletalMeshAsset() ? GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
+					
+					UEnemyLogManager::EnemyLog(EEnemyLogType::Transpar, 
+						FString::Printf(TEXT("적 [%s]가 [%.f] 대미지"), 
+							*MeshName, 
+							MeleeAttackDamage));
+				}
 				
 				// 공격한 목록에 추가하여 중복 피해를 방지합니다.
 				HittedActors.Add(OverlappingActor);

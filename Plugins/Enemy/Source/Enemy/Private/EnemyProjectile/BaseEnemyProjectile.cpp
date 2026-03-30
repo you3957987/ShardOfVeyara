@@ -1,6 +1,10 @@
 #include "EnemyProjectile/BaseEnemyProjectile.h"
+
+#include "EnemyLogManager.h"
 #include "NiagaraComponent.h"
 #include "Components/SphereComponent.h"
+#include "Enemy/BaseRangedEnemy.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -107,8 +111,26 @@ void ABaseEnemyProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedCompone
 		   this,
 		   UDamageType::StaticClass()
 		  );
-	}
+		
+		// 1. 발사체의 소유자(Owner)를 가져와서 캐릭터인지 확인
+		if (ABaseRangedEnemy* OwnerCharacter = Cast<ABaseRangedEnemy>(GetOwner()))
+		{
+			if (OwnerCharacter->GetMesh())
+			{
+				// 2. 주인 캐릭터의 스켈레탈 메쉬 에셋 이름 가져오기
+				FString OwnerMeshName = OwnerCharacter->GetMesh()->GetSkeletalMeshAsset() ? 
+					OwnerCharacter->GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
 
+				// 3. 로그 남기기 (투사체이므로 EEnemyLogType::Ranged 사용 권장)
+				UEnemyLogManager::EnemyLog( OwnerCharacter->GetEnemyType() == 
+					EEnemyType::EET_Ranged ? EEnemyLogType::Ranged : EEnemyLogType::Revive,
+					FString::Printf(TEXT("적 [%s]가 [%.f] 대미지"), 
+						*OwnerMeshName, 
+						Damage));
+			}
+		}
+	}
+	
 	// SweepResult에서 충돌 위치를 가져옵니다.
 	EffectCreateLocation = SweepResult.ImpactPoint;
 	CreateHitEffect();

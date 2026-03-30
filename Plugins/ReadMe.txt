@@ -37,6 +37,7 @@ if( Character->Implements<UPetConversationInterface>() )
 
 전투 발생 - 종료 사이 시간
 피격 및 가해 대미지 + 플레이어 사망 여부
+
 보스 도전 횟수
 보스 패턴 사용 빈도( 근거리 중거리 원거리 )
 

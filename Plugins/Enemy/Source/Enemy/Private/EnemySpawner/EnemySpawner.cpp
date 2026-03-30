@@ -1,6 +1,7 @@
 #include "EnemySpawner/EnemySpawner.h"
 
 #include "BaseEnemy.h"
+#include "EnemyLogManager.h"
 #include "NavigationSystem.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
@@ -202,6 +203,9 @@ void AEnemySpawner::SpawnEnemy()
 					SpawnRotation,
 					SpawnParams
 				);
+				
+				UEnemyLogManager::EnemyLog( EEnemyLogType::Spawner,FString::Printf(TEXT("적 [스포너]가 몬스터 스폰)")) );
+				
 			}
 		}
 	}

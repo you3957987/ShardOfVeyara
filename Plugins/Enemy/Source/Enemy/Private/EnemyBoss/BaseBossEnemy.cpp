@@ -1,5 +1,6 @@
 #include "EnemyBoss/BaseBossEnemy.h"
 #include "AIController.h"
+#include "EnemyLogManager.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/ProgressBar.h"
@@ -112,6 +113,8 @@ void ABaseBossEnemy::OnPlayerDetectOverlapBegin(UPrimitiveComponent* OverlappedC
 	{
 		SpawnDefaultController();// 스폰 몽타주 사용 안하면 자동 빙의 설정
 		PlayerDetectRangeSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision); // 한 번 감지되면 비활성화
+		
+		StartBattleLog(); // 전투 로그 시작
 	}
 }
 
@@ -145,8 +148,16 @@ float ABaseBossEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 {
 	float DamageToApply = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	UE_LOG(LogTemp, Warning, TEXT("BossSkeletonMage Take Damage : %f"), DamageToApply);
+	UE_LOG(LogTemp, Warning, TEXT("Boss Take Damage : %f"), DamageToApply);
 
+	// 메쉬 이름 가져오기 헬퍼
+	FString MeshName = GetMesh() && GetMesh()->GetSkeletalMeshAsset() ? 
+		GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
+	
+	UEnemyLogManager::EnemyLog( GetLogTypeFromEnemyType(), 
+		FString::Printf(TEXT("보스 [%s]가 [%.f] 대미지 받음 (%.f / %.f)"), 
+			*MeshName, DamageToApply, MaxHealth, Health));
+	
 	if ( DamageToApply > 0.f )
 	{
 		Health -= DamageToApply;
@@ -182,6 +193,8 @@ void ABaseBossEnemy::Die()
 	{
 		HealthBarWidget->SetVisibility(false);
 	}
+	
+	EndBattleLog(); // 전투 로그 종료
 }
 
 void ABaseBossEnemy::AfterDieMontageEnd()
@@ -351,6 +364,80 @@ void ABaseBossEnemy::TestDeadLogic()
 		 Die();
 		}, 5.0f, false);
 	}
+}
+
+void ABaseBossEnemy::StartBattleLog()
+{
+	// 이미 전투 중이면 중복 기록 안 함
+	if (bIsInBattle) return;
+
+	bIsInBattle = true;
+	BattleStartTime = GetWorld()->GetTimeSeconds(); // 현재 월드 시간 초단위 저장
+
+	// 메쉬 이름 가져오기 헬퍼
+	FString MeshName = GetMesh() && GetMesh()->GetSkeletalMeshAsset() ? 
+		GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
+
+	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
+		FString::Printf(TEXT("보스 [%s] 전투 진입 (시작 시간: %.2f)"), *MeshName, BattleStartTime));
+}
+
+void ABaseBossEnemy::EndBattleLog()
+{
+	// 전투 중이 아니면 종료 로그 안 함
+	if (!bIsInBattle) return;
+
+	float EndTime = GetWorld()->GetTimeSeconds();
+	float BattleDuration = EndTime - BattleStartTime; // 지속 시간 계산
+
+	FString MeshName = GetMesh() && GetMesh()->GetSkeletalMeshAsset() ? 
+		GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
+
+	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
+		FString::Printf(TEXT("적 [%s] 전투 종료 | 소요 시간: %.2f초 (시작: %.2f / 종료: %.2f)"), 
+			*MeshName, BattleDuration, BattleStartTime, EndTime));
+
+	// 상태 초기화
+	bIsInBattle = false;
+	BattleStartTime = 0.f;
+}
+
+void ABaseBossEnemy::AttackPatternLog(FString PatternName) const
+{
+	// 메쉬 이름 가져오기
+	FString MeshName = GetMesh() && GetMesh()->GetSkeletalMeshAsset() ? 
+		GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
+
+	// 로그 기록: [거리분류] 패턴명 선택
+	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
+		FString::Printf(TEXT("적 [%s] 패턴 결정 | 거리: [%s] | 패턴: [%s] "), 
+			*MeshName, *SelectedRangeName ,*PatternName));
+}
+
+EEnemyLogType ABaseBossEnemy::GetLogTypeFromEnemyType() const
+{
+	FString ActorName = GetName();
+
+	// 1. 클래스 이름 또는 액터 이름으로 보스 종류 판별
+	if (ActorName.Contains(TEXT("SkeletonMage")))
+	{
+		return EEnemyLogType::SkeletonMage;
+	}
+	else if (ActorName.Contains(TEXT("BlackKnight")))
+	{
+		return EEnemyLogType::BlackKnight;
+	}
+	else if (ActorName.Contains(TEXT("Worm")))
+	{
+		return EEnemyLogType::Worm;
+	}
+	else if (ActorName.Contains(TEXT("MagicSwordMan")))
+	{
+		return EEnemyLogType::MagicSwordMan;
+	}
+
+	// 기본값 (판별 불가능할 경우)
+	return EEnemyLogType::SkeletonMage; 
 }
 
 #if	WITH_EDITOR
