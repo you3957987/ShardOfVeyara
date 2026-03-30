@@ -1,3 +1,4 @@
+// 가나다라
 #pragma once
 
 #include "CoreMinimal.h"
@@ -7,6 +8,7 @@
 // 에너미 폴더 안의 ENUM 안에다가도 추가해줘야함!!!!!!!!!!!!!!!!!!!!!!!!
 // 에너미 폴더 안의 ENUM 안에다가도 추가해줘야함!!!!!!!!!!!!!!!!!!!!!!!!
 // 에너미 폴더 안의 ENUM 안에다가도 추가해줘야함!!!!!!!!!!!!!!!!!!!!!!!!
+// 깃 추가 확인용
 UENUM(BlueprintType, Meta=(DisplayName="Enemy Type")) // 적 타입을 정의하는 열거형
 enum class EEnemyType : uint8
 {
