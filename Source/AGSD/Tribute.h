@@ -62,6 +62,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
 	UTributeUI* TributeWidget;
 
+	UFUNCTION(BlueprintCallable, Category = "Tribute")
 	void SetNextTributeUI();
 	
 public:	
@@ -88,4 +89,7 @@ public:
 
 	UFUNCTION()
 	void EndTribute();
+
+	UFUNCTION(BlueprintCallable, Category = "Tribute")
+	void SuccessInsert(FString ItemID, int32 AmountToRemove);
 };

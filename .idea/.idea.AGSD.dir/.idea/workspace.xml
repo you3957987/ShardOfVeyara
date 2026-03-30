@@ -10,8 +10,21 @@
     <list default="true" id="690080f4-11c2-40e7-9f9b-e775ffc08b31" name="변경" comment="">
       <change afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/AlchemyWidget/WBP_DragEnterWidget.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
+<<<<<<< Updated upstream
       <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/AlchemyWidget/WBP_AlchemyUI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/AlchemyWidget/WBP_AlchemyUI.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_FireBurn.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_FireBurn.uasset" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/AGSD.uproject" beforeDir="false" afterPath="$PROJECT_DIR$/AGSD.uproject" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_Tribute.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_Tribute.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/AlchemyWidget/WBP_AlchemyUI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/AlchemyWidget/WBP_AlchemyUI.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/TributeWidget/WBP_TributeUI_Alchemy.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/TributeWidget/WBP_TributeUI_Alchemy.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_FireBurn.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Niagaras/NS_FireBurn.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Enemy.uplugin" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Enemy.uplugin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Enemy/BaseMageEnemy.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Enemy/BaseMageEnemy.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/BaseBossEnemy.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/BaseBossEnemy.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/Tribute.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/Tribute.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/Tribute.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/Tribute.h" afterDir="false" />
+>>>>>>> Stashed changes
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,6 +78,10 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+<<<<<<< Updated upstream
+=======
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+>>>>>>> Stashed changes
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
@@ -171,6 +188,7 @@
       <workItem from="1774661570745" duration="3061000" />
       <workItem from="1774668624910" duration="249000" />
       <workItem from="1774668963487" duration="6120000" />
+      <workItem from="1774835687252" duration="7434000" />
     </task>
     <servers />
   </component>

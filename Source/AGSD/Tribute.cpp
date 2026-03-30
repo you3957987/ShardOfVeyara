@@ -38,7 +38,8 @@ void ATribute::BeginPlay()
 
 	if (!TributeUI) return;
 	//TributeUIInstance = Cast<UTributeUI>(TributeUI->GetUserWidgetObject());
-	//if (!TributeUIInstance || !TributeDataTable) return;
+	//if (!TributeUIInstance) return;
+	if (!TributeDataTable) return;
 	SetNextTributeUI();
 }
 
@@ -61,34 +62,6 @@ void ATribute::Tick(float DeltaTime)
 
 void ATribute::Interact_Implementation(AAGSDCharacter* player)
 {
-	/*
-	PlayFireNiagara();
-	FString ItemID = player->SubItemAmount();
-	int* FoundAmount = CurrentLevelTributeItems.Find(ItemID);
-	if (FoundAmount)
-	{
-		(*FoundAmount)--;
-	}
-	TributeUIInstance->SetNextTributeItem(CurrentLevelTributeItems);
-
-	bool bIsLevelComplete = true;
-	for (auto& Elem : CurrentLevelTributeItems)
-	{
-		if (Elem.Value > 0)
-		{
-			bIsLevelComplete = false;
-			break;
-		}
-	}
-
-	if (bIsLevelComplete)
-	{
-		CurrentLevelTributeItems = {};
-		PlayFireExplosionNiagara();
-		player->AddDamage(10.0f);
-		SetNextTributeUI();
-	}
-	*/
 	if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(player->GetController()))
 	{
 		Player = player;
@@ -189,5 +162,34 @@ void ATribute::EndTribute()
 		// 메모리 관리를 위해 필요하다면 AlchemyWidget = nullptr; 를 해줄 수도 있지만, 
 		// 다시 열 때를 대비해 유지하는 것이 일반적입니다.
 	}
+}
+
+void ATribute::SuccessInsert(FString ItemID, int32 AmountToRemove)
+	{
+	PlayFireNiagara();
+	int* FoundAmount = CurrentLevelTributeItems.Find(ItemID);
+	if (FoundAmount)
+	{
+		(*FoundAmount) = (*FoundAmount) - AmountToRemove;
+	}
+	//TributeUIInstance->SetNextTributeItem(CurrentLevelTributeItems);
+
+	bool bIsLevelComplete = true;
+	for (auto& Elem : CurrentLevelTributeItems)
+	{
+		if (Elem.Value > 0)
+		{
+			bIsLevelComplete = false;
+			break;
+		}
+	}
+
+	if (bIsLevelComplete)
+	{
+		CurrentLevelTributeItems = {};
+		PlayFireExplosionNiagara();
+		Player->AddDamage(10.0f);
+		SetNextTributeUI();
+	} 
 }
 
