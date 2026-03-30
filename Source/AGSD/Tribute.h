@@ -26,16 +26,10 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tribute")
-	TObjectPtr<class UWidgetComponent> TributeUI;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tribute")
 	class USphereComponent* CollisionSphere;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UCameraComponent* CameraComp;
-	
-	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tribute")
-	//class UTributeUI* TributeUIInstance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tribute")
 	UDataTable* TributeDataTable;

@@ -30,9 +30,6 @@ class AGSD_API UTributeUI : public UUserWidget
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
-	class UUniformGridPanel* TributeItemGrid;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TArray<class UTributeItem*> TributeItems;
 	
@@ -46,8 +43,6 @@ protected:
 	float FadeSpeed = 10.0f;
 
 public:
-	void SetNextTributeItem(const TMap<FString, int32>& ItemMap);
-
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Tribute")
 	void SetTributeItemData(const FString& ItemID, int32 Amount, UTributeItem* TargetWidget);
 

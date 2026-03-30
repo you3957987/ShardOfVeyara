@@ -4,6 +4,7 @@
 #include "Tribute.h"
 
 #include "AGSDCharacter.h"
+#include "TributeTextUI.h"
 #include "TributeUI.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SphereComponent.h"
@@ -17,10 +18,6 @@ ATribute::ATribute()
 	PrimaryActorTick.bCanEverTick = true;
 
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	
-	TributeUI = CreateDefaultSubobject<UWidgetComponent>(TEXT("TributeUI"));
-	TributeUI->SetupAttachment(RootComponent);
-	TributeUI->SetWidgetSpace(EWidgetSpace::Screen);
 
 	CollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
 	CollisionSphere->SetupAttachment(RootComponent);
@@ -35,10 +32,6 @@ ATribute::ATribute()
 void ATribute::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (!TributeUI) return;
-	//TributeUIInstance = Cast<UTributeUI>(TributeUI->GetUserWidgetObject());
-	//if (!TributeUIInstance) return;
 	if (!TributeDataTable) return;
 	SetNextTributeUI();
 }
@@ -50,7 +43,6 @@ void ATribute::SetNextTributeUI()
 	{
 		CurrentLevelTributeItems = CurrentLevelRow->TributeItems;
 	}
-	//TributeUIInstance->SetNextTributeItem(CurrentLevelTributeItems);
 }
 
 // Called every frame
@@ -89,9 +81,6 @@ void ATribute::Interact_Implementation(AAGSDCharacter* player)
 			PlayerController->SetInputMode(InputMode);
 			PlayerController->bShowMouseCursor = true;
 		}
-		
-		//FTimerHandle TimerHandle;
-		//GetWorldTimerManager().SetTimer(TimerHandle, this, &AAlchemyTable::OnCameraBlendFinished, BlendTime, false);
 	}
 }
 
@@ -118,7 +107,6 @@ void ATribute::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other
 {
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
 	{
-		//TributeUIInstance->SetTargetOpacity(1.0f);
 		player->AddInteractableActor(this);
 	}
 }
@@ -128,7 +116,6 @@ void ATribute::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 {
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
 	{
-		//TributeUIInstance->SetTargetOpacity(0.0f);
 		player->RemoveInteractableActor(this);
 	}
 }
@@ -172,7 +159,6 @@ void ATribute::SuccessInsert(FString ItemID, int32 AmountToRemove)
 	{
 		(*FoundAmount) = (*FoundAmount) - AmountToRemove;
 	}
-	//TributeUIInstance->SetNextTributeItem(CurrentLevelTributeItems);
 
 	bool bIsLevelComplete = true;
 	for (auto& Elem : CurrentLevelTributeItems)
