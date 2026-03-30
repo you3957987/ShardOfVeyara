@@ -51,7 +51,7 @@ void ABossWormProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComponen
 	// 충돌 대상 로그
 	UE_LOG(LogTemp, Warning, TEXT("Projectile overlapped with: %s"), *OtherActor->GetName());
 	// [추가] 충돌 지점에 디버그 스피어 그리기 (반지름 30, 빨간색, 1초간 유지)
-	if (GetWorld()) DrawDebugSphere(GetWorld(), SweepResult.ImpactPoint, 30.0f, 12, FColor::Red, false, 1.0f);
+	//if (GetWorld()) DrawDebugSphere(GetWorld(), SweepResult.ImpactPoint, 30.0f, 12, FColor::Red, false, 1.0f);
 	
 	// 충돌 대상이 플레이어이거나 월드(벽, 바닥 등)인지 확인합니다.
 	const bool bIsPlayer = OtherActor->ActorHasTag(FName("Player"));
@@ -111,7 +111,7 @@ void ABossWormProjectile::CreateDamageZoneOnGround()
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_Visibility, QueryParams))
 	{
 		// 충돌 지점에 파란색 디버그 스피어 그리기 (반지름 50, 12, 1초간 유지)
-		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 50.0f, 12, FColor::Blue, false, 1.0f);
+		//DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 50.0f, 12, FColor::Blue, false, 1.0f);
 		
 		if ( DamageZoneProjectileClass )
 		{

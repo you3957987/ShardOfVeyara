@@ -42,7 +42,8 @@ public class Enemy : ModuleRules
 				"UMG",
 				"NavigationSystem",
 				"Niagara", 
-				"MotionWarping"
+				"MotionWarping", 
+				"AGSD"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

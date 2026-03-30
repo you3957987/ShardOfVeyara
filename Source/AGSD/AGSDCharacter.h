@@ -29,7 +29,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
  *  Implements a controllable orbiting camera
  */
 UCLASS(abstract)
-class AAGSDCharacter : public ACharacter, public IPetConversationInterface
+class AGSD_API AAGSDCharacter : public ACharacter, public IPetConversationInterface
 {
 	GENERATED_BODY()
 

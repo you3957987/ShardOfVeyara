@@ -31,7 +31,7 @@ void ABaseGuardEnemy::BeginPlay()
 	// ===========================================================================
 	// [테스트용] 5초 뒤부터 1초 간격으로 5 대미지 자해 (몽타주 재생 확인용)
 	// ===========================================================================
-	
+	/*
 	// 람다 함수 정의
 	FTimerDelegate DebugDamageDelegate;
 	DebugDamageDelegate.BindLambda([this]()
@@ -53,6 +53,7 @@ void ABaseGuardEnemy::BeginPlay()
 	{
 		World->GetTimerManager().SetTimer(DebugTimerHandle, DebugDamageDelegate, 1.0f, true, 5.0f);
 	}
+	*/
 }
 
 UAnimMontage* ABaseGuardEnemy::Attack()

@@ -78,7 +78,7 @@ void ABaseBurrowEnemy::OnBeginOverlapAttackCollisionSphere(UPrimitiveComponent* 
 
 
 		// 다시 콜리전 끄기
-		if ( BurrowAttackCollisionSphere ) BurrowAttackCollisionSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		if ( AttackRangePointSphere ) AttackRangePointSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 }
 

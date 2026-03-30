@@ -274,17 +274,20 @@ void ABaseBossEnemy::UpdateMotionWarpTarget()
 			LookAtRotation
 		);
 		
-		DrawDebugSphere(
-			GetWorld(),
-			TargetLocation,   // 위치
-			50.0f,            // 반지름 (크기)
-			12,               // 세그먼트 (구의 부드러움)
-			FColor::Purple,      // 색상
-			false,            // 지속 여부 (true면 영구 지속)
-			2.0f,             // 화면에 표시될 시간 (초)
-			0,                // 깊이 우선순위
-			2.0f              // 선 두께
-		);
+		if (bDebugMode == true)
+		{
+			DrawDebugSphere(
+				GetWorld(),
+				TargetLocation,   // 위치
+				50.0f,            // 반지름 (크기)
+				12,               // 세그먼트 (구의 부드러움)
+				FColor::Purple,      // 색상
+				false,            // 지속 여부 (true면 영구 지속)
+				2.0f,             // 화면에 표시될 시간 (초)
+				0,                // 깊이 우선순위
+				2.0f              // 선 두께
+			);
+		}
 	}
 }
 
@@ -316,18 +319,21 @@ void ABaseBossEnemy::UpdateMotionWarpTargetToFront()
 			LookAtRotation
 		);
 
-		// 계산된 위치에 디버그 구체 그리기 (초록색)
-		DrawDebugSphere(
-			GetWorld(),
-			WarpLocation,
-			50.0f,
-			12,
-			FColor::Purple,
-			false,
-			2.0f,
-			0,
-			2.0f
-		);
+		if (bDebugMode == true)
+		{
+			// 계산된 위치에 디버그 구체 그리기 (초록색)
+			DrawDebugSphere(
+				GetWorld(),
+				WarpLocation,
+				50.0f,
+				12,
+				FColor::Purple,
+				false,
+				2.0f,
+				0,
+				2.0f
+			);
+		}
 	}
 }
 

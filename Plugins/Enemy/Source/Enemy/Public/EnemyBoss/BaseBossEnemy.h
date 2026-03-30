@@ -19,6 +19,7 @@ protected:
 	// 디버그 모드
 	UPROPERTY(EditAnywhere, Category="자체설정")
 	bool bDebugMode = false;
+	
 	// 플레이어 인식 후 AI 행동 시작 범위 스피어
 	UPROPERTY(VisibleAnywhere)
 	class USphereComponent* PlayerDetectRangeSphere;

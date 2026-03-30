@@ -374,12 +374,7 @@ void UPetTalkComponent::StartConversation(FName DialogueID)
 
         	// 대화 로그에 추가
 			AddDialogueToConversationLog(RowData->SpeakerName, RowData->DialogueText);
-        	AddDialogueToConversationLog(RowData->SpeakerName, RowData->DialogueText);
-        	AddDialogueToConversationLog(RowData->SpeakerName, RowData->DialogueText);
-        	AddDialogueToConversationLog(RowData->SpeakerName, RowData->DialogueText);
-        	AddDialogueToConversationLog(RowData->SpeakerName, RowData->DialogueText);
-        	AddDialogueToConversationLog(RowData->SpeakerName, RowData->DialogueText);
-        	AddDialogueToConversationLog(RowData->SpeakerName, RowData->DialogueText);
+        	
         }
 
     	//  음성 재생 및 지속 시간 계산

@@ -91,7 +91,7 @@ void ABossMagicSwordMan::OnBeginOverlapWeaponCollisionSphere(UPrimitiveComponent
 			ACharacter* HitCharacter = Cast<ACharacter>(OtherActor);
 			if (HitCharacter)
 			{
-				HitCharacter->LaunchCharacter(FVector(0.f, 0.f, 1180.f), false, true);
+				HitCharacter->LaunchCharacter(FVector(0.f, 0.f, 900.f), false, true);
 				bSuccessJumpUpAttack = true; // 띄우기 성공 여부를 true로 설정
 			}
 		}
