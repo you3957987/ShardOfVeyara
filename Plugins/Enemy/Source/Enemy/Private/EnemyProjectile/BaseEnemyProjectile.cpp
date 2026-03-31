@@ -113,20 +113,30 @@ void ABaseEnemyProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedCompone
 		  );
 		
 		// 1. 발사체의 소유자(Owner)를 가져와서 캐릭터인지 확인
-		if (ABaseRangedEnemy* OwnerCharacter = Cast<ABaseRangedEnemy>(GetOwner()))
+		if (ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner()))
 		{
 			if (OwnerCharacter->GetMesh())
 			{
-				// 2. 주인 캐릭터의 스켈레탈 메쉬 에셋 이름 가져오기
+				// 1. 스켈레탈 메쉬 에셋 이름 가져오기
 				FString OwnerMeshName = OwnerCharacter->GetMesh()->GetSkeletalMeshAsset() ? 
 					OwnerCharacter->GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
-
-				// 3. 로그 남기기 (투사체이므로 EEnemyLogType::Ranged 사용 권장)
-				UEnemyLogManager::EnemyLog( OwnerCharacter->GetEnemyType() == 
-					EEnemyType::EET_Ranged ? EEnemyLogType::Ranged : EEnemyLogType::Revive,
-					FString::Printf(TEXT("적 [%s]가 [%.f] 대미지"), 
-						*OwnerMeshName, 
-						Damage));
+				
+				if (OwnerMeshName.Contains(TEXT("MagicSwordMan")))
+				{
+					UEnemyLogManager::EnemyLog(EEnemyLogType::MagicSwordMan, FString::Printf(TEXT("[소드맨] 검기가 [%.f] 대미지"), Damage));
+				}
+				else if ( OwnerMeshName.Contains(TEXT("Skeleton_Mage")) )
+				{
+					UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, FString::Printf(TEXT("[스켈레톤 메이지] 마법구 충돌 [%.f] 대미지 줌"), Damage ));
+				}
+				else
+				{
+					ABaseRangedEnemy* RangedCharacter = Cast<ABaseRangedEnemy>(GetOwner());
+					
+					UEnemyLogManager::EnemyLog( RangedCharacter->GetEnemyType() == EEnemyType::EET_Ranged ? EEnemyLogType::Ranged : EEnemyLogType::Revive,
+						FString::Printf(TEXT("적 [%s] 발사체가 [%.f] 대미지"),
+						*OwnerMeshName, Damage));
+				}
 			}
 		}
 	}

@@ -85,9 +85,8 @@ float ABaseGuardEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const&
 			FString AttackTypeName = (AttackDamage == GuardReactionDamage) ? TEXT("가드 반격") : TEXT("기본 공격");
 
 			UEnemyLogManager::EnemyLog(EEnemyLogType::Guard, 
-				FString::Printf(TEXT("적 [%s]가 [%.f] 대미지 가드"), 
-					*MeshName, 
-					DamageAmount));
+				FString::Printf(TEXT("적 [%s]가 [%.f] 대미지 가드 | 가드중 받은 대미지 / 반격 임계치[%.f / %.f]"), 
+					*MeshName, DamageAmount, DamageWhileGuarding, MaxDamageToReaction));
 		}
 		
 		return 0.f; // 대미지 무효화

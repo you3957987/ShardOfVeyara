@@ -1,5 +1,6 @@
 #include "EnemyProjectile/GroundAttackProjectile.h"
 
+#include "EnemyLogManager.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -136,6 +137,8 @@ void AGroundAttackProjectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComp
 			this,
 			 UDamageType::StaticClass()
 			);
+			
+			UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, FString::Printf(TEXT("[스켈레톤 메이지] 뼈 장판 공격 [%.f] 대미지 줌"), Damage ));
 			
 			// 첫 오버랩 이후 MeshComp의 콜리전을 비활성화합니다.
 			MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);

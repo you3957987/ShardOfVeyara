@@ -64,24 +64,32 @@ void ADamageZoneProjectile::ApplyDamageToOverlappingActors()
 			
 			// 로그로 대미지 양 확인 (필요시 주석 해제)
 			UE_LOG(LogTemp, Warning, TEXT("Damage Zone applied %f damage "), DamageAmount);
-		}
-		// 1. 발사체의 소유자(Owner)를 가져와서 캐릭터인지 확인
-		if (ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner()))
-		{
-			if (OwnerCharacter->GetMesh())
+			
+			// 1. 발사체의 소유자(Owner)를 가져와서 캐릭터인지 확인
+			if (ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner()))
 			{
-				// 2. 주인 캐릭터의 스켈레탈 메쉬 에셋 이름 가져오기
-				FString OwnerMeshName = OwnerCharacter->GetMesh()->GetSkeletalMeshAsset() ? 
-					OwnerCharacter->GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
+				if (OwnerCharacter->GetMesh())
+				{
+					// 2. 주인 캐릭터의 스켈레탈 메쉬 에셋 이름 가져오기
+					FString OwnerMeshName = OwnerCharacter->GetMesh()->GetSkeletalMeshAsset() ? 
+						OwnerCharacter->GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
 
-				// 3. 로그 남기기 (투사체이므로 EEnemyLogType::Ranged 사용 권장)
-				UEnemyLogManager::EnemyLog(EEnemyLogType::Mage, 
-					FString::Printf(TEXT("적 [%s]가 [%.f] 대미지"), 
-						*OwnerMeshName, 
-						DamageAmount));
+					// 3. 메시 이름에 "Worm"이 포함되어 있는지 확인
+					if (OwnerMeshName.Contains(TEXT("WormMonster_SK")))
+					{
+						// 웜 보스 전용 로그
+						UEnemyLogManager::EnemyLog(EEnemyLogType::Worm, 
+							FString::Printf(TEXT("[웜] 화염 장판 적중 | 대미지[%.f]"), DamageAmount));
+					}
+					else
+					{
+						// 그 외(메이지 등) 일반 로그
+						UEnemyLogManager::EnemyLog(EEnemyLogType::Mage, 
+							FString::Printf(TEXT("적 [%s]가 [%.f] 대미지"), *OwnerMeshName, DamageAmount));
+					}
+				}
 			}
 		}
-		
 	}
 }
 

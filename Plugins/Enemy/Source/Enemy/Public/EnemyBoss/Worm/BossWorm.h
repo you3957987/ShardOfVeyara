@@ -179,6 +179,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float FanFireBreathDamage = 3.f;
 	
+	float SuctionStartTime; // 석션 시작 시간을 저장할 변수
 	// 빨아들이기 로직
 	void HandleSuction(float DeltaTime);
 	// 빨아들이는 공격 함수
@@ -188,7 +189,7 @@ public:
 	UAnimMontage* SuctionMontage;
 	// 빨아들이고 난 후 거리 내 공격 대미지
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")	
-	float SuctionAttackDamage = 40.f;
+	float SuctionAttackDamage = 41.f;
 	// 빨아들이는 공격 딜레이
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	float SuctionAttackDelay = 4.0f;

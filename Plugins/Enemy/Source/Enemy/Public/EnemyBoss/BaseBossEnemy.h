@@ -120,7 +120,7 @@ public:
 	void StartBattleLog();
 	void EndBattleLog();
 	void AttackPatternLog(FString PatternName) const;
-	FString SelectedRangeName = "플레이어 첫 조우";
+	FString SelectedRangeName = TEXT("플레이어 첫 조우");
 	EEnemyLogType GetLogTypeFromEnemyType() const;
 	
 #if WITH_EDITOR

@@ -1,5 +1,6 @@
 #include "EnemyProjectile/BaseStreamProjectile.h"
 
+#include "EnemyLogManager.h"
 #include "NiagaraComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -87,6 +88,8 @@ void ABaseStreamProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedCompon
 		   this,
 		   UDamageType::StaticClass()
 		  );
+		
+		UEnemyLogManager::EnemyLog(EEnemyLogType::Worm, FString::Printf(TEXT("[웜] 화염 방사 | 대미지[%.f]"), Damage));
 		
 		// 대미지 한번 주고 CollisionComp 콜리전 끄기
 		if (CollisionComp) CollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);

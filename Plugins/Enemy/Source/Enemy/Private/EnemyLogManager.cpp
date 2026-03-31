@@ -32,10 +32,10 @@ FString UEnemyLogManager::GetLogFileName(EEnemyLogType InEnemyLogType)
 		case EEnemyLogType::Spawner: return TEXT("SpawnerEnemy");
 		case EEnemyLogType::Revive: return TEXT("ReviveEnemy");
 		
-		case EEnemyLogType::SkeletonMage: return TEXT("SkeletonMageEnemy");
-		case EEnemyLogType::BlackKnight: return TEXT("BlackKnightEnemy");
-		case EEnemyLogType::Worm: return TEXT("WormEnemy");
-		case EEnemyLogType::MagicSwordMan: return TEXT("MagicSwordManEnemy");
+		case EEnemyLogType::SkeletonMage: return TEXT("Boss_SkeletonMage");
+		case EEnemyLogType::BlackKnight: return TEXT("Boss_BlackKnight");
+		case EEnemyLogType::Worm: return TEXT("Boss_Worm");
+		case EEnemyLogType::MagicSwordMan: return TEXT("Boss_MagicSwordMan");
 		default: return TEXT("UnknownEnemy");
 	}
 }

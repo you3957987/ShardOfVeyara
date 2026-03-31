@@ -84,6 +84,8 @@ void ABossSkeletonMage::Tick(float DeltaTime)
 				}
 				// --- 플레이어 밀치기 효과 끝 ---
 				
+				UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, FString::Printf(TEXT("[스켈레톤 메이지] 실드 캐스트 적중으로 플레이어 밀치기")));
+				
 				// 이 아래에 이제 대미지 넣는거 추가 가능
 			}
 		}
@@ -109,6 +111,10 @@ void ABossSkeletonMage::TeleportMoveToNextPoint()
 {
 	if (TeleportDestination != FVector::ZeroVector)
 	{
+		// 텔레포트 한 거리 로그 매니저로 출력
+		UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, FString::Printf(TEXT("[스켈레톤 메이지] 텔레포트 이동: %.2f"), 
+			FVector::Dist(GetActorLocation(), TeleportDestination)));
+		
 		SpawnTeleportEffectAtLocation(GetActorLocation()); // 현재 위치에 이펙트 생성
 		
 		SetActorLocation(TeleportDestination); // 텔레포트 이동
@@ -124,6 +130,7 @@ void ABossSkeletonMage::TeleportMoveToNextPoint()
 			// Z축(Yaw) 회전만 적용하여 수평으로 바라보게 함
 			SetActorRotation(FRotator(0.f, LookAtRotation.Yaw, 0.f));
 		}
+		
 	}
 }
 
@@ -261,6 +268,11 @@ void ABossSkeletonMage::SummonEnemy()
 					SpawnLocation + FVector(0.f, 0.f, 2.f),
 					FRotator::ZeroRotator, FVector(20.f));
 			}
+			
+			// 보스와 소환되는 거리 로그 매니저로 출력
+			UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, FString::Printf(TEXT("[스켈레톤 메이지] 적 소환: %s (거리: %.2f)"), 
+				*SpawnedEnemy->GetName(), FVector::Dist(GetActorLocation(), SpawnLocation)));
+			
 		}
 	}
 }

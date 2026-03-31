@@ -101,7 +101,7 @@ void ABossWorm::OnBeginOverlapAttackCollisionSphere(UPrimitiveComponent* Overlap
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Attack Sphere Overlapped with Player!"));
 
-		// 대미지 적용 ( 어택 대미지는 공격 전 가드 공격인지 아님 일반 공격인지에 따라 각각 함수에서 설정 )
+		// 대미지 적용
 		UGameplayStatics::ApplyDamage(OtherActor, AttackDamage, GetController(),
 			this, UDamageType::StaticClass());
 
@@ -123,6 +123,20 @@ void ABossWorm::OnBeginOverlapAttackCollisionSphere(UPrimitiveComponent* Overlap
 			// 플레이어 캐릭터를 밀어냄
 			PlayerCharacter->LaunchCharacter(LaunchVelocity, true, true);
 		}
+		
+		if ( AttackDamage == NormalAttackDamage )
+		{
+			UEnemyLogManager::EnemyLog(EEnemyLogType::Worm, FString::Printf(TEXT("[웜] 일반 공격 | 대미지[%.f]"), AttackDamage));
+		}
+		else if ( AttackDamage == LungeAttackDamage )
+		{
+			UEnemyLogManager::EnemyLog(EEnemyLogType::Worm, FString::Printf(TEXT("[웜] 런지 공격 | 대미지[%.f]"), AttackDamage));
+		}
+		else if ( AttackDamage == SuctionAttackDamage )
+		{
+			UEnemyLogManager::EnemyLog(EEnemyLogType::Worm, FString::Printf(TEXT("[웜] 석션 공격 | 대미지[%.f]"), AttackDamage));
+		}
+			
 		
 		// 다시 콜리전 끄기
 		if ( AttackCollisionSphere ) AttackCollisionSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -188,7 +202,12 @@ void ABossWorm::NormalAttack()
 	{
 		PlayAnimMontage(NormalAttackMontage);
 
-		AttackDamage = NormalAttackDamage; // 공격 대미지 설정
+		if ( bIsInSuctionAttackArea)
+		{
+			AttackDamage = SuctionAttackDamage; // 석션 공격 범위 안에 있으면 석션 공격 대미지로 설정
+			bIsInSuctionAttackArea = false; // 공격 후에는 범위 플래그 초기화
+		}
+		else AttackDamage = NormalAttackDamage; // 공격 대미지 설정
 		
 		bFocusPlayerAfterAttack = false; // 공격 중에는 포커스 비활성화
 		
@@ -309,6 +328,8 @@ void ABossWorm::Unburrow()
 					// 대미지 적용
 					UGameplayStatics::ApplyDamage(PlayerCharacter, UnBurrowAttackDamage, GetController(),
 						this, UDamageType::StaticClass());
+					
+					UEnemyLogManager::EnemyLog(EEnemyLogType::Worm, FString::Printf(TEXT("[웜] 언버로우 공격 | 대미지[%.f]"), UnBurrowAttackDamage));
 					
 					// 로그 출력 (필요시 주석 해제)
 					UE_LOG(LogTemp, Warning, TEXT("Player Hit At Unburrow Attack!"));
@@ -489,9 +510,14 @@ void ABossWorm::HandleSuction(float DeltaTime)
 		{
 			bIsInSuctionAttackArea = true; // 흡입 공격 범위 안에 들어왔음을 표시
 			
+			AttackDamage = SuctionAttackDamage; // 공격 대미지 설정
+			
 			BlackboardComp->SetValueAsBool("bIsInSuctionAttackArea", true); // 블랙보드에도 반영
 			
-			AttackDamage = SuctionAttackDamage; // 공격 대미지 설정
+			float ElapsedTime = GetWorld()->GetTimeSeconds() - SuctionStartTime;
+			
+			UEnemyLogManager::EnemyLog(EEnemyLogType::Worm, 
+				FString::Printf(TEXT("[웜] 석션 성공 | 경과 시간: %.1f초"), ElapsedTime));
 			
 			EndSuction();
 			return;
@@ -557,6 +583,8 @@ void ABossWorm::StartSuction()
 		SuctionRadialForceComp->Activate(); // 빨아들이는 힘 활성화
 		
 		bIsSuctioning = true;
+		
+		SuctionStartTime = GetWorld()->GetTimeSeconds(); // 시작 시간 기록
 		
 		if ( BlackboardComp )
 		{

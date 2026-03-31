@@ -41,7 +41,9 @@ enum class EMagicSwordManAttackType : uint8
 {
 	SimpleAttack UMETA(DisplayName = "SimpleAttack"), 
 	JumpUpAttack UMETA(DisplayName = "JumpUpAttack"),
-	AirAttack UMETA(DisplayName = "AirAttack")
+	AirAttack UMETA(DisplayName = "AirAttack"),
+	JumpAttack UMETA(DisplayName = "JumpAttack"),
+	GuardReaction UMETA(DisplayName = "GuardReaction"),
 };
 
 UCLASS()

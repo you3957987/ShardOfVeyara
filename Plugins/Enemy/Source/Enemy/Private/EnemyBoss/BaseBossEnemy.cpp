@@ -154,13 +154,14 @@ float ABaseBossEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 	FString MeshName = GetMesh() && GetMesh()->GetSkeletalMeshAsset() ? 
 		GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
 	
-	UEnemyLogManager::EnemyLog( GetLogTypeFromEnemyType(), 
-		FString::Printf(TEXT("보스 [%s]가 [%.f] 대미지 받음 (%.f / %.f)"), 
-			*MeshName, DamageToApply, MaxHealth, Health));
-	
 	if ( DamageToApply > 0.f )
 	{
 		Health -= DamageToApply;
+		
+		UEnemyLogManager::EnemyLog( GetLogTypeFromEnemyType(), 
+		FString::Printf(TEXT("[%s]가 [%.f] 대미지 받음 (%.f / %.f)"), 
+			*MeshName, DamageToApply, MaxHealth, Health));
+		
 		if ( Health <= 0.f )
 		{
 			Die();
@@ -379,7 +380,7 @@ void ABaseBossEnemy::StartBattleLog()
 		GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
 
 	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
-		FString::Printf(TEXT("보스 [%s] 전투 진입 (시작 시간: %.2f)"), *MeshName, BattleStartTime));
+		FString::Printf(TEXT("[%s] 전투 진입 (시작 시간: %.2f)"), *MeshName, BattleStartTime));
 }
 
 void ABaseBossEnemy::EndBattleLog()
@@ -394,7 +395,7 @@ void ABaseBossEnemy::EndBattleLog()
 		GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
 
 	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
-		FString::Printf(TEXT("적 [%s] 전투 종료 | 소요 시간: %.2f초 (시작: %.2f / 종료: %.2f)"), 
+		FString::Printf(TEXT("[%s] 전투 종료 | 소요 시간: %.2f초 (시작: %.2f / 종료: %.2f)"), 
 			*MeshName, BattleDuration, BattleStartTime, EndTime));
 
 	// 상태 초기화
@@ -410,7 +411,7 @@ void ABaseBossEnemy::AttackPatternLog(FString PatternName) const
 
 	// 로그 기록: [거리분류] 패턴명 선택
 	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
-		FString::Printf(TEXT("적 [%s] 패턴 결정 | 거리: [%s] | 패턴: [%s] "), 
+		FString::Printf(TEXT("[%s] 패턴 결정 | 거리: [%s] | 패턴: [%s] "), 
 			*MeshName, *SelectedRangeName ,*PatternName));
 }
 
