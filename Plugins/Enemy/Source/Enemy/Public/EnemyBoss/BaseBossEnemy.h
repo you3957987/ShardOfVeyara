@@ -122,6 +122,7 @@ public:
 	void AttackPatternLog(FString PatternName) const;
 	FString SelectedRangeName = TEXT("플레이어 첫 조우");
 	EEnemyLogType GetLogTypeFromEnemyType() const;
+	void CheckPlayerDead();
 	
 #if WITH_EDITOR
 	// 에디터에서 프로퍼티가 변경될 때 호출됩니다.

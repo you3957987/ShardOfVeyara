@@ -197,7 +197,7 @@ public:
 	void StartBattleLog();
 	void EndBattleLog();
 	EEnemyLogType GetLogTypeFromEnemyType() const;
-	
+	void CheckPlayerDead();
 	
 #if WITH_EDITOR
 	// 에디터에서 프로퍼티가 변경될 때 호출됩니다.

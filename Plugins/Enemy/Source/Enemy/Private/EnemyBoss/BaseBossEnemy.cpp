@@ -1,4 +1,6 @@
 #include "EnemyBoss/BaseBossEnemy.h"
+
+#include "AGSDCharacter.h"
 #include "AIController.h"
 #include "EnemyLogManager.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -439,6 +441,20 @@ EEnemyLogType ABaseBossEnemy::GetLogTypeFromEnemyType() const
 
 	// 기본값 (판별 불가능할 경우)
 	return EEnemyLogType::SkeletonMage; 
+}
+
+void ABaseBossEnemy::CheckPlayerDead()
+{
+	AAGSDCharacter* FarmerCharacter = Cast<AAGSDCharacter>(TargetCharacter);
+	
+	if ( FarmerCharacter->GetFarmerHealthToEnemy() <= 0.f )
+	{
+		FString MeshName = GetMesh() && GetMesh()->GetSkeletalMeshAsset() ? 
+			GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
+		
+		UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
+		FString::Printf(TEXT("적 [%s] 공격으로 플레이어 사망"), *MeshName));
+	}
 }
 
 #if	WITH_EDITOR

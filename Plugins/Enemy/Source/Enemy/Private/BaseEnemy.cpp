@@ -1,4 +1,6 @@
 #include "BaseEnemy.h"
+
+#include "AGSDCharacter.h"
 #include "AIController.h"
 #include "EnemyLogManager.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -394,6 +396,20 @@ EEnemyLogType ABaseEnemy::GetLogTypeFromEnemyType() const
 		case EEnemyType::EET_Burrow:    return EEnemyLogType::Burrow;
 		case EEnemyType::EET_Revive: return EEnemyLogType::Revive;
 	default:                        return EEnemyLogType::Melee;
+	}
+}
+
+void ABaseEnemy::CheckPlayerDead()
+{
+	AAGSDCharacter* FarmerCharacter = Cast<AAGSDCharacter>(TargetCharacter);
+	
+	if ( FarmerCharacter->GetFarmerHealthToEnemy() <= 0.f )
+	{
+		FString MeshName = GetMesh() && GetMesh()->GetSkeletalMeshAsset() ? 
+			GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
+		
+		UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
+		FString::Printf(TEXT("적 [%s] 공격으로 플레이어 사망"), *MeshName));
 	}
 }
 
