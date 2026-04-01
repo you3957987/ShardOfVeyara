@@ -197,15 +197,22 @@ void AEnemySpawner::SpawnEnemy()
 				FActorSpawnParameters SpawnParams;
 				SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-				World->SpawnActor<ABaseEnemy>(
+				ABaseEnemy* SpawnedEnemy = World->SpawnActor<ABaseEnemy>(
 					SelectedEnemyClass,
 					FinalSpawnLocation,
 					SpawnRotation,
 					SpawnParams
 				);
 				
-				UEnemyLogManager::EnemyLog( EEnemyLogType::Spawner,FString::Printf(TEXT("적 [스포너]가 몬스터 스폰)")) );
-				
+				// 스켈레톤 메시 이름 가져오기
+				FString MeshName = TEXT("Unknown");
+				if (SpawnedEnemy && SpawnedEnemy->GetMesh() && SpawnedEnemy->GetMesh()->GetSkeletalMeshAsset())
+				{
+					MeshName = SpawnedEnemy->GetMesh()->GetSkeletalMeshAsset()->GetName();
+				}
+
+				// 로그에 메시 이름 추가 출력
+				UEnemyLogManager::EnemyLog(EEnemyLogType::Spawner, FString::Printf(TEXT("적 [스포너]가 [%s] 스폰"), *MeshName));
 			}
 		}
 	}
