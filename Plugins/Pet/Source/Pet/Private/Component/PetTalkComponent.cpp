@@ -486,6 +486,14 @@ void UPetTalkComponent::EndConversation()
 		PC->SetIgnoreMoveInput(false);
 	}
 
+	GetWorld()->GetTimerManager().ClearTimer(ConversationTimerHandle); // 대화 타이머 초기화
+
+	//  현재 재생 중인 음성 즉시 중지
+	if (CurrentConversationVoiceAudioComponent && CurrentConversationVoiceAudioComponent->IsPlaying())
+	{
+		CurrentConversationVoiceAudioComponent->Stop();
+	}
+	
 	AActor* OwnerActor = GetOwner();
 	
 	// 귀여운 고래 펫일 경우
