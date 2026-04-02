@@ -96,7 +96,7 @@ void ABossSkeletonMage::PlayTeleportMontage(const FVector& Destination)
 {
 	if ( BlackboardComp == nullptr ) return;
 	
-	BlackboardComp->SetValueAsFloat("AttackDelay", TeleportDelay); // 텔포후 행동 딜레이 설정
+	BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.TeleportDelay); // 텔포후 행동 딜레이 설정
 
 	TeleportDestination = Destination;
 	
@@ -163,7 +163,7 @@ void ABossSkeletonMage::PlayFireBallMontage()
 {
 	if ( BlackboardComp == nullptr ) return;
 	
-	BlackboardComp->SetValueAsFloat("AttackDelay", FireBallDelay); // 행동 딜레이 설정
+	BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.FireBallDelay); // 행동 딜레이 설정
 	
 	if ( FireBallMontage )
 	{
@@ -203,7 +203,7 @@ void ABossSkeletonMage::StartSummoning(const FVector& Location1, const FVector& 
 	
 	SpawnSummonEffectAtLocation(GetActorLocation()); // 마법사가 소환 시작 이펙트
 	
-	BlackboardComp->SetValueAsFloat("AttackDelay", SummonEnemyDelay); // 행동 딜레이 설정
+	BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.SummonEnemyDelay); // 행동 딜레이 설정
 	
 	SummonLocations.Empty();
 	SummonLocations.Add(Location1);
@@ -306,7 +306,7 @@ void ABossSkeletonMage::PlayGroundAreaAttackMontage()
 {
 	if ( BlackboardComp == nullptr ) return;
 	
-	BlackboardComp->SetValueAsFloat("AttackDelay", GroundAttackDelay); // 행동 딜레이 설정
+	BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.GroundAttackDelay); // 행동 딜레이 설정
 
 	GroundTargetingComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
 		GetWorld(),
@@ -397,7 +397,7 @@ void ABossSkeletonMage::GroundAreaAttack()
 	if (SpawnedProjectile)
 	{
 		//SpawnedProjectile->SetLifeSpan(GroundAttackDuration);
-		SpawnedProjectile->DurationTime = GroundAttackDuration; // 장판 유지 시간 설정
+		SpawnedProjectile->DurationTime = AttackStruct.GroundAttackDuration; // 장판 유지 시간 설정
 	}
 	if ( GroundAttackEffect ) 
 	{
@@ -412,7 +412,7 @@ void ABossSkeletonMage::PlayPushTargetMontage()
 {
 	if ( BlackboardComp == nullptr ) return;
 	
-	BlackboardComp->SetValueAsFloat("AttackDelay", PushTargetDelay); // 행동 딜레이 설정
+	BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.PushTargetDelay); // 행동 딜레이 설정
 	
 	if ( PushTargetMontage )
 	{

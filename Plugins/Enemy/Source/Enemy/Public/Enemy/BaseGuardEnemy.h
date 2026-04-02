@@ -38,10 +38,10 @@ public:
 	float GuardDuration = 5.f;
 	
 	// 가드시 플레이할 애니메이션 몽타주
-	UPROPERTY(EditAnywhere, Category = "자체설정")
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	UAnimMontage* GuardMontage;
 	// 가드 리액션 공격 몽타주 
-	UPROPERTY(EditAnywhere, Category = "자체설정")
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	UAnimMontage* GuardReactionAttackMontage;
 	// 가드 리액션 공격 대미지
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "자체설정")

@@ -73,10 +73,6 @@ void ABaseBurrowEnemy::OnBeginOverlapAttackCollisionSphere(UPrimitiveComponent* 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Attack Sphere Overlapped with Player!"));
 
-		// 대미지 적용 ( 어택 대미지는 공격 전 가드 공격인지 아님 일반 공격인지에 따라 각각 함수에서 설정 )
-		UGameplayStatics::ApplyDamage(OtherActor, AttackDamage, GetController(),
-			this, UDamageType::StaticClass());
-
 		// 로그 기록 로직
 		if (GetMesh()) 
 		{
@@ -88,6 +84,10 @@ void ABaseBurrowEnemy::OnBeginOverlapAttackCollisionSphere(UPrimitiveComponent* 
 					*MeshName, 
 					AttackDamage));
 		}
+		
+		// 대미지 적용 ( 어택 대미지는 공격 전 가드 공격인지 아님 일반 공격인지에 따라 각각 함수에서 설정 )
+		UGameplayStatics::ApplyDamage(OtherActor, AttackDamage, GetController(),
+			this, UDamageType::StaticClass());
 		
 		// 다시 콜리전 끄기
 		if ( AttackRangePointSphere ) AttackRangePointSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -172,10 +172,6 @@ void ABaseBurrowEnemy::FinishUnburrow()
 					// 플레이어 캐릭터를 밀쳐냄 (XY, Z 모두 강제 적용 override)
 					PlayerCharacter->LaunchCharacter(LaunchVelocity, true, true);
 					
-					// 대미지 적용 (기존 AttackDamage 사용)
-					UGameplayStatics::ApplyDamage(PlayerCharacter, 10, GetController(),
-						this, UDamageType::StaticClass());
-					
 					// 로그 기록 로직
 					if (GetMesh()) 
 					{
@@ -187,6 +183,10 @@ void ABaseBurrowEnemy::FinishUnburrow()
 								*MeshName, 
 								AttackDamage));
 					}
+					
+					// 대미지 적용 (기존 AttackDamage 사용)
+					UGameplayStatics::ApplyDamage(PlayerCharacter, 10, GetController(),
+						this, UDamageType::StaticClass());
 					
 					// 로그 출력
 					UE_LOG(LogTemp, Warning, TEXT("[BaseBurrowEnemy] Unburrow Attack Hit Player!"));

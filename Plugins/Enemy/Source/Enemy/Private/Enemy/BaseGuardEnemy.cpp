@@ -115,10 +115,6 @@ void ABaseGuardEnemy::OnBeginOverlapWeaponCollisionSphere(UPrimitiveComponent* O
 		// 어택 대미지 로그 
 		UE_LOG(LogTemp, Warning, TEXT("Guard Enemy Attack Damage : %f"), AttackDamage);
 
-		// 대미지 적용 ( 어택 대미지는 공격 전 가드 공격인지 아님 일반 공격인지에 따라 각각 함수에서 설정 )
-		UGameplayStatics::ApplyDamage(OtherActor, AttackDamage, GetController(),
-			this, UDamageType::StaticClass());
-
 		// 로그 기록 로직
 		if (GetMesh()) 
 		{
@@ -134,7 +130,11 @@ void ABaseGuardEnemy::OnBeginOverlapWeaponCollisionSphere(UPrimitiveComponent* O
 					*AttackTypeName,
 					AttackDamage));
 		}
-
+		
+		// 대미지 적용 ( 어택 대미지는 공격 전 가드 공격인지 아님 일반 공격인지에 따라 각각 함수에서 설정 )
+		UGameplayStatics::ApplyDamage(OtherActor, AttackDamage, GetController(),
+			this, UDamageType::StaticClass());
+		
 		// 다시 콜리전 끄기
 		if ( WeaponCollision ) WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}

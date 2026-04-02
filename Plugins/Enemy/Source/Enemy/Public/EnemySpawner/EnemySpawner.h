@@ -11,7 +11,10 @@ class ENEMY_API AEnemySpawner : public AActor
 	
 protected:
 	virtual void BeginPlay() override;
-
+	// 데미지 처리 함수 재정의
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+		class AController* EventInstigator, AActor* DamageCauser) override;
+	
 	void PollInit(); // 틱에서 하는 초기화
 	
 	UPROPERTY(EditAnywhere, Category = "자체설정")
@@ -43,7 +46,10 @@ protected:
 	UFUNCTION()
 	void OnEndOverlapPlayerDetectSphere(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
+	
+	// Tick에서 체력 바 위젯을 내 캐릭터 쪽으로 돌아보게 하는 함수
+	void UpdateHealthBarWidget(float DeltaTime);
+	
 	// 플레이어가 보이는지 여부 확인 함수
 	bool CanSeePlayer() const;
 	// 플레이어 감시 하는 딜레이
@@ -53,9 +59,26 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class USceneComponent* SpawnLocation;
 
+	UPROPERTY(VisibleAnywhere, Category="자체설정")
+	bool bTargetInRange = false; // 타겟이 감지 범위 안에 있는지 여부
+	// 최대 체력
+	UPROPERTY(EditAnywhere, Category="자체설정")
+	float MaxHealth = 100.f;
+	// 현재 체력
+	UPROPERTY(EditAnywhere, Category="자체설정")
+	float Health = 100.f;
 	// 스폰할 적 클래스 배열
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "자체설정")
 	TArray<TSubclassOf<class ABaseEnemy>> SpawningEnemyClasses;
+	
+	// 죽을 떄 생성할 이펙트 == 케스케이드
+	UPROPERTY(EditDefaultsOnly, Category="자체설정")
+	class UParticleSystem* DeathEffectCascade;
+	// 아이템 드롭 함수
+	void DropItemsAfterDead();
+	// 죽고 나서 떨어질 아이템 배열
+	UPROPERTY(EditAnywhere, Category="자체설정")
+	TArray<TSubclassOf<AActor>> DropItems;
 	
 	// 스폰 딜레이
 	UPROPERTY(EditAnywhere, Category = "자체설정")
@@ -66,9 +89,15 @@ protected:
 	
 	void SpawnEnemy(); // 적 스폰 함수
 
+	void Die();
+	
 public:	
 	AEnemySpawner();
 	virtual void Tick(float DeltaTime) override;
+	
+	// 체력 바 위젯 컴포넌트
+	UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "자체설정")
+	TObjectPtr<class UWidgetComponent> HealthBarWidget;
 
 #if WITH_EDITOR
 	// 에디터에서 프로퍼티가 변경될 때 호출됩니다.

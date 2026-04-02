@@ -1,11 +1,9 @@
 #include "Enemy/BaseMimicEnemy.h"
 
 #include "EnemyLogManager.h"
-#include "Components/ProgressBar.h"
 #include "Enemy/BaseMeleeEnemy.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
-#include "EnemyHUD/EnemyHealthBarWidget.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -89,15 +87,6 @@ void ABaseMimicEnemy::CheckMeleeAttackHit(float DeltaTime)
 				// 공격 로그를 출력합니다.
 				UE_LOG(LogTemp, Warning, TEXT("Attack Hit Detected on: %s"), *OverlappingActor->GetName());
 
-				// 플레이어에게 대미지를 적용합니다.
-				UGameplayStatics::ApplyDamage(
-					OverlappingActor,
-					MeleeAttackDamage, // 헤더 파일에 선언된 대미지 변수
-					GetController(),
-					this,
-					UDamageType::StaticClass()
-				);
-				
 				// 로그 기록 로직
 				if (GetMesh()) 
 				{
@@ -109,6 +98,15 @@ void ABaseMimicEnemy::CheckMeleeAttackHit(float DeltaTime)
 							*MeshName, 
 							MeleeAttackDamage));
 				}
+				
+				// 플레이어에게 대미지를 적용합니다.
+				UGameplayStatics::ApplyDamage(
+					OverlappingActor,
+					MeleeAttackDamage, // 헤더 파일에 선언된 대미지 변수
+					GetController(),
+					this,
+					UDamageType::StaticClass()
+				);
 				
 				// 공격한 목록에 추가하여 중복 피해를 방지합니다.
 				HittedActors.Add(OverlappingActor);

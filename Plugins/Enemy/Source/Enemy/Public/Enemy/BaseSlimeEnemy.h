@@ -18,7 +18,7 @@ protected:
 	int32 SplitCount = 2; 
 
 	// 분열 시 생성할 슬라임 클래스
-	UPROPERTY(EditAnywhere, Category="자체설정")
+	UPROPERTY(EditDefaultsOnly, Category="자체설정")
 	TSubclassOf<ABaseSlimeEnemy> SplitSlimeClass;
 
 	// 분열 시 생성할 슬라임 간격

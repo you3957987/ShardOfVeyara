@@ -32,7 +32,7 @@ ABossWorm::ABossWorm()
 	SuctionRadialForceComp->SetupAttachment(RootComponent);
 	
 	SuctionRadialForceComp->Radius = 10000.f;        // 영향을 미칠 범위
-	SuctionRadialForceComp->ForceStrength = SuctionForce; // 빨아들이는 힘 (음수)
+	SuctionRadialForceComp->ForceStrength = AttackStruct.SuctionForce; // 빨아들이는 힘 (음수)
 	SuctionRadialForceComp->bImpulseVelChange = false ; // 질량에 따른 힘 조정 여부 (false면 질량이 클수록 덜 빨려감)
 	SuctionRadialForceComp->bAutoActivate = false;
 }
@@ -105,7 +105,7 @@ void ABossWorm::OnBeginOverlapAttackCollisionSphere(UPrimitiveComponent* Overlap
 		UGameplayStatics::ApplyDamage(OtherActor, AttackDamage, GetController(),
 			this, UDamageType::StaticClass());
 
-		if ( AttackDamage == LungeAttackDamage || AttackDamage == SuctionAttackDamage )
+		if ( AttackDamage == AttackStruct.LungeAttackDamage || AttackDamage == AttackStruct.SuctionAttackDamage )
 		{
 			ACharacter* PlayerCharacter = Cast<ACharacter>(OtherActor);
 			
@@ -124,15 +124,15 @@ void ABossWorm::OnBeginOverlapAttackCollisionSphere(UPrimitiveComponent* Overlap
 			PlayerCharacter->LaunchCharacter(LaunchVelocity, true, true);
 		}
 		
-		if ( AttackDamage == NormalAttackDamage )
+		if ( AttackDamage == AttackStruct.NormalAttackDamage )
 		{
 			UEnemyLogManager::EnemyLog(EEnemyLogType::Worm, FString::Printf(TEXT("[웜] 일반 공격 | 대미지[%.f]"), AttackDamage));
 		}
-		else if ( AttackDamage == LungeAttackDamage )
+		else if ( AttackDamage == AttackStruct.LungeAttackDamage )
 		{
 			UEnemyLogManager::EnemyLog(EEnemyLogType::Worm, FString::Printf(TEXT("[웜] 런지 공격 | 대미지[%.f]"), AttackDamage));
 		}
-		else if ( AttackDamage == SuctionAttackDamage )
+		else if ( AttackDamage ==  AttackStruct.SuctionAttackDamage )
 		{
 			UEnemyLogManager::EnemyLog(EEnemyLogType::Worm, FString::Printf(TEXT("[웜] 석션 공격 | 대미지[%.f]"), AttackDamage));
 		}
@@ -162,11 +162,11 @@ void ABossWorm::FinishBurrow()
 	// 딜레이 설정
 	if ( BlackboardComp )
 	{
-		BlackboardComp->SetValueAsFloat("AttackDelay", BurrowDelay); // 행동 딜레이 설정
+		BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.BurrowDelay); // 행동 딜레이 설정
 	}
 	
 	// 타겟 위치 세팅하는 함수 == BurrowDelay 에서 2초 정도 남았을 때 호출되어 타겟 위치 세팅
-	float TargetSetDelay = BurrowDelay - 2.0f;
+	float TargetSetDelay = AttackStruct.BurrowDelay - 2.0f;
 	
 	// 만약 BurrowDelay가 2초보다 짧다면 즉시 호출하거나 아주 짧은 딜레이로 설정
 	if (TargetSetDelay < 0.0f)
@@ -192,7 +192,7 @@ void ABossWorm::FinishUnburrow()
 	// 공격 딜레이 설정
 	if ( BlackboardComp )
 	{
-		BlackboardComp->SetValueAsFloat("AttackDelay", UnBurrowAttackDelay); // 행동 딜레이 설정
+		BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.UnBurrowAttackDelay); // 행동 딜레이 설정
 	}
 }
 
@@ -204,16 +204,16 @@ void ABossWorm::NormalAttack()
 
 		if ( bIsInSuctionAttackArea)
 		{
-			AttackDamage = SuctionAttackDamage; // 석션 공격 범위 안에 있으면 석션 공격 대미지로 설정
+			AttackDamage = AttackStruct.SuctionAttackDamage  ; // 석션 공격 범위 안에 있으면 석션 공격 대미지로 설정
 			bIsInSuctionAttackArea = false; // 공격 후에는 범위 플래그 초기화
 		}
-		else AttackDamage = NormalAttackDamage; // 공격 대미지 설정
+		else AttackDamage = AttackStruct.NormalAttackDamage; // 공격 대미지 설정
 		
 		bFocusPlayerAfterAttack = false; // 공격 중에는 포커스 비활성화
 		
 		if ( BlackboardComp )
 		{
-			BlackboardComp->SetValueAsFloat("AttackDelay", NormalAttackDelay); // 행동 딜레이 설정
+			BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.NormalAttackDelay); // 행동 딜레이 설정
 		}
 	}
 }
@@ -224,13 +224,13 @@ void ABossWorm::LungeAttack()
 	{
 		PlayAnimMontage(LungeAttackMontage);
 
-		AttackDamage = LungeAttackDamage; // 공격 대미지 설정
+		AttackDamage = AttackStruct.LungeAttackDamage; // 공격 대미지 설정
 		
 		bFocusPlayerAfterAttack = false;  
 		
 		if ( BlackboardComp )
 		{
-			BlackboardComp->SetValueAsFloat("AttackDelay", LungeAttackDelay); // 행동 딜레이 설정
+			BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.LungeAttackDelay); // 행동 딜레이 설정
 		}
 	}
 }
@@ -326,10 +326,10 @@ void ABossWorm::Unburrow()
 					PlayerCharacter->LaunchCharacter(LaunchVelocity, true, true);
 					
 					// 대미지 적용
-					UGameplayStatics::ApplyDamage(PlayerCharacter, UnBurrowAttackDamage, GetController(),
+					UGameplayStatics::ApplyDamage(PlayerCharacter, AttackStruct.UnBurrowAttackDamage, GetController(),
 						this, UDamageType::StaticClass());
 					
-					UEnemyLogManager::EnemyLog(EEnemyLogType::Worm, FString::Printf(TEXT("[웜] 언버로우 공격 | 대미지[%.f]"), UnBurrowAttackDamage));
+					UEnemyLogManager::EnemyLog(EEnemyLogType::Worm, FString::Printf(TEXT("[웜] 언버로우 공격 | 대미지[%.f]"), AttackStruct.UnBurrowAttackDamage));
 					
 					// 로그 출력 (필요시 주석 해제)
 					UE_LOG(LogTemp, Warning, TEXT("Player Hit At Unburrow Attack!"));
@@ -349,7 +349,7 @@ void ABossWorm::RangedAttack()
 		
 		if ( BlackboardComp )
 		{
-			BlackboardComp->SetValueAsFloat("AttackDelay", RangedAttackDelay); // 행동 딜레이 설정
+			BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.RangedAttackDelay); // 행동 딜레이 설정
 		}
 	}
 }
@@ -443,7 +443,7 @@ void ABossWorm::LinearFireBreathStart()
 		
 		if ( BlackboardComp )
 		{
-			BlackboardComp->SetValueAsFloat("AttackDelay", LinearFireBreathDelay); // 행동 딜레이 설정
+			BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.LinearFireBreathDelay); // 행동 딜레이 설정
 		}
 	}
 }
@@ -458,7 +458,7 @@ void ABossWorm::FanFireBreathStart()
 		
 		if ( BlackboardComp )
 		{
-			BlackboardComp->SetValueAsFloat("AttackDelay", FanFireBreathDelay); // 행동 딜레이 설정
+			BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.FanFireBreathDelay); // 행동 딜레이 설정
 		}
 	}
 }
@@ -510,7 +510,7 @@ void ABossWorm::HandleSuction(float DeltaTime)
 		{
 			bIsInSuctionAttackArea = true; // 흡입 공격 범위 안에 들어왔음을 표시
 			
-			AttackDamage = SuctionAttackDamage; // 공격 대미지 설정
+			AttackDamage = AttackStruct.SuctionAttackDamage; // 공격 대미지 설정
 			
 			BlackboardComp->SetValueAsBool("bIsInSuctionAttackArea", true); // 블랙보드에도 반영
 			
@@ -546,7 +546,7 @@ void ABossWorm::HandleSuction(float DeltaTime)
 			}
 		}
 	 	
-		float FinalForce = SuctionForce;
+		float FinalForce = AttackStruct.SuctionForce;
 
 		if (Resistance < 0.0f && bIsMovingInput) // 플레이어가 보스를 등지고 + 도망가려고 할 때
 		{
@@ -571,7 +571,7 @@ void ABossWorm::SuctionStartMontagePlay()
 		
 		if ( BlackboardComp )
 		{
-			BlackboardComp->SetValueAsFloat("AttackDelay", SuctionAttackDelay); // 행동 딜레이 설정
+			BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.SuctionAttackDelay); // 행동 딜레이 설정
 		}
 	}
 }

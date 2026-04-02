@@ -20,14 +20,15 @@ public class AGSD : ModuleRules
 			"UMG",
 			"Slate",
 			"SlateCore",
+			"Enemy",
 			"Pet",
 			"Niagara"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] 
 		{
-			"Niagara"
-        });
+			"Niagara",
+		});
 
 		PublicIncludePaths.AddRange(new string[] {
 			"AGSD",

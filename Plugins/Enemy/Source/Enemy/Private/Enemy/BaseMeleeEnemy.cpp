@@ -41,15 +41,6 @@ void ABaseMeleeEnemy::CheckMeleeAttackHit(float DeltaTime)
 				// 공격 로그를 출력합니다.
 				UE_LOG(LogTemp, Warning, TEXT("Attack Hit Detected on: %s"), *OverlappingActor->GetName());
 
-				// 플레이어에게 대미지를 적용합니다.
-				UGameplayStatics::ApplyDamage(
-					OverlappingActor,
-					MeleeAttackDamage, // 헤더 파일에 선언된 대미지 변수
-					GetController(),
-					this,
-					UDamageType::StaticClass()
-				);
-				
 				// 로그 기록 로직
 				if (GetMesh()) 
 				{
@@ -62,6 +53,14 @@ void ABaseMeleeEnemy::CheckMeleeAttackHit(float DeltaTime)
 							MeleeAttackDamage));
 				}
 				
+				// 플레이어에게 대미지를 적용합니다.
+				UGameplayStatics::ApplyDamage(
+					OverlappingActor,
+					MeleeAttackDamage, // 헤더 파일에 선언된 대미지 변수
+					GetController(),
+					this,
+					UDamageType::StaticClass()
+				);
 				
 				// 공격한 목록에 추가하여 중복 피해를 방지합니다.
 				HittedActors.Add(OverlappingActor);

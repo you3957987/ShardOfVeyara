@@ -54,13 +54,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category="자체설정")
 	bool bIsTransparent = false;
 	// 투명도 변경 이펙트
-	UPROPERTY(EditAnywhere, Category = "자체설정")
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	class UNiagaraSystem* TransparChangeEffect; 
 	// 투명 변경 이펙트 생성 앞 뒤 위치 조정용 거리
-	UPROPERTY(EditAnywhere, Category="자체설정")
+	UPROPERTY(EditDefaultsOnly, Category="자체설정")
 	float TransEffectForwardOffset = 0.0f;
 	// 투명 변경 이펙트 생성 위 아래 위치 조정용 거리
-	UPROPERTY(EditAnywhere, Category="자체설정")
+	UPROPERTY(EditDefaultsOnly, Category="자체설정")
 	float TransEffectUpOffset = 0.0f;
 
 	
@@ -100,7 +100,7 @@ public:
 	
 	
 	// 투명도 머티리얼 데이터 배열. 메인 캐릭터 메시이름은 무조건 ChracterMesh0   <- 숫자 0임
-	UPROPERTY(EditAnywhere, Category = "자체설정")
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	TArray<FTransparencyMaterialData> TransparencyData;
 	// 캐릭터의 투명도 상태를 설정하는 함수
 	UFUNCTION(BlueprintCallable)

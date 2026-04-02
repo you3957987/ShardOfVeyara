@@ -19,9 +19,9 @@ void ABossBlackKnightAIController::SetBlackboardKey()
 	BlackboardComp->SetValueAsFloat("AttackDelay", ControlledEnemy->AttackDelay);
 
 	BlackboardComp->SetValueAsObject(TEXT("TargetCharacter"), TargetPawn);
-	BlackboardComp->SetValueAsFloat(TEXT("W_RushAttack"), ControlledEnemy->AttackWeight.RushAttack);
-	BlackboardComp->SetValueAsFloat(TEXT("W_Guard"), ControlledEnemy->AttackWeight.Guard);
-	BlackboardComp->SetValueAsFloat( TEXT("W_NormalAttack"), ControlledEnemy->AttackWeight.NormalAttack );
-	BlackboardComp->SetValueAsFloat( TEXT("W_ChargeAttack"), ControlledEnemy->AttackWeight.ChargeAttack);
-	BlackboardComp->SetValueAsFloat( TEXT("W_ZapAttack"), ControlledEnemy->AttackWeight.ZapAttack );
+	BlackboardComp->SetValueAsFloat(TEXT("W_RushAttack"), ControlledEnemy->AttackStruct.RushAttackWeight);
+	BlackboardComp->SetValueAsFloat(TEXT("W_Guard"), ControlledEnemy->AttackStruct.GuardWeight);
+	BlackboardComp->SetValueAsFloat( TEXT("W_NormalAttack"), ControlledEnemy->AttackStruct.NormalAttackWeight );
+	BlackboardComp->SetValueAsFloat( TEXT("W_ChargeAttack"), ControlledEnemy->AttackStruct.ChargeAttackWeight);
+	BlackboardComp->SetValueAsFloat( TEXT("W_ZapAttack"), ControlledEnemy->AttackStruct.ZapAttackWeight );
 }

@@ -37,7 +37,7 @@ EBTNodeResult::Type UBTTask_SummonEnemy::ExecuteTask(UBehaviorTreeComponent& Own
 			// MaxSummonDist 반경 내에서 이동 가능한 랜덤 위치를 찾습니다.
 			if (NavSystem->GetRandomReachablePointInRadius(
 				OriginPoint->GetComponentLocation(),
-				BossPawn->MaxSummonDist,
+				BossPawn->AttackStruct.MaxSummonDist,
 				NavLocation))
 			{
 				SummonLocations.Add(NavLocation.Location);

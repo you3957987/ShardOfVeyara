@@ -60,14 +60,14 @@ float ABossMagicSwordMan::TakeDamage(float DamageAmount, struct FDamageEvent con
 		DamageWhileGuarding += DamageAmount;
 
 		// 아직 리액션 대미지에 도달하지 않았으면 가드 몽타주 재생
-		if ( DamageWhileGuarding < MaxDamageToReaction && GuardHitMontage )
+		if ( DamageWhileGuarding < AttackStruct.MaxDamageToReaction && GuardHitMontage )
 		{
 			PlayAnimMontage(GuardHitMontage);
 		}
 		
 		UEnemyLogManager::EnemyLog(EEnemyLogType::BlackKnight, 
 			FString::Printf(TEXT("[소드맨] 가드 성공 | 가드로 막은 대미지: [%.f] | 가드중 받은 대미지 / 반격 임계치[%.f / %.f]"), 
-				DamageAmount, DamageWhileGuarding, MaxDamageToReaction));
+				DamageAmount, DamageWhileGuarding, AttackStruct.MaxDamageToReaction));
 		
 		return 0.f; // 대미지 무효화
 	}
@@ -161,7 +161,7 @@ UAnimMontage* ABossMagicSwordMan::StartCloseAttack()
 		{
 			PlayAnimMontage(CloseAttackMontages[RandomIndex]);
 			AttackType = EMagicSwordManAttackType::SimpleAttack;
-			if (BlackboardComp) BlackboardComp->SetValueAsFloat("AttackDelay", CloseAttackDelay);
+			if (BlackboardComp) BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.CloseAttackDelay);
 			return CloseAttackMontages[RandomIndex];
 		}
 	}
@@ -180,7 +180,7 @@ UAnimMontage* ABossMagicSwordMan::StartDashAttack()
 		{
 			PlayAnimMontage(DashAttackMontages[RandomIndex]);
 			AttackType = EMagicSwordManAttackType::SimpleAttack;
-			if (BlackboardComp) BlackboardComp->SetValueAsFloat("AttackDelay", DashAttackDelay);
+			if (BlackboardComp) BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.DashAttackDelay);
 			return DashAttackMontages[RandomIndex];
 		}
 	}
@@ -201,7 +201,7 @@ UAnimMontage* ABossMagicSwordMan::StartCloseJumpUpAttack()
 		if (BlackboardComp)
 		{
 			BlackboardComp->SetValueAsBool("AirAttack", false);
-			BlackboardComp->SetValueAsFloat("AttackDelay", CloseJumpUpAttackDelay);
+			BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.CloseJumpUpAttackDelay);
 		}
 		return CloseJumpUpAttackMontage;
 	}
@@ -220,7 +220,7 @@ UAnimMontage* ABossMagicSwordMan::StartDashJumpUpAttack()
 		if (BlackboardComp)
 		{
 			BlackboardComp->SetValueAsBool("AirAttack", false);
-			BlackboardComp->SetValueAsFloat("AttackDelay", DashJumpUpAttackDelay);
+			BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.DashJumpUpAttackDelay);
 		}
 		return DashJumpUpAttackMontage;
 	}
@@ -293,7 +293,7 @@ UAnimMontage* ABossMagicSwordMan::StartJumpAttack()
 		{
 			PlayAnimMontage(JumpAttackMontages[RandomIndex]);
 			AttackType = EMagicSwordManAttackType::JumpAttack;
-			if (BlackboardComp) BlackboardComp->SetValueAsFloat("AttackDelay", JumpAttackDelay);
+			if (BlackboardComp) BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.JumpAttackDelay);
 			return JumpAttackMontages[RandomIndex];
 		}
 	}
@@ -329,7 +329,7 @@ UAnimMontage* ABossMagicSwordMan::StartPowerAttack()
 	{
 		PlayAnimMontage(PowerAttackMontage);
 		bIsPowerAttackHit = false; // 공격 시작 시점에는 궁극기 공격이 적중했는지 여부를 false로 초기화
-		if (BlackboardComp) BlackboardComp->SetValueAsFloat("AttackDelay", PowerAttackDelay);
+		if (BlackboardComp) BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.PowerAttackDelay);
 		return PowerAttackMontage;
 	}
 	return nullptr;
@@ -414,10 +414,10 @@ void ABossMagicSwordMan::OnPowerAttackTimerTick(AActor* TargetActor)
 	if (IsValid(TargetActor))
 	{
 		// 주기적 대미지 적용
-		UGameplayStatics::ApplyDamage(TargetActor, PowerAttackTickDamage, 
+		UGameplayStatics::ApplyDamage(TargetActor, AttackStruct.PowerAttackTickDamage, 
 			GetController(), this, UDamageType::StaticClass());
 		// 대미지 로그
-		UE_LOG(LogTemp, Warning, TEXT("Boss Power Attack Tick Damage : %f"), PowerAttackTickDamage);
+		UE_LOG(LogTemp, Warning, TEXT("Boss Power Attack Tick Damage : %f"), AttackStruct.PowerAttackTickDamage);
 	}
 	else
 	{
@@ -430,13 +430,13 @@ void ABossMagicSwordMan::FinishPowerAttack()
 {
 	if ( bIsPowerAttackHit )
 	{
-		UGameplayStatics::ApplyDamage(TargetCharacter, PowerAttackFinishDamage, 
+		UGameplayStatics::ApplyDamage(TargetCharacter, AttackStruct.PowerAttackFinishDamage, 
 			GetController(), this, UDamageType::StaticClass());
 		
-		UEnemyLogManager::EnemyLog(EEnemyLogType::MagicSwordMan, FString::Printf(TEXT("[소드맨] 궁극기 마무리 대미지 적용 | 대미지: [%.f]"), PowerAttackFinishDamage));
+		UEnemyLogManager::EnemyLog(EEnemyLogType::MagicSwordMan, FString::Printf(TEXT("[소드맨] 궁극기 마무리 대미지 적용 | 대미지: [%.f]"), AttackStruct.PowerAttackFinishDamage));
 		
 		// 피니쉬 대미지 로그
-		UE_LOG(LogTemp, Warning, TEXT("Boss Power Attack Finish Damage : %f"), PowerAttackFinishDamage);
+		UE_LOG(LogTemp, Warning, TEXT("Boss Power Attack Finish Damage : %f"), AttackStruct.PowerAttackFinishDamage);
 		
 		// 타겟 움직임 및 입력 복구 
 		if (ACharacter* HitCharacter = Cast<ACharacter>(TargetCharacter))
@@ -468,7 +468,7 @@ UAnimMontage* ABossMagicSwordMan::StartBladeWaveAttack()
 	{
 		PlayAnimMontage(BladeWaveAttackMontage);
 		AttackType = EMagicSwordManAttackType::SimpleAttack;
-		if (BlackboardComp) BlackboardComp->SetValueAsFloat("AttackDelay", BladeWaveAttackDelay);
+		if (BlackboardComp) BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.BladeWaveAttackDelay);
 		return BladeWaveAttackMontage;
 	}
 	return nullptr;

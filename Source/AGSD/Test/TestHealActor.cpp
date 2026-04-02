@@ -1,9 +1,9 @@
-#include "Test/HealActor.h"
+﻿#include "TestHealActor.h"
 
 #include "AGSDCharacter.h"
 #include "Components/SphereComponent.h"
 
-AHealActor::AHealActor()
+ATestHealActor::ATestHealActor()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -15,23 +15,23 @@ AHealActor::AHealActor()
 	
 }
 
-void AHealActor::BeginPlay()
+void ATestHealActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
 	if (CollisionSphere)
 	{
-		CollisionSphere->OnComponentBeginOverlap.AddDynamic(this, &AHealActor::OnOverlapBegin);
+		CollisionSphere->OnComponentBeginOverlap.AddDynamic(this, &ATestHealActor::OnOverlapBegin);
 	}
 }
 
-void AHealActor::Tick(float DeltaTime)
+void ATestHealActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
-void AHealActor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+void ATestHealActor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor && OtherActor->ActorHasTag("Player"))

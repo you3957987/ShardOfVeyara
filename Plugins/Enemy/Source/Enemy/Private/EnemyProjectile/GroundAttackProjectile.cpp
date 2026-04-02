@@ -128,17 +128,17 @@ void AGroundAttackProjectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComp
 		if (OtherActor->ActorHasTag(FName("Player")))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("GroundAttack hit Player: %s"), *OtherActor->GetName());
-
-			// 플레이어에게 대미지를 적용합니다.
-			UGameplayStatics::ApplyDamage(
-			 OtherActor,
-			 Damage, 
-			 GetOwner() ? GetOwner()->GetInstigatorController() : nullptr, // 소유자의 컨트롤러를 데미지 인스티게이터로 사용
-			this,
-			 UDamageType::StaticClass()
-			);
 			
 			UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, FString::Printf(TEXT("[스켈레톤 메이지] 뼈 장판 공격 [%.f] 대미지 줌"), Damage ));
+			
+			// 플레이어에게 대미지를 적용합니다.
+			UGameplayStatics::ApplyDamage(
+				OtherActor,
+				Damage, 
+				GetOwner() ? GetOwner()->GetInstigatorController() : nullptr, // 소유자의 컨트롤러를 데미지 인스티게이터로 사용
+				this,
+				UDamageType::StaticClass()
+			);
 			
 			// 첫 오버랩 이후 MeshComp의 콜리전을 비활성화합니다.
 			MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);

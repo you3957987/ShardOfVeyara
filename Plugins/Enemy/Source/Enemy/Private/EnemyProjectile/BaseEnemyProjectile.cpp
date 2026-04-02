@@ -103,15 +103,6 @@ void ABaseEnemyProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedCompone
 	// 플레이어랑 충돌 시 대미지 넣는거 넣기!!!
 	if (bIsPlayer)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Projectile hit Player: %s"), *OtherActor->GetName());
-		UGameplayStatics::ApplyDamage(
-		   OtherActor,
-		   Damage, // 헤더 파일에 선언된 대미지 변수
-		   GetOwner() ? GetOwner()->GetInstigatorController() : nullptr,
-		   this,
-		   UDamageType::StaticClass()
-		  );
-		
 		// 1. 발사체의 소유자(Owner)를 가져와서 캐릭터인지 확인
 		if (ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner()))
 		{
@@ -123,7 +114,7 @@ void ABaseEnemyProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedCompone
 				
 				if (OwnerMeshName.Contains(TEXT("MagicSwordMan")))
 				{
-					UEnemyLogManager::EnemyLog(EEnemyLogType::MagicSwordMan, FString::Printf(TEXT("[소드맨] 검기가 [%.f] 대미지"), Damage));
+					UEnemyLogManager::EnemyLog(EEnemyLogType::MagicSwordMan, FString::Printf(TEXT("[소드맨] 검기가 [%.f] 대미지 줌"), Damage));
 				}
 				else if ( OwnerMeshName.Contains(TEXT("Skeleton_Mage")) )
 				{
@@ -134,11 +125,20 @@ void ABaseEnemyProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedCompone
 					ABaseRangedEnemy* RangedCharacter = Cast<ABaseRangedEnemy>(GetOwner());
 					
 					UEnemyLogManager::EnemyLog( RangedCharacter->GetEnemyType() == EEnemyType::EET_Ranged ? EEnemyLogType::Ranged : EEnemyLogType::Revive,
-						FString::Printf(TEXT("적 [%s] 발사체가 [%.f] 대미지"),
+						FString::Printf(TEXT("적 [%s] 발사체가 [%.f] 대미지 줌"),
 						*OwnerMeshName, Damage));
 				}
 			}
 		}
+		
+		UE_LOG(LogTemp, Warning, TEXT("Projectile hit Player: %s"), *OtherActor->GetName());
+		UGameplayStatics::ApplyDamage(
+		   OtherActor,
+		   Damage, // 헤더 파일에 선언된 대미지 변수
+		   GetOwner() ? GetOwner()->GetInstigatorController() : nullptr,
+		   this,
+		   UDamageType::StaticClass()
+		  );
 	}
 	
 	// SweepResult에서 충돌 위치를 가져옵니다.

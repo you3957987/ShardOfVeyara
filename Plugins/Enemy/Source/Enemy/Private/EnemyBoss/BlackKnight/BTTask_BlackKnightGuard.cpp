@@ -26,11 +26,11 @@ EBTNodeResult::Type UBTTask_BlackKnightGuard::ExecuteTask(UBehaviorTreeComponent
 	ABossBlackKnight* Boss = Cast<ABossBlackKnight>(AIController->GetPawn());
 	if ( Boss )
 	{
-		GuardDuration = Boss->GuardDuration;
+		GuardDuration = Boss->AttackStruct.GuardDuration;
 		Boss->bIsGuarding = true;
 		Boss->DamageWhileGuarding = 0.0f;
 		
-		Blackboard->SetValueAsFloat("AttackDelay", Boss->GuardDelay); // 행동 딜레이 설정
+		Blackboard->SetValueAsFloat("AttackDelay", Boss->AttackStruct.GuardDelay); // 행동 딜레이 설정
 	}
 	
 	// 2. 중요: 즉시 끝내지 않고 '진행 중' 상태를 반환
@@ -70,7 +70,7 @@ void UBTTask_BlackKnightGuard::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 		return;
 	}
 	
-	if (Boss->DamageWhileGuarding >= Boss->MaxDamageToReaction )
+	if (Boss->DamageWhileGuarding >= Boss->AttackStruct.MaxDamageToReaction )
 	{
 		// 피격 횟수가 최대치에 도달했으면 가드 리엑션 실행
 		Blackboard->SetValueAsBool("GuardAttack", true);

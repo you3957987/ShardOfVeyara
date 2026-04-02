@@ -33,7 +33,7 @@ protected:
 		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
 	// 체력 바 위젯 컴포넌트
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "자체설정")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "자체설정")
 	TObjectPtr<class UWidgetComponent> HealthBarWidget;
 	// Tick에서 체력 바 위젯을 내 캐릭터 쪽으로 돌아보게 하는 함수
 	void UpdateHealthBarWidget(float DeltaTime);
@@ -61,16 +61,16 @@ protected:
 	void PollInit(float DeltaTime); 
 
 	// 죽음 애니메이션 몽타주
-	UPROPERTY(EditAnywhere, Category = "자체설정")
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	class UAnimMontage* DeathMontage;
 	// 죽을 떄 생성할 이펙트 == 케스케이드
-	UPROPERTY(EditAnywhere, Category="자체설정")
+	UPROPERTY(EditDefaultsOnly, Category="자체설정")
 	class UParticleSystem* DeathEffectCascade;
 	// 죽음 이펙트 생성 앞 뒤 위치 조정용 거리
-	UPROPERTY(EditAnywhere, Category="자체설정")
+	UPROPERTY(EditDefaultsOnly, Category="자체설정")
 	float DeathEffectForwardOffset = 0.0f;
 	// 죽음 이펙트 크기 배율
-	UPROPERTY(EditAnywhere, Category="자체설정")
+	UPROPERTY(EditDefaultsOnly, Category="자체설정")
 	float DeathEffectScale = 1.0f;
 	// 죽음 후 일정 시간 뒤에 이펙트 생성 및 액터 제거를 위한 타이머 핸들
 	FTimerHandle DeathTimerHandle;
@@ -122,7 +122,8 @@ public:
 	void AttackPatternLog(FString PatternName) const;
 	FString SelectedRangeName = TEXT("플레이어 첫 조우");
 	EEnemyLogType GetLogTypeFromEnemyType() const;
-	void CheckPlayerDead();
+	UFUNCTION()
+	void PlayerDeadLog();
 	
 #if WITH_EDITOR
 	// 에디터에서 프로퍼티가 변경될 때 호출됩니다.

@@ -1,6 +1,5 @@
 #include "EnemyBoss/BaseBossEnemy.h"
 
-#include "AGSDCharacter.h"
 #include "AIController.h"
 #include "EnemyLogManager.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -14,6 +13,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "MotionWarpingComponent.h" 
+#include "Interface/PlayerDeadInterface.h"
 
 ABaseBossEnemy::ABaseBossEnemy()
 {
@@ -102,7 +102,21 @@ void ABaseBossEnemy::PollInit(float DeltaTime)
 		TargetCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0); // 월드에서 첫 번째 플레이어 캐릭터를 가져옵니다.
 		if ( TargetCharacter ) // 캐릭터가 유효한지 확인합니다.
 		{
-			bTargetInitalize = true; // 캐릭터가 유효하면 초기화 플래그를 true로 설정합니다.
+			IPlayerDeadInterface* DeadInterface = Cast<IPlayerDeadInterface>(TargetCharacter);
+			if (DeadInterface)
+			{
+				// 이전에 바인딩된 게 있다면 제거하고 등록 (중복 방지 안전장치)
+				DeadInterface->GetOnPlayerDeadDelegate().RemoveDynamic(this, &ABaseBossEnemy::PlayerDeadLog);
+				DeadInterface->GetOnPlayerDeadDelegate().AddDynamic(this, &ABaseBossEnemy::PlayerDeadLog);
+            
+				UE_LOG(LogTemp, Error, TEXT("asdasdsad"));
+				
+				bTargetInitalize = true; 
+			}
+			else 
+			{
+				UE_LOG(LogTemp, Error, TEXT("Player does not implement IPlayerDeadInterface"));
+			}
 		}
 	}
 }
@@ -405,6 +419,23 @@ void ABaseBossEnemy::EndBattleLog()
 	BattleStartTime = 0.f;
 }
 
+void ABaseBossEnemy::PlayerDeadLog()
+{
+	// 메쉬 이름 가져오기 헬퍼
+	FString MeshName = GetMesh() && GetMesh()->GetSkeletalMeshAsset() ? 
+		GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
+	
+	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
+		FString::Printf(TEXT("보스 [%s] 의 공격으로 플레이어 사망"), *MeshName));
+	
+	if ( BlackboardComp )
+	{
+		BlackboardComp->SetValueAsBool(TEXT("IsDead"), true);
+	} 
+	
+	EndBattleLog();
+}
+
 void ABaseBossEnemy::AttackPatternLog(FString PatternName) const
 {
 	// 메쉬 이름 가져오기
@@ -441,20 +472,6 @@ EEnemyLogType ABaseBossEnemy::GetLogTypeFromEnemyType() const
 
 	// 기본값 (판별 불가능할 경우)
 	return EEnemyLogType::SkeletonMage; 
-}
-
-void ABaseBossEnemy::CheckPlayerDead()
-{
-	AAGSDCharacter* FarmerCharacter = Cast<AAGSDCharacter>(TargetCharacter);
-	
-	if ( FarmerCharacter->GetFarmerHealthToEnemy() <= 0.f )
-	{
-		FString MeshName = GetMesh() && GetMesh()->GetSkeletalMeshAsset() ? 
-			GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
-		
-		UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
-		FString::Printf(TEXT("적 [%s] 공격으로 플레이어 사망"), *MeshName));
-	}
 }
 
 #if	WITH_EDITOR

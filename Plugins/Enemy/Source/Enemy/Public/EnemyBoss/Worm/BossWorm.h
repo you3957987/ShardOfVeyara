@@ -5,26 +5,64 @@
 #include "BossWorm.generated.h"
 
 USTRUCT(BlueprintType)
-struct FBossWormAttackWeight
+struct FBossWormAttackStruct
 {
 	GENERATED_BODY()
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float NormalAttack = 5.0f;
+	float NormalAttackWeight = 5.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float NormalAttackDamage = 25.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float NormalAttackDelay = 3.0f;
+	
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float Burrow = 3.0f;
+	float BurrowWeight = 3.0f;
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float Unburrow = 2.0f;
+	float BurrowDelay = 5.0f;
+	
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float RangedAttack = 4.0f;
+	float UnBurrowWeight = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float UnBurrowAttackDamage = 30.0f;
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float LungeAttack = 3.0f;
+	float UnBurrowAttackDelay = 3.0f;
+	
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float LinearFireBreath = 2.0f;
+	float RangedAttackWeight = 4.0f;
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float FanFireBreath = 2.0f;
+	float RangedAttackDelay = 4.0f;
+	
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float SuctionAttack = 3.0f;
+	float LungeAttackWeight = 3.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float LungeAttackDamage = 35.0f;
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float LungeAttackDelay = 5.0f;
+	
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float LinearFireBreathWeight = 2.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float LinearFireBreathDamage = 4.f;
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float LinearFireBreathDelay = 2.0f;
+	
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float FanFireBreathWeight = 2.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float FanFireBreathDamage = 3.f;
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float FanFireBreathDelay = 2.0f;
+	
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float SuctionAttackWeight = 3.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float SuctionAttackDamage = 41.f;
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float SuctionAttackDelay = 3.0f;
+	// 빨아들이는 힘 = 음수가 빨아들이는거임
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	float SuctionForce = -700000.f;
 };
 
 UCLASS()
@@ -59,7 +97,7 @@ public:
 	
 	// 공격 가중치 구조체 변수
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	FBossWormAttackWeight AttackWeight;
+	FBossWormAttackStruct AttackStruct;
 	
 	// 땅파는 중인지 여부를 나타내는 변수 + 블루프린트 에서 읽기 전용으로 설정
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "자체설정")
@@ -70,24 +108,12 @@ public:
 	// 기본 공격 몽타주
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "자체설정")
 	UAnimMontage* NormalAttackMontage;
-	// 기본 공격 대미지
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float NormalAttackDamage = 25.f;
-	// 기본 공격 어택 딜레이
-	UPROPERTY(EditAnywhere, Category = "자체설정")
-	float NormalAttackDelay = 3.0f;
 	
 	// 런지 공격 함수
 	void LungeAttack();
 	// 런지 공격 몽타주
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "자체설정")
 	UAnimMontage* LungeAttackMontage;
-	// 런지 공격 대미지
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float LungeAttackDamage = 35.f;
-	// 런지 공격 어택 딜레이
-	UPROPERTY(EditAnywhere, Category = "자체설정")
-	float LungeAttackDelay = 5.0f;
 	
 	// 버로우 함수
 	void Burrow();
@@ -97,9 +123,6 @@ public:
 	// 땅 아래로 들어가는 몽타주
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "자체설정")
 	UAnimMontage* BurrowMontage; 
-	// 버로우 딜레이
-	UPROPERTY(EditAnywhere, Category = "자체설정")
-	float BurrowDelay = 5.0f;
 	// 언버로우 타깃 위치 세팅하는 함수 == BurrowDelay 에서 2초 정도 남았을 때 호출되어 타겟 위치 세팅
 	FTimerHandle UnBurrowTargetTimerHandle; 
 	void SetUnBurrowTargetLocation();
@@ -112,17 +135,14 @@ public:
 	// 땅에서 나오는 몽타주
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "자체설정")
 	UAnimMontage* UnburrowMontage;
-	// 언버로우 공격 대미지
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float UnBurrowAttackDamage = 30.f;
-	// 언버로우 공격 어택 딜레이
-	UPROPERTY(EditAnywhere, Category = "자체설정")
-	float UnBurrowAttackDelay = 3.0f;
 	// 언버로우시 이동할 위치
 	FVector UnBurrowTargetLocation;
 	
+	// 원거리 공격 몽타주
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "자체설정")
+	UAnimMontage* RangedAttackMontage;
 	// 원거리 공격 타입일 때 발사체 클래스
-	UPROPERTY(EditAnywhere, Category="자체설정")
+	UPROPERTY(EditDefaultsOnly, Category="자체설정")
 	TSubclassOf<class ABossWormProjectile> RangedProjectileClass;
 	// 원거리 공격 지점 컴포넌트
 	UPROPERTY(VisibleAnywhere)
@@ -132,12 +152,6 @@ public:
 	// 발사체 날아가는 애님 노티파이 함수
 	UFUNCTION(BlueprintCallable)
 	void ShootRangedProjectile();
-	// 원거리 공격 몽타주
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "자체설정")
-	UAnimMontage* RangedAttackMontage;
-	// 원거리 공격 딜레이 
-	UPROPERTY(EditAnywhere, Category = "자체설정")
-	float RangedAttackDelay = 4.0f;
 
 	// 화염 방사 시작 함수
 	UFUNCTION(BlueprintCallable)
@@ -146,13 +160,13 @@ public:
 	UFUNCTION(BlueprintCallable)	
 	void EndFireBreath();
 	// 화염 방사 발사체
-	UPROPERTY(EditAnywhere, Category="자체설정")
+	UPROPERTY(EditDefaultsOnly, Category="자체설정")
 	TSubclassOf<class ABaseStreamProjectile> StreamProjectileClass;
 	// 연사 타이머 핸들
 	FTimerHandle FireBreathTimerHandle; 
 	void SpawnFireBreathProjectile(); 
 	// 화염 방사 간격
-	UPROPERTY(EditAnywhere, Category = "자체설정")	
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")	
 	float FireBreathInterval = 0.05f;
 	
 	// 직선 화염 방사 함수
@@ -160,42 +174,21 @@ public:
 	// 직선 화염 방사 몽타주
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "자체설정")
 	UAnimMontage* LinearFireBreathMontage;
-	// 직선 화염 방사 딜레이
-	UPROPERTY(EditAnywhere, Category = "자체설정")	
-	float LinearFireBreathDelay = 5.0f;
-	// 직선 화염 방사 대미지
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float LinearFireBreathDamage = 4.f;
 	
 	// 부채꼴 화염 방사 함수
 	void FanFireBreathStart();
 	// 부채꼴 화염 방사 몽타주
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "자체설정")	
 	UAnimMontage* FanFireBreathMontage;
-	// 부채꼴 화염 방사 딜레이
-	UPROPERTY(EditAnywhere, Category = "자체설정")
-	float FanFireBreathDelay = 5.0f;
-	// 부채꼴 화염 방사 대미지
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float FanFireBreathDamage = 3.f;
 	
+	// 빨아들이는 공격 몽타주
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "자체설정")	
+	UAnimMontage* SuctionMontage;
 	float SuctionStartTime; // 석션 시작 시간을 저장할 변수
 	// 빨아들이기 로직
 	void HandleSuction(float DeltaTime);
 	// 빨아들이는 공격 함수
 	void SuctionStartMontagePlay();
-	// 빨아들이는 공격 몽타주
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "자체설정")	
-	UAnimMontage* SuctionMontage;
-	// 빨아들이고 난 후 거리 내 공격 대미지
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")	
-	float SuctionAttackDamage = 41.f;
-	// 빨아들이는 공격 딜레이
-	UPROPERTY(EditAnywhere, Category = "자체설정")
-	float SuctionAttackDelay = 4.0f;
-	// 빨아들이는 힘
-	UPROPERTY(EditAnywhere, Category = "자체설정")
-	float SuctionForce = -700000.f;
 	// 빨아들이기 시작 함수 - 애님 노티파이에서 호출
 	UFUNCTION(BlueprintCallable)
 	void StartSuction();

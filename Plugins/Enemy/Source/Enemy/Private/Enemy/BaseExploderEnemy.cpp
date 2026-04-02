@@ -31,25 +31,27 @@ void ABaseExploderEnemy::Explode()
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Explode overlap with Player: %s"), *Actor->GetName());
 
+				// 로그 기록 로직
+				if (GetMesh()) 
+				{
+					// 스켈레탈 메쉬 에셋 이름 가져오기
+					FString MeshName = GetMesh()->GetSkeletalMeshAsset() ? GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
+					
+					UEnemyLogManager::EnemyLog(EEnemyLogType::Exploder, 
+						FString::Printf(TEXT("적 [%s]가 [%.f] 대미지"), 
+							*MeshName, 
+							ExplosionDamage)
+					);
+				}
+				
 				//액터에게 데미지 적용
 				UGameplayStatics::ApplyDamage(
 					Actor,
 					ExplosionDamage,
 					GetController(),
 					this,
-					UDamageType::StaticClass());
-				
-			}
-			// 로그 기록 로직
-			if (GetMesh()) 
-			{
-				// 스켈레탈 메쉬 에셋 이름 가져오기
-				FString MeshName = GetMesh()->GetSkeletalMeshAsset() ? GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
-					
-				UEnemyLogManager::EnemyLog(EEnemyLogType::Exploder, 
-					FString::Printf(TEXT("적 [%s]가 [%.f] 대미지"), 
-						*MeshName, 
-						ExplosionDamage));
+					UDamageType::StaticClass()
+				);
 			}
 		}
 	}

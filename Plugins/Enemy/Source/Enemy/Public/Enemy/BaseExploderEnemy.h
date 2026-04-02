@@ -21,7 +21,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category="자체설정")
 	float ExplosionDamage = 50.f;
 
-	UPROPERTY(EditAnywhere, Category="자체설정")
+	UPROPERTY(EditDefaultsOnly, Category="자체설정")
 	class UNiagaraSystem* ExplosionEffect;
 
 public:

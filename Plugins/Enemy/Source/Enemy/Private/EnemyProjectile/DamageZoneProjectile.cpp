@@ -56,12 +56,8 @@ void ADamageZoneProjectile::ApplyDamageToOverlappingActors()
 	for (AActor* Actor : OverlappingActors)
 	{
 		// 자기 자신(예: 몬스터)은 제외하려면 태그나 클래스 검사 추가
-		if (Actor && Actor != GetOwner())
+		if (Actor && Actor != this && Actor != GetOwner() && Actor->ActorHasTag(FName("Player")) ) // 플레이어만 데미지 적용
 		{
-			// 여기서 데미지 적용 또는 효과 부여
-			UGameplayStatics::ApplyDamage(Actor, DamageAmount, GetInstigatorController(), 
-				this, UDamageType::StaticClass());
-			
 			// 로그로 대미지 양 확인 (필요시 주석 해제)
 			UE_LOG(LogTemp, Warning, TEXT("Damage Zone applied %f damage "), DamageAmount);
 			
@@ -85,10 +81,14 @@ void ADamageZoneProjectile::ApplyDamageToOverlappingActors()
 					{
 						// 그 외(메이지 등) 일반 로그
 						UEnemyLogManager::EnemyLog(EEnemyLogType::Mage, 
-							FString::Printf(TEXT("적 [%s]가 [%.f] 대미지"), *OwnerMeshName, DamageAmount));
+							FString::Printf(TEXT("적 [%s]가 대미지 유지 발사체가 [%.f] 대미지 줌"), *OwnerMeshName, DamageAmount));
 					}
 				}
 			}
+			
+			// 여기서 데미지 적용 또는 효과 부여
+			UGameplayStatics::ApplyDamage(Actor, DamageAmount, GetInstigatorController(), 
+				this, UDamageType::StaticClass());
 		}
 	}
 }
