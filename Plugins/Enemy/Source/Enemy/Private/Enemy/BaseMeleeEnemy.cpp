@@ -1,7 +1,7 @@
 #include "Enemy/BaseMeleeEnemy.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "EnemyLogManager.h"
 
 ABaseMeleeEnemy::ABaseMeleeEnemy()
 {
@@ -27,7 +27,7 @@ void ABaseMeleeEnemy::Tick(float DeltaTime)
 
 void ABaseMeleeEnemy::CheckMeleeAttackHit(float DeltaTime)
 {
-	if (bIsMeleeAttacking == true && EnemyType == EEnemyType::EET_Melee) // 근접 공격 타입이고 공격 중일 때
+	if (bIsMeleeAttacking == true ) // 공격 중일 때
 	{
 		TArray<AActor*> OverlappingActors;
 		// AttackRangePointSphere와 겹치는 모든 액터를 가져옵니다.
@@ -41,6 +41,18 @@ void ABaseMeleeEnemy::CheckMeleeAttackHit(float DeltaTime)
 				// 공격 로그를 출력합니다.
 				UE_LOG(LogTemp, Warning, TEXT("Attack Hit Detected on: %s"), *OverlappingActor->GetName());
 
+				// 로그 기록 로직
+				if (GetMesh()) 
+				{
+					// 스켈레탈 메쉬 에셋 이름 가져오기
+					FString MeshName = GetMesh()->GetSkeletalMeshAsset() ? GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
+					
+					UEnemyLogManager::EnemyLog( EnemyType == EEnemyType::EET_Melee ? EEnemyLogType::Melee : EEnemyLogType::Revive,
+						FString::Printf(TEXT("적 [%s]가 [%.f] 대미지"), 
+							*MeshName, 
+							MeleeAttackDamage));
+				}
+				
 				// 플레이어에게 대미지를 적용합니다.
 				UGameplayStatics::ApplyDamage(
 					OverlappingActor,

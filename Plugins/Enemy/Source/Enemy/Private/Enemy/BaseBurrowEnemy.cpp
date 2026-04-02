@@ -1,5 +1,6 @@
 #include "Enemy/BaseBurrowEnemy.h"
 
+#include "EnemyLogManager.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -72,11 +73,22 @@ void ABaseBurrowEnemy::OnBeginOverlapAttackCollisionSphere(UPrimitiveComponent* 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Attack Sphere Overlapped with Player!"));
 
+		// 로그 기록 로직
+		if (GetMesh()) 
+		{
+			// 스켈레탈 메쉬 에셋 이름 가져오기
+			FString MeshName = GetMesh()->GetSkeletalMeshAsset() ? GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
+					
+			UEnemyLogManager::EnemyLog(EEnemyLogType::Burrow, 
+				FString::Printf(TEXT("적 [%s]가 [%.f] 대미지 - 기본 공격"), 
+					*MeshName, 
+					AttackDamage));
+		}
+		
 		// 대미지 적용 ( 어택 대미지는 공격 전 가드 공격인지 아님 일반 공격인지에 따라 각각 함수에서 설정 )
 		UGameplayStatics::ApplyDamage(OtherActor, AttackDamage, GetController(),
 			this, UDamageType::StaticClass());
-
-
+		
 		// 다시 콜리전 끄기
 		if ( AttackRangePointSphere ) AttackRangePointSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
@@ -159,6 +171,18 @@ void ABaseBurrowEnemy::FinishUnburrow()
 
 					// 플레이어 캐릭터를 밀쳐냄 (XY, Z 모두 강제 적용 override)
 					PlayerCharacter->LaunchCharacter(LaunchVelocity, true, true);
+					
+					// 로그 기록 로직
+					if (GetMesh()) 
+					{
+						// 스켈레탈 메쉬 에셋 이름 가져오기
+						FString MeshName = GetMesh()->GetSkeletalMeshAsset() ? GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
+					
+						UEnemyLogManager::EnemyLog(EEnemyLogType::Burrow, 
+							FString::Printf(TEXT("적 [%s]가 [%.f] 대미지 - 언버로우"), 
+								*MeshName, 
+								AttackDamage));
+					}
 					
 					// 대미지 적용 (기존 AttackDamage 사용)
 					UGameplayStatics::ApplyDamage(PlayerCharacter, 10, GetController(),

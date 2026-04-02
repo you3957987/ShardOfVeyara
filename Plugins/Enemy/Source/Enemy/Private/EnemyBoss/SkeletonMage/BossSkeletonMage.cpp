@@ -84,6 +84,8 @@ void ABossSkeletonMage::Tick(float DeltaTime)
 				}
 				// --- 플레이어 밀치기 효과 끝 ---
 				
+				UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, FString::Printf(TEXT("[스켈레톤 메이지] 실드 캐스트 적중으로 플레이어 밀치기")));
+				
 				// 이 아래에 이제 대미지 넣는거 추가 가능
 			}
 		}
@@ -94,7 +96,7 @@ void ABossSkeletonMage::PlayTeleportMontage(const FVector& Destination)
 {
 	if ( BlackboardComp == nullptr ) return;
 	
-	BlackboardComp->SetValueAsFloat("AttackDelay", TeleportDelay); // 텔포후 행동 딜레이 설정
+	BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.TeleportDelay); // 텔포후 행동 딜레이 설정
 
 	TeleportDestination = Destination;
 	
@@ -109,6 +111,10 @@ void ABossSkeletonMage::TeleportMoveToNextPoint()
 {
 	if (TeleportDestination != FVector::ZeroVector)
 	{
+		// 텔레포트 한 거리 로그 매니저로 출력
+		UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, FString::Printf(TEXT("[스켈레톤 메이지] 텔레포트 이동: %.2f"), 
+			FVector::Dist(GetActorLocation(), TeleportDestination)));
+		
 		SpawnTeleportEffectAtLocation(GetActorLocation()); // 현재 위치에 이펙트 생성
 		
 		SetActorLocation(TeleportDestination); // 텔레포트 이동
@@ -124,6 +130,7 @@ void ABossSkeletonMage::TeleportMoveToNextPoint()
 			// Z축(Yaw) 회전만 적용하여 수평으로 바라보게 함
 			SetActorRotation(FRotator(0.f, LookAtRotation.Yaw, 0.f));
 		}
+		
 	}
 }
 
@@ -156,7 +163,7 @@ void ABossSkeletonMage::PlayFireBallMontage()
 {
 	if ( BlackboardComp == nullptr ) return;
 	
-	BlackboardComp->SetValueAsFloat("AttackDelay", FireBallDelay); // 행동 딜레이 설정
+	BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.FireBallDelay); // 행동 딜레이 설정
 	
 	if ( FireBallMontage )
 	{
@@ -196,7 +203,7 @@ void ABossSkeletonMage::StartSummoning(const FVector& Location1, const FVector& 
 	
 	SpawnSummonEffectAtLocation(GetActorLocation()); // 마법사가 소환 시작 이펙트
 	
-	BlackboardComp->SetValueAsFloat("AttackDelay", SummonEnemyDelay); // 행동 딜레이 설정
+	BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.SummonEnemyDelay); // 행동 딜레이 설정
 	
 	SummonLocations.Empty();
 	SummonLocations.Add(Location1);
@@ -261,6 +268,11 @@ void ABossSkeletonMage::SummonEnemy()
 					SpawnLocation + FVector(0.f, 0.f, 2.f),
 					FRotator::ZeroRotator, FVector(20.f));
 			}
+			
+			// 보스와 소환되는 거리 로그 매니저로 출력
+			UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, FString::Printf(TEXT("[스켈레톤 메이지] 적 소환: %s (거리: %.2f)"), 
+				*SpawnedEnemy->GetName(), FVector::Dist(GetActorLocation(), SpawnLocation)));
+			
 		}
 	}
 }
@@ -294,7 +306,7 @@ void ABossSkeletonMage::PlayGroundAreaAttackMontage()
 {
 	if ( BlackboardComp == nullptr ) return;
 	
-	BlackboardComp->SetValueAsFloat("AttackDelay", GroundAttackDelay); // 행동 딜레이 설정
+	BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.GroundAttackDelay); // 행동 딜레이 설정
 
 	GroundTargetingComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
 		GetWorld(),
@@ -385,7 +397,7 @@ void ABossSkeletonMage::GroundAreaAttack()
 	if (SpawnedProjectile)
 	{
 		//SpawnedProjectile->SetLifeSpan(GroundAttackDuration);
-		SpawnedProjectile->DurationTime = GroundAttackDuration; // 장판 유지 시간 설정
+		SpawnedProjectile->DurationTime = AttackStruct.GroundAttackDuration; // 장판 유지 시간 설정
 	}
 	if ( GroundAttackEffect ) 
 	{
@@ -400,7 +412,7 @@ void ABossSkeletonMage::PlayPushTargetMontage()
 {
 	if ( BlackboardComp == nullptr ) return;
 	
-	BlackboardComp->SetValueAsFloat("AttackDelay", PushTargetDelay); // 행동 딜레이 설정
+	BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.PushTargetDelay); // 행동 딜레이 설정
 	
 	if ( PushTargetMontage )
 	{

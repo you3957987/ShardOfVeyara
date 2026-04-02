@@ -351,6 +351,8 @@ void AAGSDCharacter::Die()
 		1.0f, false
 		);
 	}
+	
+	if ( OnPlayerDead.IsBound() ) OnPlayerDead.Broadcast(); // 죽었다고 알리기
 }
 
 float AAGSDCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -576,6 +578,5 @@ void AAGSDCharacter::SpawnMyPetAfterTravel()
 		GetWorld()->SpawnActor<ABaseFlyingPet>(DefaultPetClass, SpawnLocation, SpawnRotation, SpawnParams);
 	}
 }
-
 
 //--------------

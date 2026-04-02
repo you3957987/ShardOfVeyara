@@ -13,7 +13,7 @@ class ENEMY_API ABaseRangedEnemy : public ABaseEnemy
 protected:
 	
 	// 원거리 공격 타입일 때 발사체 클래스
-	UPROPERTY(EditAnywhere, Category="자체설정")
+	UPROPERTY(EditDefaultsOnly, Category="자체설정")
 	TSubclassOf<class ABaseEnemyProjectile> ProjectileClass;
 
 	// 원거리 공격 지점 컴포넌트

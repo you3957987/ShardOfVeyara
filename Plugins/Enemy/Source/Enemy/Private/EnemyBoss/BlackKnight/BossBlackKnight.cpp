@@ -64,10 +64,14 @@ float ABossBlackKnight::TakeDamage(float DamageAmount, struct FDamageEvent const
 		DamageWhileGuarding += DamageAmount;
 
 		// 아직 리액션 대미지에 도달하지 않았으면 가드 몽타주 재생
-		if ( DamageWhileGuarding < MaxDamageToReaction && GuardMontage )
+		if ( DamageWhileGuarding < AttackStruct.MaxDamageToReaction && GuardMontage )
 		{
 			PlayAnimMontage(GuardMontage);
 		}
+		// 가드 했다고 로그매니저 출력 
+		UEnemyLogManager::EnemyLog(EEnemyLogType::BlackKnight, 
+			FString::Printf(TEXT("[블랙나이트] 가드 성공 | 가드로 막은 대미지: [%.f] | 가드중 받은 대미지 / 반격 임계치[%.f / %.f]"), 
+				DamageAmount, DamageWhileGuarding, AttackStruct.MaxDamageToReaction));
 		
 		return 0.f; // 대미지 무효화
 	}
@@ -86,7 +90,19 @@ void ABossBlackKnight::OnBeginOverlapAxeCollisionSphere(UPrimitiveComponent* Ove
 		UGameplayStatics::ApplyDamage(OtherActor, AttackDamage, GetController(),
 			this, UDamageType::StaticClass());
 
-
+		if ( AttackDamage == AttackStruct.GuardAttackDamage )
+		{
+			UEnemyLogManager::EnemyLog(EEnemyLogType::BlackKnight, FString::Printf(TEXT("[블랙나이트] 가드 반격 적중 | 대미지: [%.f]"), AttackDamage));
+		}
+		else if ( AttackDamage == AttackStruct.NormalAttackDamage )
+		{
+			UEnemyLogManager::EnemyLog(EEnemyLogType::BlackKnight, FString::Printf(TEXT("[블랙나이트] 일반 공격 적중 | 대미지: [%.f]"), AttackDamage));
+		}
+		else if ( AttackDamage == AttackStruct.ChargeAttackDamage )
+		{
+			UEnemyLogManager::EnemyLog(EEnemyLogType::BlackKnight, FString::Printf(TEXT("[블랙나이트] 차지 공격 적중 | 대미지: [%.f]"), AttackDamage));
+		}
+		
 		// 다시 콜리전 끄기
 		if ( AxeCollisionSphere ) AxeCollisionSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
@@ -111,7 +127,7 @@ void ABossBlackKnight::OnBeginOverlapRushAttackSphere(UPrimitiveComponent* Overl
 		UE_LOG(LogTemp, Warning, TEXT("Rush Attack Sphere Overlapped with Player!"));
 
 		// 대미지 적용
-		UGameplayStatics::ApplyDamage(OtherActor, RushAttackDamage, GetController(),
+		UGameplayStatics::ApplyDamage(OtherActor, AttackStruct.RushAttackDamage, GetController(),
 			this, UDamageType::StaticClass());
 
 		// --- 플레이어 밀치기 효과 시작 ---
@@ -131,6 +147,9 @@ void ABossBlackKnight::OnBeginOverlapRushAttackSphere(UPrimitiveComponent* Overl
 			PlayerCharacter->LaunchCharacter(LaunchVelocity, true, true);
 		}
 		
+		// 돌진 공격 적중 여부 로그매니저 로그 출력
+		UEnemyLogManager::EnemyLog(EEnemyLogType::BlackKnight, FString::Printf(TEXT("[블랙나이트] 돌진 공격 적중 | 대미지: [%.f]"), AttackStruct.RushAttackDamage));
+		
 		// 다시 콜리전 끄기
 		RushAttackSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
@@ -148,7 +167,7 @@ void ABossBlackKnight::RushAttack()
 		
 		if ( BlackboardComp == nullptr ) return;
 	
-		BlackboardComp->SetValueAsFloat("AttackDelay", RushAttackDelay); // 행동 딜레이 설정
+		BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.RushAttackDelay); // 행동 딜레이 설정
 	}
 }
 
@@ -248,13 +267,13 @@ void ABossBlackKnight::GuardAttack()
 	{
 		PlayAnimMontage(GuardAttackMontage);
 		// 공격 데미지를 가드 공격 데미지로 설정
-		AttackDamage = GuardAttackDamage;
+		AttackDamage = AttackStruct.GuardAttackDamage;
 		
 		bFocusPlayerAfterAttack = false; // 가드 공격 중에는 포커스 비활성화
 		
 		if ( BlackboardComp )
 		{
-			BlackboardComp->SetValueAsFloat("AttackDelay", GuardAttackDelay); // 행동 딜레이 설정
+			BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.GuardAttackDelay); // 행동 딜레이 설정
 		}
 	}
 }
@@ -325,11 +344,14 @@ void ABossBlackKnight::StartWaveAttack()
             					
             					UGameplayStatics::ApplyDamage(
 									OverlappedActor,            // 데미지를 받을 대상
-									WeakThis->ZapDamage,        // 데미지 수치
+									WeakThis->AttackStruct.ZapDamage,    // 데미지 수치
 									WeakThis->GetController(),  // 가해자 컨트롤러
 									WeakThis.Get(),             // 가해자 액터 (보스)
 									UDamageType::StaticClass()  // 데미지 타입 클래스
 								);
+            					
+            					UEnemyLogManager::EnemyLog(EEnemyLogType::BlackKnight, 
+            						FString::Printf(TEXT("[블랙나이트] 차지 어택 번개 적중 | 대미지: [%.f]"), WeakThis->AttackStruct.ZapDamage));
             				}
             			}
             		}
@@ -368,13 +390,13 @@ void ABossBlackKnight::NormalAttack()
 	{
 		PlayAnimMontage(NormalAttackMontage);
 
-		AttackDamage = NormalAttackDamage;
+		AttackDamage = AttackStruct.NormalAttackDamage;
 		
 		bFocusPlayerAfterAttack = false; // 차지 공격 중에는 포커스 비활성화
 		
 		if ( BlackboardComp )
 		{
-			BlackboardComp->SetValueAsFloat("AttackDelay", NormalAttackDelay); // 행동 딜레이 설정
+			BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.NormalAttackDelay); // 행동 딜레이 설정
 		}
 	}
 }
@@ -385,13 +407,13 @@ void ABossBlackKnight::ChargeAttack()
 	{
 		PlayAnimMontage(ChargeAttackMontage);
 
-		AttackDamage = ChargeAttackDamage;
+		AttackDamage = AttackStruct.ChargeAttackDamage;
 		
 		bFocusPlayerAfterAttack = false; // 차지 공격 중에는 포커스 비활성화
 		
 		if ( BlackboardComp )
 		{
-			BlackboardComp->SetValueAsFloat("AttackDelay", ChargeAttackDelay); // 행동 딜레이 설정
+			BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.ChargeAttackDelay); // 행동 딜레이 설정
 		}
 	}
 }
@@ -501,13 +523,13 @@ void ABossBlackKnight::ZapAttack()
 	{
 		PlayAnimMontage(ZapAttackMontage);
 
-		AttackDamage = ZapDamage;
+		AttackDamage = AttackStruct.ZapDamage;
 		
 		bFocusPlayerAfterAttack = false; // 잽 공격 중에는 포커스 비활성화
 		
 		if ( BlackboardComp )
 		{
-			BlackboardComp->SetValueAsFloat("AttackDelay", ZapAttackDelay); // 행동 딜레이 설정 
+			BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.ZapAttackDelay); // 행동 딜레이 설정 
 		}
 	}
 }
@@ -571,12 +593,14 @@ void ABossBlackKnight::SpawnZapAttackEffect()
 			{
 				UGameplayStatics::ApplyDamage(
 					OverlappedActor,
-					ZapDamage,         // 잽 공격 대미지
+					AttackStruct.ZapAttackDamage,         // 잽 공격 대미지
 					GetController(),
 					this,
 					UDamageType::StaticClass()
 				);
 				UE_LOG(LogTemp, Warning, TEXT("Zap Attack Hit Player!"));
+				
+				UEnemyLogManager::EnemyLog(EEnemyLogType::BlackKnight, FString::Printf(TEXT("[블랙나이트] 번개 소환 적중 | 대미지: [%.f]"), AttackStruct.ZapAttackDamage));
 			}
 		}
 	}

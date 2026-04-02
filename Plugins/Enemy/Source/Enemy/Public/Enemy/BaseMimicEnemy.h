@@ -27,7 +27,7 @@ protected:
 
 
 	// 위장용 스태틱 메시 (상자, 보물상자, 바위 등)
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly)
 	class UStaticMeshComponent* DisguiseMesh;
 	// 플레이어 감지용 트리거 스피어 (실제 오버랩 이벤트 발생용)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -41,7 +41,7 @@ protected:
 	bool bIsHiding = true; // 현재 위장 상태를 나타내는 변수
 
 	// 깨어날 때 생성할 이펙트 (캐스케이드)
-	UPROPERTY(EditAnywhere, Category="자체설정")
+	UPROPERTY(EditDefaultsOnly, Category="자체설정")
 	class UParticleSystem* WakeUpEffect;
 	
 public:

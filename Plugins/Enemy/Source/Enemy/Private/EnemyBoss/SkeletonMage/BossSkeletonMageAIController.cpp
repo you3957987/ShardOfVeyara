@@ -15,11 +15,11 @@ void ABossSkeletonMageAIController::SetBlackboardKey()
 
 	if ( BlackboardComp == nullptr || ControlledEnemy == nullptr ) return;
 	
-	BlackboardComp->SetValueAsFloat("W_Teleport", ControlledEnemy->AttackWeight.Teleport);
-	BlackboardComp->SetValueAsFloat("W_FireBall", ControlledEnemy->AttackWeight.FireBall);
-	BlackboardComp->SetValueAsFloat("W_Summon", ControlledEnemy->AttackWeight.Summon);
-	BlackboardComp->SetValueAsFloat("W_GroundAttack", ControlledEnemy->AttackWeight.GroundAttack);
-	BlackboardComp->SetValueAsFloat("W_PushTarget", ControlledEnemy->AttackWeight.PushTarget);
+	BlackboardComp->SetValueAsFloat("W_Teleport", ControlledEnemy->AttackStruct.TeleportWeight);
+	BlackboardComp->SetValueAsFloat("W_FireBall", ControlledEnemy->AttackStruct.FireBallWeight);
+	BlackboardComp->SetValueAsFloat("W_Summon", ControlledEnemy->AttackStruct.SummonWeight);
+	BlackboardComp->SetValueAsFloat("W_GroundAttack", ControlledEnemy->AttackStruct.GroundAttackWeight);
+	BlackboardComp->SetValueAsFloat("W_PushTarget", ControlledEnemy->AttackStruct.PushTargetWeight);
 
 	BlackboardComp->SetValueAsFloat("AttackDelay", ControlledEnemy->AttackDelay);
 	BlackboardComp->SetValueAsBool("CanAttack", true);

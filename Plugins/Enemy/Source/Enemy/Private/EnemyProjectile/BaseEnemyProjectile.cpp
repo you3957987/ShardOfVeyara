@@ -1,6 +1,10 @@
 #include "EnemyProjectile/BaseEnemyProjectile.h"
+
+#include "EnemyLogManager.h"
 #include "NiagaraComponent.h"
 #include "Components/SphereComponent.h"
+#include "Enemy/BaseRangedEnemy.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -99,6 +103,34 @@ void ABaseEnemyProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedCompone
 	// 플레이어랑 충돌 시 대미지 넣는거 넣기!!!
 	if (bIsPlayer)
 	{
+		// 1. 발사체의 소유자(Owner)를 가져와서 캐릭터인지 확인
+		if (ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner()))
+		{
+			if (OwnerCharacter->GetMesh())
+			{
+				// 1. 스켈레탈 메쉬 에셋 이름 가져오기
+				FString OwnerMeshName = OwnerCharacter->GetMesh()->GetSkeletalMeshAsset() ? 
+					OwnerCharacter->GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
+				
+				if (OwnerMeshName.Contains(TEXT("MagicSwordMan")))
+				{
+					UEnemyLogManager::EnemyLog(EEnemyLogType::MagicSwordMan, FString::Printf(TEXT("[소드맨] 검기가 [%.f] 대미지 줌"), Damage));
+				}
+				else if ( OwnerMeshName.Contains(TEXT("Skeleton_Mage")) )
+				{
+					UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, FString::Printf(TEXT("[스켈레톤 메이지] 마법구 충돌 [%.f] 대미지 줌"), Damage ));
+				}
+				else
+				{
+					ABaseRangedEnemy* RangedCharacter = Cast<ABaseRangedEnemy>(GetOwner());
+					
+					UEnemyLogManager::EnemyLog( RangedCharacter->GetEnemyType() == EEnemyType::EET_Ranged ? EEnemyLogType::Ranged : EEnemyLogType::Revive,
+						FString::Printf(TEXT("적 [%s] 발사체가 [%.f] 대미지 줌"),
+						*OwnerMeshName, Damage));
+				}
+			}
+		}
+		
 		UE_LOG(LogTemp, Warning, TEXT("Projectile hit Player: %s"), *OtherActor->GetName());
 		UGameplayStatics::ApplyDamage(
 		   OtherActor,
@@ -108,7 +140,7 @@ void ABaseEnemyProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedCompone
 		   UDamageType::StaticClass()
 		  );
 	}
-
+	
 	// SweepResult에서 충돌 위치를 가져옵니다.
 	EffectCreateLocation = SweepResult.ImpactPoint;
 	CreateHitEffect();

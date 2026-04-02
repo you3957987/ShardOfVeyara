@@ -1,5 +1,8 @@
 #include "EnemyBoss/BTTask/BTTask_SelectAttack.h"
+
+#include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "EnemyBoss/BaseBossEnemy.h"
 
 UBTTask_SelectAttack::UBTTask_SelectAttack()
 {
@@ -50,9 +53,23 @@ EBTNodeResult::Type UBTTask_SelectAttack::ExecuteTask(UBehaviorTreeComponent& Ow
 		}
 	}
 	
+	AAIController* AIController = OwnerComp.GetAIOwner();
+	if (!AIController) return EBTNodeResult::Failed;
+
+	APawn* ControlledPawn = AIController->GetPawn();
+	if (!ControlledPawn) return EBTNodeResult::Failed;
+
+	ABaseBossEnemy* Boss = Cast<ABaseBossEnemy>(ControlledPawn);
+	
 	if (SelectedAttackName != NAME_None)
 	{
 		BlackboardComp->SetValueAsName(GetSelectedBlackboardKey(), SelectedAttackName);
+		
+		if ( Boss )
+		{
+			Boss->AttackPatternLog(SelectedAttackName.ToString());
+		}
+		
 		return EBTNodeResult::Succeeded;
 	}
 	

@@ -1,3 +1,5 @@
+현재 에디터 내에서 TestMap 안의 게임 모드가 메인 프로젝트 참조중 
+
 0 - 1. uproject 파일 있는 폴더에 Plugins라는 폴더 안에다가 넣기. 없으면 폴더 생성
 0 - 2. 프로젝트 폴더의 Binaries, Intermediate , Saved 외의 플러그인 폴더 내의  Binaries, Intermediate 이거 삭제하고 sln( 에디터마다 다를 수도? ) 삭제후
         uproject 우클릭해서 generate visual studio project file 하고 빌드 하고 실행하는거 추천.
@@ -37,6 +39,7 @@ if( Character->Implements<UPetConversationInterface>() )
 
 전투 발생 - 종료 사이 시간
 피격 및 가해 대미지 + 플레이어 사망 여부
+
 보스 도전 횟수
 보스 패턴 사용 빈도( 근거리 중거리 원거리 )
 

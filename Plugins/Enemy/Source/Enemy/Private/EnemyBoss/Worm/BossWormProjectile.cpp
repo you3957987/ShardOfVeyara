@@ -1,5 +1,6 @@
 #include "EnemyBoss/Worm/BossWormProjectile.h"
 
+#include "EnemyLogManager.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Components/SphereComponent.h"
 #include "EnemyProjectile/DamageZoneProjectile.h"
@@ -68,6 +69,8 @@ void ABossWormProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComponen
 		   UDamageType::StaticClass()
 		  );
 		
+		UEnemyLogManager::EnemyLog(EEnemyLogType::Worm, FString::Printf(TEXT("[웜] 화염구 적중 | 대미지[%.f]"), Damage));
+		
 		// 캐릭터에만 맞으면 충돌 이펙트 생성
 		CreateHitEffect();
 	}
@@ -116,7 +119,7 @@ void ABossWormProjectile::CreateDamageZoneOnGround()
 		if ( DamageZoneProjectileClass )
 		{
 			FActorSpawnParameters SpawnParams;
-			SpawnParams.Owner = this;
+			SpawnParams.Owner = GetOwner();
 			SpawnParams.Instigator = GetInstigator();
 			
 			// 충돌 지점에 장판 발사체 스폰

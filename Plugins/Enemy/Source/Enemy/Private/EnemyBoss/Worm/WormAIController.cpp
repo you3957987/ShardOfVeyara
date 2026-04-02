@@ -21,12 +21,12 @@ void AWormAIController::SetBlackboardKey()
 
 	BlackboardComp->SetValueAsObject(TEXT("TargetCharacter"), TargetPawn);
 	BlackboardComp->SetValueAsBool( TEXT("bIsBurrowing"), ControlledEnemy->bIsBurrowing);
-	BlackboardComp->SetValueAsFloat(TEXT("W_NormalAttack"), ControlledEnemy->AttackWeight.NormalAttack);
-	BlackboardComp->SetValueAsFloat(TEXT("W_Burrow"), ControlledEnemy->AttackWeight.Burrow);
-	BlackboardComp->SetValueAsFloat(TEXT("W_Unburrow"), ControlledEnemy->AttackWeight.Unburrow);	
-	BlackboardComp->SetValueAsFloat(TEXT("W_RangedAttack"), ControlledEnemy->AttackWeight.RangedAttack);
-	BlackboardComp->SetValueAsFloat(TEXT("W_LungeAttack"), ControlledEnemy->AttackWeight.LungeAttack);
-	BlackboardComp->SetValueAsFloat(TEXT("W_LinearFireBreath"), ControlledEnemy->AttackWeight.LinearFireBreath);
-	BlackboardComp->SetValueAsFloat(TEXT("W_FanFireBreath"), ControlledEnemy->AttackWeight.FanFireBreath);
-	BlackboardComp->SetValueAsFloat(TEXT("W_Suction"), ControlledEnemy->AttackWeight.SuctionAttack);
+	BlackboardComp->SetValueAsFloat(TEXT("W_NormalAttack"), ControlledEnemy->AttackStruct.NormalAttackWeight);
+	BlackboardComp->SetValueAsFloat(TEXT("W_Burrow"), ControlledEnemy->AttackStruct.BurrowWeight);
+	BlackboardComp->SetValueAsFloat(TEXT("W_Unburrow"), ControlledEnemy->AttackStruct.UnBurrowWeight);	
+	BlackboardComp->SetValueAsFloat(TEXT("W_RangedAttack"), ControlledEnemy->AttackStruct.RangedAttackWeight);
+	BlackboardComp->SetValueAsFloat(TEXT("W_LungeAttack"), ControlledEnemy->AttackStruct.LungeAttackWeight);
+	BlackboardComp->SetValueAsFloat(TEXT("W_LinearFireBreath"), ControlledEnemy->AttackStruct.LinearFireBreathWeight);
+	BlackboardComp->SetValueAsFloat(TEXT("W_FanFireBreath"), ControlledEnemy->AttackStruct.FanFireBreathWeight);
+	BlackboardComp->SetValueAsFloat(TEXT("W_Suction"), ControlledEnemy->AttackStruct.SuctionAttackWeight);
 }

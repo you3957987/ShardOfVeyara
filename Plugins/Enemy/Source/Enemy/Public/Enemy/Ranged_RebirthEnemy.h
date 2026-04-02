@@ -37,7 +37,7 @@ protected:
 	int32 SoulHpCount = 3; 
 
 	// 부활 애니메이션 몽타주
-	UPROPERTY(EditAnywhere, Category = "자체설정")
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	class UAnimMontage* ReviveMontage;
 	// 부활 몽타주 끝난 후 호출되는 함수 
 	UFUNCTION(BlueprintCallable)

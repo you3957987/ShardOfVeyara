@@ -20,14 +20,14 @@ void ABossMagicSwordManAIController::SetBlackboardKey()
 	BlackboardComp->SetValueAsFloat("AttackDelay", ControlledEnemy->AttackDelay);
 	BlackboardComp->SetValueAsObject(TEXT("TargetCharacter"), TargetPawn);
 	
-	BlackboardComp->SetValueAsFloat("W_CloseAttack", ControlledEnemy->AttackWeight.CloseAttack);
-	BlackboardComp->SetValueAsFloat("W_DashAttack", ControlledEnemy->AttackWeight.DashAttack);
+	BlackboardComp->SetValueAsFloat("W_CloseAttack", ControlledEnemy->AttackStruct.CloseAttack);
+	BlackboardComp->SetValueAsFloat("W_DashAttack", ControlledEnemy->AttackStruct.DashAttack);
 	BlackboardComp->SetValueAsBool("bAirAttack", false);
-	BlackboardComp->SetValueAsFloat("W_CloseJumpUpAttack", ControlledEnemy->AttackWeight.CloseJumpUpAttack);
-	BlackboardComp->SetValueAsFloat("W_DashJumpUpAttack", ControlledEnemy->AttackWeight.DashJumpUpAttack);
-	BlackboardComp->SetValueAsFloat("W_JumpAttack", ControlledEnemy->AttackWeight.JumpAttack);	
-	BlackboardComp->SetValueAsFloat("W_Guard", ControlledEnemy->AttackWeight.Guard);
-	BlackboardComp->SetValueAsFloat("W_PowerAttack", ControlledEnemy->AttackWeight.PowerAttack);
-	BlackboardComp->SetValueAsFloat( "W_BladeWaveAttack", ControlledEnemy->AttackWeight.BladeWaveAttack);
+	BlackboardComp->SetValueAsFloat("W_CloseJumpUpAttack", ControlledEnemy->AttackStruct.CloseJumpUpAttack);
+	BlackboardComp->SetValueAsFloat("W_DashJumpUpAttack", ControlledEnemy->AttackStruct.DashJumpUpAttack);
+	BlackboardComp->SetValueAsFloat("W_JumpAttack", ControlledEnemy->AttackStruct.JumpAttack);	
+	BlackboardComp->SetValueAsFloat("W_Guard", ControlledEnemy->AttackStruct.Guard);
+	BlackboardComp->SetValueAsFloat("W_PowerAttack", ControlledEnemy->AttackStruct.PowerAttack);
+	BlackboardComp->SetValueAsFloat( "W_BladeWaveAttack", ControlledEnemy->AttackStruct.BladeWaveAttack);
 	
 }

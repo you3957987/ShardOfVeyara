@@ -1,4 +1,6 @@
 #include "EnemyBoss/SkeletonMage/BossSkeletonMageMagicBall.h"
+
+#include "EnemyLogManager.h"
 #include "NiagaraFunctionLibrary.h"
 
 ABossSkeletonMageMagicBall::ABossSkeletonMageMagicBall()
@@ -15,6 +17,7 @@ void ABossSkeletonMageMagicBall::CreateHitEffect()
 		const FRotator EffectRotation(90.f, 0.f, 0.f);
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), HitEffect, EffectCreateLocation, EffectRotation);
 	}
+	
 	
 	Super::Destroyed();
 }

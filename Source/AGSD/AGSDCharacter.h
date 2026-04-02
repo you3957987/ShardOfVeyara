@@ -14,6 +14,7 @@
 #include "PlayerStateWidget.h"
 #include "SOVGameInstance.h"
 #include "Interface/PetConversationInterface.h"
+#include "Interface/PlayerDeadInterface.h"
 #include "AGSDCharacter.generated.h"
 
 class USpringArmComponent;
@@ -29,7 +30,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
  *  Implements a controllable orbiting camera
  */
 UCLASS(abstract)
-class AGSD_API AAGSDCharacter : public ACharacter, public IPetConversationInterface
+class AGSD_API AAGSDCharacter : public ACharacter, public IPetConversationInterface, public IPlayerDeadInterface
 {
 	GENERATED_BODY()
 
@@ -239,7 +240,9 @@ protected:
 
 	
 public:
-
+	// Enemy 로그 처리 위한 겟 함수
+	FORCEINLINE float GetFarmerHealthToEnemy() const { return Health; }
+	
 	/** Handles move inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoMove(float Right, float Forward);
@@ -278,6 +281,11 @@ public:
 	void DestroyPetBeforeTravel();
 	UFUNCTION(BlueprintCallable)
 	void SpawnMyPetAfterTravel();
+	
+	// 로그 관련 인터페이스 함수 구현
+	UPROPERTY()
+	FOnPlayerDeadSignature OnPlayerDead;
+	virtual FOnPlayerDeadSignature& GetOnPlayerDeadDelegate() override { return OnPlayerDead; }
 
 	FORCEINLINE AActor* getCurrentInteractableActor() const { return CurrentInteractableActor; }
 	//--

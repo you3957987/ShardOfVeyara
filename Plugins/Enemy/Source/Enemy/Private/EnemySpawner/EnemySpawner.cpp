@@ -1,17 +1,22 @@
 #include "EnemySpawner/EnemySpawner.h"
 
 #include "BaseEnemy.h"
+#include "EnemyLogManager.h"
 #include "NavigationSystem.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/Progressbar.h"
 #include "Components/SphereComponent.h"
+#include "Components/WidgetComponent.h"
+#include "EnemyHUD/EnemyHealthBarWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AEnemySpawner::AEnemySpawner()
 {
 	PrimaryActorTick.bCanEverTick = true;
-    PrimaryActorTick.bStartWithTickEnabled = false; 
+    PrimaryActorTick.bStartWithTickEnabled = true; 
 	
 	RootCollisionSphere = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RootCollisionSphere"));
 	RootComponent = RootCollisionSphere;
@@ -27,6 +32,11 @@ AEnemySpawner::AEnemySpawner()
 	PlayerDetectSphere->SetupAttachment(RootComponent);
 	PlayerDetectSphere->SetHiddenInGame(false);
 	PlayerDetectSphere->SetSphereRadius(1000.f); // 기본값
+	
+	// 체력 바 위젯 컴포넌트 생성 및 설정
+	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBarWidget"));
+	HealthBarWidget->SetupAttachment(RootComponent);
+	HealthBarWidget->SetWidgetSpace(EWidgetSpace::World);
 }
 
 void AEnemySpawner::BeginPlay()
@@ -38,6 +48,15 @@ void AEnemySpawner::BeginPlay()
 		PlayerDetectSphere->OnComponentBeginOverlap.AddDynamic(this, &AEnemySpawner::OnBeginOverlapPlayerDetectSphere);
 		PlayerDetectSphere->OnComponentEndOverlap.AddDynamic(this, &AEnemySpawner::OnEndOverlapPlayerDetectSphere);
 	}
+	
+	if ( HealthBarWidget ) // 체력바 위젯에서 프로그레스바 설정
+	{
+		UEnemyHealthBarWidget* HealthBar = Cast<UEnemyHealthBarWidget>(HealthBarWidget->GetUserWidgetObject());
+		if ( HealthBar )
+		{
+			HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
+		}
+	}
 }
 
 void AEnemySpawner::Tick(float DeltaTime)
@@ -46,6 +65,10 @@ void AEnemySpawner::Tick(float DeltaTime)
 
 	PollInit();
 
+	UpdateHealthBarWidget(DeltaTime); // 체력 바 위젯 업데이트 -> 항상 캐릭터 쪽으로 바라보도록
+	
+	if ( bTargetInRange == false ) return;
+	
 	// 1. 쿨타임 감소
 	if (CurrentSpawnCooldown > 0.0f)
 	{
@@ -84,6 +107,32 @@ void AEnemySpawner::PollInit()
 	}
 }
 
+float AEnemySpawner::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+	class AController* EventInstigator, AActor* DamageCauser)
+{
+	float DamageToApply = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	UE_LOG(LogTemp, Warning, TEXT("Enemy Take Damage : %f"), DamageToApply);
+	
+	if ( DamageToApply > 0.f )
+	{
+		Health -= DamageToApply;
+		if ( Health <= 0.f )
+		{
+			UEnemyLogManager::EnemyLog(EEnemyLogType::Spawner, 
+			FString::Printf(TEXT("적 [스포너]가 [%.f] 대미지 받아 사망"), DamageToApply));
+			
+			Die();
+			return DamageToApply;
+		}
+	}
+	
+	UEnemyLogManager::EnemyLog(EEnemyLogType::Spawner, 
+		FString::Printf(TEXT("적 [스포너]가 [%.f] 대미지 받음 (%.f / %.f)"), DamageToApply, MaxHealth,Health));
+	
+	return DamageToApply;
+}
+
 // 플레이어가 감지 범위에 들어왔을 때
 void AEnemySpawner::OnBeginOverlapPlayerDetectSphere(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -95,9 +144,8 @@ void AEnemySpawner::OnBeginOverlapPlayerDetectSphere(UPrimitiveComponent* Overla
 		{
 			TargetCharacter = Cast<ACharacter>(OtherActor);
 		}
-
-		// 틱을 켜서 실시간 감시 시작
-		SetActorTickEnabled(true);
+		
+		bTargetInRange = true; // 타겟이 감지 범위 안에 있다고 설정
         
 		// 들어오자마자 바로 쏠 수 있게 쿨타임 초기화 (원한다면)
 		CurrentSpawnCooldown = 0.0f; 
@@ -110,8 +158,32 @@ void AEnemySpawner::OnEndOverlapPlayerDetectSphere(UPrimitiveComponent* Overlapp
 {
 	if ( OtherActor && OtherActor != this && OtherActor->ActorHasTag(FName("Player")) )
 	{
-		// 플레이어가 멀어지면 더 이상 검사할 필요 없음 -> 틱 끄기 (성능 절약)
-		SetActorTickEnabled(false);
+		bTargetInRange = false; // 타겟이 감지 범위 밖에 있다고 설정
+	}
+}
+
+void AEnemySpawner::UpdateHealthBarWidget(float DeltaTime)
+{
+	if (HealthBarWidget && HealthBarWidget->IsVisible())
+	{
+		APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		if (PC && PC->PlayerCameraManager)
+		{
+			const FVector CameraLocation = PC->PlayerCameraManager->GetCameraLocation();
+			const FVector WidgetLocation = HealthBarWidget->GetComponentLocation();
+
+			// 위젯에서 카메라를 바라보는 방향의 회전값을 계산합니다.
+			const FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(WidgetLocation, CameraLocation);
+
+			// 위젯이 항상 수평을 유지하도록 Yaw 값만 사용하여 회전을 설정합니다.
+			HealthBarWidget->SetWorldRotation(FRotator(0.f, LookAtRotation.Yaw, 0.f));
+		}
+
+		UEnemyHealthBarWidget* HealthBar = Cast<UEnemyHealthBarWidget>(HealthBarWidget->GetUserWidgetObject());
+		if ( HealthBar )
+		{
+			HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
+		}
 	}
 }
 
@@ -196,14 +268,79 @@ void AEnemySpawner::SpawnEnemy()
 				FActorSpawnParameters SpawnParams;
 				SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-				World->SpawnActor<ABaseEnemy>(
+				ABaseEnemy* SpawnedEnemy = World->SpawnActor<ABaseEnemy>(
 					SelectedEnemyClass,
 					FinalSpawnLocation,
 					SpawnRotation,
 					SpawnParams
 				);
+				
+				// 스켈레톤 메시 이름 가져오기
+				FString MeshName = TEXT("Unknown");
+				if (SpawnedEnemy && SpawnedEnemy->GetMesh() && SpawnedEnemy->GetMesh()->GetSkeletalMeshAsset())
+				{
+					MeshName = SpawnedEnemy->GetMesh()->GetSkeletalMeshAsset()->GetName();
+				}
+
+				// 로그에 메시 이름 추가 출력
+				UEnemyLogManager::EnemyLog(EEnemyLogType::Spawner, FString::Printf(TEXT("적 [스포너]가 [%s] 스폰"), *MeshName));
 			}
 		}
+	}
+}
+
+void AEnemySpawner::Die()
+{
+	if (HealthBarWidget)
+	{
+		HealthBarWidget->SetVisibility(false);
+	}
+	
+	if ( DeathEffectCascade )
+	{
+		// 현재 위치 + (앞방향 * 앞뒤 오프셋) + (윗방향 * 위아래 오프셋)
+		const FVector EffectSpawnLocation = GetActorLocation();
+		
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DeathEffectCascade,
+			EffectSpawnLocation, GetActorRotation(), FVector(1.f));
+	}
+
+	// 액터 삭제 전에 아이템 드롭 함수 호출
+	DropItemsAfterDead();
+	
+	Destroy(); 
+}
+
+void AEnemySpawner::DropItemsAfterDead()
+{
+	for (const TSubclassOf<AActor>& ItemClassToSpawn : DropItems)
+	{
+		if ( !ItemClassToSpawn ) continue;
+
+		// 적의 현재 위치 (발 밑)
+		FVector ItemSpawnLocation = GetActorLocation();
+
+		// 캡슐의 절반 높이만큼 올려서 아이템이 땅에 닿도록 조정
+		AActor* ItemCDO = ItemClassToSpawn->GetDefaultObject<AActor>();
+		if ( ItemCDO )
+		{
+			UCapsuleComponent* ItemCapsule = ItemCDO->FindComponentByClass<UCapsuleComponent>();
+			if ( ItemCapsule )
+			{
+				ItemSpawnLocation.Z += ItemCapsule->GetScaledCapsuleHalfHeight();
+			}
+		}
+
+		// 여러 아이템이 완전히 겹치지 않도록 X, Y 주변에 약간의 랜덤 오프셋 주기
+		const float RandomXY = 40.f;
+		ItemSpawnLocation.X += FMath::RandRange(-RandomXY, RandomXY);
+		ItemSpawnLocation.Y += FMath::RandRange(-RandomXY, RandomXY);
+
+		// 회전도 랜덤하게 설정
+		FRotator SpawnRotation = FRotator(0.f, FMath::RandRange(0.f, 360.f), 0.f);
+
+		// 월드에 아이템 액터 스폰
+		GetWorld()->SpawnActor<AActor>(ItemClassToSpawn, ItemSpawnLocation, SpawnRotation);
 	}
 }
 
