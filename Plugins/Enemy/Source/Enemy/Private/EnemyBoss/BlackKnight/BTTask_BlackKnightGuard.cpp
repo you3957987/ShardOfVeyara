@@ -6,7 +6,7 @@
 
 UBTTask_BlackKnightGuard::UBTTask_BlackKnightGuard()
 {
-	NodeName = "Guard Pattern";
+	NodeName = "BlackKnight Guard Pattern";
 	// TickTask를 사용하려면 반드시 true로 설정해야 함
 	bNotifyTick = true; 
 }

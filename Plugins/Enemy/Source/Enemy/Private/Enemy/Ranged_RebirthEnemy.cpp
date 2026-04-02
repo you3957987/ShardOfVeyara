@@ -22,6 +22,8 @@ ARanged_RebirthEnemy::ARanged_RebirthEnemy()
 	SoulEffectNiagara->SetupAttachment(SoulCollisionSphere);
 
 	SoulEffectNiagara->bAutoActivate = false;
+	
+	EnemyType = EEnemyType::EET_Ranged; // 원거리 공격 적으로 설정
 }
 
 float ARanged_RebirthEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,

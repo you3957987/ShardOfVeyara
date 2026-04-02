@@ -2,7 +2,6 @@
 
 #include "NiagaraFunctionLibrary.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "Engine/OverlapResult.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -52,8 +51,6 @@ void ABossBlackKnight::BeginPlay()
 void ABossBlackKnight::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
-	MoveForwardDuringRushAttack(DeltaTime);
 	
 }
 
@@ -161,8 +158,6 @@ void ABossBlackKnight::RushAttack()
 	if ( RushAttackMontage )
 	{
 		PlayAnimMontage(RushAttackMontage);
-
-		RushTargetLocation = TargetCharacter->GetActorLocation();
 		
 		bFocusPlayerAfterAttack = false; // 돌진 공격 중에는 포커스 비활성화
 		
@@ -172,94 +167,15 @@ void ABossBlackKnight::RushAttack()
 	}
 }
 
-void ABossBlackKnight::SetRushTargetLocation()
-{
-	if (TargetCharacter == nullptr) return;
-
-	// 1. 목표 지점 계산
-	FVector StartLoc = GetActorLocation();
-	FVector TargetLoc = TargetCharacter->GetActorLocation();
-	TargetLoc.Z = StartLoc.Z; // 높이는 보스 높이로 고정
-
-	// 타겟 바로 앞(공격 사거리)까지만 가도록 보정
-	FVector Direction = (TargetLoc - StartLoc).GetSafeNormal();
-	float Dist = FVector::Dist(StartLoc, TargetLoc);
-	float StopDist = 100.0f; // 100cm 앞에서 멈춤
-
-	// 최종 목표 위치 확정 및 저장
-	RushTargetLocation = StartLoc + Direction * (Dist - StopDist);
-	RushStartLocation = StartLoc;
-
-	// 타겟 바라보기 (목표를 정하는 순간 회전)
-	SetActorRotation(Direction.Rotation());
-	
-	// [추가됨] 목표 지점에 디버그 스피어 그리기 (반지름 50, 빨간색, 1초 지속)
-	DrawDebugSphere(GetWorld(), RushTargetLocation, 50.0f, 12, FColor::Red, false, 1.0f);
-}
-
 void ABossBlackKnight::StartRush()
 {
 	// 콜리전 켜기: 돌진 중 플레이어와 충돌 감지
 	RushAttackSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	
-	// 2. 시간 설정 (거리에 상관없이 무조건 0.2초 만에 도착)
-	RushDuration = 0.2f;
-	RushElapsedTime = 0.0f;
-
-	// 3. 돌진 시작 플래그 ON
-	bIsRushing = true;
-
-	// (선택) 물리 효과 끄기: 돌진 중 다른 힘에 밀리지 않도록
-	GetCharacterMovement()->SetMovementMode(MOVE_Flying);
-	
-	// [추가됨] 장애물 무시 설정
-	// 캡슐 컴포넌트가 WorldStatic(벽, 장애물)과 WorldDynamic을 무시하도록 설정
-	if (GetCapsuleComponent())
-	{
-		GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Ignore);
-		GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
-		// 필요하다면 Pawn(플레이어 등)은 블록하거나 겹치게 유지해야 함. 여기서는 기존 설정 유지.
-	}
 }
 
-void ABossBlackKnight::MoveForwardDuringRushAttack(float DeltaTime)
+void ABossBlackKnight::EndRush()
 {
-	if ( !bIsRushing ) return;
-
-	RushElapsedTime += DeltaTime;
-
-	// 0.0 ~ 1.0 사이의 진행률 계산 (0이면 시작점, 1이면 도착점)
-	float Alpha = FMath::Clamp(RushElapsedTime / RushDuration, 0.0f, 1.0f);
-
-	// 현재 위치 계산 (선형 보간: Lerp)
-	// 시작점과 목표점 사이를 Alpha 비율만큼 이동한 위치
-	FVector NewLocation = FMath::Lerp(RushStartLocation, RushTargetLocation, Alpha);
-
-	// 위치 적용 (Sweep: true로 해서 벽에 막히게 함)
-	if (!SetActorLocation(NewLocation, true))
-	{
-		// 벽에 부딪혔다면 돌진 중단
-		bIsRushing = false;
-		return;
-	}
-
-	// 시간이 다 됐으면 종료
-	if (Alpha >= 1.0f)
-	{
-		bIsRushing = false;
-
-		// (선택) 물리 효과 복구
-		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-		
-		// [추가됨] 장애물 콜리전 복구
-		if (GetCapsuleComponent())
-		{
-			GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
-			GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
-		}
-		
-		// 도착 후 처리 (예: 공격 판정, 몽타주 종료 등)
-	}
+	RushAttackSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ABossBlackKnight::GuardAttack()

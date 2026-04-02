@@ -22,6 +22,6 @@ protected:
 	
 public:
 	UBTTask_BlackKnightGuard();
-	// 가드 유지 시간
+	
 	
 };
