@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
+// 깃 허브 업데이트 확인
 ABossBlackKnight::ABossBlackKnight()
 {
 	RushAttackSphere = CreateDefaultSubobject<USphereComponent>(TEXT("RushAttackSphere"));
