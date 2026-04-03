@@ -113,13 +113,16 @@ void ABaseEnemy::PollInit()
 		if ( TargetCharacter ) // 캐릭터가 유효한지 확인합니다.
 		{
 			IPlayerDeadInterface* DeadInterface = Cast<IPlayerDeadInterface>(TargetCharacter);
-			if (DeadInterface)
+			IItemDropInterface* ItemDropInterface = Cast<IItemDropInterface>(TargetCharacter);
+			
+			if (DeadInterface && ItemDropInterface)
 			{
 				// 이전에 바인딩된 게 있다면 제거하고 등록 (중복 방지 안전장치)
 				DeadInterface->GetOnPlayerDeadDelegate().RemoveDynamic(this, &ABaseEnemy::PlayerDeadLog);
 				DeadInterface->GetOnPlayerDeadDelegate().AddDynamic(this, &ABaseEnemy::PlayerDeadLog);
-            
-				UE_LOG(LogTemp, Error, TEXT("asdasdsad"));
+				
+				// 에너미가 죽은거 플레이어 알려주는거는 SpawnDeadEffectAndDestroy에서 직접
+				// 알려줌
 				
 				bTargetInitalize = true; 
 			}
@@ -254,43 +257,12 @@ void ABaseEnemy::SpawnDeadEffectAndDestroy()
 			SpawnLocation, SpawnRotation, SpawnScale);
 	}
 
-	// 액터 삭제 전에 아이템 드롭 함수 호출
-	DropItemsAfterDead();
+	if (TargetCharacter && TargetCharacter->Implements<UItemDropInterface>())
+	{
+		IItemDropInterface::Execute_HandleEnemyDeadAndDropItem(TargetCharacter, this);
+	}
 	
 	Destroy(); // 이펙트가 없으면 바로 액터 삭제
-}
-
-void ABaseEnemy::DropItemsAfterDead()
-{
-	for (const TSubclassOf<AActor>& ItemClassToSpawn : DropItems)
-	{
-		if ( !ItemClassToSpawn ) continue;
-
-		// 적의 현재 위치 (발 밑)
-		FVector SpawnLocation = GetActorLocation();
-
-		// 캡슐의 절반 높이만큼 올려서 아이템이 땅에 닿도록 조정
-		AActor* ItemCDO = ItemClassToSpawn->GetDefaultObject<AActor>();
-		if ( ItemCDO )
-		{
-			UCapsuleComponent* ItemCapsule = ItemCDO->FindComponentByClass<UCapsuleComponent>();
-			if ( ItemCapsule )
-			{
-				SpawnLocation.Z += ItemCapsule->GetScaledCapsuleHalfHeight();
-			}
-		}
-
-		// 여러 아이템이 완전히 겹치지 않도록 X, Y 주변에 약간의 랜덤 오프셋 주기
-		const float RandomXY = 40.f;
-		SpawnLocation.X += FMath::RandRange(-RandomXY, RandomXY);
-		SpawnLocation.Y += FMath::RandRange(-RandomXY, RandomXY);
-
-		// 회전도 랜덤하게 설정
-		FRotator SpawnRotation = FRotator(0.f, FMath::RandRange(0.f, 360.f), 0.f);
-
-		// 월드에 아이템 액터 스폰
-		GetWorld()->SpawnActor<AActor>(ItemClassToSpawn, SpawnLocation, SpawnRotation);
-	}
 }
 
 void ABaseEnemy::SpawnAndPossessAIController()
