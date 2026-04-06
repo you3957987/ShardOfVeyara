@@ -62,6 +62,7 @@ FSaveData USOVGameInstance::GetSaveData()
 	SaveData.GlobalPlotDataMap = GlobalPlotDataMap;
 	SaveData.AlchemyTableDataMap = AlchemyTableDataMap;
 	SaveData.LastSaveTime = FDateTime::Now();
+	SaveData.AlreadyDroppedItems = AlreadyDroppedItems;
 	
 	return SaveData; 
 }
@@ -83,6 +84,7 @@ void USOVGameInstance::SetSaveData(FSaveData SaveData)
 	TempHotbar = SaveData.TempHotbar;
 	GlobalPlotDataMap = SaveData.GlobalPlotDataMap;
 	AlchemyTableDataMap = SaveData.AlchemyTableDataMap;
+	AlreadyDroppedItems = SaveData.AlreadyDroppedItems;
 }
 
 void USOVGameInstance::SaveGame()

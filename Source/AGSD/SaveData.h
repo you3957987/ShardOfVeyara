@@ -58,6 +58,9 @@ struct FSaveData : public FTableRowBase
 	UPROPERTY()
 	FDateTime LastSaveTime;
 	
+	UPROPERTY()
+	TArray<FString> AlreadyDroppedItems;
+	
 	FSaveData()
 	{
 		CurrentDay = 1;

@@ -15,6 +15,7 @@
 #include "SOVGameInstance.h"
 #include "Interface/PetConversationInterface.h"
 #include "Interface/PlayerDeadInterface.h"
+#include "Interface/ItemDropInterface.h"
 #include "AGSDCharacter.generated.h"
 
 class USpringArmComponent;
@@ -31,6 +32,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
  */
 UCLASS(abstract)
 class AGSD_API AAGSDCharacter : public ACharacter, public IPetConversationInterface, public IPlayerDeadInterface
+	, public IItemDropInterface
 {
 	GENERATED_BODY()
 
@@ -286,7 +288,12 @@ public:
 	UPROPERTY()
 	FOnPlayerDeadSignature OnPlayerDead;
 	virtual FOnPlayerDeadSignature& GetOnPlayerDeadDelegate() override { return OnPlayerDead; }
-
+	
+	// 적이 드롭할 아이템 데이터 테이블
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemDrop")
+	class UDataTable* EnemyDropDataTable;
+	virtual void HandleEnemyDeadAndDropItem_Implementation( AActor* DeadActor ) override;
+	
 	FORCEINLINE AActor* getCurrentInteractableActor() const { return CurrentInteractableActor; }
 	//--
 	// 펫 관련 추가

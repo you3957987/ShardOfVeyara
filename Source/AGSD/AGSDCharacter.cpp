@@ -21,6 +21,7 @@
 #include "BaseFlyingPet.h"
 #include "AssetTypeActions/AssetDefinition_SoundBase.h"
 #include "Components/AudioComponent.h"
+#include "Interface/ItemDropInterface.h"
 
 AAGSDCharacter::AAGSDCharacter()
 {
@@ -576,6 +577,82 @@ void AAGSDCharacter::SpawnMyPetAfterTravel()
 		FRotator SpawnRotation = FRotator::ZeroRotator;
 
 		GetWorld()->SpawnActor<ABaseFlyingPet>(DefaultPetClass, SpawnLocation, SpawnRotation, SpawnParams);
+	}
+}
+
+void AAGSDCharacter::HandleEnemyDeadAndDropItem_Implementation(AActor* DeadActor)
+{
+	if (DeadActor && DeadActor->Implements<UItemDropInterface>())
+	{
+		// 1. 죽은 에너미에게서 고유 ID 받아오기 (데이터 테이블 Row Name)
+		FName EnemyID = IItemDropInterface::Execute_GetItemDropTableEnemyID(DeadActor);
+		
+		// 데이터 테이블이 할당 안되거나 게임 인스턴스 할당이 없으면 종료
+		if (!EnemyDropDataTable || !GI) return;
+
+		// 2. 에너미 ID(Row Name)를 기반으로 해당 에너미의 모든 드롭 배열 가져오기
+		FEnemyDropData* DropData = EnemyDropDataTable->FindRow<FEnemyDropData>(EnemyID, TEXT("EnemyDropInfo"));
+		if (!DropData) return;
+
+		// 3. 에너미가 설정한 아이템 배열을 순회
+		for (const FEnemyDropItemInfo& ItemInfo : DropData->DropItems)
+		{
+			// 스폰할 클래스가 비어있으면 패스
+			if (!ItemInfo.DropItemClass) continue;
+
+			// 드롭 확률 체크 (0.0 ~ 1.0 사이의 값으로, 1.0이면 무조건 드롭, 0.5면 50% 확률로 드롭)
+			if (FMath::FRand() > ItemInfo.DropChance) continue;
+			
+			// 4. 최초 1회성 드롭 여부 확인
+			if (ItemInfo.bIsOneTimeDrop == true)
+			{
+				// 에너미ID_아이템클래스이름 형식으로 고유 키 생성 (예: BossSpider_BP_Sword_C )
+				FString UniqueKey = EnemyID.ToString() + TEXT("_") + ItemInfo.DropItemClass->GetName();
+				
+				UE_LOG(LogTemp, Warning, TEXT("EnemyID + Item: %s"), *UniqueKey);
+				
+				// GI의 NoRegenItem 배열에 이 키가 이미 들어있다면 (이미 떨궜던 아이템이라면)
+				if (GI->AlreadyDroppedItems.Contains(UniqueKey))
+				{
+					continue;
+				}
+				else
+				{
+					GI->AlreadyDroppedItems.Add(UniqueKey);
+				}
+			}
+
+			// 5. 드롭 개수(DropAmount)만큼 실제로 스폰시키기
+			for (int32 i = 0; i < ItemInfo.DropAmount; ++i)
+			{
+				TSubclassOf<AActor> ItemClassToSpawn = ItemInfo.DropItemClass;
+				
+				// 적의 현재 위치 (발 밑 기준)
+				FVector SpawnLocation = DeadActor->GetActorLocation();
+
+				// 아이템 액터의 캡슐 절반 높이만큼 올려서 아이템이 땅에 박히지 않도록 조정
+				AActor* ItemCDO = ItemClassToSpawn->GetDefaultObject<AActor>();
+				if (ItemCDO)
+				{
+					UCapsuleComponent* ItemCapsule = ItemCDO->FindComponentByClass<UCapsuleComponent>();
+					if (ItemCapsule)
+					{
+						SpawnLocation.Z += ItemCapsule->GetScaledCapsuleHalfHeight();
+					}
+				}
+
+				// 아이템이 여러 개일 때 한 곳에 겹치지 않도록 XY 평면에 랜덤 오프셋 부여
+				const float RandomXY = 40.f;
+				SpawnLocation.X += FMath::RandRange(-RandomXY, RandomXY);
+				SpawnLocation.Y += FMath::RandRange(-RandomXY, RandomXY);
+
+				// 회전도 랜덤하게 설정
+				FRotator SpawnRotation = FRotator(0.f, FMath::RandRange(0.f, 360.f), 0.f);
+
+				// 월드에 최종 스폰!
+				GetWorld()->SpawnActor<AActor>(ItemClassToSpawn, SpawnLocation, SpawnRotation);
+			}
+		}
 	}
 }
 

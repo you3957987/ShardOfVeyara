@@ -3,23 +3,34 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "EnemyLogManager.h"
+#include "Interface/ItemDropInterface.h"
 #include "BaseBossEnemy.generated.h"
 
 UCLASS()
-class ENEMY_API ABaseBossEnemy : public ACharacter
+class ENEMY_API ABaseBossEnemy : public ACharacter, public IItemDropInterface
 {
 	GENERATED_BODY()
 
 protected:
 	virtual void BeginPlay() override;
-
+	
+	// 아이템 드롭 테이블에 사용하는 에너미 ID
 	UPROPERTY(EditAnywhere, Category="자체설정")
-	bool bCheckDeadLogic = false;
-	void TestDeadLogic(); // 테스트용 죽음 로직 함수
-
+	FName ItemDropTableEnemyID;
+	
+	virtual FName GetItemDropTableEnemyID_Implementation() const override { return ItemDropTableEnemyID; }
+	
+	// 타겟으로 삼을 캐릭터를 저장할 변수
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "자체설정")
+	TObjectPtr<ACharacter> TargetCharacter;
+	
 	// 디버그 모드
 	UPROPERTY(EditAnywhere, Category="자체설정")
 	bool bDebugMode = false;
+	
+	UPROPERTY(EditAnywhere, Category="자체설정")
+	bool bCheckDeadLogic = false;
+	void TestDeadLogic(); // 테스트용 죽음 로직 함수
 	
 	// 플레이어 인식 후 AI 행동 시작 범위 스피어
 	UPROPERTY(VisibleAnywhere)
@@ -48,9 +59,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category="자체설정")
 	float MoveSpeed = 300.f;
 	
-	// 타겟으로 삼을 캐릭터를 저장할 변수
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "자체설정")
-	TObjectPtr<ACharacter> TargetCharacter;
 	// 블랙보드 컴포넌트
 	class UBlackboardComponent* BlackboardComp;
 	// 블랙보드 컴포넌트가 설정되었는지 여부
@@ -75,11 +83,6 @@ protected:
 	// 죽음 후 일정 시간 뒤에 이펙트 생성 및 액터 제거를 위한 타이머 핸들
 	FTimerHandle DeathTimerHandle;
 	void SpawnDeadEffectAndDestroy();
-	// 죽고 나서 떨어질 아이템 배열
-	UPROPERTY(EditAnywhere, Category="자체설정")
-	TArray<TSubclassOf<AActor>> DropItems;
-	// 아이템 드롭 함수
-	void DropItemsAfterDead();
 
 public:
 	ABaseBossEnemy();

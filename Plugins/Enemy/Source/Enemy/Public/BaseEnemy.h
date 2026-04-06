@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "EnemyLogManager.h"
+#include "Interface/ItemDropInterface.h"
 #include "BaseEnemy.generated.h"
 
 // 에디터 에너미 폴더 안의 ENUM 안에다가도 추가해줘야함!!!!!!!!!!!!!!!!!!!!!!!!
@@ -29,7 +30,7 @@ enum class EEnemyType : uint8
 };
 
 UCLASS()
-class ENEMY_API ABaseEnemy : public ACharacter
+class ENEMY_API ABaseEnemy : public ACharacter, public IItemDropInterface
 {
 	GENERATED_BODY()
 
@@ -63,6 +64,12 @@ public:
 
 	class UBlackboardComponent* BlackboardComp; // 블랙보드 컴포넌트 포인터
 	bool bBlackboardInitialized = false;
+	
+	// 아이템 드롭 테이블에 사용하는 에너미 ID
+	UPROPERTY(EditAnywhere, Category="자체설정")
+	FName ItemDropTableEnemyID;
+	
+	virtual FName GetItemDropTableEnemyID_Implementation() const override { return ItemDropTableEnemyID; }
 	
 	// 타겟으로 삼을 캐릭터를 저장할 변수
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "자체설정")
@@ -138,12 +145,7 @@ public:
 	void Die();
 	// 죽음 몽타주 끝난 후 호출되는 함수 - 애님 노티파이에서 호출
 	UFUNCTION(BlueprintCallable)
-	virtual void AfterDieMontageEnd(); 
-	// 죽고 나서 떨어질 아이템 배열
-	UPROPERTY(EditAnywhere, Category="자체설정")
-	TArray<TSubclassOf<AActor>> DropItems;
-	// 아이템 드롭 함수
-	void DropItemsAfterDead();
+	virtual void AfterDieMontageEnd();
 	
 	// 죽음 후 일정 시간 뒤에 이펙트 생성 및 액터 제거를 위한 타이머 핸들
 	FTimerHandle DeathTimerHandle;
@@ -179,6 +181,7 @@ public:
 	EEnemyLogType GetLogTypeFromEnemyType() const;
 	UFUNCTION()
 	void PlayerDeadLog();
+
 	
 #if WITH_EDITOR
 	// 에디터에서 프로퍼티가 변경될 때 호출됩니다.
