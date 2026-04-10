@@ -231,8 +231,12 @@ void ABossBlackKnight::StartWaveAttack()
                 FVector TraceStart = TargetLocation + FVector(0.f, 0.f, 1000.f);
                 FVector TraceEnd = TargetLocation - FVector(0.f, 0.f, 1000.f);
 
+            	FCollisionQueryParams TraceParams;
+            	TraceParams.AddIgnoredActor(WeakThis.Get());
+            	TraceParams.AddIgnoredActor(WeakThis->TargetCharacter);
+            	
                 FVector FinalLocation = TargetLocation;
-                if (World->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_WorldStatic))
+                if (World->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_WorldStatic, TraceParams))
                 {
                     FinalLocation = HitResult.Location;
                 }
@@ -338,9 +342,9 @@ void ABossBlackKnight::ChargeAttack()
 void ABossBlackKnight::SpawnRandomZapEffect()
 {
 	// [설정] 헤더 변수 대신 함수 내부에서 값 정의
-    const int32  SpawnCount      = 15;      // 떨어질 번개 횟수
+    const int32  SpawnCount      = 7;      // 떨어질 번개 횟수
     const float  SpawnRadius     = 800.0f;  // 보스 기준 생성 반경
-    const float  SpawnInterval   = 0.1f;   // 번개 생성 간격 (초)
+    const float  SpawnInterval   = 0.3f;   // 번개 생성 간격 (초)
     const float  DamageRadius    = 50.0f;  // 대미지 판정 범위
     const float  EffectScale     = 3.0f;    // 이펙트 크기 배율
 
@@ -379,7 +383,11 @@ void ABossBlackKnight::SpawnRandomZapEffect()
             FVector TraceStart = TargetLocation + FVector(0.f, 0.f, 500.f);
             FVector TraceEnd = TargetLocation - FVector(0.f, 0.f, 500.f);
 
-            if (WorldContext->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_WorldStatic))
+        	FCollisionQueryParams TraceParams;
+        	TraceParams.AddIgnoredActor(WeakThis.Get());
+			TraceParams.AddIgnoredActor(WeakThis->TargetCharacter);
+        	
+            if (WorldContext->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_WorldStatic, TraceParams))
             {
                 TargetLocation = HitResult.Location;
             }

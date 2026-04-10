@@ -226,7 +226,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StartBladeWave();
 	// 검기 발사체 클래스 
-	UPROPERTY(EditAnywhere, Category = "자체설정")
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	TSubclassOf<class ABaseEnemyProjectile> BladeWaveProjectileClass;
 	
 	// 깃 수정 확인
