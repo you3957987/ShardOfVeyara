@@ -249,17 +249,7 @@ void AAGSDCharacter::BeginPlay()
 		}
 		HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 	}
-	if (WBP_FadeWidget) 
-	{
-		if (!FadeWidget) FadeWidget = CreateWidget<UFadeWidget>(PC, WBP_FadeWidget);
-                
-		if (FadeWidget)
-		{
-			FadeWidget->SetRenderOpacity(1.0f);
-			FadeWidget->SetTargetOpacity(0.0f);
-			if (!FadeWidget->IsInViewport()) FadeWidget->AddToViewport(100);
-		}
-	}	
+	playFadeWidget(1.0f, 0.0f);
 }
 
 void AAGSDCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -343,11 +333,9 @@ void AAGSDCharacter::Die()
 				if (FadeWidget)
 				{
 					FadeWidget->OnFadeFinished.AddDynamic(this, &AAGSDCharacter::WakeUp);
-					FadeWidget->SetRenderOpacity(0.0f);
-					FadeWidget->SetTargetOpacity(1.0f);
-					if (!FadeWidget->IsInViewport()) FadeWidget->AddToViewport(100);
 				}
-			}	
+			}
+			playFadeWidget(0.0f, 1.0f);
 		}),
 		1.0f, false
 		);
@@ -478,6 +466,21 @@ void AAGSDCharacter::Look(const FInputActionValue& Value)
 
 	// route the input
 	DoLook(LookAxisVector.X, LookAxisVector.Y);
+}
+
+void AAGSDCharacter::playFadeWidget(float startOpacity, float endOpacity)
+{
+	if (WBP_FadeWidget) 
+	{
+		if (!FadeWidget) FadeWidget = CreateWidget<UFadeWidget>(PC, WBP_FadeWidget);
+                
+		if (FadeWidget)
+		{
+			FadeWidget->SetRenderOpacity(startOpacity);
+			FadeWidget->SetTargetOpacity(endOpacity);
+			if (!FadeWidget->IsInViewport()) FadeWidget->AddToViewport(100);
+		}
+	}	
 }
 
 void AAGSDCharacter::DoMove(float Right, float Forward)
