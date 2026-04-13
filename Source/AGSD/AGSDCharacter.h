@@ -240,6 +240,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UAudioComponent* Jumping;
 
+	UFUNCTION(BlueprintCallable)
+	void playFadeWidget(float startOpacity, float endOpacity);
 	
 public:
 	// Enemy 로그 처리 위한 겟 함수
