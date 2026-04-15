@@ -99,7 +99,10 @@ void ABaseBurrowEnemy::OnBeginOverlapDetectRangeSphere(UPrimitiveComponent* Over
 {
 	if (OtherActor && OtherActor != this && OtherActor->ActorHasTag(FName("Player")))
 	{
-		PlayUnburrowMontage();
+		if ( bIsBurrowing == true )
+		{
+			PlayUnburrowMontage();
+		}
 	}
 }
 
@@ -108,7 +111,10 @@ void ABaseBurrowEnemy::OnEndOverlapChaseRangeSphere(UPrimitiveComponent* Overlap
 {
 	if (OtherActor && OtherActor != this && OtherActor->ActorHasTag(FName("Player")))
 	{
-		PlayBurrowMontage();
+		if ( bIsBurrowing == false )
+		{
+			PlayBurrowMontage();
+		}
 	}
 }
 

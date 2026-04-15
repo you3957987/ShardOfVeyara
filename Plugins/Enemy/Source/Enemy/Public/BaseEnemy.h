@@ -129,18 +129,21 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	class UAnimMontage* SpawnMontage;
 	
+	// 죽을떄 실행할 사운드
+	UPROPERTY(EditDefaultsOnly, Category="자체설정")
+	class USoundBase* DeadSound;
 	// 죽을 떄 생성할 이펙트 == 케스케이드
 	UPROPERTY(EditDefaultsOnly, Category="자체설정")
-	class UParticleSystem* DeathEffectCascade;
+	class UParticleSystem* DeadEffectCascade;
 	// 죽음 이펙트 생성 앞 뒤 위치 조정용 거리
 	UPROPERTY(EditDefaultsOnly, Category="자체설정")
-	float DeathEffectForwardOffset = 0.0f;
+	float DeadEffectForwardOffset = 0.0f;
 	// 죽음 이펙트 생성 위 아래 위치 조정용 거리
 	UPROPERTY(EditDefaultsOnly, Category="자체설정")
-	float DeathEffectUpOffset = 0.0f;
+	float DeadEffectUpOffset = 0.0f;
 	// 죽음 이펙트 크기 배율
 	UPROPERTY(EditDefaultsOnly, Category="자체설정")
-	float DeathEffectScale = 1.0f;
+	float DeadEffectScale = 1.0f;
 	// 죽음 처리 함수
 	void Die();
 	// 죽음 몽타주 끝난 후 호출되는 함수 - 애님 노티파이에서 호출

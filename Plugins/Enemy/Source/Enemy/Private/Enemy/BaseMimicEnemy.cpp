@@ -108,6 +108,24 @@ void ABaseMimicEnemy::CheckMeleeAttackHit(float DeltaTime)
 					UDamageType::StaticClass()
 				);
 				
+				// --- 플레이어 밀치기 효과 시작 ---
+				ACharacter* PlayerCharacter = Cast<ACharacter>(OverlappingActor);
+				if (PlayerCharacter)
+				{
+					// 1. 밀어낼 방향 계산 (보스 -> 플레이어)
+					FVector PushDirection = PlayerCharacter->GetActorLocation() - GetActorLocation();
+					PushDirection.Z = 0; // 수평 방향으로만 밀도록 Z값을 0으로 설정
+					PushDirection.Normalize();
+
+					// 2. 밀어낼 속도 계산 (방향 * 힘 + 위로 띄우는 힘)
+					const FVector LaunchVelocity = PushDirection * 500 + FVector(0.f, 0.f, 200);
+
+					// 3. 플레이어 캐릭터를 밀어냄
+					// bXYOverride와 bZOverride를 true로 설정하여 현재 속도를 무시하고 새로운 속도를 적용합니다.
+					PlayerCharacter->LaunchCharacter(LaunchVelocity, true, true);
+				}
+				// --- 플레이어 밀치기 효과 끝 ---
+				
 				// 공격한 목록에 추가하여 중복 피해를 방지합니다.
 				HittedActors.Add(OverlappingActor);
 

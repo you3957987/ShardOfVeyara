@@ -71,6 +71,9 @@ protected:
 	// 죽음 애니메이션 몽타주
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	class UAnimMontage* DeathMontage;
+	// 죽을때 실행할 2d 사운드
+	UPROPERTY(EditDefaultsOnly, Category="자체설정")
+	class USoundBase* DeadSound;
 	// 죽을 떄 생성할 이펙트 == 케스케이드
 	UPROPERTY(EditDefaultsOnly, Category="자체설정")
 	class UParticleSystem* DeathEffectCascade;

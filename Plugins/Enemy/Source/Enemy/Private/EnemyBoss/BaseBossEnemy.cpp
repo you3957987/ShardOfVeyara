@@ -231,6 +231,11 @@ void ABaseBossEnemy::AfterDieMontageEnd()
 
 void ABaseBossEnemy::SpawnDeadEffectAndDestroy()
 {
+	if ( DeadSound )
+	{
+		UGameplayStatics::PlaySound2D(this, DeadSound);
+	}
+	
 	if ( DeathEffectCascade )
 	{
 		const FVector SpawnLocation = GetMesh()->GetComponentLocation() + (GetActorForwardVector() * DeathEffectForwardOffset);
