@@ -243,17 +243,21 @@ void ABaseEnemy::AfterDieMontageEnd()
 
 void ABaseEnemy::SpawnDeadEffectAndDestroy()
 {
-	if ( DeathEffectCascade )
+	if ( DeadSound )
+	{
+		UGameplayStatics::PlaySound2D(this, DeadSound);
+	}
+	if ( DeadEffectCascade )
 	{
 		// 현재 위치 + (앞방향 * 앞뒤 오프셋) + (윗방향 * 위아래 오프셋)
 		const FVector SpawnLocation = GetMesh()->GetComponentLocation() 
-			+ (GetActorForwardVector() * DeathEffectForwardOffset)
-			+ (GetActorUpVector() * DeathEffectUpOffset);
+			+ (GetActorForwardVector() * DeadEffectForwardOffset)
+			+ (GetActorUpVector() * DeadEffectUpOffset);
 
 		const FRotator SpawnRotation = GetActorRotation();
-		const FVector SpawnScale = FVector(DeathEffectScale);
+		const FVector SpawnScale = FVector(DeadEffectScale);
 
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DeathEffectCascade,
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DeadEffectCascade,
 			SpawnLocation, SpawnRotation, SpawnScale);
 	}
 

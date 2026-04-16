@@ -60,4 +60,9 @@ public:
 	// 애니메이션 노티파이에서 호출할 함수: 소울 생성
 	UFUNCTION(BlueprintCallable)
 	void SpawnSoul();
+	
+#if WITH_EDITOR
+	// 에디터에서 프로퍼티가 변경될 때 호출됩니다.
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 };

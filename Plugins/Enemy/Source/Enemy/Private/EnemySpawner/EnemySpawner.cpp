@@ -281,6 +281,12 @@ void AEnemySpawner::SpawnEnemy()
 				{
 					MeshName = SpawnedEnemy->GetMesh()->GetSkeletalMeshAsset()->GetName();
 				}
+				
+				if ( SpawnSound )
+				{
+					//2d 사운드로 재생
+					UGameplayStatics::PlaySound2D(this, SpawnSound);
+				}
 
 				// 로그에 메시 이름 추가 출력
 				UEnemyLogManager::EnemyLog(EEnemyLogType::Spawner, FString::Printf(TEXT("적 [스포너]가 [%s] 스폰"), *MeshName));
@@ -294,6 +300,11 @@ void AEnemySpawner::Die()
 	if (HealthBarWidget)
 	{
 		HealthBarWidget->SetVisibility(false);
+	}
+	
+	if (DeadSound)
+	{
+		UGameplayStatics::PlaySound2D(this, DeadSound);
 	}
 	
 	if ( DeathEffectCascade )

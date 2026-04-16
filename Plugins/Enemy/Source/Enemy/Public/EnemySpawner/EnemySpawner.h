@@ -91,6 +91,13 @@ protected:
 
 	void Die();
 	
+	// 스폰시 재생할 2D 사운드
+	UPROPERTY(EditDefaultsOnly, Category="자체설정")
+	class USoundBase* SpawnSound;
+	// 죽을떄 재생할 2d 사운드
+	UPROPERTY(EditDefaultsOnly, Category="자체설정")
+	class USoundBase* DeadSound;
+	
 public:	
 	AEnemySpawner();
 	virtual void Tick(float DeltaTime) override;
