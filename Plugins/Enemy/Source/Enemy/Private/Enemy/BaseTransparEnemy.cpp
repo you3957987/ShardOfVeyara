@@ -52,14 +52,14 @@ UAnimMontage* ABaseTransparEnemy::Attack()
 float ABaseTransparEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 	class AController* EventInstigator, AActor* DamageCauser)
 {
-	// 데미지 입을 때 투명 상태라면 투명화 해제
-	if ( bIsTransparent == true ) SetCharacterTransparency(false);
-	
 	// 부모 클래스의 TakeDamage를 호출하여 기본 데미지 처리를 수행합니다.
 	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	// 실제로 데미지를 입었다면 투명화를 해제합니다.
-	if (ActualDamage > 0.f) SetCharacterTransparency(false);
+	if (ActualDamage > 0.f && bIsTransparent == true) 
+	{
+		SetCharacterTransparency(false);
+	}
 	
 	return ActualDamage;
 }
