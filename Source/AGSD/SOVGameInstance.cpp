@@ -2,7 +2,6 @@
 
 
 #include "SOVGameInstance.h"
-
 #include "SOVSaveGame.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -54,6 +53,7 @@ FSaveData USOVGameInstance::GetSaveData()
 	SaveData.ChestMap = ChestMap;
 	SaveData.ShardsAmount = ShardsAmount;
 	SaveData.Coin = Coin;
+	SaveData.Damage = Damage;
 	SaveData.MaxPlayerHealth = MaxPlayerHealth;
 	SaveData.PlayerHealth = PlayerHealth;
 	SaveData.bHasPet = bHasPet;
@@ -61,6 +61,8 @@ FSaveData USOVGameInstance::GetSaveData()
 	SaveData.TempHotbar = TempHotbar;
 	SaveData.GlobalPlotDataMap = GlobalPlotDataMap;
 	SaveData.AlchemyTableDataMap = AlchemyTableDataMap;
+	SaveData.TributeLevel = TributeLevel;
+	SaveData.CurrentLevelTributeItems = CurrentLevelTributeItems;
 	SaveData.LastSaveTime = FDateTime::Now();
 	SaveData.AlreadyDroppedItems = AlreadyDroppedItems;
 	
@@ -77,6 +79,7 @@ void USOVGameInstance::SetSaveData(FSaveData SaveData)
 	ChestMap = SaveData.ChestMap;
 	ShardsAmount = SaveData.ShardsAmount;
 	Coin = SaveData.Coin;
+	Damage = SaveData.Damage;
 	MaxPlayerHealth = SaveData.MaxPlayerHealth;
 	PlayerHealth = SaveData.PlayerHealth;
 	bHasPet = SaveData.bHasPet;
@@ -84,6 +87,8 @@ void USOVGameInstance::SetSaveData(FSaveData SaveData)
 	TempHotbar = SaveData.TempHotbar;
 	GlobalPlotDataMap = SaveData.GlobalPlotDataMap;
 	AlchemyTableDataMap = SaveData.AlchemyTableDataMap;
+	TributeLevel = SaveData.TributeLevel;
+	CurrentLevelTributeItems = SaveData.CurrentLevelTributeItems;
 	AlreadyDroppedItems = SaveData.AlreadyDroppedItems;
 }
 

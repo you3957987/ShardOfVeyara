@@ -27,10 +27,16 @@ public class AGSD : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[] 
 		{
-			"Niagara",
-		});
+			"Niagara"
+        });
 
-		PublicIncludePaths.AddRange(new string[] {
+        // 에디터 빌드일 때만 추가되도록 조건문을 사용합니다.
+        if (Target.bBuildEditor)
+        {
+            PrivateDependencyModuleNames.Add("UnrealEd");
+        }
+
+        PublicIncludePaths.AddRange(new string[] {
 			"AGSD",
 			"AGSD/Variant_Platforming",
 			"AGSD/Variant_Platforming/Animation",

@@ -19,9 +19,12 @@
 #include "Components/ProgressBar.h"
 #include "Kismet/GameplayStatics.h"
 #include "BaseFlyingPet.h"
-#include "AssetTypeActions/AssetDefinition_SoundBase.h"
 #include "Components/AudioComponent.h"
 #include "Interface/ItemDropInterface.h"
+
+#if WITH_EDITOR
+#include "AssetTypeActions/AssetDefinition_SoundBase.h"
+#endif
 
 AAGSDCharacter::AAGSDCharacter()
 {
@@ -234,10 +237,13 @@ void AAGSDCharacter::BeginPlay()
 	PC = Cast<AAGSDPlayerController>(GetController());
 	GI = Cast<USOVGameInstance>(GetGameInstance());
 
-	if (GI) bHasPet = GI->bHasPet;
+	if (GI)
+	{
+		bHasPet = GI->bHasPet;
+		Coin = GI->Coin;
+		Damage = GI->Damage;
+	}
 	SpawnMyPetAfterTravel(); // 펫 있으면 오픈 레벨 이후 펫 스폰
-
-	Coin = GI->Coin;
 	
 	HealthBar = getHealthBar();
 	if (HealthBar)
