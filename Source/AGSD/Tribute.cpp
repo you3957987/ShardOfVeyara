@@ -15,7 +15,7 @@
 ATribute::ATribute()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 
@@ -33,12 +33,29 @@ void ATribute::BeginPlay()
 {
 	Super::BeginPlay();
 	if (!TributeDataTable) return;
-	SetNextTributeUI();
+	
+	GI = Cast<USOVGameInstance>(GetGameInstance());
+
+	TributeLevel = GI->TributeLevel;
+	CurrentLevelTributeItems = GI->CurrentLevelTributeItems;
+	
+	if (TributeLevel == 1)
+	{
+		SetNextTributeUI(TributeLevel);
+	}
 }
 
-void ATribute::SetNextTributeUI()
+void ATribute::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	FTributeData* CurrentLevelRow = TributeDataTable->FindRow<FTributeData>(FName(*FString::FromInt(++TributeLevel)), TEXT("ContextString"));
+	Super::EndPlay(EndPlayReason);
+
+	GI->TributeLevel = TributeLevel;
+	GI->CurrentLevelTributeItems = CurrentLevelTributeItems;
+}
+
+void ATribute::SetNextTributeUI(int32 level)
+{
+	FTributeData* CurrentLevelRow = TributeDataTable->FindRow<FTributeData>(FName(*FString::FromInt(level)), TEXT("ContextString"));
 	if (CurrentLevelRow)
 	{
 		CurrentLevelTributeItems = CurrentLevelRow->TributeItems;
@@ -175,7 +192,7 @@ void ATribute::SuccessInsert(FString ItemID, int32 AmountToRemove)
 		CurrentLevelTributeItems = {};
 		PlayFireExplosionNiagara();
 		Player->AddDamage(10.0f);
-		SetNextTributeUI();
+		SetNextTributeUI(++TributeLevel);
 	} 
 }
 

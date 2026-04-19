@@ -209,6 +209,7 @@ void ABaseBurrowEnemy::FinishBurrow()
 	if ( HealthBarWidget ) HealthBarWidget->SetVisibility(false);
 }
 
+#if WITH_EDITOR
 void ABaseBurrowEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
@@ -231,3 +232,4 @@ void ABaseBurrowEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyCha
 		}
 	}
 }
+#endif

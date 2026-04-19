@@ -50,6 +50,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
 	int Coin = 0;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "PlayerState")
+	float Damage = 100.0f;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
 	float MaxPlayerHealth = 200.f;
 	
@@ -74,9 +77,15 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AlchemyTableState")
 	TMap<FString, FAlchemySaveData> AlchemyTableDataMap;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "TributeState")
+	int32 TributeLevel = 1;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "TributeState")
+	TMap<FString, int32> CurrentLevelTributeItems;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "EnemyItemDrop")
 	TArray<FString> AlreadyDroppedItems;
-	
+
 	// 경작지로부터 데이터를 받아서 저장/갱신하는 함수
 	UFUNCTION(BlueprintCallable, Category = "Farming")
 	void UpdatePlotData(FPlotSaveData NewData);

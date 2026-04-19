@@ -190,7 +190,7 @@ protected:
 	float Health = 100.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
-	float Damage = 100.0;
+	float Damage = 100.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "PlayerState")
 	bool bCanBeDamage = true;

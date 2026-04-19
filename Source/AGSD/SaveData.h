@@ -60,16 +60,27 @@ struct FSaveData : public FTableRowBase
 	
 	UPROPERTY()
 	TArray<FString> AlreadyDroppedItems;
-	
+
+	UPROPERTY()
+	int32 TributeLevel;
+
+	UPROPERTY()
+	TMap<FString, int32> CurrentLevelTributeItems;
+
+	UPROPERTY()
+	float Damage;
+
 	FSaveData()
 	{
 		CurrentDay = 1;
 		CurrentTime = 360.f;
 		ShardsAmount = 0;
 		Coin = 0;
+		Damage = 100.0f;
 		MaxPlayerHealth = 200.f;	
 		PlayerHealth = MaxPlayerHealth;
 		bHasPet = false;
-		TempHotbar.SetNum(10);	
+		TempHotbar.SetNum(10);
+		TributeLevel = 1;
 	}
 };

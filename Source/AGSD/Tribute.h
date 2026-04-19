@@ -25,6 +25,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tribute")
 	class USphereComponent* CollisionSphere;
 
@@ -55,9 +57,11 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
 	UTributeUI* TributeWidget;
+	
+	USOVGameInstance* GI;
 
 	UFUNCTION(BlueprintCallable, Category = "Tribute")
-	void SetNextTributeUI();
+	void SetNextTributeUI(int32 level);
 	
 public:	
 	// Called every frame

@@ -8,11 +8,14 @@
 // #include "../../../../../../../Program Files/Epic Games/UE_5.6/Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
-#include "Commandlets/WorldPartitionCommandletHelpers.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+
+#if WITH_EDITOR
+#include "Commandlets/WorldPartitionCommandletHelpers.h"
+#endif
 
 // Sets default values
 AAlchemyTable::AAlchemyTable()
