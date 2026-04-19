@@ -9,16 +9,14 @@
   <component name="ChangeListManager">
     <list default="true" id="690080f4-11c2-40e7-9f9b-e775ffc08b31" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultGame.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultGame.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/TributeWidget/WBP_TributeUI_Alchemy.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Widgets/TributeWidget/WBP_TributeUI_Alchemy.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Level/Farm_Sky_Island.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Level/Farm_Sky_Island.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/SOVGameInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/SOVGameInstance.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/SOVGameInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/SOVGameInstance.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/SaveData.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/SaveData.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/Tribute.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/Tribute.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/Tribute.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/Tribute.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/WorldSettings/BP_FarmingGameMode.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/WorldSettings/BP_FarmingGameMode.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/BluePrint/BP_GameInstance.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/BluePrint/BP_GameInstance.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/StylizedSky/Levels/Demonstration.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StylizedSky/Levels/Demonstration.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/B/M8/996XLQD7GT3AUJUWCAOB9W.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/ClockWidget.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/ClockWidget.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/FarmingGameMode.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/FarmingGameMode.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/TimeLight.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/TimeLight.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/TimeLight.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/TimeLight.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,24 +74,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "Uproject.AGSD.executor": "Run",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;Uproject.AGSD.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="AGSD" type="Uproject" factoryName="rider.uproject">
       <configuration_1 setup="1">

@@ -38,21 +38,21 @@ void UClockWidget::SetTimeText(float time)
 	{
 		FString TimeString;
 		int CorrectionTime = FMath::FloorToInt(time);
-		if (CorrectionTime / 60 <= 12 || CorrectionTime / 60 >= 24)
+		if (CorrectionTime <= 1200 || CorrectionTime >= 2400)
 		{
 			TimeString = TEXT("AM ");
-			TimeString += FString::Printf(TEXT("%02d:"), CorrectionTime / 60);
+			TimeString += FString::Printf(TEXT("%02d:"), CorrectionTime / 100);
 		}
 		else
 		{
 			TimeString = TEXT("PM ");
-			if ((CorrectionTime - 12 * 60) / 60 == 0)
+			if ((CorrectionTime - 1200) / 100 == 0)
 			{
 				TimeString += FString::Printf(TEXT("%02d:"), 12);
 			}
-			else TimeString += FString::Printf(TEXT("%02d:"), (CorrectionTime - 12 * 60) / 60);
+			else TimeString += FString::Printf(TEXT("%02d:"), (CorrectionTime - 1200) / 100);
 		}
-		TimeString += FString::Printf(TEXT("%02d"), CorrectionTime % 60);
+		TimeString += FString::Printf(TEXT("%02d"), CorrectionTime % 100 * 6 / 10);
 		TimeText->SetText(FText::FromString(TimeString));
 	}
 }

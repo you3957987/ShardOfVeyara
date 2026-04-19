@@ -25,17 +25,11 @@ ATimeLight::ATimeLight()
 	MoonLight->SetLightColor(FColor(152, 168, 231));
 	MoonLight->SetAtmosphereSunLightIndex(1);
 	
-	SkyAtmosphere = CreateDefaultSubobject<USkyAtmosphereComponent>(TEXT("SkyAtmosphere"));
-	SkyAtmosphere->SetupAttachment(RootComponent);
-
 	ExponentialHeightFog = CreateDefaultSubobject<UExponentialHeightFogComponent>(TEXT("ExponentialHeightFog"));
 	ExponentialHeightFog->SetupAttachment(RootComponent);
 
 	SkyLight = CreateDefaultSubobject<USkyLightComponent>(TEXT("SkyLight"));
 	SkyLight->SetupAttachment(RootComponent);
-
-	VolumetricCloud = CreateDefaultSubobject<UVolumetricCloudComponent>(TEXT("VolumetricCloud"));
-	VolumetricCloud->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -51,13 +45,15 @@ void ATimeLight::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	CurrentTime = GameState->GetCurrentTime();
+	/*
 	if (!GameState) return;
 
 	if (!Timeflow) return;
-	float TimeOffset = 360.0f;
-	const float TotalTime = 1440.0f; 
+	//float TimeOffset = 360.0f;
+	const float TotalTime = 2400.0f; 
 
-	float CurrentTime = GameState->GetCurrentTime() - TimeOffset;
+	
     
 	// 2. 현재 시간을 총 시간으로 나누어 0.0 ~ 1.0 사이의 회전 비율을 구합니다.
 	// % 연산을 사용하여 하루가 끝나면 비율이 0으로 리셋되도록 합니다.
@@ -73,5 +69,6 @@ void ATimeLight::Tick(float DeltaTime)
 	
 	SunLight->SetRelativeRotation(FRotator(0.f - NewPitch, 0.f, 0.f));
 	MoonLight->SetRelativeRotation(FRotator(180.f - NewPitch, 0.f, 0.f));
+	*/
 }
 
