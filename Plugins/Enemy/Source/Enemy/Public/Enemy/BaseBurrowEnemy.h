@@ -22,8 +22,10 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class USphereComponent* AttackRangePointSphere;
 	
-	float AttackDamage = 20.f;
+	class USceneComponent* FireBreathPoint = nullptr;
 	
+	float AttackDamage = 20.f;
+
 public:
 	ABaseBurrowEnemy();
 	virtual void BeginPlay() override;
@@ -69,6 +71,28 @@ public:
 	UFUNCTION()
 	void OnEndOverlapChaseRangeSphere(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	
+	// 화염 방사 시작 함수
+	UFUNCTION(BlueprintCallable)
+	void StartFireBreath();
+	// 화염 방사 종료 함수
+	UFUNCTION(BlueprintCallable)	
+	void EndFireBreath();
+	// 화염 방사 발사체
+	UPROPERTY(EditDefaultsOnly, Category="자체설정")
+	TSubclassOf<class ABaseStreamProjectile> StreamProjectileClass;
+	// 연사 타이머 핸들
+	FTimerHandle FireBreathTimerHandle; 
+	void SpawnFireBreathProjectile();
+	// 화염 방사 간격
+	UPROPERTY(EditAnywhere, Category = "자체설정")	
+	float FireBreathInterval = 0.05f;
+	// 직선 화염 방사 어택 딜레이
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	float LinearFireBreathAttackDelay = 7.0f;
+	// 원형 화염 방사 어택 딜레이 
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	float FanFireBreathAttackDelay = 10.0f;
 	
 #if WITH_EDITOR
 	// 에디터에서 프로퍼티가 변경될 때 호출됩니다.

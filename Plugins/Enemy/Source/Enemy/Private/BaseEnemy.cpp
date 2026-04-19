@@ -177,7 +177,7 @@ void ABaseEnemy::StartFocusPlayerAfterAttack()
 }
 
 float ABaseEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, 
-	class AController* EventInstigator, AActor* DamageCauser)
+                             class AController* EventInstigator, AActor* DamageCauser)
 {
 	float DamageToApply = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
@@ -310,6 +310,14 @@ void ABaseEnemy::UpdateHealthBarWidget(float DeltaTime)
 		{
 			HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 		}
+	}
+}
+
+void ABaseEnemy::SetAttackDelayToBehaviorTree(float Delay)
+{
+	if (BlackboardComp)	
+	{
+		BlackboardComp->SetValueAsFloat(TEXT("AttackDelay"), Delay);
 	}
 }
 

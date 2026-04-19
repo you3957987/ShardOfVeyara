@@ -3,6 +3,7 @@
 #include "EnemyLogManager.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "EnemyProjectile/BaseStreamProjectile.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -53,6 +54,18 @@ void ABaseBurrowEnemy::BeginPlay()
 	if ( DetectRangeSphere ) DetectRangeSphere->OnComponentBeginOverlap.AddDynamic(this, &ABaseBurrowEnemy::OnBeginOverlapDetectRangeSphere);
 	
 	if ( ChaseRangeSphere ) ChaseRangeSphere->OnComponentEndOverlap.AddDynamic(this, &ABaseBurrowEnemy::OnEndOverlapChaseRangeSphere);
+	
+	// FireBreath 태그 있는 씬 컴포넌트 찾아서 FireBreathPoint에 할당
+	TArray<USceneComponent*> SceneComps;
+	GetComponents<USceneComponent>(SceneComps);
+	for (USceneComponent* SceneComp : SceneComps)
+	{
+		if (SceneComp && SceneComp->ComponentHasTag(TEXT("FireBreath")))
+		{
+			FireBreathPoint = SceneComp;
+			break; // 찾았으니 루프 종료
+		}
+	}
 }
 
 void ABaseBurrowEnemy::Tick(float DeltaTime)
@@ -207,6 +220,42 @@ void ABaseBurrowEnemy::FinishBurrow()
 	bIsBurrowing = true;
 	
 	if ( HealthBarWidget ) HealthBarWidget->SetVisibility(false);
+}
+
+void ABaseBurrowEnemy::StartFireBreath()
+{
+	// 이미 발사 중이라면 중복 실행 방지
+	if (GetWorldTimerManager().IsTimerActive(FireBreathTimerHandle)) return;
+	
+	// 0.05초 간격으로 SpawnFireBreathProjectile 함수 반복 호출 (Loop = true)
+	GetWorldTimerManager().SetTimer(FireBreathTimerHandle, this, 
+		&ABaseBurrowEnemy::SpawnFireBreathProjectile, FireBreathInterval, true);
+}
+
+void ABaseBurrowEnemy::EndFireBreath()
+{
+	// 타이머 정지 (발사 중단)
+	GetWorldTimerManager().ClearTimer(FireBreathTimerHandle);
+}
+
+void ABaseBurrowEnemy::SpawnFireBreathProjectile()
+{
+	if (FireBreathPoint && StreamProjectileClass)
+	{
+		// FireBreathPoint는 머리 뼈에 붙어 있으므로, 애니메이션에 따라 위치와 회전이 실시간으로 변함
+		const FVector SpawnLocation = FireBreathPoint->GetComponentLocation();
+		
+		// 소켓의 회전을 가져오되, Pitch(위아래)와 Roll(좌우기울기)은 0으로 만들어 수평으로 발사
+		FRotator SpawnRotation = FireBreathPoint->GetComponentRotation();
+		SpawnRotation.Pitch = -30.0f; // 바닥으로 박히지 않게 수평 유지
+		SpawnRotation.Roll = 0.0f;  // 기울어지지 않게
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = this;
+
+		GetWorld()->SpawnActor<ABaseStreamProjectile>(StreamProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+	}
 }
 
 #if WITH_EDITOR
