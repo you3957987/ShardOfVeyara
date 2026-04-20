@@ -12,6 +12,17 @@ struct FBossSkeletonMageAttackStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float TeleportWeight = 5.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float FireBallWeight = 10.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float SummonWeight = 2.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float GroundAttackWeight = 5.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float PushTargetWeight = 3.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float GravityAttackWeight = 5.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float TeleportDelay = 5.f;
 	// 텔레포트 최대 거리
 	UPROPERTY(EditAnywhere, Category = "자체설정")
@@ -21,12 +32,8 @@ struct FBossSkeletonMageAttackStruct
 	float MinTeleportDist = 300.f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float FireBallWeight = 10.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float FireBallDelay = 3.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float SummonWeight = 2.0f;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float SummonEnemyDelay = 7.f;
 	// 소환하는 씬 컴포넌트 기준 소환 가능한 최대 거리
@@ -34,17 +41,18 @@ struct FBossSkeletonMageAttackStruct
 	float MaxSummonDist = 400.f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float GroundAttackWeight = 5.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float GroundAttackDelay = 4.f;
 	// 장판 유지 시간
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	float GroundAttackDuration = 3.f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float PushTargetWeight = 3.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float PushTargetDelay = 3.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float GravityAttackDamage = 30.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float GravityAttackDelay = 5.f;
 };
 
 UCLASS()
@@ -70,8 +78,11 @@ public:
 	FVector TeleportDestination;
 	// 텔레포트 시각 효과
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
-	class UNiagaraSystem* TeleportEffect;
-	void SpawnTeleportEffectAtLocation(const FVector& Location);
+	class UNiagaraSystem* TeleportInEffect;
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	class UNiagaraSystem* TeleportOutEffect;
+	UFUNCTION(BlueprintCallable)
+	void SpawnTeleportEffectAtLocation(const FVector& Location, class UNiagaraSystem* EffectToSpawn = nullptr);
 	
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	class UAnimMontage* FireBallMontage;
@@ -149,4 +160,30 @@ public:
 	// 쉴드 이펙트
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	class UNiagaraSystem* MagicShieldEffect;
+	
+	UFUNCTION( BlueprintCallable )
+	void GravityAttack();
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	class UAnimMontage* GravityAttackMontage;
+	UFUNCTION(BlueprintCallable)
+	void StartGravityAttack();
+	UFUNCTION(BlueprintCallable)
+	void EndGravityAttack();
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	class UNiagaraSystem* GravityGroundEffect;
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	class UNiagaraSystem* GravityImpactEffect;
+	void HandleGravityAttack(float DeltaTime);
+	
+	float DefaultGravityScale = 1.0f;
+	float DefaultAirControl = 0.05f;
+	float DefaultMaxWalkSpeed = 1.0f;
+	
+	bool bIsGravityAttackActive = false;
+	FVector GravityAttackCenter;
+	float GravityRadius = 800.f;
+	float GravityHalfHeight = 700.f;
+	float GravityDuration = 4.8f;
+	float GravityTimer = 0.0f;
+	
 };

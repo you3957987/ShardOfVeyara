@@ -8,8 +8,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="690080f4-11c2-40e7-9f9b-e775ffc08b31" name="변경" comment="">
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/StylizedSky/Levels/Demonstration.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StylizedSky/Levels/Demonstration.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Level/Forest_Boss_Room.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Level/Forest_Boss_Room.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Config/DefaultEnemy.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Config/DefaultEnemy.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/Assasin_MagicSwordMan/BP_Assassin.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/Assasin_MagicSwordMan/BP_Assassin.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/Anim/ABP_Boss_SkeletonMage.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/Anim/ABP_Boss_SkeletonMage.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/Anim/AM_BossSkeletonMageTeleport.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/Anim/AM_BossSkeletonMageTeleport.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/BB_SkeletonMage.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/BB_SkeletonMage.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/BP_Boss_SkeletonMage.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/BP_Boss_SkeletonMage.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/BT_SkeletonMage.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/BT_SkeletonMage.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/Worm/BP_WormGroundDamageZoneProjectile.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/Worm/BP_WormGroundDamageZoneProjectile.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/Worm/BP_WormProjectile.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/Worm/BP_WormProjectile.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/EnemyAsset/Skeleton/characters/fbx/Skeleton_Mage_Anim_Spellcast_Raise.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/EnemyAsset/Skeleton/characters/fbx/Skeleton_Mage_Anim_Spellcast_Raise.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/TestMap/ThirdPerson/Level_EnemyTest_Sky.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/TestMap/ThirdPerson/Level_EnemyTest_Sky.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/VFXAsset/SkillsVFX/Particles/NS_Skill_AcidTrap.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/VFXAsset/SkillsVFX/Particles/NS_Skill_AcidTrap.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/VFXAsset/SkillsVFX/Particles/NS_Skill_Portal.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/VFXAsset/SkillsVFX/Particles/NS_Skill_Portal.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/VFXAsset/SkillsVFX/Particles/NS_Skill_TeleportationIn.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/VFXAsset/SkillsVFX/Particles/NS_Skill_TeleportationIn.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/VFXAsset/SkillsVFX/Particles/NS_Skill_TeleportationOut.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/VFXAsset/SkillsVFX/Particles/NS_Skill_TeleportationOut.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest_Sky/2/Z4/SBXUPSBI7CZPS1CF4PYLES.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/__ExternalActors__/TestMap/ThirdPerson/Level_EnemyTest_Sky/2/Z4/SBXUPSBI7CZPS1CF4PYLES.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/SkeletonMage/BossSkeletonMage.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/SkeletonMage/BossSkeletonMage.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/SkeletonMage/BossSkeletonMageAIController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/SkeletonMage/BossSkeletonMageAIController.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/SkeletonMage/BossSkeletonMage.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/SkeletonMage/BossSkeletonMage.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/Worm/BossWorm.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/Worm/BossWorm.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,6 +73,7 @@
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Classes/GameFramework/PlayerController.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/BTTask/BTTask_BattleStartLog.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BTTask/BTTask_BossSelectWeight.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/SkeletonMage/BTTask_GravityAttack.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Interface/ItemDropInterface.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Interface/PlayerDeadInterface.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/Test/TestHealActor.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -198,6 +219,7 @@
       <workItem from="1776403359656" duration="2279000" />
       <workItem from="1776564760264" duration="2648000" />
       <workItem from="1776575465187" duration="1321000" />
+      <workItem from="1776646748307" duration="9830000" />
     </task>
     <servers />
   </component>

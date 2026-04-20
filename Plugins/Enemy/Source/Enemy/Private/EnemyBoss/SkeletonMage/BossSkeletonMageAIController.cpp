@@ -20,6 +20,7 @@ void ABossSkeletonMageAIController::SetBlackboardKey()
 	BlackboardComp->SetValueAsFloat("W_Summon", ControlledEnemy->AttackStruct.SummonWeight);
 	BlackboardComp->SetValueAsFloat("W_GroundAttack", ControlledEnemy->AttackStruct.GroundAttackWeight);
 	BlackboardComp->SetValueAsFloat("W_PushTarget", ControlledEnemy->AttackStruct.PushTargetWeight);
+	BlackboardComp->SetValueAsFloat("W_GravityAttack", ControlledEnemy->AttackStruct.GravityAttackWeight);
 
 	BlackboardComp->SetValueAsFloat("AttackDelay", ControlledEnemy->AttackDelay);
 	BlackboardComp->SetValueAsBool("CanAttack", true);
