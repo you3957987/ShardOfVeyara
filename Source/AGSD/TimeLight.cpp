@@ -45,11 +45,11 @@ void ATimeLight::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (!GameState) return;
+	if (!Timeflow) return;
 	CurrentTime = GameState->GetCurrentTime();
 	/*
-	if (!GameState) return;
 
-	if (!Timeflow) return;
 	//float TimeOffset = 360.0f;
 	const float TotalTime = 2400.0f; 
 

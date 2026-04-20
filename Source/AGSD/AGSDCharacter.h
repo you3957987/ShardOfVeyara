@@ -16,6 +16,7 @@
 #include "Interface/PetConversationInterface.h"
 #include "Interface/PlayerDeadInterface.h"
 #include "Interface/ItemDropInterface.h"
+#include "SpearComboData.h"
 #include "AGSDCharacter.generated.h"
 
 class USpringArmComponent;
@@ -43,6 +44,10 @@ class AGSD_API AAGSDCharacter : public ACharacter, public IPetConversationInterf
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
+	
+	bool bIsBlocking = false;
+	
+	bool bIsJustGuardWindow = false;
 
 protected:
 	/** Jump Input Action */
@@ -65,6 +70,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* Interaction;
 
+	// 가드 액션
+	UPROPERTY(EditAnywhere, Category="Input")
+	const UInputAction* GuardAction;
+	
 	AAGSDPlayerController* PC;
 	
 	UPROPERTY(VisibleAnywhere, Category="Input Buffer")
@@ -84,7 +93,31 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PlayerState")
 	int Coin;
-	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="PlayerState")
+	bool bIsAttacking = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="PlayerState")
+	bool bIsRecovering = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="PlayerState")
+	bool bCanCombo = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="PlayerState")
+	bool bHasBufferedInput = false;
+
+	// USTRUCT 포인터는 UPROPERTY로 관리할 수 없으므로 매크로 제거
+	FSpearComboData* CurrentComboData;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="PlayerState")
+	int32 CurrentStageIndex;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PlayerState")
+	UDataTable* SpearComboDataTable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PlayerState")
+	class UAnimMontage* BlockStartMontage;
+
 private:
 	UFUNCTION(BlueprintCallable)
 	void HandleAttackInput(FName ActionName);
@@ -167,6 +200,10 @@ public:
 	FORCEINLINE USOVGameInstance* getPlayerGameInstance() const {return GI;};
 
 	FORCEINLINE float getPlayerMaxhealth() const { return MaxHealth;}
+
+	FORCEINLINE void SetCanCombo(bool b) {bCanCombo = b;}
+	
+	FORCEINLINE bool HasBufferedInput() {return bHasBufferedInput;}
 	
 protected:
 	//현재 상호작용 가능한 액터 포인터 (AACultivationPlot 또는 ACrop 등)
@@ -242,11 +279,13 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void playFadeWidget(float startOpacity, float endOpacity);
-	
+
 public:
 	// Enemy 로그 처리 위한 겟 함수
 	FORCEINLINE float GetFarmerHealthToEnemy() const { return Health; }
-	
+
+	void OnRecoveryFinished(UAnimMontage* Montage, bool bInterrupted);
+	void ResetAttackState();
 	/** Handles move inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoMove(float Right, float Forward);
@@ -313,5 +352,40 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerState")
 	void HealthRecovery(float amount);
+
+	ESpearAttackDirection GetAttackDirection();
+
+	UFUNCTION(BlueprintCallable)
+	void ProcessAttackInput();
+	
+	void StartNewCombo();
+	
+	FSpearComboData* GetComboDataByDirection(ESpearAttackDirection Direction);
+	
+	void ExecuteNextStage();
+	
+	void PlayStage(int32 Index);
+	
+	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+	
+	void StartRecovery(UAnimMontage* RecoveryMontage);
+
+	FTimerHandle JustGuardTimerHandle;
+	void EndJustGuardWindow();
+
+	void StartBlock();
+	void StopBlock();
+	void OnHitReceived();
+
+	/** 저스트 가드 성공 효과 처리 */
+	void HandleJustGuardSuccess();
+	void ResetCombo();
+	/** 성공 시 재생할 이펙트 */
+	UPROPERTY(EditAnywhere, Category = "Combat|Effects")
+	UParticleSystem* JustGuardParticle;
+	/** 성공 시 재생할 사운드 */
+	UPROPERTY(EditAnywhere, Category = "Combat|Effects")
+	USoundBase* JustGuardSound;
+	
 };
 

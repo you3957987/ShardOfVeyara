@@ -19,6 +19,7 @@
 #include "Components/ProgressBar.h"
 #include "Kismet/GameplayStatics.h"
 #include "BaseFlyingPet.h"
+#include "SpearComboData.h"
 #include "Components/AudioComponent.h"
 #include "Interface/ItemDropInterface.h"
 
@@ -398,6 +399,10 @@ void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 		//G 키를 누를 때 TryInteract 함수를 호출하도록 바인딩
 		EnhancedInputComponent->BindAction(Interaction, ETriggerEvent::Triggered, this, &AAGSDCharacter::TryInteract);
+
+		//
+		EnhancedInputComponent->BindAction(GuardAction, ETriggerEvent::Started, this, &AAGSDCharacter::StartBlock);
+		EnhancedInputComponent->BindAction(GuardAction, ETriggerEvent::Completed, this, &AAGSDCharacter::StopBlock);
 	}
 	else
 	{
@@ -487,6 +492,271 @@ void AAGSDCharacter::playFadeWidget(float startOpacity, float endOpacity)
 			if (!FadeWidget->IsInViewport()) FadeWidget->AddToViewport(100);
 		}
 	}	
+}
+
+ESpearAttackDirection AAGSDCharacter::GetAttackDirection()
+{
+	// 입력된 이동 벡터 (Input Action에서 받아온 값)
+	FVector InputMoveVector = GetLastMovementInputVector();
+	if (InputMoveVector.IsNearlyZero()) return ESpearAttackDirection::Neutral;
+
+	FVector Forward = GetActorForwardVector();
+	InputMoveVector.Normalize();
+
+	// 내적 연산 (Dot Product)
+	float Dot = FVector::DotProduct(Forward, InputMoveVector);
+
+	if (Dot > 0.5f) return ESpearAttackDirection::Forward;
+	if (Dot < -0.5f) return ESpearAttackDirection::Backward;
+    
+	return ESpearAttackDirection::Neutral;
+}
+
+void AAGSDCharacter::ProcessAttackInput()
+{
+	
+	// 공격 중이거나 복귀 중인 경우
+	if (bIsAttacking || bIsRecovering) 
+	{
+		// 1. 공격 중 콤보 가능 구간인 경우 -> 다음 단계 연계
+		if (bCanCombo)
+		{
+			ExecuteNextStage();
+		}
+		// 2. 복귀 중인 경우 -> 현재 복귀를 중단하고 새로운 콤보 시작 (Cancel Recovery)
+		else if (bIsRecovering)
+		{
+			StartNewCombo();
+		}
+		// 3. 그 외 공격 중인 경우 -> 입력 버퍼링
+		else
+		{
+			bHasBufferedInput = true;
+		}
+		return;
+	}
+
+	// 완전히 Idle 상태인 경우 새로운 콤보 시작
+	StartNewCombo();
+}
+
+void AAGSDCharacter::StartNewCombo()
+{
+	if (Mining) return;
+	ESpearAttackDirection CurrentDir = GetAttackDirection();
+	Mining = true;
+	
+	// 방향에 맞는 콤보 데이터를 테이블에서 한 번만 가져옴
+	CurrentComboData = GetComboDataByDirection(CurrentDir);
+
+	if (CurrentComboData && CurrentComboData->Stages.Num() > 0)
+	{
+		CurrentStageIndex = 0;
+		PlayStage(0);
+	}
+}
+
+FSpearComboData* AAGSDCharacter::GetComboDataByDirection(ESpearAttackDirection Direction)
+{
+	if (!SpearComboDataTable) return nullptr;
+
+	// 데이터 테이블의 모든 행을 순회하며 방향 조건이 맞는 데이터를 검색
+	static const FString ContextString(TEXT("Spear Attack Context"));
+	TArray<FSpearComboData*> AllRows;
+	SpearComboDataTable->GetAllRows<FSpearComboData>(ContextString, AllRows);
+
+	for (FSpearComboData* ComboData : AllRows)
+	{
+		if (ComboData && ComboData->DirectionRequirement == Direction)
+		{
+			return ComboData;
+		}
+	}
+
+	return nullptr;
+}
+
+void AAGSDCharacter::ExecuteNextStage()
+{
+	int32 NextIndex = CurrentStageIndex + 1;
+
+	// 다음 스테이지가 존재할 경우에만 실행
+	if (CurrentComboData && CurrentComboData->Stages.IsValidIndex(NextIndex))
+	{
+		CurrentStageIndex = NextIndex;
+		PlayStage(NextIndex);
+	}
+}
+
+void AAGSDCharacter::PlayStage(int32 Index)
+{
+	if (!CurrentComboData) return;
+
+	FSpearStageData& Stage = CurrentComboData->Stages[Index];
+	if (Stage.AttackMontage)
+	{
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+		float Duration = PlayAnimMontage(Stage.AttackMontage);
+        
+		if (Duration > 0.f)
+		{
+			bIsAttacking = true;
+			bIsRecovering = false; // 새로운 공격 시작 시 복귀 상태 해제
+			bCanCombo = false;
+			bHasBufferedInput = false;
+
+			// 몽타주 종료 델리게이트 바인딩
+			FOnMontageEnded MontageEndedDelegate;
+			MontageEndedDelegate.BindUObject(this, &AAGSDCharacter::OnAttackMontageEnded);
+			AnimInstance->Montage_SetEndDelegate(MontageEndedDelegate, Stage.AttackMontage);
+		}
+	}
+}
+
+void AAGSDCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	// 입력 버퍼가 있다면 이미 ExecuteNextStage()에서 다음 공격이 시작되었을 것이므로 무시
+	if (bInterrupted) return;
+
+	// 현재 스테이지 데이터 참조
+	if (CurrentComboData && CurrentComboData->Stages.IsValidIndex(CurrentStageIndex))
+	{
+			ResetAttackState();
+	}
+}
+
+void AAGSDCharacter::StartRecovery(UAnimMontage* RecoveryMontage)
+{
+	if (!RecoveryMontage) return;
+
+	bIsRecovering = true;
+	bCanCombo = false; // 복귀 중에는 일반 콤보 창은 닫힘 (단, 새로운 입력을 통한 캔슬은 허용)
+    
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	PlayAnimMontage(RecoveryMontage);
+
+	// 복귀 완료 시 상태 최종 리셋을 위한 바인딩
+	FOnMontageEnded RecoveryEndedDelegate;
+	RecoveryEndedDelegate.BindUObject(this, &AAGSDCharacter::OnRecoveryFinished);
+	AnimInstance->Montage_SetEndDelegate(RecoveryEndedDelegate, RecoveryMontage);
+}
+
+void AAGSDCharacter::EndJustGuardWindow()
+{
+	// 타이머에 의해 호출되면 이제 더 이상 저스트 가드 판정이 아님
+	bIsJustGuardWindow = false;
+
+	// (선택 사항) 로그를 남겨서 판정 종료를 확인해볼 수 있습니다.
+	// UE_LOG(LogTemp, Log, TEXT("Just Guard Window Closed"));
+}
+
+void AAGSDCharacter::StartBlock()
+{
+	if (Mining) return;
+	if (HoldingWeapon != EHoldingWeapon::Spear) return;
+	
+	bIsBlocking = true;
+	PlayAnimMontage(BlockStartMontage);
+
+	Mining = true;
+	// 가드 시작 후 0.2초간 저스트 가드 판정 활성화
+	bIsJustGuardWindow = true;
+	GetWorldTimerManager().SetTimer(JustGuardTimerHandle, this, &AAGSDCharacter::EndJustGuardWindow, 0.2f, false);
+}
+
+void AAGSDCharacter::StopBlock()
+{
+	if (bIsBlocking)
+	{
+		bIsBlocking = false;
+		StopAnimMontage(BlockStartMontage);
+		Mining = false;
+	}
+}
+
+void AAGSDCharacter::HandleJustGuardSuccess()
+{
+	// 1. 상태 초기화 (연속 성공 방지 및 타이머 정리)
+	bIsJustGuardWindow = false;
+	GetWorldTimerManager().ClearTimer(JustGuardTimerHandle);
+	// 2. 사운드 재생
+	if (JustGuardSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, JustGuardSound, GetActorLocation());
+	}
+	// 3. 이펙트 스폰 (보통 창이나 방패 위치에 스폰하는 것이 좋음)
+	if (JustGuardParticle)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), JustGuardParticle, GetActorLocation());
+	}
+	// 4. (고급 기능) 역경직(Hit-Stop) 연출
+	// 가드 성공의 쾌감을 위해 시간 배율을 아주 잠깐 동안 낮췄다 돌려주면 타격감이 훨씬 좋아집니다.
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.1f);
+    
+	FTimerHandle ResetTimeDilationTimer;
+	GetWorldTimerManager().SetTimer(ResetTimeDilationTimer, FTimerDelegate::CreateLambda([this]()
+	{
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
+	}), 0.05f, false); // 0.05초 뒤에 다시 원래 속도로
+	UE_LOG(LogTemp, Warning, TEXT("Just Guard Success!"));
+}
+
+void AAGSDCharacter::ResetCombo()
+{
+	// 1. 모든 상태 플래그 초기화
+	bIsAttacking = false;
+	bIsRecovering = false;
+	bCanCombo = false;
+	bHasBufferedInput = false;
+    
+	// 2. 콤보 데이터 초기화
+	CurrentStageIndex = -1;
+	CurrentComboData = nullptr;
+
+	// 3. (추가) 수비 시스템 관련 상태도 함께 초기화
+	bIsJustGuardWindow = false;
+	if (GetWorldTimerManager().IsTimerActive(JustGuardTimerHandle))
+	{
+		GetWorldTimerManager().ClearTimer(JustGuardTimerHandle);
+	}
+
+	// 몽타주가 실행 중이라면 정지 (선택 사항)
+	// GetMesh()->GetAnimInstance()->StopAllMontages(0.2f);
+
+	UE_LOG(LogTemp, Log, TEXT("Combo System Reset"));
+}
+
+void AAGSDCharacter::OnHitReceived()
+{
+	if (bIsJustGuardWindow)
+	{
+		HandleJustGuardSuccess();
+	}
+	else
+	{
+		// 일반 피격 시 콤보 리셋 및 모든 공격 상태 강제 종료
+		ResetCombo();
+	}
+}
+
+void AAGSDCharacter::OnRecoveryFinished(UAnimMontage* Montage, bool bInterrupted)
+{
+	// 다른 공격에 의해 캔슬(Interrupted)된 게 아니라 자연 종료된 경우에만 상태 리셋
+	if (!bInterrupted)
+	{
+		ResetAttackState();
+	}
+}
+
+void AAGSDCharacter::ResetAttackState()
+{
+	bIsAttacking = false;
+	bIsRecovering = false;
+	bCanCombo = false;
+	bHasBufferedInput = false;
+	CurrentStageIndex = -1;
+	CurrentComboData = nullptr;
+	Mining = false;
 }
 
 void AAGSDCharacter::DoMove(float Right, float Forward)
