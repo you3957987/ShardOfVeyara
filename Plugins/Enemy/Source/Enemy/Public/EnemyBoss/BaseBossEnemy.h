@@ -43,11 +43,6 @@ protected:
 	void OnPlayerDetectOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
-	// 체력 바 위젯 컴포넌트
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "자체설정")
-	TObjectPtr<class UWidgetComponent> HealthBarWidget;
-	// Tick에서 체력 바 위젯을 내 캐릭터 쪽으로 돌아보게 하는 함수
-	void UpdateHealthBarWidget(float DeltaTime);
 	
 	// 최대 체력
 	UPROPERTY(EditAnywhere, Category="자체설정")
@@ -58,6 +53,14 @@ protected:
 	// 이동 속도 = 여기서 값 바꾸면 자동으로 캐릭터 무브먼트 컴포넌트의 MaxWalkSpeed도 바뀜
 	UPROPERTY(EditAnywhere, Category="자체설정")
 	float MoveSpeed = 300.f;
+	
+	// 보스 이름
+	UPROPERTY(EditDefaultsOnly, Category="자체설정")
+	FText BossName;
+	// 화면에 띄울 체력바 WBP
+	UPROPERTY(EditDefaultsOnly, Category="자체설정")
+	TSubclassOf<class UBossHealthBarWidget> BossHealthBarWidgetClass;
+	class UBossHealthBarWidget* BossHealthBar; // 보스 체력 바 위젯 캐스팅해서 저장할 변수
 	
 	// 블랙보드 컴포넌트
 	class UBlackboardComponent* BlackboardComp;
@@ -109,7 +112,7 @@ public:
 	float AttackDelay = 0.0f;
 	
 	// 죽음 처리 함수
-	void Die();
+	virtual void Die();
 	// 죽음 몽타주 끝난 후 호출되는 함수 - 애님 노티파이에서 호출
 	UFUNCTION(BlueprintCallable)
 	void AfterDieMontageEnd();

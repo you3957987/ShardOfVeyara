@@ -97,6 +97,19 @@ void ABossSkeletonMage::Tick(float DeltaTime)
 	}
 }
 
+void ABossSkeletonMage::Die()
+{
+	Super::Die();
+	
+	// 타겟팅 이펙트가 존재하면 제거합니다.
+	if (GroundTargetingComponent && GroundTargetingComponent->IsValidLowLevel())
+	{
+		GroundTargetingComponent->DestroyComponent();
+		GroundTargetingComponent = nullptr;
+	}
+	
+}
+
 void ABossSkeletonMage::PlayTeleportMontage(const FVector& Destination)
 {
 	if ( BlackboardComp == nullptr ) return;

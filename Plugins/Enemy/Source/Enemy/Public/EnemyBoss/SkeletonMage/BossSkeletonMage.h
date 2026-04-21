@@ -64,6 +64,7 @@ public:
 	ABossSkeletonMage();
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+	virtual void Die() override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	FBossSkeletonMageAttackStruct AttackStruct;

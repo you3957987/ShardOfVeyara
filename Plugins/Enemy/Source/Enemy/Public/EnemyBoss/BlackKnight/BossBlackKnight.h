@@ -12,14 +12,21 @@ struct FBossBlackKnightAttackStruct
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float RushAttackWeight = 10.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float GuardWeight = 5.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float NormalAttackWeight = 5.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float ChargeAttackWeight = 8.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float ZapAttackWeight = 7.0f;
+	
 	// 돌진 공격 대미지
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float RushAttackDamage = 30.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float RushAttackDelay = 5.0f;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float GuardWeight = 5.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float GuardDelay = 4.0f;
 	// 가드 유지 시간
@@ -39,8 +46,6 @@ struct FBossBlackKnightAttackStruct
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	float GuardAttackDelay = 2.0f;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float NormalAttackWeight = 5.0f;
 	// 기본 공격 대미지
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float NormalAttackDamage = 25.f;
@@ -48,8 +53,6 @@ struct FBossBlackKnightAttackStruct
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	float NormalAttackDelay = 2.0f;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float ChargeAttackWeight = 8.0f;
 	// 차지 공격 대미지
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float ChargeAttackDamage = 35.f;
@@ -57,8 +60,6 @@ struct FBossBlackKnightAttackStruct
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	float ChargeAttackDelay = 3.0f;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float ZapAttackWeight = 7.0f;
 	// 잽 번개 공격 대미지
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float ZapAttackDamage = 20.f;
