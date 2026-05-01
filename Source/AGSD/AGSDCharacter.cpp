@@ -636,6 +636,18 @@ void AAGSDCharacter::PlayStage(int32 Index)
 	FSpearStageData& Stage = CurrentComboData->Stages[Index];
 	if (Stage.AttackMontage)
 	{
+		// [락온 타겟 추적] 공격 시작 시 몬스터 방향으로 즉시 몸을 돌림
+		if (LockedTarget && IsValid(LockedTarget))
+		{
+			FVector DirectionToTarget = LockedTarget->GetActorLocation() - GetActorLocation();
+			DirectionToTarget.Z = 0.0f; // 상하(Pitch) 기울어짐 방지
+			
+			if (!DirectionToTarget.IsNearlyZero())
+			{
+				SetActorRotation(DirectionToTarget.Rotation());
+			}
+		}
+
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 		float Duration = PlayAnimMontage(Stage.AttackMontage);
         
