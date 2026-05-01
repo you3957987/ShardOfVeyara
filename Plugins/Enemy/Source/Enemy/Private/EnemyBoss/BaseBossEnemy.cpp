@@ -6,14 +6,14 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/ProgressBar.h"
 #include "Components/sphereComponent.h"
-#include "Components/WidgetComponent.h"
 #include "EnemyBoss/SkeletonMage/BossSkeletonMage.h"
-#include "EnemyHUD/EnemyHealthBarWidget.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "MotionWarpingComponent.h" 
+#include "Components/TextBlock.h"
 #include "Interface/PlayerDeadInterface.h"
+#include "EnemyHUD/BossHealthBarWidget.h"
 
 ABaseBossEnemy::ABaseBossEnemy()
 {
@@ -25,12 +25,7 @@ ABaseBossEnemy::ABaseBossEnemy()
 	// 캡슐 컴포넌트가 카메라에 반응하지 않도록 설정합니다.
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
-
-	// 체력 바 위젯 컴포넌트 생성 및 설정
-	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBarWidget"));
-	HealthBarWidget->SetupAttachment(RootComponent);
-	HealthBarWidget->SetWidgetSpace(EWidgetSpace::World); 
-
+	
 	PlayerDetectRangeSphere = CreateDefaultSubobject<USphereComponent>(TEXT("PlayerDetectRangeSphere"));
 	PlayerDetectRangeSphere->SetupAttachment(RootComponent); // 루트 컴포넌트
 	PlayerDetectRangeSphere->ShapeColor = FColor::Green;
@@ -56,16 +51,7 @@ ABaseBossEnemy::ABaseBossEnemy()
 void ABaseBossEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if ( HealthBarWidget ) // 체력바 위젯에서 프로그레스바 설정
-	{
-		UEnemyHealthBarWidget* HealthBar = Cast<UEnemyHealthBarWidget>(HealthBarWidget->GetUserWidgetObject());
-		if ( HealthBar )
-		{
-			HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
-		}
-	}
-
+	
 	if ( PlayerDetectRangeSphere )
 	{
 		// 오버랩 이벤트 바인딩
@@ -80,7 +66,6 @@ void ABaseBossEnemy::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	PollInit(DeltaTime);
-	UpdateHealthBarWidget(DeltaTime);
 }
 
 void ABaseBossEnemy::PollInit(float DeltaTime)
@@ -131,33 +116,36 @@ void ABaseBossEnemy::OnPlayerDetectOverlapBegin(UPrimitiveComponent* OverlappedC
 		PlayerDetectRangeSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision); // 한 번 감지되면 비활성화
 		
 		StartBattleLog(); // 전투 로그 시작
+		
+		// --- 보스 체력바 생성 및 애니메이션 재생 추가 ---
+		if (BossHealthBarWidgetClass)
+		{
+			APlayerController* PC = Cast<APlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+			if (PC)
+			{
+				BossHealthBar = CreateWidget<UBossHealthBarWidget>(PC, BossHealthBarWidgetClass);
+				if (BossHealthBar)
+				{
+					BossHealthBar->AddToViewport();
+					
+					if (BossHealthBar->FadeInAnim)
+					{
+						BossHealthBar->PlayAnimation(BossHealthBar->FadeInAnim);
+					}
+					if (BossHealthBar->HealthProgressBar)
+					{
+						BossHealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
+					}
+					if ( BossHealthBar->BossNameText )
+					{
+						BossHealthBar->BossNameText->SetText(BossName);
+					}
+				}
+			}
+		}
 	}
 }
 
-void ABaseBossEnemy::UpdateHealthBarWidget(float DeltaTime)
-{
-	if (HealthBarWidget && HealthBarWidget->IsVisible())
-	{
-		APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-		if (PC && PC->PlayerCameraManager)
-		{
-			const FVector CameraLocation = PC->PlayerCameraManager->GetCameraLocation();
-			const FVector WidgetLocation = HealthBarWidget->GetComponentLocation();
-
-			// 위젯에서 카메라를 바라보는 방향의 회전값을 계산합니다.
-			const FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(WidgetLocation, CameraLocation);
-
-			// 위젯이 항상 수평을 유지하도록 Yaw 값만 사용하여 회전을 설정합니다.
-			HealthBarWidget->SetWorldRotation(FRotator(0.f, LookAtRotation.Yaw, 0.f));
-		}
-
-		UEnemyHealthBarWidget* HealthBar = Cast<UEnemyHealthBarWidget>(HealthBarWidget->GetUserWidgetObject());
-		if ( HealthBar )
-		{
-			HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
-		}
-	}
-}
 
 float ABaseBossEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 	class AController* EventInstigator, AActor* DamageCauser)
@@ -182,11 +170,12 @@ float ABaseBossEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 			Die();
 			return DamageToApply;
 		}
-		UEnemyHealthBarWidget* HealthBar = Cast<UEnemyHealthBarWidget>(HealthBarWidget->GetUserWidgetObject());
-		if ( HealthBar )
+		
+		if (BossHealthBar->HealthProgressBar)
 		{
-			HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
+			BossHealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 		}
+		
 		UEnemyLogManager::EnemyLog( GetLogTypeFromEnemyType(), 
 		FString::Printf(TEXT("[%s]가 [%.f] 대미지 받음 (%.f / %.f)"), 
 			*MeshName, DamageToApply, MaxHealth, Health));
@@ -208,10 +197,10 @@ void ABaseBossEnemy::Die()
 	{
 		BlackboardComp->SetValueAsBool(TEXT("IsDead"), true);
 	}
-
-	if (HealthBarWidget)
+	
+	if ( BossHealthBar )
 	{
-		HealthBarWidget->SetVisibility(false);
+		BossHealthBar->PlayAnimation(BossHealthBar->FadeOutAnim);
 	}
 	
 	EndBattleLog(); // 전투 로그 종료
@@ -249,6 +238,12 @@ void ABaseBossEnemy::SpawnDeadEffectAndDestroy()
 	if (TargetCharacter && TargetCharacter->Implements<UItemDropInterface>())
 	{
 		IItemDropInterface::Execute_HandleEnemyDeadAndDropItem(TargetCharacter, this);
+	}
+	
+	if ( BossHealthBar )
+	{
+		BossHealthBar->RemoveFromParent();
+		BossHealthBar = nullptr;
 	}
 	
 	Destroy(); // 이펙트가 없으면 바로 액터 삭제

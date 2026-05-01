@@ -84,10 +84,12 @@ void ABaseEnemyProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedCompone
  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	// 자기 자신, 소유자, 다른 적 투사체, 또는 다른 적 캐릭터와 충돌한 경우 무시합니다.
+	// +@ 사운드 박스 같은 거에는 Ignore 추가해 줘야 함!!!!!!!!!!!!!!!!!!!
 	if (!OtherActor || OtherActor == this || OtherActor == GetOwner() 
 	 || OtherActor->ActorHasTag(FName("EnemyProjectile")) 
 	 || OtherActor->ActorHasTag(FName("Enemy"))
-	 || OtherActor->ActorHasTag(FName("Pet")) ) // 이 줄을 추가하세요.
+	 || OtherActor->ActorHasTag(FName("Pet")) 
+	 || OtherActor->ActorHasTag(FName("Ignore"))) // 이 줄을 추가하세요.
 	{
 		return;
 	}
@@ -100,6 +102,9 @@ void ABaseEnemyProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedCompone
 	// 플레이어나 월드 오브젝트가 아니면 충돌을 처리하지 않습니다.
 	if (!bIsPlayer && !bIsWorldObject) return;
 
+	// 충돌 대상 뭔지 로그 찍기
+	UE_LOG(LogTemp, Warning, TEXT("Projectile overlapped with: %s"), *OtherActor->GetName());
+	
 	// 플레이어랑 충돌 시 대미지 넣는거 넣기!!!
 	if (bIsPlayer)
 	{

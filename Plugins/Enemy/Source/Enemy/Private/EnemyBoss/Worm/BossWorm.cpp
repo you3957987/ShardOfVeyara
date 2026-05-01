@@ -74,24 +74,15 @@ void ABossWorm::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	if ( bIsBurrowing == true )
-	{
-		// 체력바 위젯 숨기기
-		if ( HealthBarWidget ) HealthBarWidget->SetVisibility(false);
-	}
-	else
-	{
-		// 체력바 위젯 보이기
-		if ( HealthBarWidget ) HealthBarWidget->SetVisibility(true);
-	}
-	
 	HandleSuction(DeltaTime);
 }
 
-float ABossWorm::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-	class AController* EventInstigator, AActor* DamageCauser)
+void ABossWorm::Die()
 {
-	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	Super::Die();
+	
+	// 타이머 정지 (발사 중단)
+	GetWorldTimerManager().ClearTimer(FireBreathTimerHandle);
 }
 
 void ABossWorm::OnBeginOverlapAttackCollisionSphere(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,

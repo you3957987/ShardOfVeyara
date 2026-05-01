@@ -176,6 +176,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StartFocusPlayerAfterAttack(); // 공격 후 플레이어 주시 시작 함수
 	
+	UFUNCTION(BlueprintCallable)
+	void SetAttackDelayToBehaviorTree( float Delay ); // AttackDelay 값을 블랙보드에 설정하는 함수
+	
 	// 로그 관리 함수
 	float BattleStartTime = 0.f;
 	bool bIsInBattle = false;

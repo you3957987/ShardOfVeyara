@@ -214,13 +214,13 @@ void ABaseFlyingPet::CheckSurroundingEnemy()
 		// 적 태그 확인 (혹은 인터페이스나 클래스 캐스팅 확인)
 		if (Actor->ActorHasTag("Enemy"))
 		{
+			// 미믹 몬스터는 무시
 			if (Actor->ActorHasTag("Mimic")) continue;
 			// Boss 태그가 있다면 무시 
 			if (Actor->ActorHasTag("Boss"))
 			{
 				if ( bBossBattleMode == true ) return; // 이미 보스전 모드라면 무시
 				bBossBattleMode = true;
-				bIsFolloingTarget = false; // 보스전 모드 진입 시 자유 이동 모드로 전환
 				UE_LOG(LogTemp, Warning, TEXT("BossBattleMode Detected - EnemyDetectRange Maximize"));
 				EnemyDetectSphere->SetSphereRadius(30000.f); // 매우 넓은 범위로 설정
 				return; // 

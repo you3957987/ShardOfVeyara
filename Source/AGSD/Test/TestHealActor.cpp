@@ -2,6 +2,7 @@
 
 #include "AGSDCharacter.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ATestHealActor::ATestHealActor()
 {
@@ -41,7 +42,12 @@ void ATestHealActor::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 			// AAGSDCharacter로 캐스팅하여 회복 함수 호출
 			if (auto* Player = Cast<AAGSDCharacter>(OtherActor))
 			{
-				Player->HealthRecovery(500.0f); // 20만큼 회복
+				if ( bIsKillMode == true )
+				{
+					// 2. 또는 만약 캐릭터에 HealthRecovery의 반대되는 함수가 있다면 (예: ApplyDamage)
+					UGameplayStatics::ApplyDamage(Player, 100000000.0f, GetInstigatorController(), this, UDamageType::StaticClass());
+				}
+				else Player->HealthRecovery(500.0f); // 20만큼 회복
 			}
 		}
 	}

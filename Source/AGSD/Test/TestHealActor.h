@@ -13,6 +13,9 @@ protected:
 	// 게임 시작 시 호출
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere, Category="자체설정")
+	bool bIsKillMode = false;
+	
 public:	
 	ATestHealActor();
 	// 매 프레임 호출
