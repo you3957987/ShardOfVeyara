@@ -22,7 +22,8 @@
 #include "SpearComboData.h"
 #include "Components/AudioComponent.h"
 #include "Interface/ItemDropInterface.h"
-
+#include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 #if WITH_EDITOR
 #include "AssetTypeActions/AssetDefinition_SoundBase.h"
 #endif
@@ -175,6 +176,40 @@ bool AAGSDCharacter::CheckSingleInput(const TArray<FInputBufferEntry>& Buffer, F
 void AAGSDCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	// --- [락온 카메라 회전 처리] ---
+	if (LockedTarget)
+	{
+		// 1. 적이 파괴되었거나 죽어서 유효하지 않으면 락온 자동 해제
+		if (!IsValid(LockedTarget)) 
+		{
+			ToggleLockOn();
+		}
+		else
+		{
+			// 2. 현재 카메라의 위치에서 타겟의 위치를 바라보는 회전값 계산
+			FVector CameraLocation = GetFollowCamera()->GetComponentLocation();
+			FVector TargetLocation = LockedTarget->GetActorLocation(); 
+			
+			// 몬스터의 발끝을 보지 않도록 Z축 보정
+			TargetLocation.Z -= 50.f; 
+
+			FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(CameraLocation, TargetLocation);
+			FRotator CurrentRotation = GetController()->GetControlRotation();
+			
+			// 상하 방향(Pitch)은 플레이어가 마우스로 자유롭게 제어할 수 있도록 현재 회전값 유지
+			TargetRotation.Pitch = CurrentRotation.Pitch;
+			// 화면이 갸우뚱해지는 현상(Roll) 방지
+			TargetRotation.Roll = 0.0f;
+
+			// 3. 현재 컨트롤 로테이션에서 목표 로테이션으로 부드럽게 보간
+			FRotator SmoothedRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaSeconds, 8.0f); // 8.0f는 보간 속도
+
+			// 4. 컨트롤러의 시야 회전 적용
+			GetController()->SetControlRotation(SmoothedRotation);
+		}
+	}
+	// -------------------------------
 
 	float CurrentTime = GetWorld()->GetTimeSeconds();
 
@@ -403,6 +438,12 @@ void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		//
 		EnhancedInputComponent->BindAction(GuardAction, ETriggerEvent::Started, this, &AAGSDCharacter::StartBlock);
 		EnhancedInputComponent->BindAction(GuardAction, ETriggerEvent::Completed, this, &AAGSDCharacter::StopBlock);
+
+		// 락온 기능 바인딩
+		if (LockOnAction)
+		{
+			EnhancedInputComponent->BindAction(LockOnAction, ETriggerEvent::Started, this, &AAGSDCharacter::ToggleLockOn);
+		}
 	}
 	else
 	{
@@ -757,6 +798,62 @@ void AAGSDCharacter::ResetAttackState()
 	CurrentStageIndex = -1;
 	CurrentComboData = nullptr;
 	Mining = false;
+}
+
+void AAGSDCharacter::ToggleLockOn()
+{
+	if (LockedTarget)
+	{
+		// 1. 이미 락온 중이라면 락온 해제
+		LockedTarget = nullptr;
+		GetCharacterMovement()->bOrientRotationToMovement = true; 
+		bUseControllerRotationYaw = false; // 원래대로 캐릭터가 이동 방향을 보도록 설정
+	}
+	else
+	{
+		// 2. 락온 중이 아니라면 주변의 가장 가까운 적 탐색
+		LockedTarget = FindNearestLockOnTarget();
+		if (LockedTarget)
+		{
+			// 락온 시 카메라는 타겟을 보지만, 캐릭터 회전은 이동 방향을 바라보도록 설정 (게걸음 X)
+			GetCharacterMovement()->bOrientRotationToMovement = true; 
+			bUseControllerRotationYaw = false; 
+		}
+	}
+}
+
+AActor* AAGSDCharacter::FindNearestLockOnTarget()
+{
+	TArray<AActor*> OverlappingActors;
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(this);
+
+	UKismetSystemLibrary::SphereOverlapActors(
+		this,
+		GetActorLocation(),
+		LockOnRadius,
+		{ UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn) },
+		AActor::StaticClass(),
+		ActorsToIgnore,
+		OverlappingActors
+	);
+
+	AActor* NearestTarget = nullptr;
+	float MinDistance = LockOnRadius + 1.0f;
+
+	for (AActor* Actor : OverlappingActors)
+	{
+		if (Actor && Actor->ActorHasTag(FName("Enemy")))
+		{
+			float Distance = FVector::Dist(GetActorLocation(), Actor->GetActorLocation());
+			if (Distance < MinDistance)
+			{
+				MinDistance = Distance;
+				NearestTarget = Actor;
+			}
+		}
+	}
+	return NearestTarget;
 }
 
 void AAGSDCharacter::DoMove(float Right, float Forward)

@@ -9,62 +9,32 @@
   <component name="ChangeListManager">
     <list default="true" id="690080f4-11c2-40e7-9f9b-e775ffc08b31" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AGSD.uproject.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/AGSD.uproject.DotSettings.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/CR/Demo/Meshes/SK_Mannequin.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/CR/Demo/Meshes/SK_Mannequin.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AM_Guard.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AM_Guard.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo1/AM_SpearAttackCombo1_Stage1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo1/AM_SpearAttackCombo1_Stage1.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo1/AM_SpearAttackCombo1_Stage2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo1/AM_SpearAttackCombo1_Stage2.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo1/AM_SpearAttackCombo1_Stage3.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo1/AM_SpearAttackCombo1_Stage3.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo4/AM_SpearAttackCombo4_Stage1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo4/AM_SpearAttackCombo4_Stage1.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo4/AM_SpearAttackCombo4_Stage2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo4/AM_SpearAttackCombo4_Stage2.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo5/AM_SpearAttackCombo5_Stage1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo5/AM_SpearAttackCombo5_Stage1.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo8/AM_SpearAttackCombo8_Stage1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo8/AM_SpearAttackCombo8_Stage1.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo8/AM_SpearAttackCombo8_Stage2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo8/AM_SpearAttackCombo8_Stage2.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo8/AM_SpearAttackCombo8_Stage3.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo8/AM_SpearAttackCombo8_Stage3.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Farmer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Farmer.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Level/Farm_Sky_Island.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Level/Farm_Sky_Island.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Level/Tutorial_Sky_Island.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Level/Tutorial_Sky_Island.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Level/Tutorial_Village.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Level/Tutorial_Village.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/Assasin_MagicSwordMan/BP_Assassin.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/Assasin_MagicSwordMan/BP_Assassin.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/Anim/AM_BossSkeletonMageGravityAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/SkeletonMage/Anim/AM_BossSkeletonMageGravityAttack.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/Worm/BP_BossWorm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/Worm/BP_BossWorm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/ChestMonster_Mimic/BP_ChestMonster.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/ChestMonster_Mimic/BP_ChestMonster.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Explode/Beholder_Explode/BP_Beholder.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Explode/Beholder_Explode/BP_Beholder.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Explode/Frog_Explode/BP_Frog.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Explode/Frog_Explode/BP_Frog.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Grave_Spawner/BP_Grave_Spawner.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Grave_Spawner/BP_Grave_Spawner.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Guard/BishopKnight_Guard/BP_Bishop.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Guard/BishopKnight_Guard/BP_Bishop.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Mage/EvilMage/BP_EvilMage.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Mage/EvilMage/BP_EvilMage.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/Rat_Melee/BP_Rat.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/Rat_Melee/BP_Rat.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/SkeletonMinion_Melee/AM_SkeletonMinionDead.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/SkeletonMinion_Melee/AM_SkeletonMinionDead.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/SkeletonMinion_Melee/BP_SkeletonMinion.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/SkeletonMinion_Melee/BP_SkeletonMinion.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/SkeletonMinion_Melee/BP_SkeletonMinion_LowPoly.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/SkeletonMinion_Melee/BP_SkeletonMinion_LowPoly.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/SkeletonMinion_Melee/BP_SuumonSkeletonMinion.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/SkeletonMinion_Melee/BP_SuumonSkeletonMinion.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/SkeletonMinion_Melee/BP_SuumonSkeletonMinion_LowPoly.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/SkeletonMinion_Melee/BP_SuumonSkeletonMinion_LowPoly.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/SkeletonWarrior_Melee/BP_SkeletonWarrior.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/SkeletonWarrior_Melee/BP_SkeletonWarrior.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/SkeletonWarrior_Melee/BP_SkeletonWarrior_LowPoly.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/SkeletonWarrior_Melee/BP_SkeletonWarrior_LowPoly.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/SkeletonWarrior_Melee/BP_SummonSkeletonWarrior.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/SkeletonWarrior_Melee/BP_SummonSkeletonWarrior.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/SkeletonWarrior_Melee/BP_SummonSkeletonWarrior_LowPoly.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/SkeletonWarrior_Melee/BP_SummonSkeletonWarrior_LowPoly.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/Spider_Melee/BP_Spider.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Melee/Spider_Melee/BP_Spider.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Passive/Cactus/BP_Cactus.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Passive/Cactus/BP_Cactus.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Passive/MushRoom/BP_Mushroom.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Passive/MushRoom/BP_Mushroom.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Passive/TurtelShell/BP_Turtle.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Passive/TurtelShell/BP_Turtle.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Ranged/Cyclops/BP_Cyclops.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Ranged/Cyclops/BP_Cyclops.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Ranged/SkeletonRogue_Ranged/BP_SkeletonRogue.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Ranged/SkeletonRogue_Ranged/BP_SkeletonRogue.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Ranged/SkeletonRogue_Ranged/BP_SkeletonRogue_LowPoly.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Ranged/SkeletonRogue_Ranged/BP_SkeletonRogue_LowPoly.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Ranged/SkeletonRogue_Ranged/BP_SummonSkeletonRogue.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Ranged/SkeletonRogue_Ranged/BP_SummonSkeletonRogue.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Ranged/SkeletonRogue_Ranged/BP_SummonSkeletonRogue_LowPoly.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Ranged/SkeletonRogue_Ranged/BP_SummonSkeletonRogue_LowPoly.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Ranged/Wasp_Ranged/BP_Wasp.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Ranged/Wasp_Ranged/BP_Wasp.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Revive/SkeletonMinion_Melee_Revive/BP_SkeletonMinion_Revive.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Revive/SkeletonMinion_Melee_Revive/BP_SkeletonMinion_Revive.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Revive/SkeletonMinion_Melee_Revive/BP_SummonSkeletonMinion_Revive.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Revive/SkeletonMinion_Melee_Revive/BP_SummonSkeletonMinion_Revive.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Revive/SkeletonRouge_Ranged_Revive/BP_SkeletonRogue_Revive.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Revive/SkeletonRouge_Ranged_Revive/BP_SkeletonRogue_Revive.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Revive/SkeletonRouge_Ranged_Revive/BP_SummonSkeletonRogue_Revive.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Revive/SkeletonRouge_Ranged_Revive/BP_SummonSkeletonRogue_Revive.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Revive/SkeletonWarrior_Revive/BP_SkeletonWarrior_Revive.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Revive/SkeletonWarrior_Revive/BP_SkeletonWarrior_Revive.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Revive/SkeletonWarrior_Revive/BP_SummonSkeletonWarrior_Revive.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Revive/SkeletonWarrior_Revive/BP_SummonSkeletonWarrior_Revive.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Slime_Slime/BP_Slime.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Slime_Slime/BP_Slime.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Trans/Snake_Trans/BP_Snake.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Trans/Snake_Trans/BP_Snake.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Trans/Specter_Trans/BP_Specter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Trans/Specter_Trans/BP_Specter.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Worm_Burrow/GiantWorm/BP_EnemyGiantWorm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Worm_Burrow/GiantWorm/BP_EnemyGiantWorm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Worm_Burrow/SmallWorm/BP_EnemySmallWorm.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Enemy/Worm_Burrow/SmallWorm/BP_EnemySmallWorm.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/HUD/HealthBar.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/HUD/WBP_BossHealthBarWidget.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/HUD/WBP_BossHealthBarWidget.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/HUD/WBP_EnemyHealthBarWidget.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/HUD/WBP_EnemyHealthBarWidget.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/TestMap/ThirdPerson/Level_EnemyTest_Sky.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/TestMap/ThirdPerson/Level_EnemyTest_Sky.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/BaseEnemy.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/BaseEnemy.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BaseBossEnemy.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BaseBossEnemy.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/BaseEnemy.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/BaseEnemy.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/BaseBossEnemy.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/BaseBossEnemy.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Content/Pet/CuteWhale_Fly/BP_WhalePet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Content/Pet/CuteWhale_Fly/BP_WhalePet.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/BaseFlyingPet.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/BaseFlyingPet.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/Component/PetTalkComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Private/Component/PetTalkComponent.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Public/BaseFlyingPet.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Pet/Source/Pet/Public/BaseFlyingPet.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_PickUpItemBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_PickUpItemBase.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Axe.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Axe.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Forke.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Forke.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Hoe.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Hoe.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Sickle.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Sickle.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Spade.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Spade.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_WeaponBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_WeaponBase.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/DT_SpearComboData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/DT_SpearComboData.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Input/IMC_Farmer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Input/IMC_Farmer.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/SpearCombatAnimationV1/Map/Demo.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SpearCombatAnimationV1/Map/Demo.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGSD/Anim_SpearJab.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/Anim_SpearJab.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,14 +75,21 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="cidr-memory-view://6" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Core/Public/Misc/MTAccessDetector.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Classes/GameFramework/PlayerController.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/BTTask/BTTask_BattleStartLog.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/BTTask/BTTask_BossSelectWeight.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/EnemyBoss/SkeletonMage/BTTask_GravityAttack.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Interface/ItemDropInterface.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Public/Interface/PlayerDeadInterface.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/AGSD/AnimNotifyState_WeaponAttack.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/AGSD/AnimNotifyState_WeaponAttack.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/Test/TestHealActor.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/AGSD/Test/TestHealActor.h" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -123,24 +100,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;Uproject.AGSD.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;Enemt__Pet&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "Uproject.AGSD.executor": "Debug",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="AGSD" type="Uproject" factoryName="rider.uproject">
       <configuration_1 setup="1">
@@ -148,7 +125,7 @@
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
         <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Binaries/Win64/UnrealEditor-Win64-DebugGame.exe" />
-        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\YJH\Documents\GitHub\AGSD\AGSD.uproject&quot;" />
+        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\user\Documents\GitHub\AGSD\AGSD.uproject&quot;" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.6" />
         <option name="PASS_PARENT_ENVS" value="1" />
@@ -174,7 +151,7 @@
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
         <option name="EXECUTABLE_PATH" value="$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Binaries/Win64/UnrealEditor.exe" />
-        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\YJH\Documents\GitHub\AGSD\AGSD.uproject&quot;" />
+        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\user\Documents\GitHub\AGSD\AGSD.uproject&quot;" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.6" />
         <option name="PASS_PARENT_ENVS" value="1" />
@@ -260,6 +237,7 @@
       <workItem from="1777182094247" duration="688000" />
       <workItem from="1777251842267" duration="4494000" />
       <workItem from="1777598423203" duration="6904000" />
+      <workItem from="1777627334819" duration="9474000" />
     </task>
     <servers />
   </component>

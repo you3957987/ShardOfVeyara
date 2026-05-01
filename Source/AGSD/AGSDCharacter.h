@@ -73,6 +73,22 @@ protected:
 	// 가드 액션
 	UPROPERTY(EditAnywhere, Category="Input")
 	const UInputAction* GuardAction;
+
+	// 락온 액션
+	UPROPERTY(EditAnywhere, Category="Input")
+	class UInputAction* LockOnAction;
+	
+	// 락온 타겟
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat|LockOn")
+	AActor* LockedTarget = nullptr;
+
+	// 락온 탐색 반경
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|LockOn")
+	float LockOnRadius = 1500.0f;
+
+	// 락온 관련 함수
+	void ToggleLockOn();
+	AActor* FindNearestLockOnTarget();
 	
 	AAGSDPlayerController* PC;
 	
@@ -158,6 +174,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="HoldingState")
 	EHoldingWeapon HoldingWeapon = EHoldingWeapon::None;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="HoldingState")
+	AActor* HoldingActor;
+	
 	AActor* MinDistActor();
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interaction")
@@ -345,7 +364,7 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
-	void WeaponAttack();
+	float WeaponDamage();
 
 	UFUNCTION()
 	void AddDamage(float addDamage);
