@@ -9,32 +9,13 @@
   <component name="ChangeListManager">
     <list default="true" id="690080f4-11c2-40e7-9f9b-e775ffc08b31" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AGSD.uproject.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/AGSD.uproject.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/CR/Demo/Meshes/SK_Mannequin.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/CR/Demo/Meshes/SK_Mannequin.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AM_Guard.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AM_Guard.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo1/AM_SpearAttackCombo1_Stage1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo1/AM_SpearAttackCombo1_Stage1.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo1/AM_SpearAttackCombo1_Stage2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo1/AM_SpearAttackCombo1_Stage2.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo1/AM_SpearAttackCombo1_Stage3.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo1/AM_SpearAttackCombo1_Stage3.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo4/AM_SpearAttackCombo4_Stage1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo4/AM_SpearAttackCombo4_Stage1.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo4/AM_SpearAttackCombo4_Stage2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo4/AM_SpearAttackCombo4_Stage2.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo5/AM_SpearAttackCombo5_Stage1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo5/AM_SpearAttackCombo5_Stage1.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo8/AM_SpearAttackCombo8_Stage1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo8/AM_SpearAttackCombo8_Stage1.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo8/AM_SpearAttackCombo8_Stage2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo8/AM_SpearAttackCombo8_Stage2.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo8/AM_SpearAttackCombo8_Stage3.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo8/AM_SpearAttackCombo8_Stage3.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Farmer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Farmer.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_PickUpItemBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_PickUpItemBase.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Axe.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Axe.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Forke.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Forke.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Hoe.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Hoe.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Sickle.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Sickle.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Spade.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Spade.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_WeaponBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_WeaponBase.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo5/AM_SpearAttackCombo5_Stage1_Complete.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo5/AM_SpearAttackCombo5_Stage1_Complete.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo9/AM_SpearAttackCombo9_Stage1_Complete.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo9/AM_SpearAttackCombo9_Stage1_Complete.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/DT_SpearComboData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/DT_SpearComboData.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Input/IMC_Farmer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Input/IMC_Farmer.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/SpearCombatAnimationV1/Map/Demo.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SpearCombatAnimationV1/Map/Demo.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/BlackKnight/BP_BlackKnight.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/BlackKnight/BP_BlackKnight.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/BaseEnemy.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/BaseEnemy.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/Anim_SpearJab.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/Anim_SpearJab.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -238,7 +219,8 @@
       <workItem from="1777251842267" duration="4494000" />
       <workItem from="1777598423203" duration="6904000" />
       <workItem from="1777627334819" duration="9474000" />
-      <workItem from="1777648015298" duration="1000" />
+      <workItem from="1777648020418" duration="1271000" />
+      <workItem from="1777649821641" duration="2608000" />
     </task>
     <servers />
   </component>

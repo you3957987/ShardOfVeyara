@@ -480,6 +480,15 @@ void AAGSDCharacter::Move(const FInputActionValue& Value)
 	// 전진 키를 누르고 있을 때 콤보 입력
 	if (MovementVector.Y > 0.0f) HandleAttackInput(FName("Forward"));
 
+	// 선입력 판정을 위한 원시 입력 벡터 저장 (Mining 중에도 업데이트하여 애니메이션 중 방향 감지 가능)
+	if (GetController())
+	{
+		const FRotator Rotation = GetController()->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		LastRawInputVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X) * MovementVector.Y + 
+							 FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y) * MovementVector.X;
+	}
+
 	// 움직이면 안될 때
 	if (Mining)	return;
 	
@@ -489,6 +498,8 @@ void AAGSDCharacter::Move(const FInputActionValue& Value)
 
 void AAGSDCharacter::StopMove()
 {
+	LastRawInputVector = FVector::ZeroVector;
+
 	if (Running && Running->IsPlaying())
 	{
 		Running->Stop();
@@ -537,8 +548,9 @@ void AAGSDCharacter::playFadeWidget(float startOpacity, float endOpacity)
 
 ESpearAttackDirection AAGSDCharacter::GetAttackDirection()
 {
-	// 입력된 이동 벡터 (Input Action에서 받아온 값)
-	FVector InputMoveVector = GetLastMovementInputVector();
+	// [개선] GetLastMovementInputVector() 대신 직접 저장한 LastRawInputVector 사용
+	// 애니메이션 도중에는 캐릭터 이동이 멈춰있어 GetLastMovementInputVector()가 0이 되기 때문
+	FVector InputMoveVector = LastRawInputVector;
 	if (InputMoveVector.IsNearlyZero()) return ESpearAttackDirection::Neutral;
 
 	FVector Forward = GetActorForwardVector();
@@ -573,6 +585,7 @@ void AAGSDCharacter::ProcessAttackInput()
 		else
 		{
 			bHasBufferedInput = true;
+			BufferedInputTime = GetWorld()->GetTimeSeconds(); // 선입력 시점 저장
 		}
 		return;
 	}
@@ -636,18 +649,6 @@ void AAGSDCharacter::PlayStage(int32 Index)
 	FSpearStageData& Stage = CurrentComboData->Stages[Index];
 	if (Stage.AttackMontage)
 	{
-		// [락온 타겟 추적] 공격 시작 시 몬스터 방향으로 즉시 몸을 돌림
-		if (LockedTarget && IsValid(LockedTarget))
-		{
-			FVector DirectionToTarget = LockedTarget->GetActorLocation() - GetActorLocation();
-			DirectionToTarget.Z = 0.0f; // 상하(Pitch) 기울어짐 방지
-			
-			if (!DirectionToTarget.IsNearlyZero())
-			{
-				SetActorRotation(DirectionToTarget.Rotation());
-			}
-		}
-
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 		float Duration = PlayAnimMontage(Stage.AttackMontage);
         
@@ -803,6 +804,10 @@ void AAGSDCharacter::OnRecoveryFinished(UAnimMontage* Montage, bool bInterrupted
 
 void AAGSDCharacter::ResetAttackState()
 {
+	// 선입력된 공격이 있고, 입력된 지 설정된 시간(AttackBufferDuration) 이내인 경우에만 유효한 것으로 판정
+	float CurrentTime = GetWorld()->GetTimeSeconds();
+	bool bShouldTriggerBufferedAttack = bHasBufferedInput && (CurrentTime - BufferedInputTime <= AttackBufferDuration);
+
 	bIsAttacking = false;
 	bIsRecovering = false;
 	bCanCombo = false;
@@ -810,6 +815,12 @@ void AAGSDCharacter::ResetAttackState()
 	CurrentStageIndex = -1;
 	CurrentComboData = nullptr;
 	Mining = false;
+
+	// 공격 종료 시점에 선입력된 입력이 있다면 즉시 새로운 공격 실행
+	if (bShouldTriggerBufferedAttack)
+	{
+		ProcessAttackInput();
+	}
 }
 
 void AAGSDCharacter::ToggleLockOn()

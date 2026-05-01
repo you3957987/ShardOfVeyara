@@ -100,6 +100,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category="Input Buffer")
 	float InputDifference = 0.3f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Input Buffer")
+	float AttackBufferDuration = 0.2f;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UFadeWidget> WBP_FadeWidget;
@@ -121,6 +124,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="PlayerState")
 	bool bHasBufferedInput = false;
+
+	// 선입력된 공격의 발생 시점 (유효 시간 체크용)
+	float BufferedInputTime = 0.0f;
 
 	// USTRUCT 포인터는 UPROPERTY로 관리할 수 없으므로 매크로 제거
 	FSpearComboData* CurrentComboData;
@@ -259,6 +265,9 @@ protected:
 
 	FORCEINLINE float getHealth() const {return Health;};
 	
+	// 선입력 및 방향 판정을 위한 원시 입력 벡터 (이동 제한 상태에서도 업데이트됨)
+	FVector LastRawInputVector = FVector::ZeroVector;
+
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
