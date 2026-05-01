@@ -393,7 +393,7 @@ void UPetTalkComponent::StartConversation(FName DialogueID)
     		Duration = RowData->VoiceAudio->GetDuration();
     	}
         // 안전 장치: 너무 짧으면 7초로 고정
-        if (Duration <= 0.0f) Duration = 7.0f;
+        if (Duration <= 7.0f) Duration = 7.0f;
 
         //  다음 대사 예약 (체이닝 로직)
     	

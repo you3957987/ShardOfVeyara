@@ -177,7 +177,7 @@ void ABaseEnemy::StartFocusPlayerAfterAttack()
 }
 
 float ABaseEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, 
-                             class AController* EventInstigator, AActor* DamageCauser)
+	class AController* EventInstigator, AActor* DamageCauser)
 {
 	float DamageToApply = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 

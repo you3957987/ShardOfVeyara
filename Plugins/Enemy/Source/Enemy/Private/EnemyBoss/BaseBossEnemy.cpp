@@ -227,12 +227,23 @@ void ABaseBossEnemy::SpawnDeadEffectAndDestroy()
 	
 	if ( DeathEffectCascade )
 	{
-		const FVector SpawnLocation = GetMesh()->GetComponentLocation() + (GetActorForwardVector() * DeathEffectForwardOffset);
+		// 1. 기본 기준 위치 (메시 위치 또는 액터 위치)
+		FVector BaseLocation = GetMesh()->GetComponentLocation();
+
+		// 2. 방향 벡터 가져오기
+		FVector Forward = GetActorForwardVector();
+		FVector Right = GetActorRightVector();
+
+		// 3. 모든 오프셋을 적용한 최종 위치 계산
+		FVector SpawnLocation = BaseLocation 
+			+ (Forward * DeathEffectForwardOffset) // 앞뒤
+			+ (Right * DeathEffectSideOffset);     // 좌우
+
 		const FRotator SpawnRotation = GetActorRotation();
 		const FVector SpawnScale = FVector(DeathEffectScale);
 
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DeathEffectCascade,
-		 SpawnLocation, SpawnRotation, SpawnScale);
+			SpawnLocation, SpawnRotation, SpawnScale);
 	}
 	
 	if (TargetCharacter && TargetCharacter->Implements<UItemDropInterface>())

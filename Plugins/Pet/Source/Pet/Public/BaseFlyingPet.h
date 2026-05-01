@@ -53,6 +53,10 @@ protected:
 	
 	// 펫이 대상을 따라다니는 함수
 	void FollowingTarget(float DeltaTime);
+	FTimerHandle LineOfSightTimerHandle;
+	// 펫이랑 대상 사이에 벽이 있는지 체크하는 함수
+	UFUNCTION()
+	void CheckLineOfSightToTarget();
 	
 	// 루트 컴포넌트
 	UPROPERTY(VisibleAnywhere)
