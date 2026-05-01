@@ -135,10 +135,10 @@ public:
 	// 죽을 떄 생성할 이펙트 == 케스케이드
 	UPROPERTY(EditDefaultsOnly, Category="자체설정")
 	class UParticleSystem* DeadEffectCascade;
-	// 죽음 이펙트 생성 앞 뒤 위치 조정용 거리
+	// 죽음 이펙트 생성 앞 뒤 위치 조정용 거리 +가 앞, -가 뒤
 	UPROPERTY(EditDefaultsOnly, Category="자체설정")
 	float DeadEffectForwardOffset = 0.0f;
-	// 죽음 이펙트 생성 위 아래 위치 조정용 거리
+	// 죽음 이펙트 생성 위 아래 위치 조정용 거리 +가 위, -가 아래
 	UPROPERTY(EditDefaultsOnly, Category="자체설정")
 	float DeadEffectUpOffset = 0.0f;
 	// 죽음 이펙트 크기 배율

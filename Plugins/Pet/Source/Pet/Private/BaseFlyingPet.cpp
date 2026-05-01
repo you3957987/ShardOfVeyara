@@ -77,6 +77,14 @@ void ABaseFlyingPet::BeginPlay()
 		EnemyDetectInterval, 
 		true // 반복 여부: true
 	);
+	
+	GetWorld()->GetTimerManager().SetTimer(
+		LineOfSightTimerHandle, 
+		this, 
+		&ABaseFlyingPet::CheckLineOfSightToTarget, 
+		3.0f, // 1초 간격
+		true  // 반복 여부
+	);
 }
 
 void ABaseFlyingPet::Tick(float DeltaTime)
@@ -148,26 +156,32 @@ void ABaseFlyingPet::FollowingTarget(float DeltaTime)
 		- (TargetForward * CurrentSettings.Distance)    // 거리
 		+ (TargetRight * CurrentSettings.SideOffset)    // 좌우
 		+ FVector(0.0f, 0.0f, CurrentSettings.UpOffset); // 높이
-
-	// [수정] 거리에 따른 선형 가속 적용
-	float DistanceToTarget = FVector::Dist(CurrentLocation, DesiredLocation);
 	
-	// !!!!!!!!!!! 거리가 멀수록 이동 속도 선형 증가 DistanceToTarget 에 곱하는 값을 조정해서 속도 조정!!!
+	// 이동 속도 계산 (기존 로직 유지)
+	float DistanceToTarget = FVector::Dist(CurrentLocation, DesiredLocation);
 	float MoveSpeedMultiplier = 1.0f + (DistanceToTarget * 0.040f);
 	float FinalInterpSpeed = MoveInterpSpeed * MoveSpeedMultiplier;
-	
-	// 위치 보간 (부드럽게 이동) - 수정된 FinalInterpSpeed 사용
+    
+	// 보간된 새로운 위치 계산
 	FVector NewLocation = FMath::VInterpTo(CurrentLocation, DesiredLocation, DeltaTime, FinalInterpSpeed);
-	SetActorLocation(NewLocation);
-	
+
+	// [핵심 변경 사항] bSweep을 true로 설정하여 충돌 감지 활성화
+	FHitResult Hit;
+	bool bMoved = SetActorLocation(NewLocation, true, &Hit);
+
+	// 만약 벽에 부딪혔다면 (충돌이 발생했다면)
+	if (Hit.IsValidBlockingHit())
+	{
+		// 벽을 타고 미끄러지는 이동(Slide)을 추가하여 자연스럽게 함
+		FVector RemainingDelta = NewLocation - Hit.Location;
+		FVector SlideDelta = FVector::VectorPlaneProject(RemainingDelta, Hit.Normal);
+		AddActorWorldOffset(SlideDelta, true);
+	}
+    
+	// 속도 계산 로직 유지
 	if (DeltaTime > KINDA_SMALL_NUMBER)
 	{
-		// (이동 후 위치 - 이동 전 위치) / 시간 = 속도 -> ABP에 전달할 현재 속도 계산
-		CurrentVelocity = (NewLocation - CurrentLocation) / DeltaTime;
-	}
-	else
-	{
-		CurrentVelocity = FVector::ZeroVector;
+		CurrentVelocity = (GetActorLocation() - CurrentLocation) / DeltaTime;
 	}
 	
 	// --- 2. 회전 계산 (상태에 따른 분기) ---
@@ -193,6 +207,39 @@ void ABaseFlyingPet::FollowingTarget(float DeltaTime)
 
 	FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, FinalRotationSpeed);
 	SetActorRotation(NewRotation);
+}
+
+void ABaseFlyingPet::CheckLineOfSightToTarget()
+{
+	if (!TargetActor) return;
+
+	FHitResult Hit;
+	FVector Start = GetActorLocation();
+	FVector End = TargetActor->GetActorLocation();
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+	Params.AddIgnoredActor(TargetActor);
+
+	// LineTrace 등을 사용하여 시야 방해물이 있는지 확인하는 로직이 들어갈 자리입니다.
+	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params);
+	
+	if ( bHit == true )
+	{
+		// 타겟의 뒤쪽 방향 벡터
+		FVector TargetBackward = -TargetActor->GetActorForwardVector();
+		
+		// 새로운 위치 계산: 타겟 위치 + (뒤쪽 방향 * 100) + (약간의 높이 보정)
+		// 높이 보정을 위해 FollowSettings.UpOffset을 활용하거나 적절한 값을 더해줍니다.
+		FVector NewLocation = TargetActor->GetActorLocation() 
+			+ (TargetBackward * 100.0f) 
+			+ FVector(0.0f, 0.0f, FollowSettings.UpOffset);
+
+		// 순간이동 실행
+		SetActorLocation(NewLocation, false, nullptr, ETeleportType::TeleportPhysics);
+		
+		// 로그 확인 (선택 사항)
+		UE_LOG(LogTemp, Warning, TEXT("Pet Teleported: Line of sight blocked by %s"), *Hit.GetActor()->GetName());
+	}
 }
 
 void ABaseFlyingPet::CheckSurroundingEnemy()

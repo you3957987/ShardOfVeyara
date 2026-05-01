@@ -80,11 +80,14 @@ protected:
 	// 죽을 떄 생성할 이펙트 == 케스케이드
 	UPROPERTY(EditDefaultsOnly, Category="자체설정")
 	class UParticleSystem* DeathEffectCascade;
-	// 죽음 이펙트 생성 앞 뒤 위치 조정용 거리
-	UPROPERTY(EditDefaultsOnly, Category="자체설정")
+	// 죽음 이펙트 생성 앞 뒤 위치 조정용 거리 +가 앞, -가 뒤
+	UPROPERTY(EditAnywhere, Category="자체설정")
 	float DeathEffectForwardOffset = 0.0f;
+	// 죽음 이펙트 생성 좌 우 위치 조정용 거리 +가 오른쪽, -가 왼쪽
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	float DeathEffectSideOffset = 0.0f; 
 	// 죽음 이펙트 크기 배율
-	UPROPERTY(EditDefaultsOnly, Category="자체설정")
+	UPROPERTY(EditAnywhere, Category="자체설정")
 	float DeathEffectScale = 1.0f;
 	// 죽음 후 일정 시간 뒤에 이펙트 생성 및 액터 제거를 위한 타이머 핸들
 	FTimerHandle DeathTimerHandle;
