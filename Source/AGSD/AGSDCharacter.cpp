@@ -299,6 +299,7 @@ void AAGSDCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	DestroyPetBeforeTravel();
 	Super::EndPlay(EndPlayReason);
 
+	GI->Damage = Damage;
 	GI->Coin = Coin;
 	GI->PlayerHealth = Health;
 	GI->MaxPlayerHealth = MaxHealth;
@@ -391,6 +392,8 @@ float AAGSDCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 {
 	if (!bCanBeDamage) return 0.f;
 	float DamageToApply = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	if (bIsJustGuardWindow) DamageToApply = 0.f;
+	else if (bIsBlocking) DamageToApply = DamageToApply / 2.f;
 
 	UE_LOG(LogTemp, Warning, TEXT("Player Take Damage : %f"), DamageToApply);
 
