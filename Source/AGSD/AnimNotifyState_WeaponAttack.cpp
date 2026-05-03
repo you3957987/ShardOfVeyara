@@ -2,6 +2,7 @@
 
 
 #include "AnimNotifyState_WeaponAttack.h"
+#include "AGSDCharacter.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
@@ -13,14 +14,19 @@ void UAnimNotifyState_WeaponAttack::NotifyBegin(USkeletalMeshComponent* MeshComp
 
 	if (MeshComp)
 	{
-		// 시작 시 타격 배열 초기화 및 시작 소켓 위치 저장
+		// 시작 시 타격 배열 초기화 및 무기 중앙 위치 저장
 		HitActorsMap.Add(MeshComp, TArray<AActor*>());
-		PreviousLocationMap.Add(MeshComp, MeshComp->GetSocketLocation(SocketName));
+		
+		FVector StartLoc = MeshComp->GetSocketLocation(StartSocketName);
+		FVector EndLoc = MeshComp->GetSocketLocation(EndSocketName);
+		FVector MidPoint = (StartLoc + EndLoc) * 0.5f;
+		
+		PreviousLocationMap.Add(MeshComp, MidPoint);
 		Player = Cast<AAGSDCharacter>(MeshComp->GetOwner());
 		if (Player)
 		{
 			// 기본 데미지 설정
-			BaseDamage = Player->WeaponDamage();
+			BaseDamage = Player->WeaponDamage() * Player->getDamage() / 100.f;
 		}
 	}
 }
@@ -35,7 +41,13 @@ void UAnimNotifyState_WeaponAttack::NotifyTick(USkeletalMeshComponent* MeshComp,
 	if (!PreviousLocationMap.Contains(MeshComp)) return;
 
 	FVector PreviousLocation = PreviousLocationMap[MeshComp];
-	FVector CurrentLocation = MeshComp->GetSocketLocation(SocketName);
+	FVector StartLoc = MeshComp->GetSocketLocation(StartSocketName);
+	FVector EndLoc = MeshComp->GetSocketLocation(EndSocketName);
+	
+	// 현재 무기의 중앙 위치와 방향, 길이 계산
+	FVector CurrentLocation = (StartLoc + EndLoc) * 0.5f;
+	float CapsuleHalfHeight = FVector::Dist(StartLoc, EndLoc) * 0.5f;
+	FRotator CapsuleRotation = FRotationMatrix::MakeFromZ(EndLoc - StartLoc).Rotator();
 
 	TArray<FHitResult> HitResults;
 	TArray<AActor*> ActorsToIgnore;
@@ -45,19 +57,36 @@ void UAnimNotifyState_WeaponAttack::NotifyTick(USkeletalMeshComponent* MeshComp,
 	TArray<AActor*>& HitActors = HitActorsMap[MeshComp];
 	ActorsToIgnore.Append(HitActors);
 
-	// Multi Sphere Trace by Channel 수행 (찌르기/휘두르기 궤적 커버)
-	bool bHit = UKismetSystemLibrary::SphereTraceMulti(
-		MeshComp->GetWorld(),
+	// Multi Capsule Trace 수행 (네이티브 Sweep을 사용하여 회전 지원)
+	FCollisionShape CapsuleShape = FCollisionShape::MakeCapsule(TraceRadius, CapsuleHalfHeight);
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActors(ActorsToIgnore);
+	QueryParams.bTraceComplex = false;
+	QueryParams.bReturnFaceIndex = false;
+
+	bool bHit = MeshComp->GetWorld()->SweepMultiByChannel(
+		HitResults,
 		PreviousLocation,
 		CurrentLocation,
-		TraceRadius,
-		WeaponTraceChannel,
-		false,
-		ActorsToIgnore,
-		DrawDebugTrace, // 에디터에서 설정한 디버그 트레이스 모드 사용
-		HitResults,
-		true
+		CapsuleRotation.Quaternion(),
+		UEngineTypes::ConvertToCollisionChannel(WeaponTraceChannel),
+		CapsuleShape,
+		QueryParams
 	);
+
+	// 디버그 드로잉 (KismetLibrary 기능을 대신함)
+	if (DrawDebugTrace != EDrawDebugTrace::None)
+	{
+		UKismetSystemLibrary::DrawDebugCapsule(
+			MeshComp->GetWorld(),
+			CurrentLocation,
+			CapsuleHalfHeight,
+			TraceRadius,
+			CapsuleRotation,
+			FLinearColor::Red,
+			5.0f
+		);
+	}
 
 	if (bHit)
 	{

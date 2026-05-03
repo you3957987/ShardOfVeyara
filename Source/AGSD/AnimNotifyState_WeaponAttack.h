@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AGSDCharacter.h"
+class AAGSDCharacter;
 #include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "AnimNotifyState_WeaponAttack.generated.h"
@@ -23,9 +23,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Collision")
 	float TraceRadius = 20.0f;
 
-	// 무기에 붙어있는 타격용 소켓 이름
+	// 무기에 붙어있는 타격용 시작 소켓 이름 (손잡이 쪽)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Collision")
-	FName SocketName = FName("Weapon_Attack");
+	FName StartSocketName = FName("Weapon_Attack_Back");
+
+	// 무기에 붙어있는 타격용 끝 소켓 이름 (창날 끝 쪽)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Collision")
+	FName EndSocketName = FName("Weapon_Attack");
 
 	// 트레이스할 충돌 채널 (예: ETraceTypeQuery::TraceTypeQuery3)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Collision")

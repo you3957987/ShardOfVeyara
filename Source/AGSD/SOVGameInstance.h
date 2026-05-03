@@ -111,6 +111,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "SaveGame")
 	void LoadGame();
+
+	UFUNCTION(BlueprintCallable, Category = "GameInstance")
+	void InitializeVariables();
+
 protected:
 	// 게임 인스턴스가 초기화될 때 호출되는 함수 오버라이드
 	virtual void Init() override;

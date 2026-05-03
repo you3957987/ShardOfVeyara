@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "HoldingState.h"
 #include "AGSDPlayerController.h"
+#include "AnimNotifyState_WeaponAttack.h"
 #include "FadeWidget.h"
 #include "HealthBar.h"
 #include "HoldingWeapon.h"
@@ -166,7 +167,8 @@ public:
 	void RemoveInteractableActor(AActor* ActorToRemove);
 	//상호작용 가능 액터 개수
 	FORCEINLINE int32 GetInteractableActorNum() const {return InteractableActorsInRange.Num();}
-	
+	FORCEINLINE float getDamage() const {return Damage;};
+
 	UPROPERTY(EditAnywhere, Category="Input")
 	class UInputMappingContext* IMC_Farmer;
 

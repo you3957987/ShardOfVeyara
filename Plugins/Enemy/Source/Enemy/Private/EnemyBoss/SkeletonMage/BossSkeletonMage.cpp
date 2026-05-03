@@ -137,9 +137,9 @@ void ABossSkeletonMage::TeleportMoveToNextPoint()
 		
 		//SpawnTeleportEffectAtLocation(GetActorLocation()); // 현재 위치에 이펙트 생성
 		
-		// --- 수정된 부분: 목적지 좌표에서 Z축으로 10만큼 아래로 이동 ---
-		FVector AdjustedDestination = TeleportDestination;
-		AdjustedDestination.Z -= 40.0f; 
+		// --- 수정된 부분: 캡슐 절반 높이만큼 위로 오프셋을 주어 바닥 위에 정상적으로 서도록 함 ---
+		float SafeZOffset = GetCapsuleComponent() ? GetCapsuleComponent()->GetScaledCapsuleHalfHeight() : 0.f;
+		FVector AdjustedDestination = TeleportDestination + FVector(0.f, 0.f, SafeZOffset);
 		
 		SetActorLocation(AdjustedDestination); // 조정된 위치로 텔레포트 이동
 		// --------------------------------------------------------
