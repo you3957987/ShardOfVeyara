@@ -28,10 +28,9 @@ protected:
 	float TimeScale = 48.f;
 
 	UPROPERTY(EditAnywhere, Category = "Time")
-	float NextDayStartTime = 360.f;
+	float NextDayStartTime = 600.f;
 
-	const float GameHoursPerDay = (24.f * 60.f);
-	const float ResetHour = (6.f * 60.f);
+	const float GameHoursPerDay = 2400.f;
 	
 	class AAGSDGameStateBase* GameState = nullptr;
 
