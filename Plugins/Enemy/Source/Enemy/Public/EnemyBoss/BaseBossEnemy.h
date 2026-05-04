@@ -4,10 +4,11 @@
 #include "GameFramework/Character.h"
 #include "EnemyLogManager.h"
 #include "Interface/ItemDropInterface.h"
+#include "Interface/InteractionInterface.h"
 #include "BaseBossEnemy.generated.h"
 
 UCLASS()
-class ENEMY_API ABaseBossEnemy : public ACharacter, public IItemDropInterface
+class ENEMY_API ABaseBossEnemy : public ACharacter, public IItemDropInterface, public IInteractionInterface
 {
 	GENERATED_BODY()
 
@@ -125,6 +126,14 @@ public:
 	// 공격 후 플레이어 주시 시작 함수
 	UFUNCTION(BlueprintCallable)
 	void StartFocusPlayerAfterAttack(); 
+	
+	// 플레이어랑 상호작용 인터페이스
+	UPROPERTY()
+	FOnLockOnStateChanged OnLockOnStateChanged;
+	// 인터페이스 함수 오버라이드 선언
+	virtual FOnLockOnStateChanged& GetLockOnStateChangedDelegate() override { return OnLockOnStateChanged; }
+	// 플레이어 락온 상태 변경 함수 
+	void ChangePlayerLockOn( bool bLockOn );
 	
 	// 로그 관리 
 	float BattleStartTime = 0.f;

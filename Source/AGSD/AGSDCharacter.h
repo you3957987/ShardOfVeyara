@@ -16,6 +16,7 @@
 #include "Interface/PetConversationInterface.h"
 #include "Interface/PlayerDeadInterface.h"
 #include "Interface/ItemDropInterface.h"
+#include "Interface/InteractionInterface.h"
 #include "AGSDCharacter.generated.h"
 
 class USpringArmComponent;
@@ -31,7 +32,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
  *  Implements a controllable orbiting camera
  */
 UCLASS(abstract)
-class AGSD_API AAGSDCharacter : public ACharacter, public IPetConversationInterface, public IPlayerDeadInterface
+class AGSD_API AAGSDCharacter : public ACharacter, public IPetConversationInterface, public IPlayerDeadInterface, public IInteractionInterface
 	, public IItemDropInterface
 {
 	GENERATED_BODY()
@@ -289,7 +290,14 @@ public:
 	// 로그 관련 인터페이스 함수 구현
 	UPROPERTY()
 	FOnPlayerDeadSignature OnPlayerDead;
-	virtual FOnPlayerDeadSignature& GetOnPlayerDeadDelegate() override { return OnPlayerDead; }
+	virtual FOnPlayerDeadSignature& ReturnOnPlayerDeadDelegate() override { return OnPlayerDead; }
+	
+	// 
+	UPROPERTY()
+	FOnLockOnStateChanged OnLockOnStateChanged;
+	virtual FOnLockOnStateChanged& GetLockOnStateChangedDelegate() override { return OnLockOnStateChanged; }
+	UFUNCTION()
+	void HandleLockOn( bool bLockOn );
 	
 	// 적이 드롭할 아이템 데이터 테이블
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemDrop")

@@ -256,6 +256,10 @@ void AAGSDCharacter::BeginPlay()
 		HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 	}
 	playFadeWidget(1.0f, 0.0f);
+	
+	
+	OnLockOnStateChanged.RemoveDynamic(this, &AAGSDCharacter::HandleLockOn);
+	OnLockOnStateChanged.AddDynamic(this, &AAGSDCharacter::HandleLockOn);
 }
 
 void AAGSDCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -586,6 +590,20 @@ void AAGSDCharacter::SpawnMyPetAfterTravel()
 		FRotator SpawnRotation = FRotator::ZeroRotator;
 
 		GetWorld()->SpawnActor<ABaseFlyingPet>(DefaultPetClass, SpawnLocation, SpawnRotation, SpawnParams);
+	}
+}
+
+void AAGSDCharacter::HandleLockOn(bool bLockOn)
+{	if (PC)
+	{
+		if (bLockOn)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("LockOn True True"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("LockOn False False"));
+		}
 	}
 }
 
