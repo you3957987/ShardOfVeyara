@@ -7,39 +7,7 @@
 
 USOVGameInstance::USOVGameInstance()
 {
-	InitializeVariables();
-}
-
-void USOVGameInstance::InitializeVariables()
-{
-	// 블루프린트 에디터에서 설정한 기본값들이 담긴 원본 객체(CDO)를 가져옵니다.
-	const USOVGameInstance* DefaultInstance = GetDefault<USOVGameInstance>(GetClass());
-	if (!DefaultInstance) return;
-
-	// 에디터 설정값을 그대로 복사 (Level, 시간, 체력 등)
-	NoRegenItem = DefaultInstance->NoRegenItem;
-	Level = DefaultInstance->Level;
-	TeleportationTag = DefaultInstance->TeleportationTag;
-	CurrentDay = DefaultInstance->CurrentDay;
-	CurrentTime = DefaultInstance->CurrentTime;
-	ShardsAmount = DefaultInstance->ShardsAmount;
-	Coin = DefaultInstance->Coin;
-	Damage = DefaultInstance->Damage;
-	MaxPlayerHealth = DefaultInstance->MaxPlayerHealth;
-	PlayerHealth = MaxPlayerHealth;
-	bHasPet = DefaultInstance->bHasPet;
-	CurrentSelectedHotbar = DefaultInstance->CurrentSelectedHotbar;
-	TributeLevel = DefaultInstance->TributeLevel;
-	
-	// 데이터 맵 및 인벤토리는 비워줌 (필요 시 CDO에서 복사 가능)
-	ChestMap.Empty();
-	TempInventory.Empty();
-	TempHotbar.Empty();
 	TempHotbar.SetNum(10);
-	GlobalPlotDataMap.Empty();
-	AlchemyTableDataMap.Empty();
-	CurrentLevelTributeItems.Empty();
-	AlreadyDroppedItems.Empty();
 }
 
 void USOVGameInstance::UpdatePlotData(FPlotSaveData NewData)

@@ -25,7 +25,6 @@ ABaseBossEnemy::ABaseBossEnemy()
 	// 캡슐 컴포넌트가 카메라에 반응하지 않도록 설정합니다.
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel4, ECollisionResponse::ECR_Block);
 	
 	PlayerDetectRangeSphere = CreateDefaultSubobject<USphereComponent>(TEXT("PlayerDetectRangeSphere"));
 	PlayerDetectRangeSphere->SetupAttachment(RootComponent); // 루트 컴포넌트

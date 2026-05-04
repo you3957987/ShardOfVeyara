@@ -61,9 +61,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Farming")
 	UAnimMontage* PullPlant;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Farming")
-	class UNiagaraSystem* WeedEffect;
 	
 private:
 	//콜리전 박스

@@ -2,37 +2,32 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "Struct_ItemData.h"
 #include "SpearComboData.generated.h"
-
-UENUM(BlueprintType)
-enum class ESpearAttackDirection : uint8
-{
-	Neutral,
-	Forward,
-	Backward
-};
-
-USTRUCT(BlueprintType)
-struct FSpearStageData // 각 단계별 개별 애니메이션 데이터
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UAnimMontage* AttackMontage; // 공격 동작 (Stage)
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float DamageMultiplier = 1.0f;
-};
 
 USTRUCT(BlueprintType)
 struct FSpearComboData : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	// 콤보 하나(1~10번) 내의 모든 스테이지를 리스트로 관리
+	// 1. 입력 조건
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FSpearStageData> Stages;
+	FName RequiredInput; // "Attack", "Forward", "Backward" 등
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ESpearAttackDirection DirectionRequirement = ESpearAttackDirection::Neutral;
+	bool bRequiresForward; // 전진 키가 필요한지 여부
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsChargeAttack; // 차징 공격 여부
+
+	// 2. 실행 에셋
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* ComboMontage;
+
+	// 3. 게임플레이 데이터
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DamageMultiplier = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName NextComboSection; // 다음 연계될 섹션 이름
 };
