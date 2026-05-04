@@ -22,8 +22,7 @@ public class AGSD : ModuleRules
 			"SlateCore",
 			"Enemy",
 			"Pet",
-			"Niagara",
-			"NavigationSystem"
+			"Niagara"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] 

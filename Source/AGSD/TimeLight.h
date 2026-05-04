@@ -25,20 +25,23 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere)
 	UDirectionalLightComponent* SunLight;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere)
 	UDirectionalLightComponent* MoonLight;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere)
+	USkyAtmosphereComponent* SkyAtmosphere;
+
+	UPROPERTY(EditAnywhere)
 	UExponentialHeightFogComponent* ExponentialHeightFog;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere)
 	USkyLightComponent* SkyLight;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float CurrentTime;
+	UPROPERTY(EditAnywhere)
+	UVolumetricCloudComponent* VolumetricCloud;
 	
 	AAGSDGameStateBase* GameState;
 

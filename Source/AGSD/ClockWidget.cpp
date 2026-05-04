@@ -34,26 +34,27 @@ void UClockWidget::NativeConstruct()
 
 void UClockWidget::SetTimeText(float time)
 {
-	if (!TimeText) return;
-
-	// 시간을 0~2400 사이로 정규화 (하루가 넘어가는 경우 대비)
-	float NormalizedTime = FMath::Fmod(time, 2400.0f);
-	if (NormalizedTime < 0.0f) NormalizedTime += 2400.0f;
-
-	// 시간과 분을 float 상태에서 계산하여 정밀도 유지
-	int32 TotalHours = FMath::FloorToInt(NormalizedTime / 100.0f);
-	float MinuteFraction = FMath::Fmod(NormalizedTime, 100.0f);
-	
-	// 100단위 시간 체계를 60분 체계로 변환 (1단위당 0.6분)
-	int32 Minutes = FMath::FloorToInt(MinuteFraction * 0.6f);
-
-	// 12시간제 및 AM/PM 결정
-	FString Period = (TotalHours < 12) ? TEXT("AM ") : TEXT("PM ");
-	int32 DisplayHours = TotalHours % 12;
-	if (DisplayHours == 0) DisplayHours = 12;
-
-	FString TimeString = FString::Printf(TEXT("%s%02d:%02d"), *Period, DisplayHours, Minutes);
-	TimeText->SetText(FText::FromString(TimeString));
+	if (TimeText)
+	{
+		FString TimeString;
+		int CorrectionTime = FMath::FloorToInt(time);
+		if (CorrectionTime / 60 <= 12 || CorrectionTime / 60 >= 24)
+		{
+			TimeString = TEXT("AM ");
+			TimeString += FString::Printf(TEXT("%02d:"), CorrectionTime / 60);
+		}
+		else
+		{
+			TimeString = TEXT("PM ");
+			if ((CorrectionTime - 12 * 60) / 60 == 0)
+			{
+				TimeString += FString::Printf(TEXT("%02d:"), 12);
+			}
+			else TimeString += FString::Printf(TEXT("%02d:"), (CorrectionTime - 12 * 60) / 60);
+		}
+		TimeString += FString::Printf(TEXT("%02d"), CorrectionTime % 60);
+		TimeText->SetText(FText::FromString(TimeString));
+	}
 }
 
 void UClockWidget::SetDayText(int32 day)

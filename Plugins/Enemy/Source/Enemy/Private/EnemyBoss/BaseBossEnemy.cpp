@@ -25,7 +25,6 @@ ABaseBossEnemy::ABaseBossEnemy()
 	// 캡슐 컴포넌트가 카메라에 반응하지 않도록 설정합니다.
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel4, ECollisionResponse::ECR_Block);
 	
 	PlayerDetectRangeSphere = CreateDefaultSubobject<USphereComponent>(TEXT("PlayerDetectRangeSphere"));
 	PlayerDetectRangeSphere->SetupAttachment(RootComponent); // 루트 컴포넌트
@@ -92,8 +91,8 @@ void ABaseBossEnemy::PollInit(float DeltaTime)
 			if (DeadInterface)
 			{
 				// 이전에 바인딩된 게 있다면 제거하고 등록 (중복 방지 안전장치)
-				DeadInterface->GetOnPlayerDeadDelegate().RemoveDynamic(this, &ABaseBossEnemy::PlayerDeadLog);
-				DeadInterface->GetOnPlayerDeadDelegate().AddDynamic(this, &ABaseBossEnemy::PlayerDeadLog);
+				DeadInterface->ReturnOnPlayerDeadDelegate().RemoveDynamic(this, &ABaseBossEnemy::PlayerDeadLog);
+				DeadInterface->ReturnOnPlayerDeadDelegate().AddDynamic(this, &ABaseBossEnemy::PlayerDeadLog);
             
 				UE_LOG(LogTemp, Error, TEXT("asdasdsad"));
 				
@@ -264,6 +263,29 @@ void ABaseBossEnemy::SpawnDeadEffectAndDestroy()
 void ABaseBossEnemy::StartFocusPlayerAfterAttack()
 {
 	bFocusPlayerAfterAttack = true; // 공격 후 포커스 시작 플래그를 true로 설정
+}
+
+void ABaseBossEnemy::ChangePlayerLockOn(bool bLockOn)
+{
+	if (TargetCharacter)
+	{
+		IInteractionInterface* InteractionTarget = Cast<IInteractionInterface>(TargetCharacter);
+		if (InteractionTarget)
+		{
+			// 1. 상대방의 델리게이트 참조를 가져옵니다.
+			FOnLockOnStateChanged& LockOnDelegate = InteractionTarget->GetLockOnStateChangedDelegate();
+
+			// 2. IsBound()를 통해 구독 중인 대상(플레이어의 로직 등)이 있는지 확인합니다.
+			if (LockOnDelegate.IsBound())
+			{
+				LockOnDelegate.Broadcast(bLockOn);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("LockOn Delegate is NOT bound in TargetCharacter!"));
+			}
+		}
+	}
 }
 
 // 공격 전에 한번씩 호출

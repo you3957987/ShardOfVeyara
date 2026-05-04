@@ -232,6 +232,8 @@ void ABossWorm::Burrow()
 	{
 		PlayAnimMontage(BurrowMontage);
 		BlackboardComp->SetValueAsBool( TEXT("bIsBurrowing"), true);
+		
+		ChangePlayerLockOn(false); // 플레이어 락온 해제
 	}
 }
 

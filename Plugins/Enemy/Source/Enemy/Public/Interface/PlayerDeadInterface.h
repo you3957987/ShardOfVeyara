@@ -21,5 +21,5 @@ class ENEMY_API IPlayerDeadInterface
 public:
 	
 	// 구현부(AGSDCharacter)에서 실제 델리게이트 참조를 넘겨주게 됩니다.
-	virtual FOnPlayerDeadSignature& GetOnPlayerDeadDelegate() = 0;
+	virtual FOnPlayerDeadSignature& ReturnOnPlayerDeadDelegate() = 0;
 };
