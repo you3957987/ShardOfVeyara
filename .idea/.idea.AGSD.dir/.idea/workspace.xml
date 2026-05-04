@@ -9,51 +9,7 @@
   <component name="ChangeListManager">
     <list default="true" id="690080f4-11c2-40e7-9f9b-e775ffc08b31" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGSD.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/CR/Demo/Meshes/SK_Mannequin.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/CR/Demo/Meshes/SK_Mannequin.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo1/AM_SpearAttackCombo1_Stage3_Complete.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo1/AM_SpearAttackCombo1_Stage3_Complete.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo4/AM_SpearAttackCombo4_Stage1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo4/AM_SpearAttackCombo4_Stage1.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo4/AM_SpearAttackCombo4_Stage2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo4/AM_SpearAttackCombo4_Stage2.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo5/AM_SpearAttackCombo5_Stage1_Complete.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo5/AM_SpearAttackCombo5_Stage1_Complete.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo7/AM_SpearAttackCombo7_Stage1_Complete.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo7/AM_SpearAttackCombo7_Stage1_Complete.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo8/AM_SpearAttackCombo8_Stage1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo8/AM_SpearAttackCombo8_Stage1.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo8/AM_SpearAttackCombo8_Stage2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Animations/AnimMontage/SpearCombo/AttackCombo8/AM_SpearAttackCombo8_Stage2.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Assets/Tools/Forke_Modify.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Assets/Tools/Forke_Modify.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Assets/Tools/Hoe.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Assets/Tools/Hoe.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_AnimNotifyState_WeaponAttack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_AnimNotifyState_WeaponAttack.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Scarecrow.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_Scarecrow.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_TimeLight.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/BP_TimeLight.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_Weeds.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/InteractionActor/BP_Weeds.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Forke.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Forke.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Spade.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_Spade.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_WeaponBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Blueprints/Weapons/BP_WeaponBase.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/DataAssets/DT_SpearComboData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/DataAssets/DT_SpearComboData.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/HYH/Levels/Dungeon_Boss_Room_Streaming.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/HYH/Levels/Dungeon_Boss_Room_Streaming.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_PlayerHUD.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Inventory/Blueprint/UI/WBP_PlayerHUD.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Level/Cave_sky_Island.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Level/Cave_sky_Island.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Level/City_Sky_Island.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Level/City_Sky_Island.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Level/Dungeon_Boss_Room.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Level/Dungeon_Boss_Room.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Level/Dungeon_Sky_Island.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Level/Dungeon_Sky_Island.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Level/Farm_Sky_Island.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Level/Farm_Sky_Island.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LevelDesign/Level/Forest_Boss_Room.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LevelDesign/Level/Forest_Boss_Room.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/MainMenuUI/Blueprint/WBP_PauseMenu.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/MainMenuUI/Blueprint/WBP_PauseMenu.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PolygonParticleFX/Materials/Base/M_PolygonParticle_ParticleBase_01.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PolygonParticleFX/Materials/Base/M_PolygonParticle_ParticleBase_01.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/PolygonParticleFX/Materials/MI_PolygonParticles_Leaf_01.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/PolygonParticleFX/Materials/MI_PolygonParticles_Leaf_01.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/StylizedSky/Blueprints/BP_StylizedSkyTimeLight.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StylizedSky/Blueprints/BP_StylizedSkyTimeLight.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/0/CX/ONDLRQEFUKSCKRKNC4ERHY.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/0/CX/ONDLRQEFUKSCKRKNC4ERHY.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/1/FC/1M3MS9RHZOJY5O86DM2NF5.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/1/FC/1M3MS9RHZOJY5O86DM2NF5.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/BlackKnight/AI/BT_BlackKnight.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/BlackKnight/AI/BT_BlackKnight.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/BlackKnight/Anim/AM_Rush.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Content/Boss/BlackKnight/Anim/AM_Rush.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/SkeletonMage/BossSkeletonMage.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Enemy/Source/Enemy/Private/EnemyBoss/SkeletonMage/BossSkeletonMage.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSD.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSD.Build.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AGSDCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/AnimNotifyState_WeaponAttack.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AnimNotifyState_WeaponAttack.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/AnimNotifyState_WeaponAttack.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/AnimNotifyState_WeaponAttack.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/Anim_PullPlant.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/Anim_PullPlant.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/ClockWidget.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/ClockWidget.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/SOVGameInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/SOVGameInstance.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/SOVGameInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/SOVGameInstance.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/SaveGameSlot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/SaveGameSlot.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGSD/Weeds.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGSD/Weeds.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AGSD.uproject.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/AGSD.uproject.DotSettings.user" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,7 +50,6 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="cidr-memory-view://4" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Core/Public/Misc/MTAccessDetector.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Core/Public/UObject/ScriptDelegates.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/CoreUObject/Public/UObject/SparseDelegate.h" root0="FORCE_HIGHLIGHTING" />
@@ -264,6 +219,7 @@
       <workItem from="1777648020418" duration="1271000" />
       <workItem from="1777649821641" duration="2608000" />
       <workItem from="1777794745270" duration="16649000" />
+      <workItem from="1777862999258" duration="754000" />
     </task>
     <servers />
   </component>
