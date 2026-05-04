@@ -12,6 +12,5 @@ void UAnim_SpearJab::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase*
 	AAGSDCharacter* Player = Cast<AAGSDCharacter>(MeshComp->GetOwner());
 	if (Player)
 	{
-		Player->WeaponAttack();
 	}
 }

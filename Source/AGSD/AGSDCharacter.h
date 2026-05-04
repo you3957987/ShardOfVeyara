@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "HoldingState.h"
 #include "AGSDPlayerController.h"
+#include "AnimNotifyState_WeaponAttack.h"
 #include "FadeWidget.h"
 #include "HealthBar.h"
 #include "HoldingWeapon.h"
@@ -17,6 +18,7 @@
 #include "Interface/PlayerDeadInterface.h"
 #include "Interface/ItemDropInterface.h"
 #include "Interface/InteractionInterface.h"
+#include "SpearComboData.h"
 #include "AGSDCharacter.generated.h"
 
 class USpringArmComponent;
@@ -32,8 +34,8 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
  *  Implements a controllable orbiting camera
  */
 UCLASS(abstract)
-class AGSD_API AAGSDCharacter : public ACharacter, public IPetConversationInterface, public IPlayerDeadInterface, public IInteractionInterface
-	, public IItemDropInterface
+class AGSD_API AAGSDCharacter : public ACharacter, public IPetConversationInterface, public IPlayerDeadInterface
+	, public IItemDropInterface, public IInteractionInterface
 {
 	GENERATED_BODY()
 
@@ -44,6 +46,10 @@ class AGSD_API AAGSDCharacter : public ACharacter, public IPetConversationInterf
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
+	
+	bool bIsBlocking = false;
+	
+	bool bIsJustGuardWindow = false;
 
 protected:
 	/** Jump Input Action */
@@ -66,6 +72,26 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* Interaction;
 
+	// 가드 액션
+	UPROPERTY(EditAnywhere, Category="Input")
+	const UInputAction* GuardAction;
+
+	// 락온 액션
+	UPROPERTY(EditAnywhere, Category="Input")
+	class UInputAction* LockOnAction;
+	
+	// 락온 타겟
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat|LockOn")
+	AActor* LockedTarget = nullptr;
+
+	// 락온 탐색 반경
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|LockOn")
+	float LockOnRadius = 1500.0f;
+
+	// 락온 관련 함수
+	void ToggleLockOn();
+	AActor* FindNearestLockOnTarget();
+	
 	AAGSDPlayerController* PC;
 	
 	UPROPERTY(VisibleAnywhere, Category="Input Buffer")
@@ -76,6 +102,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category="Input Buffer")
 	float InputDifference = 0.3f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Input Buffer")
+	float AttackBufferDuration = 0.2f;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UFadeWidget> WBP_FadeWidget;
@@ -85,7 +114,34 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PlayerState")
 	int Coin;
-	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="PlayerState")
+	bool bIsAttacking = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="PlayerState")
+	bool bIsRecovering = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="PlayerState")
+	bool bCanCombo = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="PlayerState")
+	bool bHasBufferedInput = false;
+
+	// 선입력된 공격의 발생 시점 (유효 시간 체크용)
+	float BufferedInputTime = 0.0f;
+
+	// USTRUCT 포인터는 UPROPERTY로 관리할 수 없으므로 매크로 제거
+	FSpearComboData* CurrentComboData;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="PlayerState")
+	int32 CurrentStageIndex;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PlayerState")
+	UDataTable* SpearComboDataTable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PlayerState")
+	class UAnimMontage* BlockStartMontage;
+
 private:
 	UFUNCTION(BlueprintCallable)
 	void HandleAttackInput(FName ActionName);
@@ -112,7 +168,8 @@ public:
 	void RemoveInteractableActor(AActor* ActorToRemove);
 	//상호작용 가능 액터 개수
 	FORCEINLINE int32 GetInteractableActorNum() const {return InteractableActorsInRange.Num();}
-	
+	FORCEINLINE float getDamage() const {return Damage;};
+
 	UPROPERTY(EditAnywhere, Category="Input")
 	class UInputMappingContext* IMC_Farmer;
 
@@ -126,6 +183,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="HoldingState")
 	EHoldingWeapon HoldingWeapon = EHoldingWeapon::None;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="HoldingState")
+	AActor* HoldingActor;
+	
 	AActor* MinDistActor();
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interaction")
@@ -168,6 +228,10 @@ public:
 	FORCEINLINE USOVGameInstance* getPlayerGameInstance() const {return GI;};
 
 	FORCEINLINE float getPlayerMaxhealth() const { return MaxHealth;}
+
+	FORCEINLINE void SetCanCombo(bool b) {bCanCombo = b;}
+	
+	FORCEINLINE bool HasBufferedInput() {return bHasBufferedInput;}
 	
 protected:
 	//현재 상호작용 가능한 액터 포인터 (AACultivationPlot 또는 ACrop 등)
@@ -204,6 +268,9 @@ protected:
 
 	FORCEINLINE float getHealth() const {return Health;};
 	
+	// 선입력 및 방향 판정을 위한 원시 입력 벡터 (이동 제한 상태에서도 업데이트됨)
+	FVector LastRawInputVector = FVector::ZeroVector;
+
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
@@ -243,11 +310,13 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void playFadeWidget(float startOpacity, float endOpacity);
-	
+
 public:
 	// Enemy 로그 처리 위한 겟 함수
 	FORCEINLINE float GetFarmerHealthToEnemy() const { return Health; }
-	
+
+	void OnRecoveryFinished(UAnimMontage* Montage, bool bInterrupted);
+	void ResetAttackState();
 	/** Handles move inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoMove(float Right, float Forward);
@@ -292,12 +361,13 @@ public:
 	FOnPlayerDeadSignature OnPlayerDead;
 	virtual FOnPlayerDeadSignature& ReturnOnPlayerDeadDelegate() override { return OnPlayerDead; }
 	
-	// 
+	// 락온 상태 변경 인터페이스 구현
 	UPROPERTY()
 	FOnLockOnStateChanged OnLockOnStateChanged;
 	virtual FOnLockOnStateChanged& GetLockOnStateChangedDelegate() override { return OnLockOnStateChanged; }
+
 	UFUNCTION()
-	void HandleLockOn( bool bLockOn );
+	void HandleLockOn(bool bLockOn);
 	
 	// 적이 드롭할 아이템 데이터 테이블
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemDrop")
@@ -314,6 +384,9 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	float WeaponDamage();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void WeaponAttack();
 
 	UFUNCTION()
@@ -321,5 +394,40 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerState")
 	void HealthRecovery(float amount);
+
+	ESpearAttackDirection GetAttackDirection();
+
+	UFUNCTION(BlueprintCallable)
+	void ProcessAttackInput();
+	
+	void StartNewCombo();
+	
+	FSpearComboData* GetComboDataByDirection(ESpearAttackDirection Direction);
+	
+	void ExecuteNextStage();
+	
+	void PlayStage(int32 Index);
+	
+	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+	
+	void StartRecovery(UAnimMontage* RecoveryMontage);
+
+	FTimerHandle JustGuardTimerHandle;
+	void EndJustGuardWindow();
+
+	void StartBlock();
+	void StopBlock();
+	void OnHitReceived();
+
+	/** 저스트 가드 성공 효과 처리 */
+	void HandleJustGuardSuccess();
+	void ResetCombo();
+	/** 성공 시 재생할 이펙트 */
+	UPROPERTY(EditAnywhere, Category = "Combat|Effects")
+	UParticleSystem* JustGuardParticle;
+	/** 성공 시 재생할 사운드 */
+	UPROPERTY(EditAnywhere, Category = "Combat|Effects")
+	USoundBase* JustGuardSound;
+	
 };
 

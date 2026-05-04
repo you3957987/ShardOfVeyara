@@ -22,7 +22,8 @@ public class AGSD : ModuleRules
 			"SlateCore",
 			"Enemy",
 			"Pet",
-			"Niagara"
+			"Niagara",
+			"NavigationSystem"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] 
@@ -30,7 +31,7 @@ public class AGSD : ModuleRules
 			"Niagara"
         });
 
-        // ¿¡µğÅÍ ºôµåÀÏ ¶§¸¸ Ãß°¡µÇµµ·Ï Á¶°Ç¹®À» »ç¿ëÇÕ´Ï´Ù.
+        // ì—ë””í„° ë¹Œë“œì¼ ë•Œë§Œ ì¶”ê°€ë˜ë„ë¡ ì¡°ê±´ë¬¸ì„ ì‚¬ìš©í•©ë‹ˆë‹¤.
         if (Target.bBuildEditor)
         {
             PrivateDependencyModuleNames.Add("UnrealEd");

@@ -118,10 +118,10 @@ void AAlchemyTable::ApplyPotColor(FLinearColor NewColor)
 		PotDynamicMaterial->SetVectorParameterValue(TEXT("Color"), NewColor);
 
 	if (SplashVFXComponent)
-		SplashVFXComponent->SetNiagaraVariableLinearColor(TEXT("User.Color"), NewColor);
+		SplashVFXComponent->SetVariableLinearColor(TEXT("User.Color"), NewColor);
 
 	if (BubbleVFXComponent)
-		BubbleVFXComponent->SetNiagaraVariableLinearColor(TEXT("User.Color"), NewColor);
+		BubbleVFXComponent->SetVariableLinearColor(TEXT("User.Color"), NewColor);
 }
 
 void AAlchemyTable::EndAlchemy()
