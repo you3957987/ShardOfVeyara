@@ -147,7 +147,6 @@ void ABaseBossEnemy::OnPlayerDetectOverlapBegin(UPrimitiveComponent* OverlappedC
 	}
 }
 
-
 float ABaseBossEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 	class AController* EventInstigator, AActor* DamageCauser)
 {
@@ -176,6 +175,8 @@ float ABaseBossEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 		{
 			BossHealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 		}
+		
+		SetHitOverlay(); // 히트 오버레이 설정
 		
 		UEnemyLogManager::EnemyLog( GetLogTypeFromEnemyType(), 
 		FString::Printf(TEXT("[%s]가 [%.f] 대미지 받음 (%.f / %.f)"), 
@@ -375,6 +376,25 @@ void ABaseBossEnemy::UpdateMotionWarpTargetToFront()
 	}
 }
 
+void ABaseBossEnemy::SetHitOverlay()
+{
+	if (GetMesh() && HitOverlayMaterial)
+	{
+		GetMesh()->SetOverlayMaterial(HitOverlayMaterial);
+		
+		// 0.2초 후에 ClearHitOverlay 함수를 호출하여 오버레이 제거
+		GetWorld()->GetTimerManager().SetTimer(HitFlashTimerHandle, this,
+			&ABaseBossEnemy::ClearHitOverlay, 0.2f, false);
+	}
+}
+
+void ABaseBossEnemy::ClearHitOverlay()
+{
+	if (GetMesh())
+	{
+		GetMesh()->SetOverlayMaterial(nullptr);
+	}
+}
 
 void ABaseBossEnemy::TestDeadLogic()
 {

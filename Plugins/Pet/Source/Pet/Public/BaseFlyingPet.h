@@ -47,9 +47,9 @@ protected:
 	EPetType PetType;
 	
 	// 아이템 감지 콜리전 시작 함수
-	UFUNCTION()
-	void OnItemDetectBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	FTimerHandle ItemDetectTimerHandle;
+	// 주기적으로 주변 아이템을 체크할 함수
+	void CheckSurroundingItems();
 	
 	// 펫이 대상을 따라다니는 함수
 	void FollowingTarget(float DeltaTime);
@@ -117,6 +117,9 @@ protected:
 	float EnemyDetectInterval = 0.5f;
 	// 만약 보스 만나면 보스 끝나기 전까지 기능 조정용 플래그
 	bool bBossBattleMode = false;
+	
+	// 적 또는 아이템 감지시 타깃 캐릭터 사이에 벽 있는지 확인하는 함수
+	bool TraceCharacterToTarget( AActor* Target );
 	
 public:
 	ABaseFlyingPet();

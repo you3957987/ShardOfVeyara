@@ -157,7 +157,7 @@ void ABossWorm::FinishBurrow()
 	}
 	
 	// 타겟 위치 세팅하는 함수 == BurrowDelay 에서 2초 정도 남았을 때 호출되어 타겟 위치 세팅
-	float TargetSetDelay = AttackStruct.BurrowDelay - 2.0f;
+	float TargetSetDelay = AttackStruct.BurrowDelay - 0.1f;
 	
 	// 만약 BurrowDelay가 2초보다 짧다면 즉시 호출하거나 아주 짧은 딜레이로 설정
 	if (TargetSetDelay < 0.0f)

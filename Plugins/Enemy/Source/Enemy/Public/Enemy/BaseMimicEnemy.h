@@ -27,7 +27,7 @@ protected:
 
 
 	// 위장용 스태틱 메시 (상자, 보물상자, 바위 등)
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UStaticMeshComponent* DisguiseMesh;
 	// 플레이어 감지용 트리거 스피어 (실제 오버랩 이벤트 발생용)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

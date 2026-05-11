@@ -98,6 +98,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="자체설정")
 	class USoundBase* DeadSound;
 	
+	// 피격용 Overlay 머티리얼 == 피격시 머터리얼 덧씌우기
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	class UMaterialInterface* HitOverlayMaterial;
+	FTimerHandle HitFlashTimerHandle;
+
+	// 히트시 오버레이 덧씌울 함수
+	void SetHitOverlay();
+	// 오버레이를 다시 제거할 함수
+	void ClearHitOverlay();
+	
 public:	
 	AEnemySpawner();
 	virtual void Tick(float DeltaTime) override;

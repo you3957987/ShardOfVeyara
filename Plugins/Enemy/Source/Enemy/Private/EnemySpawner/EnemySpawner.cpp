@@ -3,7 +3,6 @@
 #include "BaseEnemy.h"
 #include "EnemyLogManager.h"
 #include "NavigationSystem.h"
-#include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/Progressbar.h"
@@ -37,6 +36,8 @@ AEnemySpawner::AEnemySpawner()
 	HealthBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBarWidget"));
 	HealthBarWidget->SetupAttachment(RootComponent);
 	HealthBarWidget->SetWidgetSpace(EWidgetSpace::World);
+	
+	Tags.Add(FName("Enemy")); // 적 캐릭터 태그 추가 -> 이걸 이용해서 프로젝트에서 플러그인 에너미 접근. 매우 중요!!!!
 }
 
 void AEnemySpawner::BeginPlay()
@@ -126,6 +127,8 @@ float AEnemySpawner::TakeDamage(float DamageAmount, struct FDamageEvent const& D
 			return DamageToApply;
 		}
 	}
+	
+	SetHitOverlay(); // 히트 오버레이 설정
 	
 	UEnemyLogManager::EnemyLog(EEnemyLogType::Spawner, 
 		FString::Printf(TEXT("적 [스포너]가 [%.f] 대미지 받음 (%.f / %.f)"), DamageToApply, MaxHealth,Health));
@@ -354,6 +357,27 @@ void AEnemySpawner::DropItemsAfterDead()
 		GetWorld()->SpawnActor<AActor>(ItemClassToSpawn, ItemSpawnLocation, SpawnRotation);
 	}
 }
+
+void AEnemySpawner::SetHitOverlay()
+{
+	if (SpawnerMesh && HitOverlayMaterial)
+	{
+		SpawnerMesh->SetOverlayMaterial(HitOverlayMaterial);
+		
+		// 0.2초 후에 ClearHitOverlay 함수를 호출하여 오버레이 제거
+		GetWorld()->GetTimerManager().SetTimer(HitFlashTimerHandle, this,
+			&AEnemySpawner::ClearHitOverlay, 0.2f, false);
+	}
+}
+
+void AEnemySpawner::ClearHitOverlay()
+{
+	if (SpawnerMesh)
+	{
+		SpawnerMesh->SetOverlayMaterial(nullptr);
+	}
+}
+
 
 #if WITH_EDITOR
 void AEnemySpawner::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)

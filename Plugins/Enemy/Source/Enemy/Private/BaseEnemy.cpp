@@ -201,6 +201,8 @@ float ABaseEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& Dama
 		}
 	}
 	
+	SetHitOverlay(); // 히트 오버레이 설정
+	
 	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
 		FString::Printf(TEXT("적 [%s]가 [%.f] 대미지 받음 (%.f / %.f)"), 
 			*MeshName, DamageToApply, MaxHealth,Health));
@@ -319,6 +321,26 @@ void ABaseEnemy::SetAttackDelayToBehaviorTree(float Delay)
 	if (BlackboardComp)	
 	{
 		BlackboardComp->SetValueAsFloat(TEXT("AttackDelay"), Delay);
+	}
+}
+
+void ABaseEnemy::SetHitOverlay()
+{
+	if (GetMesh() && HitOverlayMaterial)
+	{
+		GetMesh()->SetOverlayMaterial(HitOverlayMaterial);
+		
+		// 0.2초 후에 ClearHitOverlay 함수를 호출하여 오버레이 제거
+		GetWorld()->GetTimerManager().SetTimer(HitFlashTimerHandle, this,
+			&ABaseEnemy::ClearHitOverlay, 0.2f, false);
+	}
+}
+
+void ABaseEnemy::ClearHitOverlay()
+{
+	if (GetMesh())
+	{
+		GetMesh()->SetOverlayMaterial(nullptr);
 	}
 }
 
