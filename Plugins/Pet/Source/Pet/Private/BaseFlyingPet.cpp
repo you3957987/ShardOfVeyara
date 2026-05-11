@@ -55,11 +55,6 @@ void ABaseFlyingPet::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if ( ItemDetectSphere )
-	{
-		// 비긴 오버랩 이벤트 바인딩
-		ItemDetectSphere->OnComponentBeginOverlap.AddDynamic(this, &ABaseFlyingPet::OnItemDetectBeginOverlap);
-	}
 	if (PetTalkComp)
 	{
 		// 대화가 끝나면 내 클래스의 EndConversation 함수를 실행해라! 라고 등록
@@ -82,8 +77,17 @@ void ABaseFlyingPet::BeginPlay()
 		LineOfSightTimerHandle, 
 		this, 
 		&ABaseFlyingPet::CheckLineOfSightToTarget, 
-		3.0f, // 1초 간격
+		3.0f, // 3초 간격
 		true  // 반복 여부
+	);
+	
+	// 3초 마다 아이템 감지
+	GetWorld()->GetTimerManager().SetTimer(
+		ItemDetectTimerHandle, 
+		this, 
+		&ABaseFlyingPet::CheckSurroundingItems, 
+		3.0f, 
+		true
 	);
 }
 
@@ -261,16 +265,23 @@ void ABaseFlyingPet::CheckSurroundingEnemy()
 		// 적 태그 확인 (혹은 인터페이스나 클래스 캐스팅 확인)
 		if (Actor->ActorHasTag("Enemy"))
 		{
+			// 배틀 상태가 아니면 타겟과의 시야 체크를 해서 벽으로 가려진 적은 무시하도록 (배틀 상태에서는 일단 감지된 적은 모두 적으로 간주)
+			if ( PetState != EPetState::EPS_Battle && TraceCharacterToTarget( Actor ) == false ) continue;
+			
 			// 미믹 몬스터는 무시
 			if (Actor->ActorHasTag("Mimic")) continue;
+			
 			// Boss 태그가 있다면 무시 
 			if (Actor->ActorHasTag("Boss"))
 			{
-				if ( bBossBattleMode == true ) return; // 이미 보스전 모드라면 무시
-				bBossBattleMode = true;
-				UE_LOG(LogTemp, Warning, TEXT("BossBattleMode Detected - EnemyDetectRange Maximize"));
-				EnemyDetectSphere->SetSphereRadius(30000.f); // 매우 넓은 범위로 설정
-				return; // 
+				if (bBossBattleMode == false)
+				{
+					bBossBattleMode = true;
+					EnemyDetectSphere->SetSphereRadius(30000.f);
+					UE_LOG(LogTemp, Warning, TEXT("BossBattleMode Detected"));
+				}
+				bEnemyFound = true; // ◀ 보스도 적으로 간주하여 상태 업데이트 로직으로 넘어가게 함
+				break; // 보스를 찾았으니 반복문 탈출
 			}
 			
 			bEnemyFound = true;
@@ -279,18 +290,22 @@ void ABaseFlyingPet::CheckSurroundingEnemy()
 	}
 
 	// 상태 업데이트
-	if (bEnemyFound)
+	if (bEnemyFound == true )
 	{
 		if (PetState != EPetState::EPS_Battle)
 		{
 			// 평상시 상태였는데 주변 적이 있다는 의미
 			PetState = EPetState::EPS_Battle;
 			//bIsFolloingTarget = false; // 배틀 모드 진입 시 자유 이동 모드로 전환
-			if ( PetTalkComp ) PetTalkComp->Travel_FollowToBattle();
+			
+			if ( bBossBattleMode == true && PetTalkComp ) PetTalkComp->Travel_FollowToBattle( true );
+			else if ( bBossBattleMode == false && PetTalkComp ) PetTalkComp->Travel_FollowToBattle( false );
 		}
 	}
 	else if ( bEnemyFound == false && bBossBattleMode == true ) // 보스전 모드 해제 조건
 	{
+		PetState = EPetState::EPS_Follow;
+		if ( PetTalkComp ) PetTalkComp->Travel_BattleToFollow( true );
 		UE_LOG(LogTemp, Warning, TEXT("BossBattleMode Ended - EnemyDetectRange Restore"));
 		bBossBattleMode = false;
 		//bIsFolloingTarget = true; // 다시 따라다니기 모드로 전환
@@ -302,35 +317,77 @@ void ABaseFlyingPet::CheckSurroundingEnemy()
 		{
 			// 배틀 모드에서 벗어나 평상시 상태로 복귀
 			PetState = EPetState::EPS_Follow;
-			if ( PetTalkComp ) PetTalkComp->Travel_BattleToFollow();
+			if ( PetTalkComp ) PetTalkComp->Travel_BattleToFollow( false );
 			//bIsFolloingTarget = true; // 다시 따라다니기 모드로 전환
 		}
 	}
 }
 
-void ABaseFlyingPet::OnItemDetectBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+bool ABaseFlyingPet::TraceCharacterToTarget(AActor* Target)
 {
-	// 통상적인 따라다니기 상태가 아닐 경우 무시 -> 배틀 모드 등에서 아이템 반응 안하도록
-	if ( PetState != EPetState::EPS_Follow ) return;
+	if (!TargetActor || !Target) return false;
+
+	FHitResult Hit;
+	FVector Start = TargetActor->GetActorLocation() + (FVector::UpVector * 50.f);
+	FVector End = Target->GetActorLocation() + (FVector::UpVector * 50.f); 
 	
-	// 겹친 액터가 Item 태그를 가지고 있는지 확인
-	if ( OtherActor && OtherActor != this && OtherActor->ActorHasTag("Item") )
+	// 캐릭터의 눈높이 정도를 고려한다면 높이 오프셋을 추가할 수 있습니다.
+	// Start.Z += 50.f; 
+	// End.Z += 50.f;
+
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);          // 펫 무시
+	Params.AddIgnoredActor(TargetActor);   // 플레이어 무시
+	Params.AddIgnoredActor(Target);        // 타겟 무시 (장애물만 체크하기 위함)
+
+	// ECC_Visibility 채널을 사용하여 가시성을 가로막는 물체(벽 등)가 있는지 검사
+	bool bHit = GetWorld()->LineTraceSingleByChannel(
+		Hit, 
+		Start, 
+		End, 
+		ECC_Visibility, 
+		Params
+	);
+	
+	if (bHit)
 	{
-		// 하나의 아이템에 대해 여러 콜리전 컴포넌트가 있을 수 있으므로, 하나만 처리하도록 루트 컴포넌트 확인
-		if ( OtherActor->GetRootComponent() != OtherComp ) return;
-
-		// 아이템 획득 로직 구현 (예: 아이템 파괴)
-		UE_LOG(LogTemp, Warning, TEXT("Pet Item Detected: %s"), *OtherActor->GetName());
-
-		if ( PetTalkComp ) PetTalkComp->Travel_ItemDetect(OtherActor, ItemDetectPingSpawnPoint->GetComponentLocation());
+		// 무엇에 부딪혔는지 로그 출력
+		UE_LOG(LogTemp, Warning, TEXT("Trace Blocked by: %s"), *Hit.GetActor()->GetName());
+		//DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 1.0f, 0, 2.0f);
 	}
-	else if ( OtherActor && OtherActor != this && OtherActor->ActorHasTag("Mimic") )
-	{
-		// 하나의 아이템에 대해 여러 콜리전 컴포넌트가 있을 수 있으므로, 하나만 처리하도록 루트 컴포넌트 확인
-		if ( OtherActor->GetRootComponent() != OtherComp ) return;
 
-		if ( PetTalkComp ) PetTalkComp->Travel_ItemDetect(OtherActor, ItemDetectPingSpawnPoint->GetComponentLocation());
+	// 무언가에 부딪혔다면 시야가 가려진 것이므로 false 리턴
+	return !bHit;
+}
+
+void ABaseFlyingPet::CheckSurroundingItems()
+{
+	// 따라다니기 상태가 아니면 무시
+	if (PetState != EPetState::EPS_Follow || !ItemDetectSphere) return;
+
+	TArray<AActor*> OverlappingActors;
+	// 범위 내의 모든 액터를 가져옴
+	ItemDetectSphere->GetOverlappingActors(OverlappingActors);
+
+	for (AActor* Actor : OverlappingActors)
+	{
+		if (!Actor || Actor == this) continue;
+
+		// 태그 확인 (Item 또는 Mimic)
+		bool bIsItem = Actor->ActorHasTag("Item");
+		bool bIsMimic = Actor->ActorHasTag("Mimic");
+
+		if (bIsItem || bIsMimic)
+		{
+			// 1. 벽 체크 (플레이어와 아이템 사이 시야 확인)
+			if (TraceCharacterToTarget(Actor) == false) continue;
+
+			// 2. 대화 컴포넌트로 전달 (이미 대화한 아이템 히스토리 처리는 PetTalkComp 내부에서 수행됨)
+			if (PetTalkComp)
+			{
+				PetTalkComp->Travel_ItemDetect(Actor, ItemDetectPingSpawnPoint->GetComponentLocation());
+			}
+		}
 	}
 }
 

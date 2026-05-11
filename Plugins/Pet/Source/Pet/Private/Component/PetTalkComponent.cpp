@@ -142,11 +142,14 @@ void UPetTalkComponent::SpawnItemPingEffectAtLocation(const FVector& TargetLocat
 	}
 }
 
-void UPetTalkComponent::Travel_FollowToBattle()
+void UPetTalkComponent::Travel_FollowToBattle(bool bBoss)
 {
+	UDataTable* TargetTable = bBoss ? Travel_BattleStartBoss : Travel_FollowToBattleDialogue;
 	FPetConversationData SelectedDialogue;
-	if (GetRandomDialogueFromTable(Travel_FollowToBattleDialogue, SelectedDialogue))
+
+	if (GetRandomDialogueFromTable(TargetTable, SelectedDialogue))
 	{
+		// 보이스 오디오가 있으면 그 길이를, 없으면 기본 3초 사용
 		float Duration = (SelectedDialogue.VoiceAudio) ? SelectedDialogue.VoiceAudio->GetDuration() : 3.0f;
 		if (Duration <= 0.0f) Duration = 3.0f;
 
@@ -154,11 +157,14 @@ void UPetTalkComponent::Travel_FollowToBattle()
 	}
 }
 
-void UPetTalkComponent::Travel_BattleToFollow()
+void UPetTalkComponent::Travel_BattleToFollow( bool bBoss )
 {
+	UDataTable* TargetTable = bBoss ? Travel_BattleEndBoss : Travel_BattleToFollowDialogue;
 	FPetConversationData SelectedDialogue;
-	if (GetRandomDialogueFromTable(Travel_BattleToFollowDialogue, SelectedDialogue))
+
+	if (GetRandomDialogueFromTable(TargetTable, SelectedDialogue))
 	{
+		// 보이스 오디오가 있으면 그 길이를, 없으면 기본 3초 사용
 		float Duration = (SelectedDialogue.VoiceAudio) ? SelectedDialogue.VoiceAudio->GetDuration() : 3.0f;
 		if (Duration <= 0.0f) Duration = 3.0f;
 

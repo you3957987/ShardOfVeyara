@@ -179,6 +179,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetAttackDelayToBehaviorTree( float Delay ); // AttackDelay 값을 블랙보드에 설정하는 함수
 	
+	// 피격용 Overlay 머티리얼 == 피격시 머터리얼 덧씌우기
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	class UMaterialInterface* HitOverlayMaterial;
+	FTimerHandle HitFlashTimerHandle;
+
+	// 히트시 오버레이 덧씌울 함수
+	void SetHitOverlay();
+	// 오버레이를 다시 제거할 함수
+	void ClearHitOverlay();
+	
 	// 로그 관리 함수
 	float BattleStartTime = 0.f;
 	bool bIsInBattle = false;

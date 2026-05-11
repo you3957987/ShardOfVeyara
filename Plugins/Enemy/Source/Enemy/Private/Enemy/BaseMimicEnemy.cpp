@@ -60,6 +60,9 @@ void ABaseMimicEnemy::BeginPlay()
 		HealthBarWidget->SetVisibility(false);
 	}
 	
+	// 혹시 모르니 한번 더 태그 제거 
+	Tags.Remove("Enemy");
+	
 	Super::BeginPlay();
 }
 
@@ -187,6 +190,9 @@ void ABaseMimicEnemy::WakeUp()
 		HealthBarWidget->SetVisibility(true);
 	}
 	
+	// 태그 제거 및 추가
+	Tags.Remove("Mimic");
+	Tags.Add("Enemy");
 }
 #if WITH_EDITOR
 void ABaseMimicEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)

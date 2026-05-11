@@ -82,9 +82,15 @@ protected:
 	// 탐사중 Follow -> Battle 상태 전환 대사 데이터
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	class UDataTable* Travel_FollowToBattleDialogue;
+	// 탐사중 보스전 시작 대사 데이터
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	class UDataTable* Travel_BattleStartBoss;
 	// 탐사중 Battle -> Follow 상태 전환 대사 데이터
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	class UDataTable* Travel_BattleToFollowDialogue;
+	// 탐사중 보스전 종료 대사 데이터
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	class UDataTable* Travel_BattleEndBoss;
 	// 탐사중 아이템 발견 대사 데이터 목록 
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	class UDataTable* TravelItemDetectDataTable;
@@ -165,10 +171,10 @@ public:
 	void Travel_ItemDetect(AActor* DetectedItem, const FVector& PingSpawnLocation);
 	// 외부에서 Follow -> Battle 상태 전환 대사 호출
 	UFUNCTION(BlueprintCallable)
-	void Travel_FollowToBattle();
+	void Travel_FollowToBattle( bool bBoss );
 	// 외부에서 Battle -> Follow 상태 전환 대사 호출
 	UFUNCTION(BlueprintCallable)
-	void Travel_BattleToFollow();
+	void Travel_BattleToFollow( bool bBoss );
 	// 탐험시 대사. 다이얼로그 ID로 호출
 	UFUNCTION(BlueprintCallable)
 	void Travel_StartSmallConversation(FName DialogueID);
