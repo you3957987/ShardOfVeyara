@@ -587,8 +587,8 @@ void ABossSkeletonMage::HandleGravityAttack(float DeltaTime)
 	if (bIsGravityAttackActive)
 	{
 		// 디버그 캡슐 그리기는 매 프레임 실행 (시각화 유지용)
-		DrawDebugCapsule(GetWorld(), GravityAttackCenter, GravityHalfHeight, GravityRadius, 
-			FQuat::Identity, FColor::Purple, false, DeltaTime * 2.f, 0, 1.0f);
+		//DrawDebugCapsule(GetWorld(), GravityAttackCenter, GravityHalfHeight, GravityRadius, 
+		//FQuat::Identity, FColor::Purple, false, DeltaTime * 2.f, 0, 1.0f);
 
 		// 범위 체크
 		TArray<FOverlapResult> OverlapResults;

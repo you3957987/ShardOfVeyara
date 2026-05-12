@@ -11,42 +11,50 @@ struct FBossMagicSwordManAttackStruct
 	
 	// 근점 공격 - 3개중 랜덤
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float CloseAttack = 10.0f;
+	float CloseAttackWeight = 10.0f;
+	// 대시 공격 - 3개중 랜덤
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float DashAttackWeight = 10.0f;
+	// 근점 띄우기 공격
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float CloseJumpUpAttackWeight = 10.0f;
+	// 대시 띄우기 공격
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float DashJumpUpAttackWeight = 10.0f;
+	// 점프 공격
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")	
+	float JumpAttackWeight = 10.0f;
+	// 가드 패턴
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float GuardWeight = 10.0f;
+	// 궁극기 패턴
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float PowerAttackWeight = 10.0f;
+	// 원거리 검기 공격 패턴
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float BladeWaveAttackWeight = 10.0f;
+	
 	// 근접 공격 딜레이	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float CloseAttackDelay = 6.f;
 	
-	// 대시 공격 - 3개중 랜덤
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float DashAttack = 10.0f;
 	// 대시 공격 딜레이
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float DashAttackDelay = 6.f;
 	
-	// 근점 띄우기 공격
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float CloseJumpUpAttack = 10.0f;
 	// 근점 띄우기 공격 딜레이
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float CloseJumpUpAttackDelay = 6.f;
 	
-	// 대시 띄우기 공격
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float DashJumpUpAttack = 10.0f;
+	
 	// 대시 띄우기 공격 딜레이
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float DashJumpUpAttackDelay = 6.f;
 	
-	// 점프 공격
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")	
-	float JumpAttack = 10.0f;
 	// 점프 공격 딜레이
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float JumpAttackDelay = 6.f;
 	
-	// 가드 패턴
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float Guard = 10.0f;
 	// 가드 후 딜레이 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float GuardDelay = 2.f;
@@ -55,11 +63,8 @@ struct FBossMagicSwordManAttackStruct
 	float GuardDuration = 5.f;
 	// 반격 발동에 필요한 최대 대미지
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float MaxDamageToReaction = 10.f;
+	float MaxDamageToReaction = 30.f;
 	
-	// 궁극기 패턴
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float PowerAttack = 10.0f;
 	// 궁극기 틱 대미지
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float PowerAttackTickDamage = 8.f;
@@ -70,9 +75,6 @@ struct FBossMagicSwordManAttackStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float PowerAttackFinishDamage = 30.f;
 	
-	// 원거리 검기 공격 패턴
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float BladeWaveAttack = 10.0f;
 	// 원거리 검기 공격 딜레이
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float BladeWaveAttackDelay = 1.0f;
