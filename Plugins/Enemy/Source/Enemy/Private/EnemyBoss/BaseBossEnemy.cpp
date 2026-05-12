@@ -92,8 +92,8 @@ void ABaseBossEnemy::PollInit(float DeltaTime)
 			if (DeadInterface)
 			{
 				// 이전에 바인딩된 게 있다면 제거하고 등록 (중복 방지 안전장치)
-				DeadInterface->GetOnPlayerDeadDelegate().RemoveDynamic(this, &ABaseBossEnemy::PlayerDeadLog);
-				DeadInterface->GetOnPlayerDeadDelegate().AddDynamic(this, &ABaseBossEnemy::PlayerDeadLog);
+				DeadInterface->ReturnOnPlayerDeadDelegate().RemoveDynamic(this, &ABaseBossEnemy::PlayerDeadLog);
+				DeadInterface->ReturnOnPlayerDeadDelegate().AddDynamic(this, &ABaseBossEnemy::PlayerDeadLog);
             
 				UE_LOG(LogTemp, Error, TEXT("asdasdsad"));
 				
@@ -147,7 +147,6 @@ void ABaseBossEnemy::OnPlayerDetectOverlapBegin(UPrimitiveComponent* OverlappedC
 	}
 }
 
-
 float ABaseBossEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 	class AController* EventInstigator, AActor* DamageCauser)
 {
@@ -176,6 +175,8 @@ float ABaseBossEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 		{
 			BossHealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 		}
+		
+		SetHitOverlay(); // 히트 오버레이 설정
 		
 		UEnemyLogManager::EnemyLog( GetLogTypeFromEnemyType(), 
 		FString::Printf(TEXT("[%s]가 [%.f] 대미지 받음 (%.f / %.f)"), 
@@ -266,6 +267,29 @@ void ABaseBossEnemy::StartFocusPlayerAfterAttack()
 	bFocusPlayerAfterAttack = true; // 공격 후 포커스 시작 플래그를 true로 설정
 }
 
+void ABaseBossEnemy::ChangePlayerLockOn(bool bLockOn)
+{
+	if (TargetCharacter)
+	{
+		IInteractionInterface* InteractionTarget = Cast<IInteractionInterface>(TargetCharacter);
+		if (InteractionTarget)
+		{
+			// 1. 상대방의 델리게이트 참조를 가져옵니다.
+			FOnLockOnStateChanged& LockOnDelegate = InteractionTarget->GetLockOnStateChangedDelegate();
+
+			// 2. IsBound()를 통해 구독 중인 대상(플레이어의 로직 등)이 있는지 확인합니다.
+			if (LockOnDelegate.IsBound())
+			{
+				LockOnDelegate.Broadcast(bLockOn);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("LockOn Delegate is NOT bound in TargetCharacter!"));
+			}
+		}
+	}
+}
+
 // 공격 전에 한번씩 호출
 void ABaseBossEnemy::UpdateMotionWarpTarget()
 {
@@ -352,6 +376,25 @@ void ABaseBossEnemy::UpdateMotionWarpTargetToFront()
 	}
 }
 
+void ABaseBossEnemy::SetHitOverlay()
+{
+	if (GetMesh() && HitOverlayMaterial)
+	{
+		GetMesh()->SetOverlayMaterial(HitOverlayMaterial);
+		
+		// 0.2초 후에 ClearHitOverlay 함수를 호출하여 오버레이 제거
+		GetWorld()->GetTimerManager().SetTimer(HitFlashTimerHandle, this,
+			&ABaseBossEnemy::ClearHitOverlay, 0.2f, false);
+	}
+}
+
+void ABaseBossEnemy::ClearHitOverlay()
+{
+	if (GetMesh())
+	{
+		GetMesh()->SetOverlayMaterial(nullptr);
+	}
+}
 
 void ABaseBossEnemy::TestDeadLogic()
 {

@@ -4,10 +4,11 @@
 #include "GameFramework/Character.h"
 #include "EnemyLogManager.h"
 #include "Interface/ItemDropInterface.h"
+#include "Interface/InteractionInterface.h"
 #include "BaseBossEnemy.generated.h"
 
 UCLASS()
-class ENEMY_API ABaseBossEnemy : public ACharacter, public IItemDropInterface
+class ENEMY_API ABaseBossEnemy : public ACharacter, public IItemDropInterface, public IInteractionInterface
 {
 	GENERATED_BODY()
 
@@ -93,6 +94,16 @@ protected:
 	FTimerHandle DeathTimerHandle;
 	void SpawnDeadEffectAndDestroy();
 
+	// 피격용 Overlay 머티리얼 == 피격시 머터리얼 덧씌우기
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	class UMaterialInterface* HitOverlayMaterial;
+	FTimerHandle HitFlashTimerHandle;
+
+	// 히트시 오버레이 덧씌울 함수
+	void SetHitOverlay();
+	// 오버레이를 다시 제거할 함수
+	void ClearHitOverlay();
+	
 public:
 	ABaseBossEnemy();
 	virtual void Tick(float DeltaTime) override;
@@ -125,6 +136,14 @@ public:
 	// 공격 후 플레이어 주시 시작 함수
 	UFUNCTION(BlueprintCallable)
 	void StartFocusPlayerAfterAttack(); 
+	
+	// 플레이어랑 상호작용 인터페이스
+	UPROPERTY()
+	FOnLockOnStateChanged OnLockOnStateChanged;
+	// 인터페이스 함수 오버라이드 선언
+	virtual FOnLockOnStateChanged& GetLockOnStateChangedDelegate() override { return OnLockOnStateChanged; }
+	// 플레이어 락온 상태 변경 함수 
+	void ChangePlayerLockOn( bool bLockOn );
 	
 	// 로그 관리 
 	float BattleStartTime = 0.f;

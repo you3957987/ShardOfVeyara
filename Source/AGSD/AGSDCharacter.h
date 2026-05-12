@@ -17,6 +17,7 @@
 #include "Interface/PetConversationInterface.h"
 #include "Interface/PlayerDeadInterface.h"
 #include "Interface/ItemDropInterface.h"
+#include "Interface/InteractionInterface.h"
 #include "SpearComboData.h"
 #include "AGSDCharacter.generated.h"
 
@@ -34,7 +35,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
  */
 UCLASS(abstract)
 class AGSD_API AAGSDCharacter : public ACharacter, public IPetConversationInterface, public IPlayerDeadInterface
-	, public IItemDropInterface
+	, public IItemDropInterface, public IInteractionInterface
 {
 	GENERATED_BODY()
 
@@ -358,7 +359,15 @@ public:
 	// 로그 관련 인터페이스 함수 구현
 	UPROPERTY()
 	FOnPlayerDeadSignature OnPlayerDead;
-	virtual FOnPlayerDeadSignature& GetOnPlayerDeadDelegate() override { return OnPlayerDead; }
+	virtual FOnPlayerDeadSignature& ReturnOnPlayerDeadDelegate() override { return OnPlayerDead; }
+	
+	// 락온 상태 변경 인터페이스 구현
+	UPROPERTY()
+	FOnLockOnStateChanged OnLockOnStateChanged;
+	virtual FOnLockOnStateChanged& GetLockOnStateChangedDelegate() override { return OnLockOnStateChanged; }
+
+	UFUNCTION()
+	void HandleLockOn(bool bLockOn);
 	
 	// 적이 드롭할 아이템 데이터 테이블
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemDrop")
@@ -376,6 +385,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	float WeaponDamage();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void WeaponAttack();
 
 	UFUNCTION()
 	void AddDamage(float addDamage);

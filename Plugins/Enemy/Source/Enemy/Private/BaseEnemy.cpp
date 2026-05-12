@@ -119,8 +119,8 @@ void ABaseEnemy::PollInit()
 			if (DeadInterface && ItemDropInterface)
 			{
 				// 이전에 바인딩된 게 있다면 제거하고 등록 (중복 방지 안전장치)
-				DeadInterface->GetOnPlayerDeadDelegate().RemoveDynamic(this, &ABaseEnemy::PlayerDeadLog);
-				DeadInterface->GetOnPlayerDeadDelegate().AddDynamic(this, &ABaseEnemy::PlayerDeadLog);
+				DeadInterface->ReturnOnPlayerDeadDelegate().RemoveDynamic(this, &ABaseEnemy::PlayerDeadLog);
+				DeadInterface->ReturnOnPlayerDeadDelegate().AddDynamic(this, &ABaseEnemy::PlayerDeadLog);
 				
 				// 에너미가 죽은거 플레이어 알려주는거는 SpawnDeadEffectAndDestroy에서 직접
 				// 알려줌
@@ -200,6 +200,8 @@ float ABaseEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& Dama
 			return DamageToApply;
 		}
 	}
+	
+	SetHitOverlay(); // 히트 오버레이 설정
 	
 	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
 		FString::Printf(TEXT("적 [%s]가 [%.f] 대미지 받음 (%.f / %.f)"), 
@@ -319,6 +321,26 @@ void ABaseEnemy::SetAttackDelayToBehaviorTree(float Delay)
 	if (BlackboardComp)	
 	{
 		BlackboardComp->SetValueAsFloat(TEXT("AttackDelay"), Delay);
+	}
+}
+
+void ABaseEnemy::SetHitOverlay()
+{
+	if (GetMesh() && HitOverlayMaterial)
+	{
+		GetMesh()->SetOverlayMaterial(HitOverlayMaterial);
+		
+		// 0.2초 후에 ClearHitOverlay 함수를 호출하여 오버레이 제거
+		GetWorld()->GetTimerManager().SetTimer(HitFlashTimerHandle, this,
+			&ABaseEnemy::ClearHitOverlay, 0.2f, false);
+	}
+}
+
+void ABaseEnemy::ClearHitOverlay()
+{
+	if (GetMesh())
+	{
+		GetMesh()->SetOverlayMaterial(nullptr);
 	}
 }
 

@@ -270,6 +270,8 @@ void AAGSDCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	OnLockOnStateChanged.AddDynamic(this, &AAGSDCharacter::HandleLockOn);
+
 	PC = Cast<AAGSDPlayerController>(GetController());
 	GI = Cast<USOVGameInstance>(GetGameInstance());
 
@@ -1059,3 +1061,22 @@ void AAGSDCharacter::HandleEnemyDeadAndDropItem_Implementation(AActor* DeadActor
 }
 
 //--------------
+
+void AAGSDCharacter::HandleLockOn(bool bLockOn)
+{
+	if (PC)
+	{
+		if (bLockOn)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("LockOn True - Note: Manual lock-on logic might be needed if this should trigger a lock-on"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("LockOn False - Releasing LockOn"));
+			if (LockedTarget)
+			{
+				ToggleLockOn();
+			}
+		}
+	}
+}
