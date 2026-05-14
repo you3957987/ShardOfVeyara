@@ -68,13 +68,23 @@ void ABossSkeletonMage::Tick(float DeltaTime)
 
 				// 공격한 목록에 추가하여 중복 피해를 방지합니다.
 				HittedActors.Add(OverlappingActor);
-
+				
 				bIsAttacking = false; // 공격 상태를 종료합니다.
 
 				// --- 플레이어 밀치기 효과 시작 ---
 				ACharacter* PlayerCharacter = Cast<ACharacter>(OverlappingActor);
 				if (PlayerCharacter)
 				{
+					PlayerCharacter->StopAnimMontage(); // 현재 재생 중인 몽타주 중지
+					
+					// 2. 컨트롤러를 가져와서 이동 입력 무시 상태 해제
+					if (APlayerController* PC = Cast<APlayerController>(PlayerCharacter->GetController()))
+					{
+						PC->SetIgnoreMoveInput(false);
+						// 필요하다면 시점 회전도 함께 풉니다.
+						// PC->SetIgnoreLookInput(false);
+					}
+					
 					// 1. 밀어낼 방향 계산 (보스 -> 플레이어)
 					FVector PushDirection = PlayerCharacter->GetActorLocation() - GetActorLocation();
 					PushDirection.Z = 0; // 수평 방향으로만 밀도록 Z값을 0으로 설정
@@ -86,6 +96,7 @@ void ABossSkeletonMage::Tick(float DeltaTime)
 					// 3. 플레이어 캐릭터를 밀어냄
 					// bXYOverride와 bZOverride를 true로 설정하여 현재 속도를 무시하고 새로운 속도를 적용합니다.
 					PlayerCharacter->LaunchCharacter(LaunchVelocity, true, true);
+					
 				}
 				// --- 플레이어 밀치기 효과 끝 ---
 				

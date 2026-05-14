@@ -5,7 +5,7 @@
 
 UBTTask_GravityAttack::UBTTask_GravityAttack()
 {
-	NodeName = "GravityAttack";
+	NodeName = "SkeletonMageGravityAttack";
 
 	bNotifyTick = true;
 }
