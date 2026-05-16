@@ -268,8 +268,8 @@ void ABaseFlyingPet::CheckSurroundingEnemy()
 			// 배틀 상태가 아니면 타겟과의 시야 체크를 해서 벽으로 가려진 적은 무시하도록 (배틀 상태에서는 일단 감지된 적은 모두 적으로 간주)
 			if ( PetState != EPetState::EPS_Battle && TraceCharacterToTarget( Actor ) == false ) continue;
 			
-			// 미믹 몬스터는 무시
-			if (Actor->ActorHasTag("Mimic")) continue;
+			// 미믹 몬스터 또는 버로우 몬스터는 무시
+			if (Actor->ActorHasTag("Mimic") || Actor->ActorHasTag("Burrow")) continue;
 			
 			// Boss 태그가 있다면 무시 
 			if (Actor->ActorHasTag("Boss"))

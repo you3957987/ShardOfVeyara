@@ -28,7 +28,10 @@ class ENEMY_API ABaseDelayedBurstProjectile : public AActor
 	// 폭발 시 재생되는 나이아가라 이펙트
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	class UNiagaraSystem* ExplosionEffect;
-	
+
+	// 폭발시 일어날 2D 사운드
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	class USoundBase* ExplosionSound;
 
 	// 타이머에 의해 호출되어 실제 폭발을 수행하는 함수
 	UFUNCTION()

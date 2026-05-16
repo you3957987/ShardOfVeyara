@@ -66,11 +66,16 @@ void ABaseBurrowEnemy::BeginPlay()
 			break; // 찾았으니 루프 종료
 		}
 	}
+	
+	Tags.Add(FName("Burrow")); // 버로우 태그 추가
 }
 
 void ABaseBurrowEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	//bIsRecentlyUnburrowed 계속 로그 찍기 
+	UE_LOG( LogTemp, Warning, TEXT("bIsRecentlyUnburrowed : %s"), bIsRecentlyUnburrowed ? TEXT("true") : TEXT("false") );
 }
 
 float ABaseBurrowEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -82,6 +87,8 @@ float ABaseBurrowEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const
 void ABaseBurrowEnemy::OnBeginOverlapAttackCollisionSphere(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if ( bIsRecentlyUnburrowed == true ) return;
+	
 	if (OtherActor && OtherActor != this && OtherActor->ActorHasTag(FName("Player")))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Attack Sphere Overlapped with Player!"));
@@ -127,6 +134,9 @@ void ABaseBurrowEnemy::OnEndOverlapChaseRangeSphere(UPrimitiveComponent* Overlap
 		if ( bIsBurrowing == false )
 		{
 			PlayBurrowMontage();
+			
+			// 타이머 정지 (발사 중단) 
+			GetWorldTimerManager().ClearTimer(FireBreathTimerHandle);
 		}
 	}
 }
@@ -162,7 +172,11 @@ void ABaseBurrowEnemy::FinishUnburrow()
 	bIsBurrowing = false;
 	
 	if ( HealthBarWidget ) HealthBarWidget->SetVisibility(true);
-
+	
+	// --- 1초 공격 제한 로직 추가 ---
+	bIsRecentlyUnburrowed = true; // 현재 "공격 제한" 상태임
+	GetWorldTimerManager().SetTimer(UnburrowDelayTimerHandle, this, &ABaseBurrowEnemy::ResetUnburrowDelay, 3.0f, false);
+	
 	if ( BurrowAttackCollisionSphere )
 	{
 		// 플레이어 액터 감지 
@@ -200,11 +214,11 @@ void ABaseBurrowEnemy::FinishUnburrow()
 						UEnemyLogManager::EnemyLog(EEnemyLogType::Burrow, 
 							FString::Printf(TEXT("적 [%s]가 [%.f] 대미지 - 언버로우"), 
 								*MeshName, 
-								AttackDamage));
+								UnburrowAttackDamage));
 					}
 					
-					// 대미지 적용 (기존 AttackDamage 사용)
-					UGameplayStatics::ApplyDamage(PlayerCharacter, 10, GetController(),
+					// 대미지 적용 
+					UGameplayStatics::ApplyDamage(PlayerCharacter, UnburrowAttackDamage, GetController(),
 						this, UDamageType::StaticClass());
 					
 					// 로그 출력

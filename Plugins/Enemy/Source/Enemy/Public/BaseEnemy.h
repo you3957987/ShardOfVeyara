@@ -157,6 +157,8 @@ public:
 	// 스폰 효과 사용 여부. 기본은 트루이지만 스폰 몽타주 안넣으면 false랑 동일
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	bool bUseSpawnMontage = false;
+	// 스폰 몽타주로 스폰중에는 대미지 안 받도록 하게 하는 변수
+	bool bIsSpawning = false;
 	// 스폰 몽타주 끝난 후 AI 컨트롤러 빙의 함수 - 애님 노티파이에서 호출
 	UFUNCTION( BlueprintCallable )
 	void SpawnAndPossessAIController();
