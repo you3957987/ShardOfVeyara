@@ -13,5 +13,6 @@ enum class EHoldingWeapon : uint8 // 클래스 이름이 아닌, ENUM 타입 이
 	None        UMETA(DisplayName = "None"),
 	Spear        UMETA(DisplayName = "Spear"),
 	Sickle        UMETA(DisplayName = "Sickle"),
-	Potion        UMETA(DisplayName = "Potion")
+	Potion        UMETA(DisplayName = "Potion"),
+	Touch         UMETA(DisplayName = "Touch")
 };
