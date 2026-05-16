@@ -36,6 +36,7 @@ protected:
 	class UButton* DialogueChoiceButton_0;
 	UPROPERTY(meta = (BindWidget))
 	class UButton* DialogueChoiceButton_1;
+	
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	UWidgetAnimation* FadeInAnim;
@@ -69,10 +70,18 @@ public:
 	void OnPressedLogButton();
 	FOnSubtitleActionDelegate OnLogClicked;
 
+	UFUNCTION(BlueprintCallable)
+	void OnPressedConversationButton();
+	FOnSubtitleActionDelegate OnConversationButtonClicked;
+	
 	// 0번은 기본 대사창, 1번은 선택지 대사창
 	UPROPERTY(meta = (BindWidget))
 	class UWidgetSwitcher* WidgetSwitcher;
-
+	
+	// 대화창 클릭시 다음 대화로 넘어가기
+	UPROPERTY(meta = (BindWidget))
+	class UButton* ConversationButton;
+	
 	void SetupChoiceDialogueText(const FText& Choice0Text, const FText& Choice1Text);
 	UFUNCTION(BlueprintCallable)
 	void OnClickDialogueChoice_0();

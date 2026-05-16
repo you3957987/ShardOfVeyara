@@ -57,6 +57,11 @@ protected:
 	// 펫이랑 대상 사이에 벽이 있는지 체크하는 함수
 	UFUNCTION()
 	void CheckLineOfSightToTarget();
+	int32 LineOfSightBlockedCount = 0;
+	
+	// 벽이 사이에 있을 경우 순간이동시 나타날 케스케이드 이펙트
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	class UParticleSystem* TeleportEffect;
 	
 	// 루트 컴포넌트
 	UPROPERTY(VisibleAnywhere)

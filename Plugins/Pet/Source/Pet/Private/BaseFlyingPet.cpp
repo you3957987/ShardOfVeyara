@@ -77,7 +77,7 @@ void ABaseFlyingPet::BeginPlay()
 		LineOfSightTimerHandle, 
 		this, 
 		&ABaseFlyingPet::CheckLineOfSightToTarget, 
-		3.0f, // 3초 간격
+		2.0f, // 2초 간격
 		true  // 반복 여부
 	);
 	
@@ -229,21 +229,47 @@ void ABaseFlyingPet::CheckLineOfSightToTarget()
 	
 	if ( bHit == true )
 	{
-		// 타겟의 뒤쪽 방향 벡터
-		FVector TargetBackward = -TargetActor->GetActorForwardVector();
+		LineOfSightBlockedCount++;
 		
-		// 새로운 위치 계산: 타겟 위치 + (뒤쪽 방향 * 100) + (약간의 높이 보정)
-		// 높이 보정을 위해 FollowSettings.UpOffset을 활용하거나 적절한 값을 더해줍니다.
-		FVector NewLocation = TargetActor->GetActorLocation() 
-			+ (TargetBackward * 100.0f) 
-			+ FVector(0.0f, 0.0f, FollowSettings.UpOffset);
+		if (LineOfSightBlockedCount >= 2)
+		{
+			FVector TargetLocation = TargetActor->GetActorLocation();
+			FVector TargetForward = TargetActor->GetActorForwardVector();
+			FVector TargetRight = TargetActor->GetActorRightVector();
 
-		// 순간이동 실행
-		SetActorLocation(NewLocation, false, nullptr, ETeleportType::TeleportPhysics);
-		
-		// 로그 확인 (선택 사항)
-		UE_LOG(LogTemp, Warning, TEXT("Pet Teleported: Line of sight blocked by %s"), *Hit.GetActor()->GetName());
+			// 1. 가고 싶은 이상적인 위치 (FollowSettings 기준)
+			FVector DesiredLocation = TargetLocation
+				- (TargetForward * FollowSettings.Distance)
+				+ (TargetRight * FollowSettings.SideOffset)
+				+ FVector(0.0f, 0.0f, FollowSettings.UpOffset);
+
+			// 2. 캐릭터에서 목표 지점으로 레이를 쏴서 "실제로 갈 수 있는 끝점" 찾기
+			FHitResult SweepHit;
+			FVector TraceStart = TargetLocation + FVector(0.0f, 0.0f, FollowSettings.UpOffset);
+			FVector FinalLocation = DesiredLocation;
+
+			if (GetWorld()->LineTraceSingleByChannel(SweepHit, TraceStart, DesiredLocation, ECC_Visibility, Params))
+			{
+				// 벽에 부딪혔다면, 그 충돌 지점에서 살짝 안쪽으로 들어온 위치를 최종 목적지로 설정
+				FinalLocation = SweepHit.Location + (SweepHit.Normal * 20.0f);
+			}
+
+			// 3. 순간이동 실행 (이때는 이미 안전한 위치를 계산했으므로 bSweep은 false여도 됨)
+			SetActorLocation(FinalLocation, false, nullptr, ETeleportType::TeleportPhysics);
+			
+			// 로그 확인 (선택 사항)
+			UE_LOG(LogTemp, Warning, TEXT("Pet Teleported: Line of sight blocked by %s"), *Hit.GetActor()->GetName());
+			
+			LineOfSightBlockedCount = 0; // 순간이동 후 카운트 초기화
+			// 순간이동 이펙트 재생
+			if (TeleportEffect)
+			{
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TeleportEffect, 
+					FinalLocation, FRotator::ZeroRotator);
+			}
+		}
 	}
+	else LineOfSightBlockedCount = 0; // 시야가 확보된 경우 카운트 초기화
 }
 
 void ABaseFlyingPet::CheckSurroundingEnemy()

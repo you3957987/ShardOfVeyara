@@ -3,6 +3,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Components/AudioComponent.h"
+#include "Components/Button.h"
 #include "Components/ScrollBox.h"
 #include "Components/WidgetSwitcher.h"
 #include "FlyingPet/CuteWhalePet.h"
@@ -47,6 +48,9 @@ void UPetTalkComponent::BeginPlay()
 			
 			ConversationSubtitleInstance->OnSkipClicked.RemoveDynamic(this, &UPetTalkComponent::EndConversation);
 			ConversationSubtitleInstance->OnSkipClicked.AddDynamic(this, &UPetTalkComponent::EndConversation);
+			
+			ConversationSubtitleInstance->OnConversationButtonClicked.RemoveDynamic(this, &UPetTalkComponent::SkipCurrentDialogue);
+			ConversationSubtitleInstance->OnConversationButtonClicked.AddDynamic(this, &UPetTalkComponent::SkipCurrentDialogue);
 
 			ConversationSubtitleInstance->OnLogClicked.RemoveDynamic(this, &UPetTalkComponent::OnPressedLogButton);
 			ConversationSubtitleInstance->OnLogClicked.AddDynamic(this, &UPetTalkComponent::OnPressedLogButton);
@@ -348,13 +352,18 @@ void UPetTalkComponent::StartConversation(FName DialogueID)
         	{
         		// 위젯을 선택지 모드로 전환 (위젯 스위처 1번) 및 텍스트 설정 함수 호출 필요
         		ConversationSubtitleInstance->SetupChoiceDialogueText(RowData->Choice1_Text, RowData->Choice2_Text);
-                
-        		// 만약 위젯 코드를 직접 접근한다면:
+        		
         		if (ConversationSubtitleInstance->WidgetSwitcher)
         		{
-        			ConversationSubtitleInstance->WidgetSwitcher->SetActiveWidgetIndex(1); // 선택지 화면
-        			// 버튼 텍스트 설정 로직 필요
+        			ConversationSubtitleInstance->WidgetSwitcher->SetActiveWidgetIndex(1); // 선택지 화면으로 전환
         		}
+        		
+        		if (ConversationSubtitleInstance->ConversationButton)
+        		{
+        			// 마우스 클릭을 통과시켜 뒤의 버튼이 눌리게 함
+        			ConversationSubtitleInstance->ConversationButton->SetVisibility(ESlateVisibility::Collapsed);
+        		}
+        		
         		// 대화 로그에 추가할 정보 저장
         		SpeakerName_Text = RowData->SpeakerName;
         		PendingChoice1_Text = RowData->Choice1_Text;
@@ -375,12 +384,15 @@ void UPetTalkComponent::StartConversation(FName DialogueID)
         		{
         			ConversationSubtitleInstance->WidgetSwitcher->SetActiveWidgetIndex(0);
         		}
+        		if (ConversationSubtitleInstance->ConversationButton)
+				{
+					// 선택지 모드가 아니면 대화창 전체를 클릭 가능하게 설정
+					ConversationSubtitleInstance->ConversationButton->SetVisibility(ESlateVisibility::Visible);
+				}
         	}
-
-
+        	
         	// 대화 로그에 추가
 			AddDialogueToConversationLog(RowData->SpeakerName, RowData->DialogueText);
-        	
         }
 
     	//  음성 재생 및 지속 시간 계산
