@@ -365,7 +365,9 @@ public:
 	UPROPERTY()
 	FOnLockOnStateChanged OnLockOnStateChanged;
 	virtual FOnLockOnStateChanged& GetLockOnStateChangedDelegate() override { return OnLockOnStateChanged; }
-
+	
+	virtual void StopAnimMontage(UAnimMontage* AnimMontage = nullptr) override;
+	
 	UFUNCTION()
 	void HandleLockOn(bool bLockOn);
 	

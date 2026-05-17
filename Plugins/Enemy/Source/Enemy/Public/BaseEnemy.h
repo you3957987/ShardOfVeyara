@@ -94,10 +94,10 @@ public:
 	EEnemyType EnemyType = EEnemyType::EET_Melee;
 	// 최대 체력
 	UPROPERTY(EditAnywhere, Category="자체설정")
-	float MaxHealth = 100.f;
+	float MaxHealth = 50.f;
 	// 현재 체력
 	UPROPERTY(EditAnywhere, Category="자체설정")
-	float Health = 100.f;
+	float Health = 50.f;
 	// 이동 속도 = 여기서 값 바꾸면 자동으로 캐릭터 무브먼트 컴포넌트의 MaxWalkSpeed도 바뀜
 	UPROPERTY(EditAnywhere, Category="자체설정")
 	float MoveSpeed = 300.f;
@@ -106,17 +106,17 @@ public:
 	float AttackRange = 100.f;
 	// AI가 플레이어를 인식하는 범위
 	UPROPERTY(EditAnywhere, Category="자체설정")
-	float DetectRange = 700.f; 
+	float DetectRange = 800.f; 
 	// AI가 플레이어를 추적하는 범위
 	UPROPERTY(EditAnywhere, Category="자체설정")
-	float ChaseRange = 1000.f;
+	float ChaseRange = 1500.f;
 	// 공격 애니메이션 몽타주 배열
 	UPROPERTY(EditDefaultsOnly, Category="자체설정")
 	TArray<TObjectPtr<class UAnimMontage>> AttackMontages;
 	virtual UAnimMontage* Attack(); // 공격 함수. 
 	// 공격 딜레이
 	UPROPERTY(EditAnywhere, Category="자체설정")
-	float AttackDelay = 1.5f;
+	float AttackDelay = 2.0f;
 	// 패트롤 딜레이
 	UPROPERTY(EditAnywhere, Category="자체설정")
 	float PatrolDelay = 3.f;
@@ -157,6 +157,8 @@ public:
 	// 스폰 효과 사용 여부. 기본은 트루이지만 스폰 몽타주 안넣으면 false랑 동일
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	bool bUseSpawnMontage = false;
+	// 스폰 몽타주로 스폰중에는 대미지 안 받도록 하게 하는 변수
+	bool bIsSpawning = false;
 	// 스폰 몽타주 끝난 후 AI 컨트롤러 빙의 함수 - 애님 노티파이에서 호출
 	UFUNCTION( BlueprintCallable )
 	void SpawnAndPossessAIController();

@@ -134,6 +134,8 @@ void ABaseSlimeEnemy::SpawnDeadEffectAndDestroy()
 				// 새 슬라임에 적용
 				NewSlime->MaxHealth = NewMaxHealth;
 				
+				NewSlime->Health = NewMaxHealth; // 현재 체력도 최대 체력으로 초기화
+				
 				// 5. AI 컨트롤러 활성화 (바로 움직이게 하기 위함)
 				NewSlime->SpawnDefaultController();
 			}

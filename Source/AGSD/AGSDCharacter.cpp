@@ -176,7 +176,7 @@ bool AAGSDCharacter::CheckSingleInput(const TArray<FInputBufferEntry>& Buffer, F
 void AAGSDCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
+	
 	// --- [락온 카메라 회전 처리] ---
 	if (LockedTarget)
 	{
@@ -572,6 +572,8 @@ ESpearAttackDirection AAGSDCharacter::GetAttackDirection()
 
 void AAGSDCharacter::ProcessAttackInput()
 {
+	// 공중 상태 체크
+	//if (GetCharacterMovement() && GetCharacterMovement()->IsFalling()) return;
 	
 	// 공격 중이거나 복귀 중인 경우
 	if (bIsAttacking || bIsRecovering) 
@@ -1058,6 +1060,20 @@ void AAGSDCharacter::HandleEnemyDeadAndDropItem_Implementation(AActor* DeadActor
 			}
 		}
 	}
+}
+
+void AAGSDCharacter::StopAnimMontage(UAnimMontage* AnimMontage)
+{
+	Super::StopAnimMontage(AnimMontage);
+	
+	//ResetAttackState();
+	bIsAttacking = false;
+	bIsRecovering = false;
+	bCanCombo = false;
+	bHasBufferedInput = false;
+	CurrentStageIndex = -1;
+	CurrentComboData = nullptr;
+	Mining = false;
 }
 
 //--------------

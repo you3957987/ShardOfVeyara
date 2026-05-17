@@ -40,7 +40,7 @@ void UBTTask_FocusMove::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 		MoveDir.Normalize();
 
 		// 디버그: 구체 대신 '나아갈 방향'을 화살표로 그리면 확인하기 훨씬 편합니다.
-		DrawDebugDirectionalArrow(GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + (MoveDir * 200.f), 50.f, FColor::Green, false, 0.1f);
+		//DrawDebugDirectionalArrow(GetWorld(), Pawn->GetActorLocation(), Pawn->GetActorLocation() + (MoveDir * 200.f), 50.f, FColor::Green, false, 0.1f);
 
 		// 4. 해당 방향으로 이동 입력 추가
 		Pawn->AddMovementInput(MoveDir, 1.0f);

@@ -9,8 +9,12 @@ class ENEMY_API UBTTask_PushTarget : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 
+	bool bIsAttacking = false;
+
 public:
 	UBTTask_PushTarget();
-	
+
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+	// 틱 태스크
+	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 };

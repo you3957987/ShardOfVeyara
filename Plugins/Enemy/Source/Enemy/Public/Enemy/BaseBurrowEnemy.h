@@ -23,8 +23,6 @@ protected:
 	class USphereComponent* AttackRangePointSphere;
 	
 	class USceneComponent* FireBreathPoint = nullptr;
-	
-	float AttackDamage = 20.f;
 
 public:
 	ABaseBurrowEnemy();
@@ -94,6 +92,18 @@ public:
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	float FanFireBreathAttackDelay = 10.0f;
 	
+	// 공격 대미지
+	UPROPERTY(EditAnywhere, Category="자체설정")
+	float AttackDamage = 10.f;
+	// 공격 대미지
+	UPROPERTY(EditAnywhere, Category="자체설정")
+	float UnburrowAttackDamage = 10.f;
+	
+	bool bIsRecentlyUnburrowed = false; // 언버로우 직후인지 체크하는 변수
+	FTimerHandle UnburrowDelayTimerHandle; // 1초 뒤 변수를 원복할 타이머
+	// 1초 뒤에 호출되어 변수를 false로 만들 함수
+	void ResetUnburrowDelay() { bIsRecentlyUnburrowed = false; }
+
 #if WITH_EDITOR
 	// 에디터에서 프로퍼티가 변경될 때 호출됩니다.
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
