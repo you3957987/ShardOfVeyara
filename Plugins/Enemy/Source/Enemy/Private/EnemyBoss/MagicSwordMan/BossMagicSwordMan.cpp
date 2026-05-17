@@ -1,10 +1,13 @@
 #include "EnemyBoss/MagicSwordMan/BossMagicSwordMan.h"
 
+#include "MotionWarpingComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/SphereComponent.h"
 #include "EnemyProjectile/BaseEnemyProjectile.h"
+#include "Engine/OverlapResult.h"
+#include "Engine/TargetPoint.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 ABossMagicSwordMan::ABossMagicSwordMan()
@@ -15,7 +18,6 @@ ABossMagicSwordMan::ABossMagicSwordMan()
 	PowerAttackCollisionSphere->ShapeColor = FColor::Red;
 	PowerAttackCollisionSphere->SetVisibility(false);
 	PowerAttackCollisionSphere->SetHiddenInGame(false); 
-	
 }
 
 void ABossMagicSwordMan::BeginPlay()
@@ -72,7 +74,25 @@ float ABossMagicSwordMan::TakeDamage(float DamageAmount, struct FDamageEvent con
 		return 0.f; // 대미지 무효화
 	}
 	
-	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	// 2. 가드 중이 아닐 때 실제 대미지 적용
+	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	// 3. 체력 비율 체크를 통한 2페이즈(특수 패턴) 진입 로직
+	if (Health > 0.f && bIsSecondPhaseStarted == false)
+	{
+		// 현재 체력 비율 계산 (MaxHealth가 0이 아님을 전제)
+		float CurrentHealthRatio = Health / MaxHealth;
+
+		if (CurrentHealthRatio <= SecondPhaseHealthThreshold)
+		{
+			bIsSecondPhaseStarted = true; // 중복 실행 방지
+			
+			// 블랙보드 값 업데이트 (StartSecondPhase 함수 호출)
+			StartSecondPhase(); 
+		}
+	}
+	
+	return ActualDamage;
 }
 
 void ABossMagicSwordMan::OnBeginOverlapWeaponCollisionSphere(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -239,6 +259,8 @@ void ABossMagicSwordMan::JumpUpAttackCheck()
 	{
 		// 띄우기 성공 시 공중 공격 패턴으로 전환
 		BlackboardComp->SetValueAsBool("AirAttack", true);
+		
+		BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.AirAttackDelay);
 	}
 }
 
@@ -483,6 +505,126 @@ void ABossMagicSwordMan::StartBladeWave()
 		FRotator SpawnRotation = GetActorRotation();
 		GetWorld()->SpawnActor<ABaseEnemyProjectile>(BladeWaveProjectileClass, SpawnLocation, SpawnRotation);
 	}
+}
+
+void ABossMagicSwordMan::StartSecondPhase()
+{
+	if ( BlackboardComp == nullptr ) return;
+	
+	UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, TEXT("[매직소드맨] 2페이즈 패턴"));
+	
+	BlackboardComp->SetValueAsBool("SecondPhase", true);
+}
+
+UAnimMontage* ABossMagicSwordMan::PlaySecondPhaseMontage()
+{
+	if ( SecondPhaseMontage )
+	{
+		PlayAnimMontage(SecondPhaseMontage);
+		return SecondPhaseMontage;
+	}
+	return nullptr;
+}
+
+void ABossMagicSwordMan::StartHover()
+{
+	if (!HoverLocationPoint)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[소드맨] HoverLocationPoint가 설정되지 않았습니다!"));
+		return;
+	}
+	
+	// 1. 목표 위치 계산 (기준점 + 높이 700)
+	FVector BaseLocation = HoverLocationPoint->GetActorLocation();
+	FVector GoalLocation = BaseLocation + FVector(0.f, 0.f, 700.f);
+
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+	
+	// 2. 모션 워핑 타겟 업데이트 (회전은 현재 보스 회전 유지 또는 타겟 방향)
+	MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation(
+		FName("WarpTarget"), // 몽타주 노티파이에서 사용할 이름
+		GoalLocation,
+		GetActorRotation()
+	);
+}
+
+void ABossMagicSwordMan::SetGravityCharacter()
+{
+	if (!GetCharacterMovement()) return;
+	
+	GetCharacterMovement()->Velocity = FVector::ZeroVector;
+	
+	// 캡슐 콜리전 다시 켜기
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	
+	// 중력값 저장
+	DefaultGravityScaleBeforeHover = GetCharacterMovement()->GravityScale;
+
+	GetCharacterMovement()->GravityScale = 0.05f;
+}
+
+void ABossMagicSwordMan::RushToPlayer()
+{
+	if (!GetCharacterMovement()) return;
+	// 중력 스케일 원상 복구
+	GetCharacterMovement()->GravityScale = DefaultGravityScaleBeforeHover;
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+}
+
+void ABossMagicSwordMan::RushStrike()
+{
+	float DamageRadius = 400.f;     // 공격 범위 반지름
+	// 참고하신 로직의 힘 설정 (필요 시 헤더파일의 AttackStruct 등에 정의하여 사용하세요)
+	float PushForce = 600.f;       // 수평으로 밀어내는 힘
+	float PushUpwardForce = 200.f;  // 위로 띄우는 힘 (참고 코드보다 조금 높게 설정하여 타격감 강화)
+
+	// 1. 발바닥 위치 계산
+	float CapsuleHalfHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+	FVector FootLocation = GetActorLocation() - FVector(0.f, 0.f, CapsuleHalfHeight);
+
+	// 2. 범위 내 모든 액터 감지 (OverlapMulti)
+	TArray<FOverlapResult> OverlapResults;
+	FCollisionShape SphereShape = FCollisionShape::MakeSphere(DamageRadius);
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this); 
+
+	bool bHit = GetWorld()->OverlapMultiByChannel(OverlapResults, FootLocation, FQuat::Identity, ECC_Pawn, SphereShape, QueryParams);
+
+	if (bHit)
+	{
+		for (const FOverlapResult& Result : OverlapResults)
+		{
+			AActor* HitActor = Result.GetActor();
+			if (HitActor && HitActor->ActorHasTag(FName("Player")))
+			{
+				// 3. 대미지 적용
+				UGameplayStatics::ApplyDamage(HitActor, AttackStruct.RushStrikeAttackDamage, 
+					GetController(), this, UDamageType::StaticClass());
+
+				// 4. 플레이어 밀치기 (Radial Launch)
+				ACharacter* PlayerChar = Cast<ACharacter>(HitActor);
+				if (PlayerChar)
+				{
+					// 폭발 중심(FootLocation)에서 플레이어로 향하는 수평 방향 계산
+					FVector PushDirection = PlayerChar->GetActorLocation() - FootLocation;
+					PushDirection.Z = 0.f; // 수평 방향 추출
+					PushDirection.Normalize();
+
+					// 수평 힘 + 수직 힘 합산
+					const FVector LaunchVelocity = (PushDirection * PushForce) + FVector(0.f, 0.f, PushUpwardForce);
+
+					// 플레이어 캐릭터 밀어냄 (기존 속도 무시)
+					PlayerChar->LaunchCharacter(LaunchVelocity, true, true);
+				}
+
+				UEnemyLogManager::EnemyLog(EEnemyLogType::MagicSwordMan, 
+					FString::Printf(TEXT("[소드맨] RushStrike 적중 | 대미지: [%.f] | 밀치기 적용"),  AttackStruct.RushStrikeAttackDamage));
+			}
+		}
+	}
+	if ( bDebugMode == true )DrawDebugSphere(GetWorld(), FootLocation, DamageRadius, 12, FColor::Red, false, 2.0f);
+
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 }
 
 #if WITH_EDITOR
