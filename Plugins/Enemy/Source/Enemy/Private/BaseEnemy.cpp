@@ -79,6 +79,9 @@ void ABaseEnemy::BeginPlay()
 	if ( bUseSpawnMontage == true && SpawnMontage ) // 스폰 몽타주 사용 시
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Spawn Montage Play"));
+		
+		bIsSpawning = true; // 스폰 중 상태로 설정
+		
 		PlayAnimMontage(SpawnMontage);
 		// 체력바 안보이게
 		if ( HealthBarWidget )
@@ -180,6 +183,8 @@ void ABaseEnemy::StartFocusPlayerAfterAttack()
 float ABaseEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, 
 	class AController* EventInstigator, AActor* DamageCauser)
 {
+	if ( bIsSpawning == true ) return 0.0f; // 스폰 몽타주 재생 중이면 대미지 안받도록 함
+	
 	float DamageToApply = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	UE_LOG(LogTemp, Warning, TEXT("Enemy Take Damage : %f"), DamageToApply);
@@ -284,6 +289,8 @@ void ABaseEnemy::SpawnAndPossessAIController()
 	{
 		HealthBarWidget->SetVisibility(true);
 	}
+	
+	bIsSpawning = false; // 스폰 상태 해제
 }
 
 void ABaseEnemy::ShowCharacterMesh()

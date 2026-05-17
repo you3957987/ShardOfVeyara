@@ -23,36 +23,41 @@ struct FBossSkeletonMageAttackStruct
 	float GravityAttackWeight = 5.0f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float TeleportDelay = 5.f;
+	float TeleportDelay = 1.5f;
 	// 텔레포트 최대 거리
 	UPROPERTY(EditAnywhere, Category = "자체설정")
-	float MaxTeleportDist = 500.f;
+	float MaxTeleportDist = 800.f;
 	// 텔레포트 최소 거리
 	UPROPERTY(EditAnywhere, Category = "자체설정")
-	float MinTeleportDist = 300.f;
+	float MinTeleportDist = 500.f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float FireBallDelay = 3.f;
+	float FireBallDelay = 1.f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float SummonEnemyDelay = 7.f;
+	float SummonEnemyDelay = 8.f;
 	// 소환하는 씬 컴포넌트 기준 소환 가능한 최대 거리
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	float MaxSummonDist = 400.f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float GroundAttackDelay = 4.f;
+	float GroundAttackDelay = 1.5f;
 	// 장판 유지 시간
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	float GroundAttackDuration = 3.f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float PushTargetDelay = 3.f;
+	float PushTargetDelay = 0.5f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float GravityAttackDamage = 30.f;
+	float GravityAttackDamage = 15.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float GravityAttackDelay = 5.f;
+	float GravityAttackDelay = 1.5f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float SecondPhaseThunderAttackDamage = 5.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float SecondPhaseMeteorAttackDamage = 10.0f;
 };
 
 UCLASS()
@@ -65,6 +70,8 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void Die() override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+		class AController* EventInstigator, AActor* DamageCauser) override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	FBossSkeletonMageAttackStruct AttackStruct;
@@ -186,5 +193,49 @@ public:
 	float GravityHalfHeight = 700.f;
 	float GravityDuration = 4.8f;
 	float GravityTimer = 0.0f;
+	
+	// 특수 패턴 수행할 체력 비율 0 ~ 1
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	float SecondPhaseHealthThreshold = 0.5f;
+	// 특정 체력 이하로 내려갈 시 실행할 특수 패턴
+	void StartSecondPhase();
+	bool bIsSecondPhaseStarted = false;
+	// 특수 공격 몽타주
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	class UAnimMontage* SecondPhaseMontage;
+	void PlaySecondPhaseMontage();
+	UFUNCTION( BlueprintCallable )
+	void SecondPhaseTeleportBossAndPlayer();
+	
+	// 번개 공격 떨어지기 전 위치 알려주는 나이아가라 이펙트
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	class UNiagaraSystem* ThunderTargetingEffect;
+	// 번개 공격 나이아가라 임펙트	
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	class UNiagaraSystem* ThunderImpactEffect;
+	// 번개 칠 시 나올 사운드 
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	class USoundBase* ThunderSound;
+	
+	UFUNCTION( BlueprintCallable )
+	void SummonThunderToPlayer();
+	
+	// 특수 패턴 시작시 이동시킬 위치
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	TObjectPtr<class ATargetPoint> BossTeleportPoint;
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	TObjectPtr<class ATargetPoint> PlayerTeleportPoint;
+	
+	
+	// 메테오 공격 이펙트	
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	class UNiagaraSystem* MeteorEffect;
+	// 메테오 충돌시 사운드
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	class USoundBase* MeteorSound;
+	
+	
+	UFUNCTION( BlueprintCallable )
+	void StartSummonRandomMeteor();
 	
 };

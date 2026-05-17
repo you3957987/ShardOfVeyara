@@ -1,6 +1,5 @@
 #include "Enemy/Ranged_RebirthEnemy.h"
 
-#include "AIController.h"
 #include "NiagaraComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -177,6 +176,27 @@ void ARanged_RebirthEnemy::AfterReviveMontageEnd()
 	if (HealthBarWidget)
 	{
 		HealthBarWidget->SetVisibility(true);
+	}
+}
+
+void ARanged_RebirthEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+	
+	// 변경된 프로퍼티의 이름을 가져옵니다.
+	const FName PropertyName = (PropertyChangedEvent.Property != nullptr) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+
+	// 디버그 모드에 따라 어택, 디텍트, 체이스 범위 구체의 가시성을 설정합니다.
+	if (PropertyName == GET_MEMBER_NAME_CHECKED(ABaseEnemy, bDebugMode))
+	{
+		if (bDebugMode == true)
+		{
+			if (SoulCollisionSphere) SoulCollisionSphere->SetVisibility(true);
+		}
+		else
+		{
+			if (SoulCollisionSphere) SoulCollisionSphere->SetVisibility(false);
+		}
 	}
 }
 

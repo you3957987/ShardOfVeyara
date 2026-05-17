@@ -10,8 +10,12 @@ class ENEMY_API UBTTask_GroundAreaAttack : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 	
+	bool bIsAttacking = false;
+
 public:
 	UBTTask_GroundAreaAttack();
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+	// 틱 태스크
+	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 };

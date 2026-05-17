@@ -24,4 +24,5 @@ void ABossSkeletonMageAIController::SetBlackboardKey()
 
 	BlackboardComp->SetValueAsFloat("AttackDelay", ControlledEnemy->AttackDelay);
 	BlackboardComp->SetValueAsBool("CanAttack", true);
+	BlackboardComp->SetValueAsBool("SecondPhase", false);
 }

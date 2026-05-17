@@ -45,7 +45,7 @@ void ABaseDelayedBurstProjectile::Tick(float DeltaTime)
 
 void ABaseDelayedBurstProjectile::Explode()
 {
-	// 1. 전조 이펙트 제거
+	// 전조 이펙트 제거
 	if (PreExplosionComp)
 	{
 		PreExplosionComp->Deactivate(); // 파티클 생성 중단
@@ -53,7 +53,7 @@ void ABaseDelayedBurstProjectile::Explode()
 		PreExplosionComp = nullptr;
 	}
 
-	// 2. 폭발 이펙트 재생 (일회성)
+	// 폭발 이펙트 재생 (일회성)
 	if (ExplosionEffect)
 	{
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
@@ -63,8 +63,14 @@ void ABaseDelayedBurstProjectile::Explode()
 			GetActorRotation()
 		);
 	}
+	
+	// 폭발 사운드 재생
+	if (ExplosionSound)
+	{
+		UGameplayStatics::PlaySound2D(this, ExplosionSound);
+	}
 
-	// 3. 범위 내 대상 감지 및 대미지 처리
+	// 범위 내 대상 감지 및 대미지 처리
 	TArray<AActor*> OverlappingActors;
 	if (DamageSphere)
 	{

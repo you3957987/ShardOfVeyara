@@ -11,7 +11,8 @@ void UConversationSubtitle::NativeConstruct()
 
 	if (SkipButton) SkipButton->OnClicked.AddDynamic(this, &UConversationSubtitle::OnPressedSkipButton);
 	if (LogButton) LogButton->OnClicked.AddDynamic(this, &UConversationSubtitle::OnPressedLogButton);
-
+	if (ConversationButton) ConversationButton->OnClicked.AddDynamic(this, &UConversationSubtitle::OnPressedConversationButton);
+	
 	if (ConversationLogWidgetClass && !LogWidgetInstance)
 	{
 		LogWidgetInstance = CreateWidget<UConversationLog>(GetWorld(), ConversationLogWidgetClass);
@@ -84,7 +85,7 @@ void UConversationSubtitle::OnFadeOutFinished()
 
 void UConversationSubtitle::OnPressedSkipButton()
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnPressedSkipButton"));
+	//UE_LOG(LogTemp, Warning, TEXT("OnPressedSkipButton"));
 
 	if (OnSkipClicked.IsBound())
 	{
@@ -94,11 +95,19 @@ void UConversationSubtitle::OnPressedSkipButton()
 
 void UConversationSubtitle::OnPressedLogButton()
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnPressedLogButton"));
+	//UE_LOG(LogTemp, Warning, TEXT("OnPressedLogButton"));
 
 	if (OnLogClicked.IsBound())
 	{
 		OnLogClicked.Broadcast();
+	}
+}
+
+void UConversationSubtitle::OnPressedConversationButton()
+{
+	if (OnConversationButtonClicked.IsBound())
+	{
+		OnConversationButtonClicked.Broadcast();
 	}
 }
 
