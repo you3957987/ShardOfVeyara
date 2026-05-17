@@ -1,5 +1,6 @@
 #include "EnemyBoss/SkeletonMage/BossSkeletonMage.h"
 #include "BaseEnemy.h"
+#include "NavigationSystem.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/SphereComponent.h"
 #include "EnemyProjectile/BaseEnemyProjectile.h"
@@ -9,6 +10,7 @@
 #include "NiagaraComponent.h" // 헤더 파일 추가
 #include "Components/CapsuleComponent.h" 
 #include "Engine/OverlapResult.h"
+#include "Engine/TargetPoint.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -121,6 +123,28 @@ void ABossSkeletonMage::Die()
 	
 }
 
+float ABossSkeletonMage::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+	class AController* EventInstigator, AActor* DamageCauser)
+{
+	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	// 1. 체력이 0보다 크고, 아직 2페이즈가 시작되지 않았는지 확인
+	if (Health > 0.f && bIsSecondPhaseStarted == false  )
+	{
+		// 2. 현재 체력 비율 계산
+		float CurrentHealthRatio = Health / MaxHealth;
+
+		// 3. 설정된 임계값보다 낮아졌는지 체크
+		if (CurrentHealthRatio <= SecondPhaseHealthThreshold)
+		{
+			bIsSecondPhaseStarted = true; // 중복 실행 방지 플래그 설정
+			StartSecondPhase();          // 특수 패턴 함수 실행
+		}
+	}
+	
+	return ActualDamage;
+}
+
 void ABossSkeletonMage::PlayTeleportMontage(const FVector& Destination)
 {
 	if ( BlackboardComp == nullptr ) return;
@@ -184,6 +208,19 @@ void ABossSkeletonMage::SpawnTeleportEffectAtLocation(const FVector& Location, c
 	const FVector EndTrace = Location - FVector(0.f, 0.f, 1000.f); // 아래로 1000 유닛
 	FCollisionQueryParams TraceParams;
 	TraceParams.AddIgnoredActor(this);
+	if (TargetCharacter) TraceParams.AddIgnoredActor(TargetCharacter);
+
+	// 2. 특정 태그를 가진 모든 액터 무시
+	TArray<AActor*> PetActors;
+	TArray<AActor*> EnemyActors;
+
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Pet"), PetActors);
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Enemy"), EnemyActors);
+
+	// TraceParams에 각각 추가
+	TraceParams.AddIgnoredActors(PetActors);
+	TraceParams.AddIgnoredActors(EnemyActors);
+
 
 	// 라인 트레이스로 바닥 위치를 찾습니다.
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_WorldStatic, TraceParams))
@@ -327,6 +364,17 @@ void ABossSkeletonMage::SpawnSummonEffectAtLocation(const FVector& Location)
 	const FVector EndTrace = Location - FVector(0.f, 0.f, 1000.f); // 아래로 1000 유닛
 	FCollisionQueryParams TraceParams;
 	TraceParams.AddIgnoredActor(this);
+	if ( TargetCharacter ) TraceParams.AddIgnoredActor(TargetCharacter);
+	
+	TArray<AActor*> PetActors;
+	TArray<AActor*> EnemyActors;
+
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Pet"), PetActors);
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Enemy"), EnemyActors);
+
+	// TraceParams에 각각 추가
+	TraceParams.AddIgnoredActors(PetActors);
+	TraceParams.AddIgnoredActors(EnemyActors);
 
 	// 라인 트레이스로 바닥 위치를 찾습니다.
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_WorldStatic, TraceParams))
@@ -375,7 +423,8 @@ void ABossSkeletonMage::TraceTargetCharacterForGroundAttackEffect(float DeltaTim
 		FVector EndTrace = CharacterLocation - FVector(0.f, 0.f, 1000.f); // 아래로 1000 유닛
 		FCollisionQueryParams TraceParams;
 		TraceParams.AddIgnoredActor(this);
-		TraceParams.AddIgnoredActor(TargetCharacter);
+		if ( TargetCharacter )TraceParams.AddIgnoredActor(TargetCharacter);
+		
 
 		if (GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_WorldStatic, TraceParams))
 		{
@@ -410,8 +459,19 @@ void ABossSkeletonMage::GroundAreaAttack()
 	const FVector StartTrace = CharacterLocation;
 	const FVector EndTrace = CharacterLocation - FVector(0.f, 0.f, 1000.f); // 아래로 1000 유닛
 	FCollisionQueryParams TraceParams;
-	TraceParams.AddIgnoredActor(TargetCharacter);
+	if ( TargetCharacter )TraceParams.AddIgnoredActor(TargetCharacter);
 	TraceParams.AddIgnoredActor(this);
+	
+	TArray<AActor*> PetActors;
+	TArray<AActor*> EnemyActors;
+
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Pet"), PetActors);
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Enemy"), EnemyActors);
+
+	// TraceParams에 각각 추가
+	TraceParams.AddIgnoredActors(PetActors);
+	TraceParams.AddIgnoredActors(EnemyActors);
+	
 
 	// 라인 트레이스로 바닥 위치를 찾습니다.
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_WorldStatic, TraceParams))
@@ -498,9 +558,19 @@ void ABossSkeletonMage::StartGravityAttack()
 	FVector SpawnLocation = CharacterLocation;
 	FHitResult HitResult;
 	FCollisionQueryParams TraceParams;
-	TraceParams.AddIgnoredActor(TargetCharacter);
+	if ( TargetCharacter )TraceParams.AddIgnoredActor(TargetCharacter);
 	TraceParams.AddIgnoredActor(this);
 
+	TArray<AActor*> PetActors;
+	TArray<AActor*> EnemyActors;
+
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Pet"), PetActors);
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Enemy"), EnemyActors);
+
+	// TraceParams에 각각 추가
+	TraceParams.AddIgnoredActors(PetActors);
+	TraceParams.AddIgnoredActors(EnemyActors);
+	
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, CharacterLocation, CharacterLocation - FVector(0.f, 0.f, 1000.f), ECC_WorldStatic, TraceParams))
 	{
 		SpawnLocation = HitResult.Location;
@@ -648,3 +718,244 @@ void ABossSkeletonMage::HandleGravityAttack(float DeltaTime)
 	}
 }
 
+void ABossSkeletonMage::StartSecondPhase()
+{
+	if ( BlackboardComp == nullptr ) return;
+	
+	UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, TEXT("[스켈레톤 메이지] 2페이즈 패턴"));
+	
+	BlackboardComp->SetValueAsBool("SecondPhase", true);
+}
+
+void ABossSkeletonMage::PlaySecondPhaseMontage()
+{
+	if ( SecondPhaseMontage )
+	{
+		PlayAnimMontage(SecondPhaseMontage);
+	}
+	
+	// 현재 위치에 텔레포트 입장 이펙트 생성
+	if ( TeleportInEffect ) SpawnTeleportEffectAtLocation(GetActorLocation(), TeleportInEffect); 
+	// 타깃 캐릭터 위치에도 텔레포트 입장 이펙트 생성
+	if ( TargetCharacter && TeleportInEffect )
+	{
+		SpawnTeleportEffectAtLocation(TargetCharacter->GetActorLocation(), TeleportInEffect);
+	}
+}
+
+void ABossSkeletonMage::SecondPhaseTeleportBossAndPlayer()
+{
+	// 1. 보스 순간이동 처리
+	if (BossTeleportPoint)
+	{
+		FVector BossDest = BossTeleportPoint->GetActorLocation();
+		
+		// 보스 본체는 캡슐 높이만큼 보정해서 이동
+		float SafeZOffset = GetCapsuleComponent() ? GetCapsuleComponent()->GetScaledCapsuleHalfHeight() : 0.f;
+		FVector AdjustedBossDest = BossDest + FVector(0.f, 0.f, SafeZOffset);
+		SetActorLocation(AdjustedBossDest);
+
+		// 도착 지점(타깃 포인트 위치)에 텔레포트 아웃 이펙트 생성
+		if (TeleportOutEffect)
+		{
+			// SpawnTeleportEffectAtLocation 내부의 LineTrace가 바닥에 예쁘게 깔아줍니다.
+			SpawnTeleportEffectAtLocation(BossDest, TeleportOutEffect);
+		}
+	}
+
+	// 2. 플레이어 순간이동 처리
+	if (PlayerTeleportPoint && TargetCharacter)
+	{
+		FVector PlayerDest = PlayerTeleportPoint->GetActorLocation();
+		
+		// 플레이어 본체는 캡슐 높이만큼 보정해서 이동
+		float PlayerSafeZOffset = TargetCharacter->GetCapsuleComponent() ? TargetCharacter->GetCapsuleComponent()->GetScaledCapsuleHalfHeight() : 0.f;
+		FVector AdjustedPlayerDest = PlayerDest + FVector(0.f, 0.f, PlayerSafeZOffset);
+		TargetCharacter->SetActorLocation(AdjustedPlayerDest);
+
+		// 플레이어 도착 지점(타깃 포인트 위치)에 텔레포트 아웃 이펙트 생성
+		if (TeleportOutEffect)
+		{
+			SpawnTeleportEffectAtLocation(PlayerDest, TeleportOutEffect);
+		}
+	}
+	
+	// 3. 순간이동 후 보스가 플레이어를 즉시 바라보게 회전 업데이트
+	if (TargetCharacter)
+	{
+		const FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetCharacter->GetActorLocation());
+		SetActorRotation(FRotator(0.f, LookAtRotation.Yaw, 0.f));
+	}
+	
+	if (TargetCharacter)
+	{
+		if (APlayerController* PC = Cast<APlayerController>(TargetCharacter->GetController()))
+		{
+			// 1. 플레이어 위치에서 보스 위치를 바라보는 기본 회전값 계산
+			FVector StartLook = TargetCharacter->GetActorLocation();
+			FVector EndLook = GetActorLocation();
+    
+			FRotator NewControlRotation = UKismetMathLibrary::FindLookAtRotation(StartLook, EndLook);
+        
+			// 2. 각도 보정: 카메라를 약간 위로 들게 함 (Pitch 조정)
+			// 음수(-) 방향으로 갈수록 하늘을 바라보고, 양수(+) 방향으로 갈수록 바닥을 바라봅니다.
+			// -10.0f ~ -20.0f 사이의 값을 주어 보스와 캐릭터가 같이 보이게 조절하세요.
+			NewControlRotation.Pitch -= 15.0f; 
+
+			// 3. 카메라 제어 회전(Control Rotation) 설정
+			PC->SetControlRotation(NewControlRotation);
+		}
+	}
+
+	UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, TEXT("[스켈레톤 메이지] 2페이즈 위치로 보스 및 플레이어 강제 이동 완료"));
+}
+
+void ABossSkeletonMage::SummonThunderToPlayer()
+{
+	if (!TargetCharacter || !ThunderTargetingEffect || !ThunderImpactEffect) return;
+
+    // 1. 플레이어의 현재 바닥 위치 계산
+    const FVector PlayerLocation = TargetCharacter->GetActorLocation();
+    FVector SpawnLocation = PlayerLocation;
+    
+    FHitResult HitResult;
+    FCollisionQueryParams TraceParams;
+    TraceParams.AddIgnoredActor(this);
+    if ( TargetCharacter ) TraceParams.AddIgnoredActor(TargetCharacter);
+
+	TArray<AActor*> PetActors;
+	TArray<AActor*> EnemyActors;
+
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Pet"), PetActors);
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Enemy"), EnemyActors);
+
+	// TraceParams에 각각 추가
+	TraceParams.AddIgnoredActors(PetActors);
+	TraceParams.AddIgnoredActors(EnemyActors);
+	
+    // 바닥 감지 (LineTrace)
+    if (GetWorld()->LineTraceSingleByChannel(HitResult, PlayerLocation, PlayerLocation - FVector(0.f, 0.f, 1000.f), ECC_WorldStatic, TraceParams))
+    {
+        SpawnLocation = HitResult.Location;
+    }
+
+    // 2. 타겟팅 이펙트 생성 (번개가 떨어질 곳을 미리 알림)
+    // 위치를 약간 띄워(Z+5.0) 바닥에 묻히지 않게 합니다.
+    UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ThunderTargetingEffect, SpawnLocation + FVector(0.f, 0.f, 5.f));
+
+    // 3. 딜레이 이후 실제 번개 이펙트 및 대미지 로직 실행 (상황에 맞게 시간 조절)
+    float LightningDelay = 1.0f; 
+    
+    FTimerHandle ThunderTimerHandle;
+    GetWorldTimerManager().SetTimer(ThunderTimerHandle, [this, SpawnLocation]()
+    {
+        // A. 실제 번개 이펙트 소환
+        UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ThunderImpactEffect, SpawnLocation);
+
+        // B. 대미지 판정용 디버그 스피어 (2초 유지)
+        float DamageRadius = 100.f;
+        //DrawDebugSphere(GetWorld(), SpawnLocation, DamageRadius, 12, FColor::Yellow, false, 2.0f);
+
+        // C. 실제 대미지 적용 (범위 내 플레이어 체크)
+        TArray<FOverlapResult> OverlapResults;
+        FCollisionShape Sphere = FCollisionShape::MakeSphere(DamageRadius);
+        FCollisionQueryParams QueryParams;
+        QueryParams.AddIgnoredActor(this);
+
+    	if ( ThunderSound )UGameplayStatics::PlaySound2D(GetWorld(), ThunderSound);
+    	
+        if (GetWorld()->OverlapMultiByChannel(OverlapResults, SpawnLocation, FQuat::Identity, ECC_Pawn, Sphere, QueryParams))
+        {
+	        for (auto& Result : OverlapResults)
+	        {
+				AActor* HitActor = Result.GetActor();
+				if (HitActor && HitActor->ActorHasTag(TEXT("Player")))
+				{
+					// 대미지 수치는 AttackStruct나 별도 변수에서 가져오시면 됩니다.
+					UGameplayStatics::ApplyDamage(HitActor, AttackStruct.SecondPhaseThunderAttackDamage, GetController(), this, UDamageType::StaticClass());
+					
+					UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, 
+						FString::Printf(TEXT("[스켈레톤 메이지] 2페이즈 번개 공격으로 플레이어에게 %.2f 대미지"), AttackStruct.SecondPhaseThunderAttackDamage));
+				}
+			}
+        }
+    }, LightningDelay, false);
+    
+}
+
+void ABossSkeletonMage::StartSummonRandomMeteor()
+{
+    float MeteorDuration = 5.0f;
+    float MeteorInterval = 0.6f;
+    float MeteorRadius = 500.f;
+
+    UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+    if (!NavSys) return;
+
+    // 1. 타이머 핸들을 함수 지역 변수로 먼저 선언
+    FTimerHandle MeteorPatternTimer;
+
+    // 2. 반복 타이머 설정
+	GetWorldTimerManager().SetTimer(MeteorPatternTimer, [this, NavSys, MeteorRadius]()
+    {
+        if (!TargetCharacter) return;
+
+        FNavLocation RandomNavLocation;
+        bool bFound = NavSys->GetRandomReachablePointInRadius(TargetCharacter->GetActorLocation(), MeteorRadius, RandomNavLocation);
+
+        if (bFound)
+        {
+            FVector SpawnLocation = RandomNavLocation.Location;
+
+            if (ThunderTargetingEffect)
+            {
+                UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), MeteorEffect, SpawnLocation + FVector(0,0,5.f));
+            }
+
+            float FallDelay = 0.9f;
+            FTimerHandle IndividualMeteorTimer;
+            GetWorldTimerManager().SetTimer(IndividualMeteorTimer, [this, SpawnLocation]()
+            {
+            	
+                // --- 번개 공격과 동일한 직접 대미지 판정 로직 시작 ---
+                float DamageRadius = 200.f;
+                //DrawDebugSphere(GetWorld(), SpawnLocation, DamageRadius, 12, FColor::Red, false, 2.0f);
+
+            	if ( MeteorSound )UGameplayStatics::PlaySound2D(GetWorld(), MeteorSound);
+            	
+                TArray<FOverlapResult> OverlapResults;
+                FCollisionShape Sphere = FCollisionShape::MakeSphere(DamageRadius);
+                FCollisionQueryParams QueryParams;
+                QueryParams.AddIgnoredActor(this);
+
+                if (GetWorld()->OverlapMultiByChannel(OverlapResults, SpawnLocation, FQuat::Identity, ECC_Pawn, Sphere, QueryParams))
+                {
+                    for (auto& Result : OverlapResults)
+                    {
+                        AActor* HitActor = Result.GetActor();
+                        if (HitActor && HitActor->ActorHasTag(TEXT("Player")))
+                        {
+                            // AttackStruct의 적절한 대미지 변수를 사용하세요 (예: MeteorDamage)
+                            float DamageAmount = AttackStruct.SecondPhaseMeteorAttackDamage;
+                            UGameplayStatics::ApplyDamage(HitActor, DamageAmount, GetController(), this, UDamageType::StaticClass());
+                            
+                            UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, 
+                                FString::Printf(TEXT("[스켈레톤 메이지] 랜덤 메테오 적중: %.2f 대미지"), DamageAmount));
+                        }
+                    }
+                }
+            }, FallDelay, false);
+        }
+    }, MeteorInterval, true);
+
+    // 3. 패턴 종료 타이머
+    // 람다 캡처에 MeteorPatternTimer를 직접 서술하여 전달합니다.
+    FTimerHandle PatternEndTimer;
+    GetWorldTimerManager().SetTimer(PatternEndTimer, [this, MeteorPatternTimer]() mutable
+    {
+        // 이제 캡처된 MeteorPatternTimer를 사용하여 클리어 가능합니다.
+        GetWorldTimerManager().ClearTimer(MeteorPatternTimer);
+        
+        UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, TEXT("[스켈레톤 메이지] 랜덤 메테오 패턴 종료"));
+    }, MeteorDuration, false);
+}
