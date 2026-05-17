@@ -89,6 +89,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Niagara")
 	class UNiagaraComponent* BubbleVFXComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	class USoundBase* SplashSound;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Niagara")
 	FLinearColor BaseLiquidColor = FColor::FromHex("A5DDFFFF");
 	

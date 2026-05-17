@@ -273,6 +273,13 @@ void AAGSDCharacter::BeginPlay()
 	OnLockOnStateChanged.AddDynamic(this, &AAGSDCharacter::HandleLockOn);
 
 	PC = Cast<AAGSDPlayerController>(GetController());
+	
+	if (PC)
+	{
+		// 카메라 거리에 따른 오디오 감쇠 문제를 해결하기 위해 오디오 리스너를 캐릭터(RootComponent)로 덮어씁니다.
+		PC->SetAudioListenerOverride(GetRootComponent(), FVector::ZeroVector, FRotator::ZeroRotator);
+	}
+
 	GI = Cast<USOVGameInstance>(GetGameInstance());
 
 	if (GI)

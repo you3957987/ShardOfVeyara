@@ -159,6 +159,12 @@ void AAlchemyTable::EndAlchemy()
 void AAlchemyTable::SplashPot(bool clear)
 {
 	SplashVFXComponent->Activate(true);
+	
+	if (SplashSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, SplashSound, GetActorLocation());
+	}
+
 	if (InsertedItemID.Num() == 2)
 	{
 		TargetRecipe.ItemID = TEXT("Sludge");

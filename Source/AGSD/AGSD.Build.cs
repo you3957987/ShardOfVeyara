@@ -23,7 +23,8 @@ public class AGSD : ModuleRules
 			"Enemy",
 			"Pet",
 			"Niagara",
-			"NavigationSystem"
+			"NavigationSystem",
+			"PhysicsCore"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] 
