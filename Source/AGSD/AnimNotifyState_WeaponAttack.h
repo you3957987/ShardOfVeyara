@@ -43,6 +43,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|VFX")
 	class UNiagaraSystem* HitEffect;
 
+	// 공격(휘두르기) 시 재생할 사운드
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Audio")
+	class USoundBase* AttackSound;
+
+	// 적 타격 시 재생할 사운드
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Audio")
+	class USoundBase* HitSound;
+
 	UPROPERTY(VisibleAnywhere, Blueprintreadwrite, Category = "Combat|Collision")
 	AAGSDCharacter* Player;
 

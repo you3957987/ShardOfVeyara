@@ -6,6 +6,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Sound/SoundBase.h"
 
 void UAnimNotifyState_WeaponAttack::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
 	float TotalDuration, const FAnimNotifyEventReference& EventReference)
@@ -27,6 +28,12 @@ void UAnimNotifyState_WeaponAttack::NotifyBegin(USkeletalMeshComponent* MeshComp
 		{
 			// 기본 데미지 설정
 			BaseDamage = Player->WeaponDamage() * Player->getDamage() / 100.f;
+		}
+
+		// 공격(휘두르기) 시작 시 사운드 재생
+		if (AttackSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(MeshComp->GetWorld(), AttackSound, MidPoint);
 		}
 	}
 }
@@ -125,6 +132,12 @@ void UAnimNotifyState_WeaponAttack::NotifyTick(USkeletalMeshComponent* MeshComp,
 						Hit.ImpactPoint,
 						Hit.ImpactNormal.Rotation()
 					);
+				}
+
+				// 타격음 (사운드) 재생
+				if (HitSound)
+				{
+					UGameplayStatics::PlaySoundAtLocation(MeshComp->GetWorld(), HitSound, Hit.ImpactPoint);
 				}
 			}
 		}
