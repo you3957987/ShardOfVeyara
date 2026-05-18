@@ -376,6 +376,52 @@ void ABaseBossEnemy::UpdateMotionWarpTargetToFront()
 	}
 }
 
+void ABaseBossEnemy::UpdateMotionWarpTargetToFloor()
+{
+	if (MotionWarpingComponent && TargetCharacter)
+	{
+		FVector BossLocation = GetActorLocation();
+		// 1. 타겟 캐릭터의 위치를 기준점으로 잡습니다.
+		FVector TargetLocation = TargetCharacter->GetActorLocation();
+
+		// 2. 바닥을 찾기 위한 라인 트레이스 설정
+		// 타겟 위치에서 위로 100, 아래로 1000만큼 선을 긋습니다.
+		FVector Start = TargetLocation + FVector(0.f, 0.f, 100.f);
+		FVector End = TargetLocation - FVector(0.f, 0.f, 1000.f);
+
+		FHitResult HitResult;
+		FCollisionQueryParams Params;
+		Params.AddIgnoredActor(this);
+		Params.AddIgnoredActor(TargetCharacter); // 타겟 캐릭터 자체는 무시하고 바닥만 찾음
+
+		// 3. 라인 트레이스 실행 (Visibility 채널 사용)
+		FVector WarpLocation = TargetLocation; // 트레이스 실패 시 기본값은 타겟 위치
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
+		{
+			WarpLocation = HitResult.Location; // 바닥 충돌 지점
+		}
+
+		// 4. 보스가 타겟을 바라보도록 회전값 계산
+		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(BossLocation, TargetLocation);
+		LookAtRotation.Pitch = 0.f;
+		LookAtRotation.Roll = 0.f;
+
+		// 5. 워프 타겟 업데이트
+		MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation(
+			FName("WarpTarget"),
+			WarpLocation,
+			LookAtRotation
+		);
+
+		if (bDebugMode == true)
+		{
+			// 바닥 타겟 지점에 보라색 구체 표시
+			DrawDebugSphere(GetWorld(), WarpLocation, 50.f, 12,
+				FColor::Purple, false, 2.f, 0, 2.f);
+		}
+	}
+}
+
 void ABaseBossEnemy::SetHitOverlay()
 {
 	if (GetMesh() && HitOverlayMaterial)

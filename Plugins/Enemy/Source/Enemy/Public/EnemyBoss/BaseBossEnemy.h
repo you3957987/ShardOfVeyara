@@ -121,6 +121,9 @@ public:
 	// 모션 워핑 타깃 - 타깃 캐릭터의 앞쪽
 	UFUNCTION(BlueprintCallable)
 	void UpdateMotionWarpTargetToFront();
+	// 모션 워핑 타깃 - 타깃 캐릭터 바닥
+	UFUNCTION(BlueprintCallable)
+	void UpdateMotionWarpTargetToFloor();
 	
 	// 공격 지연 시간. 블랙보드 태스크에서 재지정
 	float AttackDelay = 0.0f;

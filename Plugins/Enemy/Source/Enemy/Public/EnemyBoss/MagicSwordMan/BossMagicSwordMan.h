@@ -11,56 +11,59 @@ struct FBossMagicSwordManAttackStruct
 	
 	// 근점 공격 - 3개중 랜덤
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float CloseAttackWeight = 10.0f;
+	float CloseAttackWeight = 0.0f;
 	// 대시 공격 - 3개중 랜덤
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float DashAttackWeight = 10.0f;
+	float DashAttackWeight = 0.0f;
 	// 근점 띄우기 공격
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float CloseJumpUpAttackWeight = 10.0f;
+	float CloseJumpUpAttackWeight = 0.0f;
 	// 대시 띄우기 공격
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float DashJumpUpAttackWeight = 10.0f;
 	// 점프 공격
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")	
-	float JumpAttackWeight = 10.0f;
+	float JumpAttackWeight = 0.0f;
 	// 가드 패턴
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float GuardWeight = 10.0f;
+	float GuardWeight = 0.0f;
 	// 궁극기 패턴
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float PowerAttackWeight = 10.0f;
+	float PowerAttackWeight = 0.0f;
 	// 원거리 검기 공격 패턴
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float BladeWaveAttackWeight = 10.0f;
+	float BladeWaveAttackWeight = 0.0f;
 	
 	// 근접 공격 딜레이	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float CloseAttackDelay = 6.f;
+	float CloseAttackDelay = 1.f;
 	
 	// 대시 공격 딜레이
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float DashAttackDelay = 6.f;
+	float DashAttackDelay = 1.f;
 	
 	// 근점 띄우기 공격 딜레이
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float CloseJumpUpAttackDelay = 6.f;
-	
+	float CloseJumpUpAttackDelay = 2.5f;
 	
 	// 대시 띄우기 공격 딜레이
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float DashJumpUpAttackDelay = 6.f;
+	float DashJumpUpAttackDelay = 2.5f;
+	
+	// 공중 공격 이후 딜레이	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float AirAttackDelay = 1.f;
 	
 	// 점프 공격 딜레이
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float JumpAttackDelay = 6.f;
+	float JumpAttackDelay = 1.f;
 	
 	// 가드 후 딜레이 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float GuardDelay = 2.f;
+	float GuardDelay = 1.5f;
 	// 가드 유지 시간
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float GuardDuration = 5.f;
+	float GuardDuration = 4.f;
 	// 반격 발동에 필요한 최대 대미지
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float MaxDamageToReaction = 30.f;
@@ -70,14 +73,18 @@ struct FBossMagicSwordManAttackStruct
 	float PowerAttackTickDamage = 8.f;
 	// 궁극기 딜레이
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float PowerAttackDelay = 2.f;
+	float PowerAttackDelay = 2.5f;
 	// 궁극기 마무리 대미지
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
-	float PowerAttackFinishDamage = 30.f;
+	float PowerAttackFinishDamage = 15.f;
 	
 	// 원거리 검기 공격 딜레이
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float BladeWaveAttackDelay = 1.0f;
+	
+	// 러쉬 스트라이크 대미지
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float RushStrikeAttackDamage = 15.f;
 };
 
 // 어택 타입 구분용 열거형
@@ -231,7 +238,33 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	TSubclassOf<class ABaseEnemyProjectile> BladeWaveProjectileClass;
 	
-	// 깃 수정 확인
+	// 특수 패턴 수행할 체력 비율 0 ~ 1
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	float SecondPhaseHealthThreshold = 0.5f;
+	// 특정 체력 이하로 내려갈 시 실행할 특수 패턴
+	void StartSecondPhase();
+	bool bIsSecondPhaseStarted = false;
+	// 특수 공격 몽타주
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	class UAnimMontage* SecondPhaseMontage;
+	UAnimMontage* PlaySecondPhaseMontage();
+	
+	UPROPERTY(EditAnywhere, Category = "자체설정")
+	TObjectPtr<class ATargetPoint> HoverLocationPoint;
+	
+	UFUNCTION(BlueprintCallable)
+	void StartHover();
+	UFUNCTION(BlueprintCallable)
+	void SetGravityCharacter();
+	UFUNCTION(BlueprintCallable)
+	void RushToPlayer();
+	
+	float DefaultGravityScaleBeforeHover;
+	
+	// RushAttackCollisionSphere 비긴 오버랩 함수
+	UFUNCTION(BlueprintCallable)
+	void RushStrike();
+
 #if WITH_EDITOR
 	// 에디터에서 프로퍼티가 변경될 때 호출됩니다.
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
