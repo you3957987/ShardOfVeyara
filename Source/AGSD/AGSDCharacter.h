@@ -109,7 +109,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UFadeWidget> WBP_FadeWidget;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	class UFadeWidget* FadeWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PlayerState")

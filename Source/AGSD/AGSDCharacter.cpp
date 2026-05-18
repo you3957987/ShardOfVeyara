@@ -378,16 +378,11 @@ void AAGSDCharacter::Die()
 		FTimerHandle TimerHandle;// 2. 대기 시간 (초 단위)
 		GetWorldTimerManager().SetTimer(TimerHandle, FTimerDelegate::CreateLambda([this]()
 		{
-			if (WBP_FadeWidget) 
-			{
-				if (!FadeWidget) FadeWidget = CreateWidget<UFadeWidget>(PC, WBP_FadeWidget);
-                
-				if (FadeWidget)
-				{
-					FadeWidget->OnFadeFinished.AddDynamic(this, &AAGSDCharacter::WakeUp);
-				}
-			}
 			playFadeWidget(0.0f, 1.0f);
+			if (FadeWidget)
+			{
+				FadeWidget->OnFadeFinished.AddDynamic(this, &AAGSDCharacter::WakeUp);
+			}
 		}),
 		1.0f, false
 		);
