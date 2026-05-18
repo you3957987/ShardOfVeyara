@@ -885,27 +885,31 @@ void ABossSkeletonMage::SummonThunderToPlayer()
 
 void ABossSkeletonMage::StartSummonRandomMeteor()
 {
-    float MeteorRadius = 500.f; 
-    float ForwardOffset = 300.f; 
+	float MeteorRadius = 350.f; 
+	float ForwardOffset = 450.f; 
 
-    UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
-    if (!NavSys || !TargetCharacter) return;
+	UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+	if (!NavSys || !TargetCharacter) return;
 
-    // 1. 기준점 계산 (캐릭터 앞쪽 300 유닛)
-    const FVector TargetLoc = TargetCharacter->GetActorLocation();
-    const FVector TargetForward = TargetCharacter->GetActorForwardVector();
-    const FVector OriginPoint = TargetLoc + (TargetForward * ForwardOffset);
+	// 1. 기준 보정 위치 계산
+	const FVector TargetLoc = TargetCharacter->GetActorLocation();
+	const FVector TargetForward = TargetCharacter->GetActorForwardVector();
+    
+	// 캐릭터의 캡슐 절반 높이를 가져옵니다.
+	float HalfHeight = TargetCharacter->GetCapsuleComponent() ? TargetCharacter->GetCapsuleComponent()->GetScaledCapsuleHalfHeight() : 0.f;
 
-    // 디버그 드로우
-    DrawDebugSphere(GetWorld(), OriginPoint, 50.f, 12, FColor::Purple, false, 1.0f);
-    DrawDebugSphere(GetWorld(), OriginPoint, MeteorRadius, 16, FColor::Purple.WithAlpha(50), false, 1.0f);
+	// 2. 기준점 계산 (캐릭터 앞쪽 ~ 유닛 + 캡슐 높이 절반만큼 아래로)
+	const FVector OriginPoint = TargetLoc + (TargetForward * ForwardOffset) - FVector(0.f, 0.f, HalfHeight);
 
-    // 2. 단일 위치 찾기 및 생성
-    FNavLocation RandomNavLocation;
-    if (NavSys->GetRandomReachablePointInRadius(OriginPoint, MeteorRadius, RandomNavLocation))
-    {
+	// 디버그 드로우 (위치가 내려갔는지 확인용)
+	//DrawDebugSphere(GetWorld(), OriginPoint, MeteorRadius, 16, FColor::Purple.WithAlpha(50), false, 1.0f);
+
+	// 3. 단일 위치 찾기 및 생성
+	FNavLocation RandomNavLocation;
+	if (NavSys->GetRandomPointInNavigableRadius(OriginPoint, MeteorRadius, RandomNavLocation))
+	{
         FVector SpawnLocation = RandomNavLocation.Location;
-
+		
         // 이펙트 알림
         if (MeteorEffect)
         {
@@ -918,12 +922,6 @@ void ABossSkeletonMage::StartSummonRandomMeteor()
 				FVector(1.f),
 				true // Auto Destroy
 			);
-
-        	// 디버그용: 이펙트 스폰 실패 시 로그 남기기
-        	if (!NiagaraComp)
-        	{
-        		UE_LOG(LogTemp, Error, TEXT("Niarara X"));
-        	}
         }
 
         // 실제 대미지 판정 (0.9초 뒤 낙하)

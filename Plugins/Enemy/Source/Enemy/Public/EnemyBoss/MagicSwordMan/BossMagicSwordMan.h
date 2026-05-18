@@ -33,6 +33,9 @@ struct FBossMagicSwordManAttackStruct
 	// 원거리 검기 공격 패턴
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float BladeWaveAttackWeight = 0.0f;
+	// 백대시 패턴 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float BackDashWeight = 0.0f;
 	
 	// 근접 공격 딜레이	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
@@ -77,6 +80,10 @@ struct FBossMagicSwordManAttackStruct
 	// 궁극기 마무리 대미지
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	float PowerAttackFinishDamage = 15.f;
+	
+	// 백대시 딜레이
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
+	float BackDashDelay = 0.1f;
 	
 	// 원거리 검기 공격 딜레이
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
@@ -237,6 +244,12 @@ public:
 	// 검기 발사체 클래스 
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	TSubclassOf<class ABaseEnemyProjectile> BladeWaveProjectileClass;
+	
+	// 뒤로 백대시 하는 몽타주
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	UAnimMontage* DashBackMontage;
+	// 백대시 시작 함수
+	UAnimMontage* StartDashBack();
 	
 	// 특수 패턴 수행할 체력 비율 0 ~ 1
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
