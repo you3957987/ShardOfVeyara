@@ -234,7 +234,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	class USoundBase* MeteorSound;
 	
-	
 	UFUNCTION( BlueprintCallable )
 	void StartSummonRandomMeteor();
 	

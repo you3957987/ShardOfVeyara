@@ -885,77 +885,74 @@ void ABossSkeletonMage::SummonThunderToPlayer()
 
 void ABossSkeletonMage::StartSummonRandomMeteor()
 {
-    float MeteorDuration = 5.5f;
-    float MeteorInterval = 0.8f;
-    float MeteorRadius = 500.f;
+    float MeteorRadius = 500.f; 
+    float ForwardOffset = 300.f; 
 
     UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
-    if (!NavSys) return;
+    if (!NavSys || !TargetCharacter) return;
 
-    // 1. 타이머 핸들을 함수 지역 변수로 먼저 선언
-    FTimerHandle MeteorPatternTimer;
+    // 1. 기준점 계산 (캐릭터 앞쪽 300 유닛)
+    const FVector TargetLoc = TargetCharacter->GetActorLocation();
+    const FVector TargetForward = TargetCharacter->GetActorForwardVector();
+    const FVector OriginPoint = TargetLoc + (TargetForward * ForwardOffset);
 
-    // 2. 반복 타이머 설정
-	GetWorldTimerManager().SetTimer(MeteorPatternTimer, [this, NavSys, MeteorRadius]()
+    // 디버그 드로우
+    DrawDebugSphere(GetWorld(), OriginPoint, 50.f, 12, FColor::Purple, false, 1.0f);
+    DrawDebugSphere(GetWorld(), OriginPoint, MeteorRadius, 16, FColor::Purple.WithAlpha(50), false, 1.0f);
+
+    // 2. 단일 위치 찾기 및 생성
+    FNavLocation RandomNavLocation;
+    if (NavSys->GetRandomReachablePointInRadius(OriginPoint, MeteorRadius, RandomNavLocation))
     {
-        if (!TargetCharacter) return;
+        FVector SpawnLocation = RandomNavLocation.Location;
 
-        FNavLocation RandomNavLocation;
-        bool bFound = NavSys->GetRandomReachablePointInRadius(TargetCharacter->GetActorLocation(), MeteorRadius, RandomNavLocation);
-
-        if (bFound)
+        // 이펙트 알림
+        if (MeteorEffect)
         {
-            FVector SpawnLocation = RandomNavLocation.Location;
+        	// Z값을 20 정도로 높여서 바닥에 묻히는걸 방지
+        	UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+				GetWorld(), 
+				MeteorEffect, 
+				SpawnLocation + FVector(0, 0, 5.f), 
+				FRotator::ZeroRotator,
+				FVector(1.f),
+				true // Auto Destroy
+			);
 
-            if (ThunderTargetingEffect)
+        	// 디버그용: 이펙트 스폰 실패 시 로그 남기기
+        	if (!NiagaraComp)
+        	{
+        		UE_LOG(LogTemp, Error, TEXT("Niarara X"));
+        	}
+        }
+
+        // 실제 대미지 판정 (0.9초 뒤 낙하)
+        float FallDelay = 0.9f;
+        FTimerHandle IndividualMeteorTimer;
+        GetWorldTimerManager().SetTimer(IndividualMeteorTimer, [this, SpawnLocation]()
+        {
+            float DamageRadius = 200.f;
+            if (MeteorSound) UGameplayStatics::PlaySound2D(GetWorld(), MeteorSound);
+            
+            TArray<FOverlapResult> OverlapResults;
+            FCollisionShape Sphere = FCollisionShape::MakeSphere(DamageRadius);
+            FCollisionQueryParams QueryParams;
+            QueryParams.AddIgnoredActor(this);
+
+            if (GetWorld()->OverlapMultiByChannel(OverlapResults, SpawnLocation, FQuat::Identity, ECC_Pawn, Sphere, QueryParams))
             {
-                UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), MeteorEffect, SpawnLocation + FVector(0,0,5.f));
-            }
-
-            float FallDelay = 0.9f;
-            FTimerHandle IndividualMeteorTimer;
-            GetWorldTimerManager().SetTimer(IndividualMeteorTimer, [this, SpawnLocation]()
-            {
-            	
-                // --- 번개 공격과 동일한 직접 대미지 판정 로직 시작 ---
-                float DamageRadius = 200.f;
-                //DrawDebugSphere(GetWorld(), SpawnLocation, DamageRadius, 12, FColor::Red, false, 2.0f);
-
-            	if ( MeteorSound )UGameplayStatics::PlaySound2D(GetWorld(), MeteorSound);
-            	
-                TArray<FOverlapResult> OverlapResults;
-                FCollisionShape Sphere = FCollisionShape::MakeSphere(DamageRadius);
-                FCollisionQueryParams QueryParams;
-                QueryParams.AddIgnoredActor(this);
-
-                if (GetWorld()->OverlapMultiByChannel(OverlapResults, SpawnLocation, FQuat::Identity, ECC_Pawn, Sphere, QueryParams))
+                for (auto& Result : OverlapResults)
                 {
-                    for (auto& Result : OverlapResults)
+                    AActor* HitActor = Result.GetActor();
+                    if (HitActor && HitActor->ActorHasTag(TEXT("Player")))
                     {
-                        AActor* HitActor = Result.GetActor();
-                        if (HitActor && HitActor->ActorHasTag(TEXT("Player")))
-                        {
-                            // AttackStruct의 적절한 대미지 변수를 사용하세요 (예: MeteorDamage)
-                            float DamageAmount = AttackStruct.SecondPhaseMeteorAttackDamage;
-                            UGameplayStatics::ApplyDamage(HitActor, DamageAmount, GetController(), this, UDamageType::StaticClass());
-                            
-                            UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, 
-                                FString::Printf(TEXT("[스켈레톤 메이지] 랜덤 메테오 적중: %.2f 대미지"), DamageAmount));
-                        }
+                        UGameplayStatics::ApplyDamage(HitActor, AttackStruct.SecondPhaseMeteorAttackDamage, GetController(), this, UDamageType::StaticClass());
+                        
+                        UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, 
+                            TEXT("[스켈레톤 메이지] 단일 메테오 적중"));
                     }
                 }
-            }, FallDelay, false);
-        }
-    }, MeteorInterval, true);
-
-    // 3. 패턴 종료 타이머
-    // 람다 캡처에 MeteorPatternTimer를 직접 서술하여 전달합니다.
-    FTimerHandle PatternEndTimer;
-    GetWorldTimerManager().SetTimer(PatternEndTimer, [this, MeteorPatternTimer]() mutable
-    {
-        // 이제 캡처된 MeteorPatternTimer를 사용하여 클리어 가능합니다.
-        GetWorldTimerManager().ClearTimer(MeteorPatternTimer);
-        
-        UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, TEXT("[스켈레톤 메이지] 랜덤 메테오 패턴 종료"));
-    }, MeteorDuration, false);
+            }
+        }, FallDelay, false);
+    }
 }
