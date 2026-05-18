@@ -77,3 +77,6 @@ DerivedDataCache/*
 # IDE specific files
 .idea/
 *.workspace.xml
+
+# Ignore VARCO3DPlugin
+Plugins/VARCO3DPlugin-1.1.1-Win64-UE5.6/
