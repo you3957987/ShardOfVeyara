@@ -38,11 +38,9 @@ protected:
 public:	
 	AGroundAttackProjectile();
 	virtual void Tick(float DeltaTime) override;
-
-	UFUNCTION()
-	void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
+	
+	void HandleDamage();
+	
 	// 생성 후 상승할 높이
 	UPROPERTY(EditAnywhere, Category="자체설정")
 	float RiseHeight = 20.f;

@@ -161,10 +161,10 @@ public:
 	void CreateMagicShield();
 	// 수평으로 밀어내는 힘
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
-	float PushForce = 2000.f;
+	float PushForce = 1600.f;
 	// 위로 띄우는 힘
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
-	float PushUpwardForce = 400.f; 
+	float PushUpwardForce = 350.f; 
 	// 쉴드 이펙트
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	class UNiagaraSystem* MagicShieldEffect;
