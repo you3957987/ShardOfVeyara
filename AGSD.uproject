@@ -34,7 +34,11 @@
 		{
             		"Name": "MotionWarping",
             		"Enabled": true
-        	}
+        	},
+		{
+			"Name": "VARCO3DPlugin",
+			"Enabled": false
+		}
 	],
 	"TargetPlatforms": [
 		"Windows"
