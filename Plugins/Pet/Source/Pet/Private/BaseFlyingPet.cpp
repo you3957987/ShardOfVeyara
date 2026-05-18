@@ -295,7 +295,8 @@ void ABaseFlyingPet::CheckSurroundingEnemy()
 			if ( PetState != EPetState::EPS_Battle && TraceCharacterToTarget( Actor ) == false ) continue;
 			
 			// 미믹 몬스터 또는 버로우 몬스터는 무시
-			if (Actor->ActorHasTag("Mimic") || Actor->ActorHasTag("Burrow")) continue;
+			if (Actor->ActorHasTag("Mimic") || Actor->ActorHasTag("Burrow") 
+				|| Actor->ActorHasTag("Trans")) continue;
 			
 			// Boss 태그가 있다면 무시 
 			if (Actor->ActorHasTag("Boss"))

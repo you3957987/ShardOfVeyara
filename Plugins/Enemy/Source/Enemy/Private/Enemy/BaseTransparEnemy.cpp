@@ -18,6 +18,8 @@ ABaseTransparEnemy::ABaseTransparEnemy()
 	AttackRangePointSphere->SetHiddenInGame(false);
 
 	EnemyType = EEnemyType::EET_Transpar;
+	
+	Tags.Add("Trans");
 }
 
 void ABaseTransparEnemy::BeginPlay()
