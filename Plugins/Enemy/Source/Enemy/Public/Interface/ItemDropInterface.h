@@ -18,8 +18,20 @@ struct FEnemyDropItemInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DropInfo")
 	bool bIsOneTimeDrop = false;
 	
-	// 드롭할 아이템의 개수
+	// 아이템 드롭 개수를 최소~최대 범위 내에서 무작위로 결정할지 여부
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DropInfo")
+	bool bUseRandomDropAmount = false;
+
+	// 무작위 드롭 개수 적용 시 최소 개수
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DropInfo", meta = (EditCondition = "bUseRandomDropAmount"))
+	int32 DropAmountMin = 1;
+
+	// 무작위 드롭 개수 적용 시 최대 개수
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DropInfo", meta = (EditCondition = "bUseRandomDropAmount"))
+	int32 DropAmountMax = 3;
+	
+	// 고정 드롭 시 아이템의 개수 (bUseRandomDropAmount가 false일 때 사용)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DropInfo", meta = (EditCondition = "!bUseRandomDropAmount"))
 	int32 DropAmount = 1;
 	
 	// 개별적으로 돌아가는 아이템 드롭 확률[ 0 ~ 1 ] ( ex) 개수 3개면 1개 1개 1개씩 확률 적용 )

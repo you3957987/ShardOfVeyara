@@ -993,6 +993,8 @@ void AAGSDCharacter::SpawnMyPetAfterTravel()
 	}
 }
 
+// C:\Users\YJH\Documents\GitHub\AGSD\Source\AGSD\AGSDCharacter.cpp
+
 void AAGSDCharacter::HandleEnemyDeadAndDropItem_Implementation(AActor* DeadActor)
 {
 	if (DeadActor && DeadActor->Implements<UItemDropInterface>())
@@ -1019,12 +1021,7 @@ void AAGSDCharacter::HandleEnemyDeadAndDropItem_Implementation(AActor* DeadActor
 			// 4. 최초 1회성 드롭 여부 확인
 			if (ItemInfo.bIsOneTimeDrop == true)
 			{
-				// 에너미ID_아이템클래스이름 형식으로 고유 키 생성 (예: BossSpider_BP_Sword_C )
 				FString UniqueKey = EnemyID.ToString() + TEXT("_") + ItemInfo.DropItemClass->GetName();
-				
-				UE_LOG(LogTemp, Warning, TEXT("EnemyID + Item: %s"), *UniqueKey);
-				
-				// GI의 NoRegenItem 배열에 이 키가 이미 들어있다면 (이미 떨궜던 아이템이라면)
 				if (GI->AlreadyDroppedItems.Contains(UniqueKey))
 				{
 					continue;
@@ -1035,35 +1032,30 @@ void AAGSDCharacter::HandleEnemyDeadAndDropItem_Implementation(AActor* DeadActor
 				}
 			}
 
-			// 5. 드롭 개수(DropAmount)만큼 실제로 스폰시키기
-			for (int32 i = 0; i < ItemInfo.DropAmount; ++i)
+			// --- 추가/수정된 로직: 드롭 개수 결정 ---
+			int32 FinalDropAmount = ItemInfo.DropAmount;
+			if (ItemInfo.bUseRandomDropAmount)
+			{
+				// Min과 Max 사이에서 무작위 개수 결정 (Min, Max 모두 포함)
+				FinalDropAmount = FMath::RandRange(ItemInfo.DropAmountMin, ItemInfo.DropAmountMax);
+			}
+
+			// 5. 결정된 개수(FinalDropAmount)만큼 실제로 스폰시키기
+			for (int32 i = 0; i < FinalDropAmount; ++i)
 			{
 				TSubclassOf<AActor> ItemClassToSpawn = ItemInfo.DropItemClass;
 				
-				// 적의 현재 위치 (발 밑 기준)
+				// 적의 현재 위치
 				FVector SpawnLocation = DeadActor->GetActorLocation();
 
-				// 아이템 액터의 캡슐 절반 높이만큼 올려서 아이템이 땅에 박히지 않도록 조정
-				AActor* ItemCDO = ItemClassToSpawn->GetDefaultObject<AActor>();
-				if (ItemCDO)
-				{
-					UCapsuleComponent* ItemCapsule = ItemCDO->FindComponentByClass<UCapsuleComponent>();
-					if (ItemCapsule)
-					{
-						SpawnLocation.Z += ItemCapsule->GetScaledCapsuleHalfHeight();
-					}
-				}
+				// 캐릭터 발 밑 근처에서 약간의 랜덤 위치 오프셋을 주면 아이템들이 겹치지 않아 보기 좋습니다.
+				FVector RandomOffset = FVector(FMath::RandRange(-20.f, 20.f), FMath::RandRange(-20.f, 20.f), 0.f);
+				SpawnLocation += RandomOffset;
 
-				// 아이템이 여러 개일 때 한 곳에 겹치지 않도록 XY 평면에 랜덤 오프셋 부여
-				const float RandomXY = 40.f;
-				SpawnLocation.X += FMath::RandRange(-RandomXY, RandomXY);
-				SpawnLocation.Y += FMath::RandRange(-RandomXY, RandomXY);
+				FActorSpawnParameters SpawnParams;
+				SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-				// 회전도 랜덤하게 설정
-				FRotator SpawnRotation = FRotator(0.f, FMath::RandRange(0.f, 360.f), 0.f);
-
-				// 월드에 최종 스폰!
-				GetWorld()->SpawnActor<AActor>(ItemClassToSpawn, SpawnLocation, SpawnRotation);
+				GetWorld()->SpawnActor<AActor>(ItemClassToSpawn, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
 			}
 		}
 	}
