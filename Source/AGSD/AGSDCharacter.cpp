@@ -580,7 +580,7 @@ ESpearAttackDirection AAGSDCharacter::GetAttackDirection()
 void AAGSDCharacter::ProcessAttackInput()
 {
 	// 공중 상태 체크
-	//if (GetCharacterMovement() && GetCharacterMovement()->IsFalling()) return;
+	if (GetCharacterMovement() && GetCharacterMovement()->IsFalling()) return;
 	
 	// 공격 중이거나 복귀 중인 경우
 	if (bIsAttacking || bIsRecovering) 

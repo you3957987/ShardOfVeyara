@@ -885,8 +885,8 @@ void ABossSkeletonMage::SummonThunderToPlayer()
 
 void ABossSkeletonMage::StartSummonRandomMeteor()
 {
-    float MeteorDuration = 5.0f;
-    float MeteorInterval = 0.6f;
+    float MeteorDuration = 5.5f;
+    float MeteorInterval = 0.8f;
     float MeteorRadius = 500.f;
 
     UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
