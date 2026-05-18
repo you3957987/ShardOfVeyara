@@ -47,6 +47,13 @@ ABaseEnemy::ABaseEnemy()
 	HealthBarWidget->SetupAttachment(RootComponent);
 	HealthBarWidget->SetWidgetSpace(EWidgetSpace::World); // 월드 공간으로 변경
 
+	// 락온용 위젯 컴포넌트 생성 및 설정
+	LockOnWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOnWidget"));
+	LockOnWidget->SetupAttachment(GetCapsuleComponent());
+	LockOnWidget->SetWidgetSpace(EWidgetSpace::Screen); // 스크린 스페이스
+	LockOnWidget->SetVisibility(false); // 기본은 숨김
+	LockOnWidget->ComponentTags.Add(FName("LockOnMarker"));
+
 	// 캐릭터 메시의 콜리전을 비활성화합니다.
 	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
 

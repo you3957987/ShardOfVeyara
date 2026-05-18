@@ -91,6 +91,7 @@ protected:
 	// 락온 관련 함수
 	void ToggleLockOn();
 	AActor* FindNearestLockOnTarget();
+	void SetLockOnMarkerState(AActor* TargetActor, bool bActive);
 	
 	AAGSDPlayerController* PC;
 	

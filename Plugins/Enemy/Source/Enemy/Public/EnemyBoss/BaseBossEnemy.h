@@ -62,6 +62,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="자체설정")
 	TSubclassOf<class UBossHealthBarWidget> BossHealthBarWidgetClass;
 	class UBossHealthBarWidget* BossHealthBar; // 보스 체력 바 위젯 캐스팅해서 저장할 변수
+
+	// 락온용 위젯 컴포넌트
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "자체설정")
+	TObjectPtr<class UWidgetComponent> LockOnWidget;
 	
 	// 블랙보드 컴포넌트
 	class UBlackboardComponent* BlackboardComp;

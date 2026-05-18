@@ -1,6 +1,7 @@
 #include "EnemyBoss/BaseBossEnemy.h"
 
 #include "AIController.h"
+#include "Components/WidgetComponent.h"
 #include "EnemyLogManager.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -36,6 +37,13 @@ ABaseBossEnemy::ABaseBossEnemy()
 	
 	Tags.Add(FName("Enemy")); // 적 캐릭터 태그 추가 -> 이걸 이용해서 프로젝트에서 플러그인 에너미 접근. 매우 중요!!!!
 	Tags.Add(FName("Boss")); // 보스 태그 추가
+
+	// 락온용 위젯 컴포넌트 생성 및 설정
+	LockOnWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("LockOnWidget"));
+	LockOnWidget->SetupAttachment(GetCapsuleComponent());
+	LockOnWidget->SetWidgetSpace(EWidgetSpace::Screen); // 스크린 스페이스
+	LockOnWidget->SetVisibility(false); // 기본은 숨김
+	LockOnWidget->ComponentTags.Add(FName("LockOnMarker"));
 	
 	// AI 컨트롤러가 자동 빙의 하는거 제한. 범위 안에 플레이어가 들어왔을 때 오버랩 이벤트로 빙의
 	AutoPossessAI = EAutoPossessAI::Disabled;

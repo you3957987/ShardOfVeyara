@@ -79,6 +79,10 @@ public:
 	// 체력 바 위젯 컴포넌트
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "자체설정")
 	TObjectPtr<class UWidgetComponent> HealthBarWidget;
+
+	// 락온용 위젯 컴포넌트
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "자체설정")
+	TObjectPtr<class UWidgetComponent> LockOnWidget;
 	// Tick에서 체력 바 위젯을 내 캐릭터 쪽으로 돌아보게 하는 함수
 	void UpdateHealthBarWidget(float DeltaTime);
 	

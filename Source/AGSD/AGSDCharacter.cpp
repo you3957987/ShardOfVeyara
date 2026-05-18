@@ -24,6 +24,8 @@
 #include "Interface/ItemDropInterface.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Components/WidgetComponent.h"
+#include "Blueprint/UserWidget.h"
 #if WITH_EDITOR
 #include "AssetTypeActions/AssetDefinition_SoundBase.h"
 #endif
@@ -836,7 +838,8 @@ void AAGSDCharacter::ToggleLockOn()
 {
 	if (LockedTarget)
 	{
-		// 1. 이미 락온 중이라면 락온 해제
+		// 1. 이미 락온 중이라면 조준선 끄고 락온 해제
+		SetLockOnMarkerState(LockedTarget, false);
 		LockedTarget = nullptr;
 		GetCharacterMovement()->bOrientRotationToMovement = true; 
 		bUseControllerRotationYaw = false; // 원래대로 캐릭터가 이동 방향을 보도록 설정
@@ -850,8 +853,13 @@ void AAGSDCharacter::ToggleLockOn()
 			// 락온 시 카메라는 타겟을 보지만, 캐릭터 회전은 이동 방향을 바라보도록 설정 (게걸음 X)
 			GetCharacterMovement()->bOrientRotationToMovement = true; 
 			bUseControllerRotationYaw = false; 
+			
+			// 조준선 켜고 애니메이션 재생
+			SetLockOnMarkerState(LockedTarget, true);
 		}
 	}
+
+	OnLockOnStateChanged.Broadcast(LockedTarget != nullptr);
 }
 
 AActor* AAGSDCharacter::FindNearestLockOnTarget()
@@ -1087,6 +1095,40 @@ void AAGSDCharacter::HandleLockOn(bool bLockOn)
 			{
 				ToggleLockOn();
 			}
+		}
+	}
+}
+
+void AAGSDCharacter::SetLockOnMarkerState(AActor* TargetActor, bool bActive)
+{
+	if (!TargetActor) return;
+
+	TArray<UWidgetComponent*> WidgetComps;
+	TargetActor->GetComponents<UWidgetComponent>(WidgetComps);
+
+	for (UWidgetComponent* Comp : WidgetComps)
+	{
+		if (Comp && Comp->ComponentHasTag(FName("LockOnMarker")))
+		{
+			Comp->SetVisibility(bActive);
+
+			UUserWidget* UserWidget = Comp->GetUserWidgetObject();
+			if (UserWidget)
+			{
+				UFunction* AnimFunc = UserWidget->FindFunction(FName("PlayLockOnAnim"));
+				if (AnimFunc)
+				{
+					struct FPlayLockOnAnimArgs
+					{
+						bool bPlay;
+					};
+					FPlayLockOnAnimArgs Args;
+					Args.bPlay = bActive;
+					
+					UserWidget->ProcessEvent(AnimFunc, &Args);
+				}
+			}
+			break;
 		}
 	}
 }
