@@ -22,12 +22,7 @@ AGroundAttackProjectile::AGroundAttackProjectile()
 void AGroundAttackProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if ( MeshComp )
-	{
-		MeshComp->OnComponentBeginOverlap.AddDynamic(this, &AGroundAttackProjectile::OnBeginOverlap);
-	}
-
+	
 	// 생성 후 상승 로직 시작
 	if (RiseDuration > 0.f )
 	{
@@ -91,6 +86,8 @@ void AGroundAttackProjectile::UpperMesh(float DeltaTime)
 			FinalLocation.Z = InitialLocation.Z + RiseHeight;
 			SetActorLocation(FinalLocation);
 
+			HandleDamage();
+			
 			// 최종 위치를 PeakLocation에 저장합니다.
 			PeakLocation = InitialLocation + FVector(0.f, 0.f, RiseHeight);
 			bIsStaying = true;
@@ -118,30 +115,38 @@ void AGroundAttackProjectile::LowerMesh(float DeltaTime)
 	}
 }
 
-void AGroundAttackProjectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-                                             UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AGroundAttackProjectile::HandleDamage()
 {
-	// 자기 자신이나 소유자와 충돌한 경우는 무시합니다.
-	if (OtherActor && (OtherActor != this) && (OtherActor != GetOwner()))
+	if (!MeshComp) return;
+
+	// 1. 현재 MeshComp와 겹쳐 있는 모든 액터를 가져옵니다.
+	TArray<AActor*> OverlappingActors;
+	MeshComp->GetOverlappingActors(OverlappingActors);
+
+	for (AActor* OtherActor : OverlappingActors)
 	{
-		// 충돌한 액터가 "Player" 태그를 가지고 있는지 확인합니다.
-		if (OtherActor->ActorHasTag(FName("Player")))
+		// 2. 자기 자신이나 소유자 제외, 유효성 검사
+		if (OtherActor && (OtherActor != this) && (OtherActor != GetOwner()))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("GroundAttack hit Player: %s"), *OtherActor->GetName());
-			
-			UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, FString::Printf(TEXT("[스켈레톤 메이지] 뼈 장판 공격 [%.f] 대미지 줌"), Damage ));
-			
-			// 플레이어에게 대미지를 적용합니다.
-			UGameplayStatics::ApplyDamage(
-				OtherActor,
-				Damage, 
-				GetOwner() ? GetOwner()->GetInstigatorController() : nullptr, // 소유자의 컨트롤러를 데미지 인스티게이터로 사용
-				this,
-				UDamageType::StaticClass()
-			);
-			
-			// 첫 오버랩 이후 MeshComp의 콜리전을 비활성화합니다.
-			MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			// 3. "Player" 태그 확인
+			if (OtherActor->ActorHasTag(FName("Player")))
+			{
+				UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, 
+					FString::Printf(TEXT("[스켈레톤 메이지] 뼈 장판 공격 [%.f] 대미지 줌"), Damage));
+                
+				// 4. 대미지 적용
+				UGameplayStatics::ApplyDamage(
+					OtherActor,
+					Damage, 
+					GetOwner() ? GetOwner()->GetInstigatorController() : nullptr,
+					this,
+					UDamageType::StaticClass()
+				);
+                
+				// 5. 단발성 공격이라면 콜리전 비활성화 (필요 시)
+				MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				break; // 한 명의 플레이어만 공격한다면 루프 종료
+			}
 		}
 	}
 }

@@ -30,6 +30,7 @@ void ABossMagicSwordManAIController::SetBlackboardKey()
 	BlackboardComp->SetValueAsFloat("W_PowerAttack", ControlledEnemy->AttackStruct.PowerAttackWeight);
 	BlackboardComp->SetValueAsFloat( "W_BladeWaveAttack", ControlledEnemy->AttackStruct.BladeWaveAttackWeight);
 	BlackboardComp->SetValueAsFloat("AttackDelay", ControlledEnemy->AttackStruct.AirAttackDelay);
+	BlackboardComp->SetValueAsFloat("W_BackDash", ControlledEnemy->AttackStruct.BackDashWeight);
 	
 	BlackboardComp->SetValueAsBool("SecondPhase", false);
 }

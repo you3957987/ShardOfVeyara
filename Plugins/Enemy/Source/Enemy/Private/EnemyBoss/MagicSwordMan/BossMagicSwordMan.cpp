@@ -507,6 +507,19 @@ void ABossMagicSwordMan::StartBladeWave()
 	}
 }
 
+UAnimMontage* ABossMagicSwordMan::StartDashBack()
+{
+	if ( DashBackMontage )
+	{
+		PlayAnimMontage(DashBackMontage);
+		
+		if (BlackboardComp) BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.BackDashDelay);
+		
+		return DashBackMontage;
+	}
+	return nullptr;
+}
+
 void ABossMagicSwordMan::StartSecondPhase()
 {
 	if ( BlackboardComp == nullptr ) return;
