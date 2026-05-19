@@ -179,6 +179,7 @@ void ARanged_RebirthEnemy::AfterReviveMontageEnd()
 	}
 }
 
+#if WITH_EDITOR
 void ARanged_RebirthEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
@@ -199,7 +200,7 @@ void ARanged_RebirthEnemy::PostEditChangeProperty(FPropertyChangedEvent& Propert
 		}
 	}
 }
-
+#endif
 
 
 
