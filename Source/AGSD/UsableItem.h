@@ -21,7 +21,7 @@ class AGSD_API IUsableItem
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Item")
+	UFUNCTION(BlueprintNativeEvent, Category = "Item")
 	void UseItem(class AAGSDCharacter* Player);
-	virtual void UseItem_Implementation(class AAGSDCharacter* Player) {}
+	virtual void UseItem_Implementation(class AAGSDCharacter* Player) = 0;
 };
