@@ -119,6 +119,9 @@ public:
     
 	UFUNCTION(BlueprintCallable, Category = "Farming")
 	void AdvanceGrowth();
+
+	UFUNCTION(BlueprintCallable, Category = "Farming|Effects")
+	void SpawnGrowthEffect(class UNiagaraSystem* EffectSystem);
     
 private:
 	//루트 컴포넌트
@@ -134,10 +137,6 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Farming|Effects", meta = (AllowPrivateAccess = "true"))
 	class UNiagaraSystem* FertilizerEffectSystem;
-
-	// 성장 비약 일회성 이펙트
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Farming|Effects", meta = (AllowPrivateAccess = "true"))
-	class UNiagaraSystem* GrowthEffectSystem;
 
 	void UpdateFertilizerEffect();
 };

@@ -57,8 +57,32 @@ void AACultivationPlot::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AAct
 
 void AACultivationPlot::ShowWidget_Implementation(ACharacter* player)
 {
+	AAGSDCharacter* GSDCharacter = Cast<AAGSDCharacter>(player);
+	if (!GSDCharacter) return;
+
+	FText DynamicText = InteractActionText;
+
+	if (PlantedCrop == nullptr)
+	{
+		DynamicText = FText::FromString(TEXT("작물심기"));
+	}
+	else if (!FullyGrown)
+	{
+		FStruct_ItemData HoldingItem = GSDCharacter->GetHoldingItemData();
+		if (HoldingItem.ItemBPClass)
+		{
+			AActor* DefaultActor = Cast<AActor>(HoldingItem.ItemBPClass->GetDefaultObject());
+			if (DefaultActor && DefaultActor->Implements<UUsableItem>())
+			{
+				DynamicText = FText::FromString(TEXT("물약사용"));
+			}
+		}
+	}
+
 	if (AAGSDPlayerController* PlayerController = Cast<AAGSDPlayerController>(player->GetController()))
-		PlayerController->ShowInteractionWidget(InteractActionText);
+	{
+		PlayerController->ShowInteractionWidget(DynamicText);
+	}
 }
 
 bool AACultivationPlot::CanInteract_Implementation(AAGSDCharacter* player)
@@ -324,10 +348,6 @@ void AACultivationPlot::ApplyGrowthElixir()
 {
 	if (PlantedCrop && !FullyGrown && !bHasWeeds)
 	{
-		if (GrowthEffectSystem)
-		{
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), GrowthEffectSystem, GetActorLocation());
-		}
 		while (!FullyGrown)
 		{
 			AdvanceGrowth();
@@ -358,6 +378,14 @@ void AACultivationPlot::UpdateFertilizerEffect()
 				FertilizerEffectComponent->Deactivate();
 			}
 		}
+	}
+}
+
+void AACultivationPlot::SpawnGrowthEffect(UNiagaraSystem* EffectSystem)
+{
+	if (EffectSystem)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), EffectSystem, GetActorLocation());
 	}
 }
 
