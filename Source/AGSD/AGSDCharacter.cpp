@@ -17,6 +17,7 @@
 #include "FadeWidget.h"
 #include "HeartProgressBar.h"
 #include "PlayerStateWidget.h"
+#include "MotionWarpingComponent.h"
 #include "SOVGameInstance.h"
 #include "Components/ProgressBar.h"
 #include "Kismet/GameplayStatics.h"
@@ -77,6 +78,8 @@ AAGSDCharacter::AAGSDCharacter()
 	Jumping = CreateDefaultSubobject<UAudioComponent>(TEXT("JumpingAudio"));
 	Jumping->SetupAttachment(RootComponent);
 	Jumping->bAutoActivate = false;
+
+	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpingComponent"));
 }
 
 void AAGSDCharacter::HandleAttackInput(FName ActionName)
@@ -193,17 +196,64 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	
-	// --- [락온 카메라 회전 처리] ---
+	// --- [락온 카메라 회전 및 유지 상태 처리] ---
 	if (LockedTarget)
 	{
-		// 1. 적이 파괴되었거나 죽어서 유효하지 않으면 락온 자동 해제
+		bool bShouldRelease = false;
+
+		// 1. 적이 파괴되었는지 검사 (기존 예외 처리)
 		if (!IsValid(LockedTarget)) 
+		{
+			bShouldRelease = true;
+		}
+		else
+		{
+			// 2. 락온 유지 한계 거리(1800.0f) 체크
+			float Distance = FVector::Dist(GetActorLocation(), LockedTarget->GetActorLocation());
+			if (Distance > 1800.0f)
+			{
+				bShouldRelease = true;
+			}
+		}
+
+		if (bShouldRelease)
 		{
 			ToggleLockOn();
 		}
 		else
 		{
-			// 2. 현재 카메라의 위치에서 타겟의 위치를 바라보는 회전값 계산
+			// 3. 장애물 시야 차단 체크 (Line of Sight - Visibility 채널)
+			FVector TraceStart = GetFollowCamera()->GetComponentLocation();
+			FVector TraceEnd = LockedTarget->GetActorLocation();
+			
+			FCollisionQueryParams TraceParams;
+			TraceParams.AddIgnoredActor(this);
+			TraceParams.AddIgnoredActor(LockedTarget);
+
+			FHitResult HitResult;
+			bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_Visibility, TraceParams);
+
+			if (bHit)
+			{
+				// 장애물에 가려진 상태
+				if (!bIsLineOfSightBlocked)
+				{
+					bIsLineOfSightBlocked = true;
+					// 1.2초 후 OnLineOfSightTimeout 실행
+					GetWorldTimerManager().SetTimer(LineOfSightTimerHandle, this, &AAGSDCharacter::OnLineOfSightTimeout, 1.2f, false);
+				}
+			}
+			else
+			{
+				// 시야가 확보된 상태
+				if (bIsLineOfSightBlocked)
+				{
+					bIsLineOfSightBlocked = false;
+					GetWorldTimerManager().ClearTimer(LineOfSightTimerHandle);
+				}
+			}
+
+			// 4. 카메라 회전 보간 처리
 			FVector CameraLocation = GetFollowCamera()->GetComponentLocation();
 			FVector TargetLocation = LockedTarget->GetActorLocation(); 
 			
@@ -213,19 +263,14 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 			FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(CameraLocation, TargetLocation);
 			FRotator CurrentRotation = GetController()->GetControlRotation();
 			
-			// 상하 방향(Pitch)은 플레이어가 마우스로 자유롭게 제어할 수 있도록 현재 회전값 유지
 			TargetRotation.Pitch = CurrentRotation.Pitch;
-			// 화면이 갸우뚱해지는 현상(Roll) 방지
 			TargetRotation.Roll = 0.0f;
 
-			// 3. 현재 컨트롤 로테이션에서 목표 로테이션으로 부드럽게 보간
-			FRotator SmoothedRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaSeconds, 8.0f); // 8.0f는 보간 속도
-
-			// 4. 컨트롤러의 시야 회전 적용
+			FRotator SmoothedRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaSeconds, 8.0f);
 			GetController()->SetControlRotation(SmoothedRotation);
 		}
 	}
-	// -------------------------------
+	// ---------------------------------------------
 
 	float CurrentTime = GetWorld()->GetTimeSeconds();
 
@@ -472,6 +517,16 @@ void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 			EnhancedInputComponent->BindAction(LockOnAction, ETriggerEvent::Started, this, &AAGSDCharacter::ToggleLockOn);
 		}
 
+		if (SwitchTargetLeftAction)
+		{
+			EnhancedInputComponent->BindAction(SwitchTargetLeftAction, ETriggerEvent::Started, this, &AAGSDCharacter::SwitchTargetLeft);
+		}
+
+		if (SwitchTargetRightAction)
+		{
+			EnhancedInputComponent->BindAction(SwitchTargetRightAction, ETriggerEvent::Started, this, &AAGSDCharacter::SwitchTargetRight);
+		}
+
 		// 튜토리얼 스킵 기능 바인딩
 		if (SkipTutorialAction)
 		{
@@ -685,6 +740,8 @@ void AAGSDCharacter::PlayStage(int32 Index)
 	FSpearStageData& Stage = CurrentComboData->Stages[Index];
 	if (Stage.AttackMontage)
 	{
+		UpdateMotionWarpTarget();
+
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 		float Duration = PlayAnimMontage(Stage.AttackMontage);
         
@@ -866,8 +923,16 @@ void AAGSDCharacter::ToggleLockOn()
 		// 1. 이미 락온 중이라면 조준선 끄고 락온 해제
 		SetLockOnMarkerState(LockedTarget, false);
 		LockedTarget = nullptr;
-		GetCharacterMovement()->bOrientRotationToMovement = true; 
-		bUseControllerRotationYaw = false; // 원래대로 캐릭터가 이동 방향을 보도록 설정
+
+		// 시야 차단 타이머 및 상태 초기화
+		GetWorldTimerManager().ClearTimer(LineOfSightTimerHandle);
+		bIsLineOfSightBlocked = false;
+
+		// 모션 워프 타겟 제거
+		if (MotionWarpingComponent)
+		{
+			MotionWarpingComponent->RemoveWarpTarget(FName("WarpTarget"));
+		}
 	}
 	else
 	{
@@ -875,10 +940,6 @@ void AAGSDCharacter::ToggleLockOn()
 		LockedTarget = FindNearestLockOnTarget();
 		if (LockedTarget)
 		{
-			// 락온 시 카메라는 타겟을 보지만, 캐릭터 회전은 이동 방향을 바라보도록 설정 (게걸음 X)
-			GetCharacterMovement()->bOrientRotationToMovement = true; 
-			bUseControllerRotationYaw = false; 
-			
 			// 조준선 켜고 애니메이션 재생
 			SetLockOnMarkerState(LockedTarget, true);
 		}
@@ -903,22 +964,220 @@ AActor* AAGSDCharacter::FindNearestLockOnTarget()
 		OverlappingActors
 	);
 
-	AActor* NearestTarget = nullptr;
-	float MinDistance = LockOnRadius + 1.0f;
+	AActor* BestTarget = nullptr;
+	float BestScore = FLT_MAX;
+
+	FVector CameraLocation = GetFollowCamera()->GetComponentLocation();
+	FVector CameraForward = GetFollowCamera()->GetForwardVector();
 
 	for (AActor* Actor : OverlappingActors)
 	{
 		if (Actor && Actor->ActorHasTag(FName("Enemy")))
 		{
+			// 1. 캐릭터와의 거리 계산
 			float Distance = FVector::Dist(GetActorLocation(), Actor->GetActorLocation());
-			if (Distance < MinDistance)
+			if (Distance > LockOnRadius) continue;
+
+			// 2. 카메라 전방 기준 시야각 오프셋(AngleOffset) 계산
+			FVector DirToTarget = (Actor->GetActorLocation() - CameraLocation).GetSafeNormal();
+			float Dot = FVector::DotProduct(CameraForward, DirToTarget);
+			float AngleOffset = FMath::RadiansToDegrees(FMath::Acos(Dot));
+
+			// 3. 시야각 120도 이내 필터링 (중앙선 기준 좌우 60도)
+			if (AngleOffset <= 60.0f)
 			{
-				MinDistance = Distance;
-				NearestTarget = Actor;
+				// 4. Normalized Score (가중치 1:1) 계산
+				float NormDistance = Distance / LockOnRadius;
+				float NormAngle = AngleOffset / 60.0f;
+				float Score = (NormDistance * 1.0f) + (NormAngle * 1.0f);
+
+				if (Score < BestScore)
+				{
+					BestScore = Score;
+					BestTarget = Actor;
+				}
 			}
 		}
 	}
-	return NearestTarget;
+	return BestTarget;
+}
+
+void AAGSDCharacter::SwitchTargetLeft()
+{
+	SwitchTarget(true);
+}
+
+void AAGSDCharacter::SwitchTargetRight()
+{
+	SwitchTarget(false);
+}
+
+void AAGSDCharacter::SwitchTarget(bool bLookLeft)
+{
+	if (!LockedTarget) return;
+
+	TArray<AActor*> OverlappingActors;
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(this);
+
+	UKismetSystemLibrary::SphereOverlapActors(
+		this,
+		GetActorLocation(),
+		LockOnRadius,
+		{ UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn) },
+		AActor::StaticClass(),
+		ActorsToIgnore,
+		OverlappingActors
+	);
+
+	AActor* NewTarget = nullptr;
+	float MinYDiff = FLT_MAX;
+
+	FTransform CameraTransform = GetFollowCamera()->GetComponentTransform();
+	FVector CurrentTargetLocal = CameraTransform.InverseTransformPosition(LockedTarget->GetActorLocation());
+
+	FVector CameraLocation = GetFollowCamera()->GetComponentLocation();
+	FVector CameraForward = GetFollowCamera()->GetForwardVector();
+
+	for (AActor* Actor : OverlappingActors)
+	{
+		if (Actor && Actor->ActorHasTag(FName("Enemy")) && Actor != LockedTarget)
+		{
+			// 1. 시야각 120도 필터링
+			FVector DirToTarget = (Actor->GetActorLocation() - CameraLocation).GetSafeNormal();
+			float Dot = FVector::DotProduct(CameraForward, DirToTarget);
+			float AngleOffset = FMath::RadiansToDegrees(FMath::Acos(Dot));
+
+			if (AngleOffset > 60.0f) continue;
+
+			// 2. 카메라 공간 상의 위치 계산 (Y축: Right)
+			FVector EnemyLocal = CameraTransform.InverseTransformPosition(Actor->GetActorLocation());
+			float YDiff = EnemyLocal.Y - CurrentTargetLocal.Y;
+
+			if (bLookLeft)
+			{
+				// 좌측에 있는 적: 현재 타겟의 로컬 Y보다 작은 Y값을 가짐
+				if (YDiff < 0.0f)
+				{
+					float AbsDiff = FMath::Abs(YDiff);
+					if (AbsDiff < MinYDiff)
+					{
+						MinYDiff = AbsDiff;
+						NewTarget = Actor;
+					}
+				}
+			}
+			else
+			{
+				// 우측에 있는 적: 현재 타겟의 로컬 Y보다 큰 Y값을 가짐
+				if (YDiff > 0.0f)
+				{
+					float AbsDiff = FMath::Abs(YDiff);
+					if (AbsDiff < MinYDiff)
+					{
+						MinYDiff = AbsDiff;
+						NewTarget = Actor;
+					}
+				}
+			}
+		}
+	}
+
+	if (NewTarget)
+	{
+		// 마커 전환 및 락온 대상 변경
+		SetLockOnMarkerState(LockedTarget, false);
+		LockedTarget = NewTarget;
+		SetLockOnMarkerState(LockedTarget, true);
+
+		// 시야 차단 타이머 상태 초기화
+		GetWorldTimerManager().ClearTimer(LineOfSightTimerHandle);
+		bIsLineOfSightBlocked = false;
+
+		OnLockOnStateChanged.Broadcast(true);
+	}
+}
+
+void AAGSDCharacter::OnLineOfSightTimeout()
+{
+	if (LockedTarget && bIsLineOfSightBlocked)
+	{
+		ToggleLockOn();
+	}
+}
+
+void AAGSDCharacter::UpdateMotionWarpTarget()
+{
+	if (MotionWarpingComponent)
+	{
+		if (!LockedTarget)
+		{
+			// 락온 타겟이 없을 때 모션 워프 타겟 제거
+			MotionWarpingComponent->RemoveWarpTarget(FName("WarpTarget"));
+			return;
+		}
+
+		FVector PlayerLoc = GetActorLocation();
+		FVector TargetLoc = LockedTarget->GetActorLocation();
+
+		// 1. 플레이어 캐릭터 전방 120도 시야 범위(좌우 60도) 내에 타겟이 있는지 검사
+		FVector Forward = GetActorForwardVector();
+		FVector DirToTarget = (TargetLoc - PlayerLoc).GetSafeNormal2D();
+		float Dot = FVector::DotProduct(Forward, DirToTarget);
+		float AngleDiff = FMath::RadiansToDegrees(FMath::Acos(Dot));
+
+		if (AngleDiff > 60.0f)
+		{
+			// 정면 시야각 120도를 벗어났다면(예: 뒤를 돌아서 공격 시 등), 모션 워프 타겟을 제거하여 급회전 현상 방지
+			MotionWarpingComponent->RemoveWarpTarget(FName("WarpTarget"));
+			return;
+		}
+
+		// 2. 플레이어 캐릭터가 락온 타겟을 바라보는 회전값 계산
+		FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(PlayerLoc, TargetLoc);
+		TargetRotation.Pitch = 0.f;
+		TargetRotation.Roll = 0.f;
+
+		// 수평(2D) 방향 및 거리 계산
+		float ActualDistance = FVector::Dist2D(PlayerLoc, TargetLoc);
+
+		FVector WarpLocation = PlayerLoc;
+		const float AttackStopDistance = 150.0f; // 몬스터 전방 150.0f 남겨두기
+		const float MaxWarpStep = 350.0f;        // 공격 시 순간이동 방지를 위한 최대 워프 전진 제한 거리
+
+		if (ActualDistance > AttackStopDistance)
+		{
+			// 몬스터 전방 150.0f가 되는 목표 지점 계산
+			FVector DesiredWarpLoc = TargetLoc - (DirToTarget * AttackStopDistance);
+			
+			// 해당 목표 지점까지의 워프 필요 거리
+			float WarpDist = FVector::Dist2D(PlayerLoc, DesiredWarpLoc);
+			if (WarpDist > MaxWarpStep)
+			{
+				// 최대 허용치만큼만 앞으로 전진 워프
+				WarpLocation = PlayerLoc + (DirToTarget * MaxWarpStep);
+			}
+			else
+			{
+				WarpLocation = DesiredWarpLoc;
+			}
+		}
+		else
+		{
+			// 이미 공격 사거리 이내(150.0f 이하)에 있다면 현재 위치 유지하며 회전만 보정
+			WarpLocation = PlayerLoc;
+		}
+
+		// Z축 좌표는 플레이어의 현재 높이를 유지하여 땅밑 침하 또는 공중 부양 방지
+		WarpLocation.Z = PlayerLoc.Z;
+
+		// WarpTarget 업데이트
+		MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation(
+			FName("WarpTarget"),
+			WarpLocation,
+			TargetRotation
+		);
+	}
 }
 
 void AAGSDCharacter::DoMove(float Right, float Forward)

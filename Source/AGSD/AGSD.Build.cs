@@ -24,7 +24,8 @@ public class AGSD : ModuleRules
 			"Pet",
 			"Niagara",
 			"NavigationSystem",
-			"PhysicsCore"
+			"PhysicsCore",
+			"MotionWarping"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] 

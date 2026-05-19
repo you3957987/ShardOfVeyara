@@ -26,6 +26,7 @@ class UCameraComponent;
 class UInputAction;
 struct FInputActionValue;
 class AACultivationPlot;
+class UMotionWarpingComponent;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -79,6 +80,13 @@ protected:
 	// 락온 액션
 	UPROPERTY(EditAnywhere, Category="Input")
 	class UInputAction* LockOnAction;
+
+	// 락온 타겟 전환 액션 (좌/우)
+	UPROPERTY(EditAnywhere, Category="Input")
+	class UInputAction* SwitchTargetLeftAction;
+
+	UPROPERTY(EditAnywhere, Category="Input")
+	class UInputAction* SwitchTargetRightAction;
 	
 	// 락온 타겟
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat|LockOn")
@@ -88,10 +96,29 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|LockOn")
 	float LockOnRadius = 1500.0f;
 
+	// 시야 차단 상태 플래그
+	UPROPERTY(BlueprintReadOnly, Category="Combat|LockOn")
+	bool bIsLineOfSightBlocked = false;
+
+	// 시야 차단 타이머 핸들
+	FTimerHandle LineOfSightTimerHandle;
+
 	// 락온 관련 함수
 	void ToggleLockOn();
 	AActor* FindNearestLockOnTarget();
 	void SetLockOnMarkerState(AActor* TargetActor, bool bActive);
+	void SwitchTargetLeft();
+	void SwitchTargetRight();
+	void SwitchTarget(bool bLookLeft);
+	void OnLineOfSightTimeout();
+
+	// 모션 워핑 컴포넌트
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat|Warping")
+	class UMotionWarpingComponent* MotionWarpingComponent;
+
+	// 모션 워핑 타겟 업데이트 함수
+	UFUNCTION(BlueprintCallable, Category = "Combat|Warping")
+	void UpdateMotionWarpTarget();
 	
 	AAGSDPlayerController* PC;
 	
