@@ -353,7 +353,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "PlayerState")
 	void TeleportToBed();
 
-	UPROPERTY( EditAnywhere, Category="Pet")
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category="Pet")
 	bool bHasPet = false;
 	
 	UPROPERTY( BlueprintReadOnly)
