@@ -174,6 +174,17 @@ public:
 	UPROPERTY(EditAnywhere, Category="Input")
 	class UInputMappingContext* IMC_Farmer;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Input")
+	class UInputAction* SkipTutorialAction;
+
+	// 튜토리얼 스킵이 활성화될 맵 이름들 (예: Tutorial_Village, Tutorial_Sky_Island)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Tutorial")
+	TArray<FString> TutorialMapNames;
+
+	// 튜토리얼 스킵 완료 시 이동할 타겟 맵 이름 (예: Farm_Sky_Island)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Tutorial")
+	FName TargetSkipMapName;
+
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -431,6 +442,14 @@ public:
 	/** 성공 시 재생할 사운드 */
 	UPROPERTY(EditAnywhere, Category = "Combat|Effects")
 	USoundBase* JustGuardSound;
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Tutorial")
+	void OnSkipTutorialTriggered();
+	
+	void SkipTutorialPressed();
+	
+	UFUNCTION()
+	void ExecuteTutorialSkipLevelTransition();
 	
 };
 

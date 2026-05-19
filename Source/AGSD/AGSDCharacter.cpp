@@ -383,6 +383,7 @@ void AAGSDCharacter::Die()
 			playFadeWidget(0.0f, 1.0f);
 			if (FadeWidget)
 			{
+				FadeWidget->OnFadeFinished.RemoveDynamic(this, &AAGSDCharacter::WakeUp);
 				FadeWidget->OnFadeFinished.AddDynamic(this, &AAGSDCharacter::WakeUp);
 			}
 		}),
@@ -426,7 +427,10 @@ void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 			if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
 			{
 				UEnhancedInputLocalPlayerSubsystem* EnhancedSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
-				EnhancedSubsystem->AddMappingContext(IMC_Farmer, 1);
+				if (EnhancedSubsystem)
+				{
+					EnhancedSubsystem->AddMappingContext(IMC_Farmer, 1);
+				}
 			}
 		}
 		// Jumping
@@ -452,6 +456,12 @@ void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		if (LockOnAction)
 		{
 			EnhancedInputComponent->BindAction(LockOnAction, ETriggerEvent::Started, this, &AAGSDCharacter::ToggleLockOn);
+		}
+
+		// 튜토리얼 스킵 기능 바인딩
+		if (SkipTutorialAction)
+		{
+			EnhancedInputComponent->BindAction(SkipTutorialAction, ETriggerEvent::Triggered, this, &AAGSDCharacter::SkipTutorialPressed);
 		}
 	}
 	else
@@ -1130,5 +1140,52 @@ void AAGSDCharacter::SetLockOnMarkerState(AActor* TargetActor, bool bActive)
 			}
 			break;
 		}
+	}
+}
+
+void AAGSDCharacter::SkipTutorialPressed()
+{
+	FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
+	if (TutorialMapNames.Contains(CurrentLevelName))
+	{
+		OnSkipTutorialTriggered();
+	}
+}
+
+void AAGSDCharacter::OnSkipTutorialTriggered_Implementation()
+{
+	// 페이드 아웃 시작 (투명도 0.0 -> 1.0)
+	playFadeWidget(0.0f, 1.0f);
+
+	if (FadeWidget)
+	{
+		// 중복 바인딩 방지 후 페이드 아웃 완료 이벤트 바인딩
+		FadeWidget->OnFadeFinished.RemoveDynamic(this, &AAGSDCharacter::ExecuteTutorialSkipLevelTransition);
+		FadeWidget->OnFadeFinished.AddDynamic(this, &AAGSDCharacter::ExecuteTutorialSkipLevelTransition);
+	}
+	else
+	{
+		// 페이드 위젯이 유효하지 않을 경우 즉시 이동 (예외 처리)
+		ExecuteTutorialSkipLevelTransition();
+	}
+}
+
+void AAGSDCharacter::ExecuteTutorialSkipLevelTransition()
+{
+	if (FadeWidget)
+	{
+		// 이벤트 바인딩 해제
+		FadeWidget->OnFadeFinished.RemoveDynamic(this, &AAGSDCharacter::ExecuteTutorialSkipLevelTransition);
+	}
+
+	// 블루프린트에서 타겟 맵 이름이 설정되어 있다면 해당 맵으로 이동
+	if (TargetSkipMapName != NAME_None)
+	{
+		UGameplayStatics::OpenLevel(this, TargetSkipMapName);
+	}
+	else
+	{
+		// 설정되지 않았을 경우 기본값
+		UGameplayStatics::OpenLevel(this, FName("Farm_Sky_Island"));
 	}
 }

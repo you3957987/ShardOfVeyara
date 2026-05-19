@@ -44,6 +44,7 @@ void ABed::Interact_Implementation(AAGSDCharacter* player)
 	TargetPlayer->RemoveInteractableActor(this);
 	if (!WBP_FadeWidget) return;
 	if (!FadeWidget) FadeWidget = CreateWidget<UFadeWidget>(TargetPlayer->getPlayerController(), WBP_FadeWidget);
+	FadeWidget->OnFadeFinished.RemoveDynamic(this, &ABed::WakeUp);
 	FadeWidget->OnFadeFinished.AddDynamic(this, &ABed::WakeUp);
 	FadeWidget->SetRenderOpacity(0.0f);
 	FadeWidget->SetTargetOpacity(1.0f);
