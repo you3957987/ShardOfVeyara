@@ -9,6 +9,11 @@ void UFadeWidget::SetTargetOpacity(float NewOpacity)
 	bIsTickPaused = false;
 }
 
+void UFadeWidget::SetFadeSpeed(float NewSpeed)
+{
+	FadeSpeed = NewSpeed;
+}
+
 void UFadeWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);

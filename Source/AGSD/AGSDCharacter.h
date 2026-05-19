@@ -143,6 +143,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PlayerState")
 	class UAnimMontage* BlockStartMontage;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="PlayerState")
+	FStruct_ItemData HoldingItemData;
+	
 private:
 	UFUNCTION(BlueprintCallable)
 	void HandleAttackInput(FName ActionName);
@@ -150,6 +153,8 @@ private:
 public:
 	/** Constructor */
 	AAGSDCharacter();	
+
+	FORCEINLINE FStruct_ItemData GetHoldingItemData() const { return HoldingItemData; }
 
 	//G 키 입력과 바인딩될 함수
 	void TryInteract();
@@ -321,7 +326,7 @@ protected:
 	UAudioComponent* Jumping;
 
 	UFUNCTION(BlueprintCallable)
-	void playFadeWidget(float startOpacity, float endOpacity);
+	void playFadeWidget(float startOpacity, float endOpacity, float fadeSpeed = 2.0f);
 
 public:
 	// Enemy 로그 처리 위한 겟 함수

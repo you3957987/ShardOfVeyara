@@ -16,8 +16,11 @@ class AGSD_API UFadeWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category = "Fade")
 	void SetTargetOpacity(float NewOpacity);
+
+	UFUNCTION(BlueprintCallable, Category = "Fade")
+	void SetFadeSpeed(float NewSpeed);
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnFadeFinished OnFadeFinished;
@@ -34,5 +37,5 @@ private:
     
 	/** 투명도 보간 속도 (EditDefaultsOnly로 BP에서 설정 가능) */
 	UPROPERTY(EditDefaultsOnly, Category = "Fade")
-	float FadeSpeed = 8.0f;
+	float FadeSpeed = 2.0f;
 };

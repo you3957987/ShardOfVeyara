@@ -5,8 +5,11 @@
 #include "Components/BoxComponent.h"
 #include "AGSDPlayerController.h"
 #include "AGSDCharacter.h"
+#include "UsableItem.h"
 #include "SeedDataTable.h"
 #include "Kismet/GameplayStatics.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 
 // Sets default values
 AACultivationPlot::AACultivationPlot()
@@ -22,6 +25,11 @@ AACultivationPlot::AACultivationPlot()
 	CollisionBox->SetBoxExtent(FVector(50.0f, 50.f, 50.f));
 	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &AACultivationPlot::OnBeginOverlap);
 	CollisionBox->OnComponentEndOverlap.AddDynamic(this, &AACultivationPlot::OnEndOverlap);
+
+	// 나이아가라 컴포넌트 설정
+	FertilizerEffectComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("FertilizerEffectComponent"));
+	FertilizerEffectComponent->SetupAttachment(RootComponent);
+	FertilizerEffectComponent->bAutoActivate = false;
 }
 
 void AACultivationPlot::HandleDayPassed(int32 CurrentDay)
@@ -55,7 +63,22 @@ void AACultivationPlot::ShowWidget_Implementation(ACharacter* player)
 
 bool AACultivationPlot::CanInteract_Implementation(AAGSDCharacter* player)
 {
-	if (PlantedCrop == nullptr)	return player->HoldingState == EHoldingState::EHS_Seed;
+	// 1. 작물이 심겨져 있지 않을 때: 씨앗을 들고 있으면 상호작용 가능
+	if (PlantedCrop == nullptr)
+	{
+		return player->HoldingState == EHoldingState::EHS_Seed;
+	}
+
+	// 2. 작물이 심겨져 있고 아직 다 자라지 않았을 때: 풍요나 성장 물약을 들고 있으면 상호작용 가능
+	if (!FullyGrown)
+	{
+		FString ItemIDStr = player->GetHoldingItemData().ItemID;
+		if (ItemIDStr.Contains(TEXT("Growth")) || ItemIDStr.Contains(TEXT("Rich")))
+		{
+			return true;
+		}
+	}
+
 	return false;
 }
 
@@ -73,9 +96,8 @@ void AACultivationPlot::Interact_Implementation(AAGSDCharacter* player)
 	if (!SeedDataTable) return;
 	UE_LOG(LogTemp, Warning, TEXT("AACultivationPlot::OnBeginOverlap"));
 	
-	//CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-	if (PlantedCrop == nullptr)
+	// 1. 작물이 심겨져 있지 않고, 플레이어가 씨앗을 들고 있는 경우 -> 기존의 씨앗 심기 동작
+	if (PlantedCrop == nullptr && player->HoldingState == EHoldingState::EHS_Seed)
 	{
 		SeedName = FName(*player->SubItemAmount());
 		
@@ -90,6 +112,22 @@ void AACultivationPlot::Interact_Implementation(AAGSDCharacter* player)
 		
 		PlantCrop();
 		PlantedCrop->MeshUpdate(CurrentGrowStageIndex);
+		return;
+	}
+
+	// 2. 작물이 심겨져 있고 아직 다 자라지 않았으며, 풍요나 성장 물약을 들고 있는 경우 -> 물약의 UseItem 실행
+	if (PlantedCrop && !FullyGrown)
+	{
+		FStruct_ItemData HoldingItem = player->GetHoldingItemData();
+		if (HoldingItem.ItemBPClass)
+		{
+			AActor* DefaultActor = Cast<AActor>(HoldingItem.ItemBPClass->GetDefaultObject());
+			if (DefaultActor && DefaultActor->Implements<UUsableItem>())
+			{
+				IUsableItem::Execute_UseItem(DefaultActor, player);
+				return;
+			}
+		}
 	}
 }
 
@@ -117,6 +155,7 @@ void AACultivationPlot::BeginPlay()
 	FullyGrown = LoadedData.FullyGrown;
 	ScheduledDay = LoadedData.ScheduledDay;
 	bHasWeeds = LoadedData.bHasWeeds;
+	BonusYield = LoadedData.BonusYield;
 
 	
 	//CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -139,6 +178,8 @@ void AACultivationPlot::BeginPlay()
 		FullyGrown = true;
 		PlantedCrop->SetCollisionEnable();
 	}
+
+	UpdateFertilizerEffect();
 }
 
 void AACultivationPlot::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -154,6 +195,7 @@ void AACultivationPlot::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	SaveData.FullyGrown = FullyGrown;
 	SaveData.ScheduledDay = ScheduledDay;
 	SaveData.bHasWeeds = bHasWeeds;
+	SaveData.BonusYield = BonusYield;
 
 	if (GI)
 	{
@@ -182,10 +224,13 @@ void AACultivationPlot::PlantCrop()
 	);
 	if (PlantedCrop)
 	{
-	    PlantedCrop->SetCropData(CropData);
+		PlantedCrop->SetCropData(CropData);
+		PlantedCrop->SetBonusYield(BonusYield);
 
 		PlantedCrop->OnHarvested.AddDynamic(this, &AACultivationPlot::OnPlantedCropDestroyed);		
 		UGameplayStatics::FinishSpawningActor(PlantedCrop, SpawnTransform);
+
+		UpdateFertilizerEffect();
 	}
 }
 
@@ -197,11 +242,14 @@ void AACultivationPlot::OnPlantedCropDestroyed()
 	FullyGrown = false;
 	ScheduledDay = 0;
 	SeedName = NAME_None;
+	BonusYield = 0;
 
 	/*
 	if (CollisionBox)
 		CollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	*/
+
+	UpdateFertilizerEffect();
 }
 
 void AACultivationPlot::GetSeedInfo(FName TargetRowName)
@@ -260,5 +308,56 @@ void AACultivationPlot::AdvanceGrowth()
 {
 	GrowthLogic();
 	PlantedCrop->MeshUpdate(CurrentGrowStageIndex);
+}
+
+void AACultivationPlot::ApplyFertilizer(int32 Amount)
+{
+	BonusYield = Amount;
+	if (PlantedCrop)
+	{
+		PlantedCrop->SetBonusYield(BonusYield);
+	}
+	UpdateFertilizerEffect();
+}
+
+void AACultivationPlot::ApplyGrowthElixir()
+{
+	if (PlantedCrop && !FullyGrown && !bHasWeeds)
+	{
+		if (GrowthEffectSystem)
+		{
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), GrowthEffectSystem, GetActorLocation());
+		}
+		while (!FullyGrown)
+		{
+			AdvanceGrowth();
+		}
+	}
+}
+
+void AACultivationPlot::UpdateFertilizerEffect()
+{
+	if (FertilizerEffectComponent)
+	{
+		if (PlantedCrop != nullptr && BonusYield > 0)
+		{
+			if (FertilizerEffectSystem && FertilizerEffectComponent->GetAsset() != FertilizerEffectSystem)
+			{
+				FertilizerEffectComponent->SetAsset(FertilizerEffectSystem);
+			}
+
+			if (!FertilizerEffectComponent->IsActive())
+			{
+				FertilizerEffectComponent->Activate(true);
+			}
+		}
+		else
+		{
+			if (FertilizerEffectComponent->IsActive())
+			{
+				FertilizerEffectComponent->Deactivate();
+			}
+		}
+	}
 }
 

@@ -96,7 +96,7 @@ void ACrop::BeginPlay()
 //작물 수확 구현부
 void ACrop::HarvestCrop()
 {
-	if (HarvestClass == nullptr) return;
+	if (CropData == nullptr || CropData->HarvestRewards.Num() <= 0 || CropData->HarvestRewards[0].Harvest == nullptr) return;
 	
 	const float SpawnRadius = 50.f;
 	const FVector TargetLocation = GetActorLocation();
@@ -142,12 +142,19 @@ void ACrop::SetCropData(UUCropData* CData)
 	}
 }
 
+void ACrop::SetBonusYield(int32 Amount)
+{
+	BonusYield = Amount;
+}
+
 //상호작용 시 구현부
 void ACrop::Interact_Implementation(AAGSDCharacter* player)
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACrop::OnBeginOverlap"));
 
-	for (int i = 0; i < CropData->HarvestRewards[0].Quantity; i++)	HarvestCrop();
+	int32 FinalQuantity = FMath::Max(1, CropData->HarvestRewards[0].Quantity + BonusYield);
+
+	for (int i = 0; i < FinalQuantity; i++)	HarvestCrop();
 	if (OnHarvested.IsBound())
 	{
 		OnHarvested.Broadcast();

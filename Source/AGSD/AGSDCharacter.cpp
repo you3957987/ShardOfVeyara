@@ -11,6 +11,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Interaction.h"
+#include "Struct_ItemData.h"
+#include "UsableItem.h"
 #include "AGSD.h"
 #include "FadeWidget.h"
 #include "HeartProgressBar.h"
@@ -89,14 +91,26 @@ void AAGSDCharacter::HandleAttackInput(FName ActionName)
 
 void AAGSDCharacter::TryInteract()
 {
-	if (!CanInteract)
+	// 1. 플레이어 근처에 상호작용 가능한 오브젝트가 있으면 최우선으로 상호작용
+	if (CanInteract && IsValid(CurrentInteractableActor) && CurrentInteractableActor->Implements<UInteraction>())
 	{
-		CurrentInteractableActor = nullptr;
+		IInteraction::Execute_Interact(CurrentInteractableActor, this);
 		return;
 	}
-	if (!IsValid(CurrentInteractableActor)) return;
-	if (!CurrentInteractableActor->Implements<UInteraction>()) return;
-	IInteraction::Execute_Interact(CurrentInteractableActor, this);
+
+	// 2. 상호작용 가능한 오브젝트가 없으면, 들고 있는 아이템 데이터(HoldingItemData)의 클래스로부터 CDO를 가져와 사용 시도
+	if (HoldingItemData.ItemBPClass)
+	{
+		// 클래스 디폴트 오브젝트(CDO)를 가져와 전용 사용 인터페이스(IUsableItem) 실행 (스폰 없음)
+		AActor* DefaultActor = Cast<AActor>(HoldingItemData.ItemBPClass->GetDefaultObject());
+		if (DefaultActor)
+		{
+			if (DefaultActor->Implements<UUsableItem>())
+			{
+				IUsableItem::Execute_UseItem(DefaultActor, this);
+			}
+		}
+	}
 }
 
 void AAGSDCharacter::AddInteractableActor(AActor* NewActor)
@@ -550,7 +564,7 @@ void AAGSDCharacter::Look(const FInputActionValue& Value)
 	DoLook(LookAxisVector.X, LookAxisVector.Y);
 }
 
-void AAGSDCharacter::playFadeWidget(float startOpacity, float endOpacity)
+void AAGSDCharacter::playFadeWidget(float startOpacity, float endOpacity, float fadeSpeed)
 {
 	if (WBP_FadeWidget) 
 	{
@@ -558,6 +572,7 @@ void AAGSDCharacter::playFadeWidget(float startOpacity, float endOpacity)
                 
 		if (FadeWidget)
 		{
+			FadeWidget->SetFadeSpeed(fadeSpeed);
 			FadeWidget->SetRenderOpacity(startOpacity);
 			FadeWidget->SetTargetOpacity(endOpacity);
 			if (!FadeWidget->IsInViewport()) FadeWidget->AddToViewport(100);
@@ -1155,7 +1170,7 @@ void AAGSDCharacter::SkipTutorialPressed()
 void AAGSDCharacter::OnSkipTutorialTriggered_Implementation()
 {
 	// 페이드 아웃 시작 (투명도 0.0 -> 1.0)
-	playFadeWidget(0.0f, 1.0f);
+	playFadeWidget(0.0f, 1.0f, 6.0f);
 
 	if (FadeWidget)
 	{

@@ -78,6 +78,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Farming")
 	FName SeedName = NAME_None;
 
+	// 추가 보너스 수확량
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
+	int32 BonusYield = 0;
+
 	AAGSDGameStateBase* GS = nullptr;
 	USOVGameInstance* GI = nullptr;
 
@@ -87,6 +91,12 @@ protected:
 	void SpawnWeeds();
 
 public:	
+	UFUNCTION(BlueprintCallable, Category = "Farming")
+	void ApplyFertilizer(int32 Amount);
+
+	UFUNCTION(BlueprintCallable, Category = "Farming")
+	void ApplyGrowthElixir();
+
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	//오버랩 시작 시 작동할 함수
 	UFUNCTION()
@@ -106,7 +116,9 @@ public:
     FORCEINLINE bool GetFullyGrown() const { return FullyGrown; };
 	
     //작물 매니저가 성장 날짜가 되었을 땨 호출하여 성장을 처리하는 함수
-    void AdvanceGrowth();
+    
+	UFUNCTION(BlueprintCallable, Category = "Farming")
+	void AdvanceGrowth();
     
 private:
 	//루트 컴포넌트
@@ -115,4 +127,17 @@ private:
 	//콜리전 박스
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CultivationPlot, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* CollisionBox;
+
+	// 풍요 비료 지속 이펙트
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = CultivationPlot, meta = (AllowPrivateAccess = "true"))
+	class UNiagaraComponent* FertilizerEffectComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Farming|Effects", meta = (AllowPrivateAccess = "true"))
+	class UNiagaraSystem* FertilizerEffectSystem;
+
+	// 성장 비약 일회성 이펙트
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Farming|Effects", meta = (AllowPrivateAccess = "true"))
+	class UNiagaraSystem* GrowthEffectSystem;
+
+	void UpdateFertilizerEffect();
 };

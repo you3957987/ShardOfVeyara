@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "CoreMinimal.h"
 #include "PlotSaveData.generated.h"
@@ -32,4 +32,8 @@ struct FPlotSaveData
 	//잡초가 자랐는지
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
 	bool bHasWeeds = false;
+
+	// 추가 보너스 수확량
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Farming")
+	int32 BonusYield = 0;
 };

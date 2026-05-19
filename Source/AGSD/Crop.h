@@ -40,10 +40,17 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
 	TEnumAsByte<ECollisionChannel> PlacementTraceChannel;
+
+	// 추가 보너스 수확량 (풍요 비료 반영용)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Farming")
+	int32 BonusYield = 0;
 	
 public:	
 	//작물이 경작지에 심길 때 실행할 함수
 	void SetCropData(UUCropData* CData);
+
+	UFUNCTION(BlueprintCallable, Category = "Farming")
+	void SetBonusYield(int32 Amount);
 
 	//오버랩 시작 시 작동할 함수
 	UFUNCTION()
