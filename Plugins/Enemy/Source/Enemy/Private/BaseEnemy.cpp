@@ -165,13 +165,22 @@ UAnimMontage* ABaseEnemy::Attack()
 {
 	// 여기서 SetFoucs 하면 나중에 ClearFocus 도 해줘야함. 일단 커찮아서 안함.
 
+	if ( Health <= 0.f ) return nullptr;
+	
 	// 어택 몽타주 배열중 랜덤하게 하나 실행
 	if ( AttackMontages.Num() > 0 )
 	{
+		if ( Health <= 0.f ) return nullptr;
+		
 		int32 RandomIndex = FMath::RandRange(0, AttackMontages.Num() - 1);
+		
+		if ( Health <= 0.f ) return nullptr;
+		
 		UAnimMontage* RandomAttackMontage = AttackMontages[RandomIndex];
 		if ( RandomAttackMontage )
 		{
+			if ( Health <= 0.f ) return nullptr;
+			
 			PlayAnimMontage(RandomAttackMontage);
 			bFocusPlayerAfterAttack = false; // 공격 후 포커스 시작 플래그를 false로 설정
 			
