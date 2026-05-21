@@ -1129,7 +1129,7 @@ void AAGSDCharacter::UpdateMotionWarpTarget()
 		float Dot = FVector::DotProduct(Forward, DirToTarget);
 		float AngleDiff = FMath::RadiansToDegrees(FMath::Acos(Dot));
 
-		if (AngleDiff > 60.0f)
+		if (AngleDiff > MaxAngleDiff)
 		{
 			// 정면 시야각 120도를 벗어났다면(예: 뒤를 돌아서 공격 시 등), 모션 워프 타겟을 제거하여 급회전 현상 방지
 			MotionWarpingComponent->RemoveWarpTarget(FName("WarpTarget"));

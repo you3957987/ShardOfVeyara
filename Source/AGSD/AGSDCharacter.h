@@ -119,6 +119,9 @@ protected:
 	// 모션 워핑 타겟 업데이트 함수
 	UFUNCTION(BlueprintCallable, Category = "Combat|Warping")
 	void UpdateMotionWarpTarget();
+
+	UPROPERTY(EditAnywhere, Category = "Combat|Warping")
+	float MaxAngleDiff = 90.f;
 	
 	AAGSDPlayerController* PC;
 	
