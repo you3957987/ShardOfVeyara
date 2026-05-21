@@ -96,7 +96,7 @@ protected:
 	float DeathEffectScale = 1.0f;
 	// 죽음 후 일정 시간 뒤에 이펙트 생성 및 액터 제거를 위한 타이머 핸들
 	FTimerHandle DeathTimerHandle;
-	void SpawnDeadEffectAndDestroy();
+	virtual void SpawnDeadEffectAndDestroy();
 
 	// 피격용 Overlay 머티리얼 == 피격시 머터리얼 덧씌우기
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")

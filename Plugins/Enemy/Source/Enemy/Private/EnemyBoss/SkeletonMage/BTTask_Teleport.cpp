@@ -39,17 +39,17 @@ EBTNodeResult::Type UBTTask_Teleport::ExecuteTask(UBehaviorTreeComponent& OwnerC
     bool bFoundIdealLocation = false;
     bool bFoundAnyLocation = false;
     float MaxDistanceFound = 0.f;
-    const int32 MaxAttempts = 10; // 최대 시도 횟수
+    const int32 MaxAttempts = 50; // 최대 시도 횟수
 
     for (int32 i = 0; i < MaxAttempts; ++i)
     {
         FNavLocation TempLocation;
         // 보스 주변 최대 반경 내에서 이동 가능한 랜덤 위치 찾기
-        if (NavSystem->GetRandomPointInNavigableRadius(BossLocation, BossPawn->AttackStruct.MaxTeleportDist, TempLocation))
+        if (NavSystem->GetRandomReachablePointInRadius(BossLocation, BossPawn->AttackStruct.MaxTeleportDist, TempLocation))
         {
             bFoundAnyLocation = true;
             const float CurrentDistance = FVector::Dist(BossLocation, TempLocation.Location);
-
+            
             // 현재 위치와 찾은 위치 사이의 거리가 최소 반경보다 큰지 확인 (이상적인 경우)
             if (CurrentDistance > BossPawn->AttackStruct.MinTeleportDist)
             {

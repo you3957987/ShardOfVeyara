@@ -65,6 +65,9 @@ class ENEMY_API ABossSkeletonMage : public ABaseBossEnemy
 {
 	GENERATED_BODY()
 
+protected:
+	virtual void SpawnDeadEffectAndDestroy() override;
+	
 public:
 	ABossSkeletonMage();
 	virtual void BeginPlay() override;

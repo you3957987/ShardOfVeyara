@@ -225,7 +225,7 @@ void ABaseBossEnemy::AfterDieMontageEnd()
 	
 	// 0.3초 후에 SpawnEffectAndDestroy 함수를 호출합니다.
 	GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this,
-		&ABossSkeletonMage::SpawnDeadEffectAndDestroy, 1.0f, false);
+		&ABaseBossEnemy::SpawnDeadEffectAndDestroy, 1.0f, false);
 }
 
 void ABaseBossEnemy::SpawnDeadEffectAndDestroy()

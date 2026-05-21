@@ -14,6 +14,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
+
 ABossSkeletonMage::ABossSkeletonMage()
 {
 	SummonPointOne = CreateDefaultSubobject<USceneComponent>(TEXT("SummonPointOne"));
@@ -121,6 +122,37 @@ void ABossSkeletonMage::Die()
 		GroundTargetingComponent = nullptr;
 	}
 	
+}
+
+void ABossSkeletonMage::SpawnDeadEffectAndDestroy()
+{
+	// 주변 "Enemy" 태그를 가진 액터들에게 대미지 적용
+	TArray<FOverlapResult> OverlapResults;
+	FCollisionShape SearchSphere = FCollisionShape::MakeSphere(3000.f); // 범위 3000 유닛
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this); // 자기 자신은 제외
+	
+	if (GetWorld()->OverlapMultiByChannel(OverlapResults, GetActorLocation(), FQuat::Identity, ECC_Pawn, SearchSphere, QueryParams))
+	{
+		for (const FOverlapResult& Result : OverlapResults)
+		{
+			AActor* HitActor = Result.GetActor();
+			
+			// 액터가 유효하고 "Enemy" 태그를 가지고 있는지 확인
+			if (HitActor && HitActor->ActorHasTag(FName("Enemy")))
+			{
+				UGameplayStatics::ApplyDamage(
+					HitActor, 
+					1000.f,           // 대미지 1000
+					GetController(),  // 대미지 원인 컨트롤러
+					this,             // 대미지 가해자
+					UDamageType::StaticClass()
+				);
+			}
+		}
+	}
+
+	Super::SpawnDeadEffectAndDestroy();
 }
 
 float ABossSkeletonMage::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
