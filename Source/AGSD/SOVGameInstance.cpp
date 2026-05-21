@@ -30,6 +30,7 @@ void USOVGameInstance::InitializeVariables()
 	bHasPet = DefaultInstance->bHasPet;
 	CurrentSelectedHotbar = DefaultInstance->CurrentSelectedHotbar;
 	TributeLevel = DefaultInstance->TributeLevel;
+	MouseSensitivity = DefaultInstance->MouseSensitivity;
 	
 	// 데이터 맵 및 인벤토리는 비워줌 (필요 시 CDO에서 복사 가능)
 	ChestMap.Empty();
@@ -97,6 +98,7 @@ FSaveData USOVGameInstance::GetSaveData()
 	SaveData.CurrentLevelTributeItems = CurrentLevelTributeItems;
 	SaveData.LastSaveTime = FDateTime::Now();
 	SaveData.AlreadyDroppedItems = AlreadyDroppedItems;
+	SaveData.MouseSensitivity = MouseSensitivity;
 	
 	return SaveData; 
 }
@@ -122,6 +124,7 @@ void USOVGameInstance::SetSaveData(FSaveData SaveData)
 	TributeLevel = SaveData.TributeLevel;
 	CurrentLevelTributeItems = SaveData.CurrentLevelTributeItems;
 	AlreadyDroppedItems = SaveData.AlreadyDroppedItems;
+	MouseSensitivity = SaveData.MouseSensitivity;
 }
 
 void USOVGameInstance::SaveGame()

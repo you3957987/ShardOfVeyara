@@ -85,7 +85,10 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "EnemyItemDrop")
 	TArray<FString> AlreadyDroppedItems;
-
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Setting")
+	float MouseSensitivity = 5.f;
+	
 	// 경작지로부터 데이터를 받아서 저장/갱신하는 함수
 	UFUNCTION(BlueprintCallable, Category = "Farming")
 	void UpdatePlotData(FPlotSaveData NewData);

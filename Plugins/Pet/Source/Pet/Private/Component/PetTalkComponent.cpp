@@ -396,7 +396,7 @@ void UPetTalkComponent::StartConversation(FName DialogueID)
         }
 
     	//  음성 재생 및 지속 시간 계산
-    	float Duration = 7.0f;
+    	float Duration = 10.0f;
     	if (RowData->VoiceAudio)
     	{
     		//  기존 음성 중지 로직 추가
@@ -411,7 +411,7 @@ void UPetTalkComponent::StartConversation(FName DialogueID)
     		Duration = RowData->VoiceAudio->GetDuration();
     	}
         // 안전 장치: 너무 짧으면 7초로 고정
-        if (Duration <= 7.0f) Duration = 7.0f;
+        if (Duration <= 10.0f) Duration = 10.0f;
 
         //  다음 대사 예약 (체이닝 로직)
     	

@@ -362,6 +362,9 @@ void AAGSDCharacter::BeginPlay()
 		HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 	}
 	playFadeWidget(1.0f, 0.0f);
+	
+	
+	MouseSensitivity = GI->MouseSensitivity;
 }
 
 void AAGSDCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -1204,9 +1207,11 @@ void AAGSDCharacter::DoLook(float Yaw, float Pitch)
 {
 	if (GetController() != nullptr)
 	{
-		// add yaw and pitch input to controller
-		AddControllerYawInput(Yaw);
-		AddControllerPitchInput(Pitch);
+		// MouseSensitivity가 5일 때 (5/5 = 1)이 되어 기존 속도와 동일해집니다.
+		float SensitivityMultiplier = MouseSensitivity / 5.0f;
+
+		AddControllerYawInput(Yaw * SensitivityMultiplier);
+		AddControllerPitchInput(Pitch * SensitivityMultiplier);
 	}
 }
 

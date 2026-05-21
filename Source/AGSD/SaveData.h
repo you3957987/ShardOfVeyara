@@ -62,6 +62,9 @@ struct FSaveData : public FTableRowBase
 	TArray<FString> AlreadyDroppedItems;
 
 	UPROPERTY()
+	float MouseSensitivity;
+	
+	UPROPERTY()
 	int32 TributeLevel;
 
 	UPROPERTY()
