@@ -1,5 +1,7 @@
 #include "BaseFlyingPet.h"
 
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Component/PetTalkComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Character.h"
@@ -305,6 +307,9 @@ void ABaseFlyingPet::CheckSurroundingEnemy()
 				{
 					bBossBattleMode = true;
 					EnemyDetectSphere->SetSphereRadius(30000.f);
+					
+					HealCharacter(); // 보스전 시작 시 캐릭터 힐링
+					
 					UE_LOG(LogTemp, Warning, TEXT("BossBattleMode Detected"));
 				}
 				bEnemyFound = true; // ◀ 보스도 적으로 간주하여 상태 업데이트 로직으로 넘어가게 함
@@ -346,6 +351,30 @@ void ABaseFlyingPet::CheckSurroundingEnemy()
 			PetState = EPetState::EPS_Follow;
 			if ( PetTalkComp ) PetTalkComp->Travel_BattleToFollow( false );
 			//bIsFolloingTarget = true; // 다시 따라다니기 모드로 전환
+		}
+	}
+}
+
+void ABaseFlyingPet::HealCharacter()
+{
+	if (TargetActor)
+	{
+		// TargetActor 한테 - 대미지 주기 
+		UGameplayStatics::ApplyDamage(TargetActor, -HealAmount, 
+			nullptr, this, nullptr);
+		
+		// 2. 나이아가라 이펙트를 그 자리(Location)에 생성
+		if (HealEffect)
+		{
+			// SpawnSystemAtLocation을 사용하면 부착되지 않고 월드 좌표에 고정되어 실행됩니다.
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+				GetWorld(),
+				HealEffect,
+				TargetActor->GetActorLocation(), // 플레이어의 현재 위치(고정값)
+				FRotator::ZeroRotator,
+				FVector(2.f),                    // 스케일
+				true                         // 자동 파괴
+			);
 		}
 	}
 }

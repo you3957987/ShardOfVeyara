@@ -451,6 +451,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ProcessAttackInput();
 	
+	//-----------------------------------
+	void ActivateAttackRotate();
+	void HandleRotateCharacterStartAttack(float DeltaSeconds);
+	bool bIsRotatingToCamera = false;
+	FRotator TargetAttackRotation;
+	float RotationTimer = 0.0f;
+	float MaxRotationTime = 0.2f;   
+	float RotationSpeed = 500.0f; 
+	//-----------------------------------
+	
 	void StartNewCombo();
 	
 	FSpearComboData* GetComboDataByDirection(ESpearAttackDirection Direction);

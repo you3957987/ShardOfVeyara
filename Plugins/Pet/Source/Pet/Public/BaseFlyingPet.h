@@ -126,6 +126,15 @@ protected:
 	// 적 또는 아이템 감지시 타깃 캐릭터 사이에 벽 있는지 확인하는 함수
 	bool TraceCharacterToTarget( AActor* Target );
 	
+	// 캐릭터 힐 시켜주는 함수
+	void HealCharacter();
+	// 캐릭터한테 줄 힐 양
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	float HealAmount = 500.f;
+	// 캐릭터 힐 시킬떄 사용할 나이아가라 파티클
+	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
+	class UNiagaraSystem* HealEffect;
+
 public:
 	ABaseFlyingPet();
 	virtual void Tick(float DeltaTime) override;
