@@ -55,6 +55,8 @@ protected:
 	// 플레이어 감시 하는 딜레이
 	float CurrentSpawnCooldown = 0.0f;
 	
+	bool bActivateSpawner = false;
+	
 	// 몬스터가 스폰될 위치 씬 컴포넌트
 	UPROPERTY(VisibleAnywhere)
 	class USceneComponent* SpawnLocation;

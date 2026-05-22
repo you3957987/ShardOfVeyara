@@ -149,9 +149,12 @@ void AEnemySpawner::OnBeginOverlapPlayerDetectSphere(UPrimitiveComponent* Overla
 		}
 		
 		bTargetInRange = true; // 타겟이 감지 범위 안에 있다고 설정
-        
+		
 		// 들어오자마자 바로 쏠 수 있게 쿨타임 초기화 (원한다면)
-		CurrentSpawnCooldown = 0.0f; 
+		if ( bActivateSpawner == false )CurrentSpawnCooldown = 0.0f; 
+		
+		bActivateSpawner = true;
+		
 	}
 }
 
