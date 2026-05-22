@@ -443,6 +443,11 @@ void AAGSDCharacter::SetHighLight(AActor* TargetActor, bool bActive)
 {
 	if (TargetActor)
 	{
+		if (TargetActor->ActorHasTag(TEXT("NPC")))
+		{
+			return;
+		}
+
 		TArray<UPrimitiveComponent*> Comps;
 		TargetActor->GetComponents(Comps);
 		for (UPrimitiveComponent* Comp : Comps)

@@ -257,7 +257,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	FORCEINLINE void SetCanOpenChest(bool boolean) { bCanOpenChest = boolean; };
 
-	void SetHighLight(AActor* TargetActor, bool bActive);
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	void SetHighLight(AActor* TargetActor, bool bActive = true);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bCanOpenChest = true;
