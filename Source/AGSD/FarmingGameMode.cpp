@@ -23,7 +23,10 @@ void AFarmingGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	HandleTimeIncrement(DeltaSeconds * TimeScale);
+	// 원래 시간 로직
+	//HandleTimeIncrement(DeltaSeconds * TimeScale);
+	// x4 용 시간 로직
+	HandleTimeIncrement(DeltaSeconds * TimeScale * 0.1f);
 }
 
 void AFarmingGameMode::NextDay(float time)
