@@ -80,6 +80,10 @@ AAGSDCharacter::AAGSDCharacter()
 	Jumping->bAutoActivate = false;
 
 	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpingComponent"));
+
+	// 오디오 리스너 컴포넌트 생성 및 부착
+	AudioListenerComponent = CreateDefaultSubobject<USceneComponent>(TEXT("AudioListenerComponent"));
+	AudioListenerComponent->SetupAttachment(RootComponent);
 }
 
 void AAGSDCharacter::HandleAttackInput(FName ActionName)
@@ -195,6 +199,21 @@ bool AAGSDCharacter::CheckSingleInput(const TArray<FInputBufferEntry>& Buffer, F
 void AAGSDCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	// 선입력 유효 시간 초과 체크 및 해제
+	if (bHasBufferedInput)
+	{
+		float CurrentTime = GetWorld()->GetTimeSeconds();
+		if (CurrentTime - BufferedInputTime > AttackBufferDuration)
+		{
+			bHasBufferedInput = false;
+		}
+	}
+
+	if (AudioListenerComponent && FollowCamera)
+	{
+		AudioListenerComponent->SetWorldRotation(FollowCamera->GetComponentRotation());
+	}
 	
 	// --- [락온 카메라 회전 및 유지 상태 처리] ---
 	if (LockedTarget)
@@ -224,7 +243,13 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 		{
 			// 3. 장애물 시야 차단 체크 (Line of Sight - Visibility 채널)
 			FVector TraceStart = GetFollowCamera()->GetComponentLocation();
-			FVector TraceEnd = LockedTarget->GetActorLocation();
+			
+			// 대상의 피벗 높이 보정 (캡슐 절반 높이 또는 기본 오프셋 적용하여 중심 높이 계산)
+			float TargetHalfHeight = LockedTarget->GetSimpleCollisionHalfHeight();
+			FVector TargetVisualCenter = LockedTarget->GetActorLocation();
+			TargetVisualCenter.Z += (TargetHalfHeight > 0.0f) ? TargetHalfHeight : 50.0f;
+
+			FVector TraceEnd = TargetVisualCenter;
 			
 			FCollisionQueryParams TraceParams;
 			TraceParams.AddIgnoredActor(this);
@@ -232,6 +257,17 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 
 			FHitResult HitResult;
 			bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_Visibility, TraceParams);
+
+			if (bHit && HitResult.GetActor())
+			{
+				AActor* HitActor = HitResult.GetActor();
+				if (HitActor->GetClass()->ImplementsInterface(UInteraction::StaticClass()) ||
+					HitActor->ActorHasTag(FName("Item")) ||
+					HitActor->ActorHasTag(FName("Interactable")))
+				{
+					bHit = false;
+				}
+			}
 
 			if (bHit)
 			{
@@ -255,10 +291,7 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 
 			// 4. 카메라 회전 보간 처리
 			FVector CameraLocation = GetFollowCamera()->GetComponentLocation();
-			FVector TargetLocation = LockedTarget->GetActorLocation(); 
-			
-			// 몬스터의 발끝을 보지 않도록 Z축 보정
-			TargetLocation.Z -= 50.f; 
+			FVector TargetLocation = TargetVisualCenter; // 발끝 Z축 감산 대신 가슴 높이 중심(TargetVisualCenter) 지정
 
 			FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(CameraLocation, TargetLocation);
 			FRotator CurrentRotation = GetController()->GetControlRotation();
@@ -335,10 +368,11 @@ void AAGSDCharacter::BeginPlay()
 
 	PC = Cast<AAGSDPlayerController>(GetController());
 	
-	if (PC)
+	if (PC && AudioListenerComponent)
 	{
-		// 카메라 거리에 따른 오디오 감쇠 문제를 해결하기 위해 오디오 리스너를 캐릭터(RootComponent)로 덮어씁니다.
-		PC->SetAudioListenerOverride(GetRootComponent(), FVector::ZeroVector, FRotator::ZeroRotator);
+		// 카메라 거리에 따른 오디오 감쇠 문제를 해결하기 위해 오디오 리스너를 AudioListenerComponent로 설정합니다.
+		// 이 컴포넌트는 위치는 캐릭터를 따르고 회전은 카메라 회전으로 매 프레임 업데이트됩니다.
+		PC->SetAudioListenerOverride(AudioListenerComponent, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 
 	GI = Cast<USOVGameInstance>(GetGameInstance());
@@ -657,6 +691,15 @@ ESpearAttackDirection AAGSDCharacter::GetAttackDirection()
 	return ESpearAttackDirection::Neutral;
 }
 
+float AAGSDCharacter::GetCurrentAttackDamageMultiplier() const
+{
+	if (CurrentComboData && CurrentComboData->Stages.IsValidIndex(CurrentStageIndex))
+	{
+		return CurrentComboData->Stages[CurrentStageIndex].DamageMultiplier;
+	}
+	return 1.0f;
+}
+
 void AAGSDCharacter::ProcessAttackInput()
 {
 	// 공중 상태 체크
@@ -728,11 +771,27 @@ void AAGSDCharacter::ExecuteNextStage()
 {
 	int32 NextIndex = CurrentStageIndex + 1;
 
-	// 다음 스테이지가 존재할 경우에만 실행
-	if (CurrentComboData && CurrentComboData->Stages.IsValidIndex(NextIndex))
+	if (CurrentComboData)
 	{
-		CurrentStageIndex = NextIndex;
-		PlayStage(NextIndex);
+		// 다음 스테이지가 존재할 경우에만 실행
+		if (CurrentComboData->Stages.IsValidIndex(NextIndex))
+		{
+			CurrentStageIndex = NextIndex;
+			PlayStage(NextIndex);
+		}
+		// 마지막 스테이지 다음으로 넘어가려고 하면 새로운 방향 입력에 따른 콤보 데이터 로드 후 순환
+		else
+		{
+			ESpearAttackDirection CurrentDir = GetAttackDirection();
+			FSpearComboData* NewComboData = GetComboDataByDirection(CurrentDir);
+
+			if (NewComboData && NewComboData->Stages.Num() > 0)
+			{
+				CurrentComboData = NewComboData;
+				CurrentStageIndex = 0;
+				PlayStage(0);
+			}
+		}
 	}
 }
 
@@ -926,6 +985,7 @@ void AAGSDCharacter::ToggleLockOn()
 		// 1. 이미 락온 중이라면 조준선 끄고 락온 해제
 		SetLockOnMarkerState(LockedTarget, false);
 		LockedTarget = nullptr;
+		TargetLockOnDistance = 0.0f;
 
 		// 시야 차단 타이머 및 상태 초기화
 		GetWorldTimerManager().ClearTimer(LineOfSightTimerHandle);
@@ -945,6 +1005,7 @@ void AAGSDCharacter::ToggleLockOn()
 		{
 			// 조준선 켜고 애니메이션 재생
 			SetLockOnMarkerState(LockedTarget, true);
+			TargetLockOnDistance = 0.0f;
 		}
 	}
 
@@ -1091,6 +1152,7 @@ void AAGSDCharacter::SwitchTarget(bool bLookLeft)
 		// 마커 전환 및 락온 대상 변경
 		SetLockOnMarkerState(LockedTarget, false);
 		LockedTarget = NewTarget;
+		TargetLockOnDistance = 0.0f;
 		SetLockOnMarkerState(LockedTarget, true);
 
 		// 시야 차단 타이머 상태 초기화
@@ -1187,15 +1249,69 @@ void AAGSDCharacter::DoMove(float Right, float Forward)
 {
 	if (GetController() != nullptr)
 	{
-		// find out which way is forward
-		const FRotator Rotation = GetController()->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		FVector ForwardDirection;
+		FVector RightDirection;
 
-		// get forward vector
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		if (IsValid(LockedTarget))
+		{
+			FVector PlayerLoc = GetActorLocation();
+			FVector TargetLoc = LockedTarget->GetActorLocation();
+			FVector DirectionToTarget = TargetLoc - PlayerLoc;
+			DirectionToTarget.Z = 0.0f;
 
-		// get right vector 
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+			float CurrentDistance = FVector::Dist2D(PlayerLoc, TargetLoc);
+
+			if (DirectionToTarget.Normalize())
+			{
+				ForwardDirection = DirectionToTarget;
+				RightDirection = FVector::CrossProduct(FVector::UpVector, ForwardDirection);
+
+				// 락온 중 이동 시 나선형으로 늘어나는 위치 오차 피드백 제어
+				bool bIsFalling = GetCharacterMovement() && GetCharacterMovement()->IsFalling();
+
+				if (FMath::Abs(Forward) > 0.01f || bIsFalling)
+				{
+					// 플레이어가 전진/후진을 입력하거나 공중에 떠 있는 상태일 때는 타겟 거리를 현재 2D 거리로 실시간 동기화 (착지 덜컹거림 방지)
+					TargetLockOnDistance = CurrentDistance;
+				}
+				else
+				{
+					// 락온 거리가 초기화되지 않았다면 현재 거리로 설정
+					if (TargetLockOnDistance <= 0.0f)
+					{
+						TargetLockOnDistance = CurrentDistance;
+					}
+
+					// 거리 편차 계산
+					float DistanceError = CurrentDistance - TargetLockOnDistance;
+					
+					// 1.5% 비례 제어로 오차를 전진 가속도 입력에 반영 (오차 100cm당 1.5의 전진 입력)
+					float CorrectionForward = DistanceError * 0.015f;
+					CorrectionForward = FMath::Clamp(CorrectionForward, -1.0f, 1.0f);
+					Forward = CorrectionForward;
+				}
+			}
+			else
+			{
+				// Fallback if players are at the exact same location
+				const FRotator Rotation = GetController()->GetControlRotation();
+				const FRotator YawRotation(0, Rotation.Yaw, 0);
+				ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+				RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+			}
+		}
+		else
+		{
+			// find out which way is forward
+			const FRotator Rotation = GetController()->GetControlRotation();
+			const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+			// get forward vector
+			ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+
+			// get right vector 
+			RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		}
 
 		// add movement 
 		AddMovementInput(ForwardDirection, Forward);
