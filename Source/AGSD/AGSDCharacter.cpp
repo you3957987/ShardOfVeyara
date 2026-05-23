@@ -22,6 +22,7 @@
 #include "Components/ProgressBar.h"
 #include "Kismet/GameplayStatics.h"
 #include "BaseFlyingPet.h"
+#include "NiagaraFunctionLibrary.h"
 #include "SpearComboData.h"
 #include "Components/AudioComponent.h"
 #include "Interface/ItemDropInterface.h"
@@ -197,6 +198,7 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 	
 	HandleRotateCharacterStartAttack(DeltaSeconds);
+	HandleRotateCharacterStartGuard(DeltaSeconds);
 	
 	// --- [락온 카메라 회전 및 유지 상태 처리] ---
 	if (LockedTarget)
@@ -476,8 +478,29 @@ float AAGSDCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 	}
 	
 	if (bIsJustGuardWindow) DamageToApply = 0.f;
-	else if (bIsBlocking) DamageToApply = DamageToApply / 2.f;
+	else if (bIsBlocking) DamageToApply = DamageToApply = 0;
+	//else if (bIsBlocking) DamageToApply = DamageToApply / 2.f;
 
+	if ( bIsJustGuardWindow || bIsBlocking )
+	{
+		if ( DamageToApply >= 0.f && GuardEffect )
+		{		
+			FVector SpawnLocation = GetActorLocation() 
+						+ (GetActorForwardVector() * 50.f) 
+						+ (GetActorUpVector() * 40.f); // 90.f에서 40.f로 수정 (밑으로 50 이동)
+			
+			//  이펙트 생성
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+				GetWorld(), 
+				GuardEffect, 
+				SpawnLocation, 
+				FRotator::ZeroRotator, 
+				FVector(0.5f), // 스케일
+				true
+			);
+		}
+	}
+	
 	UE_LOG(LogTemp, Warning, TEXT("Player Take Damage : %f"), DamageToApply);
 
 	if ( DamageToApply > 0.f )
@@ -721,7 +744,7 @@ void AAGSDCharacter::ActivateAttackRotate()
 
 void AAGSDCharacter::HandleRotateCharacterStartAttack(float DeltaSeconds)
 {
-	if (bIsRotatingToCamera)
+	if ( bIsRotatingToCamera )
 	{
 		// 1. 타이머 업데이트 및 시간 초과 체크
 		RotationTimer += DeltaSeconds;
@@ -746,6 +769,29 @@ void AAGSDCharacter::HandleRotateCharacterStartAttack(float DeltaSeconds)
 			TargetAttackRotation, 
 			DeltaSeconds, 
 			RotationSpeed
+		);
+
+		SetActorRotation(NewRotation);
+	}
+}
+
+void AAGSDCharacter::HandleRotateCharacterStartGuard(float DeltaSeconds)
+{
+	if (bIsBlocking == true)
+	{
+		// 1. 매 프레임 실시간으로 카메라(컨트롤러)의 Yaw 방향을 목표로 설정
+		const FRotator ControlRot = GetControlRotation();
+		FRotator TargetGuardRotation = FRotator(0.f, ControlRot.Yaw, 0.f);
+
+		FRotator CurrentRotation = GetActorRotation();
+
+		// 2. 시간 초과나 목표 도달 체크 없이, 가드 중이라면 계속 보간 회전
+		// RotationSpeed 값이 너무 낮으면 회전이 카메라를 못 따라갈 수 있으니 적절히 조절하세요.
+		FRotator NewRotation = FMath::RInterpConstantTo(
+			CurrentRotation, 
+			TargetGuardRotation, 
+			DeltaSeconds, 
+			200.f // 또는 더 빠른 팔로잉을 원하면 특정 수치(예: 720.0f) 대입
 		);
 
 		SetActorRotation(NewRotation);
@@ -871,7 +917,7 @@ void AAGSDCharacter::StartBlock()
 	
 	bIsBlocking = true;
 	PlayAnimMontage(BlockStartMontage);
-
+	
 	Mining = true;
 	// 가드 시작 후 0.2초간 저스트 가드 판정 활성화
 	bIsJustGuardWindow = true;

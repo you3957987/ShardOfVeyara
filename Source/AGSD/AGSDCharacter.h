@@ -459,6 +459,12 @@ public:
 	float RotationTimer = 0.0f;
 	float MaxRotationTime = 0.2f;   
 	float RotationSpeed = 500.0f; 
+	
+	void HandleRotateCharacterStartGuard(float DeltaSeconds);
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GuardEffect")
+	class UNiagaraSystem* GuardEffect;
+	
 	//-----------------------------------
 	
 	void StartNewCombo();
