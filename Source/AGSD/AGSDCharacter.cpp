@@ -22,6 +22,7 @@
 #include "Components/ProgressBar.h"
 #include "Kismet/GameplayStatics.h"
 #include "BaseFlyingPet.h"
+#include "NiagaraFunctionLibrary.h"
 #include "SpearComboData.h"
 #include "Components/AudioComponent.h"
 #include "Interface/ItemDropInterface.h"
@@ -214,6 +215,9 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 	{
 		AudioListenerComponent->SetWorldRotation(FollowCamera->GetComponentRotation());
 	}
+	
+	HandleRotateCharacterStartAttack(DeltaSeconds);
+	HandleRotateCharacterStartGuard(DeltaSeconds);
 	
 	// --- [락온 카메라 회전 및 유지 상태 처리] ---
 	if (LockedTarget)
@@ -498,11 +502,44 @@ void AAGSDCharacter::Die()
 float AAGSDCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
                                  class AController* EventInstigator, AActor* DamageCauser)
 {
-	if (!bCanBeDamage) return 0.f;
+	if (DamageAmount > 0.f && !bCanBeDamage) return 0.f;
 	float DamageToApply = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	
+	if ( DamageToApply < 0.f )
+	{
+		Health = FMath::Clamp(Health - DamageToApply, 0.0f, MaxHealth);
+		
+		if (HealthBar && HealthBar->HealthProgressBar) 
+		{
+			HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
+		}
+		return DamageToApply;
+	}
+	
 	if (bIsJustGuardWindow) DamageToApply = 0.f;
-	else if (bIsBlocking) DamageToApply = DamageToApply / 2.f;
+	else if (bIsBlocking) DamageToApply = DamageToApply = 0;
+	//else if (bIsBlocking) DamageToApply = DamageToApply / 2.f;
 
+	if ( bIsJustGuardWindow || bIsBlocking )
+	{
+		if ( DamageToApply >= 0.f && GuardEffect )
+		{		
+			FVector SpawnLocation = GetActorLocation() 
+						+ (GetActorForwardVector() * 50.f) 
+						+ (GetActorUpVector() * 40.f); // 90.f에서 40.f로 수정 (밑으로 50 이동)
+			
+			//  이펙트 생성
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+				GetWorld(), 
+				GuardEffect, 
+				SpawnLocation, 
+				FRotator::ZeroRotator, 
+				FVector(0.5f), // 스케일
+				true
+			);
+		}
+	}
+	
 	UE_LOG(LogTemp, Warning, TEXT("Player Take Damage : %f"), DamageToApply);
 
 	if ( DamageToApply > 0.f )
@@ -710,6 +747,8 @@ void AAGSDCharacter::ProcessAttackInput()
 	// 공중 상태 체크
 	if (GetCharacterMovement() && GetCharacterMovement()->IsFalling()) return;
 	
+	ActivateAttackRotate();
+	
 	// 공격 중이거나 복귀 중인 경우
 	if (bIsAttacking || bIsRecovering) 
 	{
@@ -733,7 +772,78 @@ void AAGSDCharacter::ProcessAttackInput()
 	}
 
 	// 완전히 Idle 상태인 경우 새로운 콤보 시작
+	
 	StartNewCombo();
+}
+
+void AAGSDCharacter::ActivateAttackRotate()
+{
+	if (FollowCamera)
+	{
+		// 목표 방향 설정 (카메라의 Yaw)
+		const FRotator ControlRot = GetControlRotation();
+		TargetAttackRotation = FRotator(0.f, ControlRot.Yaw, 0.f);
+
+		// 회전 로직 초기화
+		bIsRotatingToCamera = true;
+		RotationTimer = 0.0f; // 타이머 리셋
+	}
+}
+
+void AAGSDCharacter::HandleRotateCharacterStartAttack(float DeltaSeconds)
+{
+	if ( bIsRotatingToCamera )
+	{
+		// 1. 타이머 업데이트 및 시간 초과 체크
+		RotationTimer += DeltaSeconds;
+		if (RotationTimer >= MaxRotationTime)
+		{
+			bIsRotatingToCamera = false;
+			return; // 시간 다 되면 종료
+		}
+
+		FRotator CurrentRotation = GetActorRotation();
+
+		// 2. 목표 도달 여부 체크 (이미 카메라 방향이라면 멈춤)
+		if (CurrentRotation.Equals(TargetAttackRotation, 1.0f)) // 1도 이내 오차
+		{
+			bIsRotatingToCamera = false;
+			return;
+		}
+
+		// 3. 일정한 속도로 회전 (RInterpToConstant)
+		FRotator NewRotation = FMath::RInterpConstantTo(
+			CurrentRotation, 
+			TargetAttackRotation, 
+			DeltaSeconds, 
+			RotationSpeed
+		);
+
+		SetActorRotation(NewRotation);
+	}
+}
+
+void AAGSDCharacter::HandleRotateCharacterStartGuard(float DeltaSeconds)
+{
+	if (bIsBlocking == true)
+	{
+		// 1. 매 프레임 실시간으로 카메라(컨트롤러)의 Yaw 방향을 목표로 설정
+		const FRotator ControlRot = GetControlRotation();
+		FRotator TargetGuardRotation = FRotator(0.f, ControlRot.Yaw, 0.f);
+
+		FRotator CurrentRotation = GetActorRotation();
+
+		// 2. 시간 초과나 목표 도달 체크 없이, 가드 중이라면 계속 보간 회전
+		// RotationSpeed 값이 너무 낮으면 회전이 카메라를 못 따라갈 수 있으니 적절히 조절하세요.
+		FRotator NewRotation = FMath::RInterpConstantTo(
+			CurrentRotation, 
+			TargetGuardRotation, 
+			DeltaSeconds, 
+			200.f // 또는 더 빠른 팔로잉을 원하면 특정 수치(예: 720.0f) 대입
+		);
+
+		SetActorRotation(NewRotation);
+	}
 }
 
 void AAGSDCharacter::StartNewCombo()
@@ -871,7 +981,7 @@ void AAGSDCharacter::StartBlock()
 	
 	bIsBlocking = true;
 	PlayAnimMontage(BlockStartMontage);
-
+	
 	Mining = true;
 	// 가드 시작 후 0.2초간 저스트 가드 판정 활성화
 	bIsJustGuardWindow = true;
