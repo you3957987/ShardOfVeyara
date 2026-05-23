@@ -48,6 +48,10 @@ class AGSD_API AAGSDCharacter : public ACharacter, public IPetConversationInterf
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
 	
+	/** Audio listener target component that follows character position but rotates with camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
+	USceneComponent* AudioListenerComponent;
+	
 	bool bIsBlocking = false;
 	
 	bool bIsJustGuardWindow = false;
@@ -91,6 +95,9 @@ protected:
 	// 락온 타겟
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat|LockOn")
 	AActor* LockedTarget = nullptr;
+
+	// 락온 시 유지할 목표 거리
+	float TargetLockOnDistance = 0.0f;
 
 	// 락온 탐색 반경
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|LockOn")
@@ -250,7 +257,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	FORCEINLINE void SetCanOpenChest(bool boolean) { bCanOpenChest = boolean; };
 
-	void SetHighLight(AActor* TargetActor, bool bActive);
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	void SetHighLight(AActor* TargetActor, bool bActive = true);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bCanOpenChest = true;
@@ -445,6 +453,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerState")
 	void HealthRecovery(float amount);
+
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	float GetCurrentAttackDamageMultiplier() const;
 
 	ESpearAttackDirection GetAttackDirection();
 

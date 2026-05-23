@@ -26,8 +26,8 @@ void UAnimNotifyState_WeaponAttack::NotifyBegin(USkeletalMeshComponent* MeshComp
 		Player = Cast<AAGSDCharacter>(MeshComp->GetOwner());
 		if (Player)
 		{
-			// 기본 데미지 설정
-			BaseDamage = Player->WeaponDamage() * Player->getDamage() / 100.f;
+			// 기본 데미지 설정에 현재 콤보 스테이지의 데미지 배율(DamageMultiplier) 적용
+			BaseDamage = (Player->WeaponDamage() * Player->getDamage() / 100.f) * Player->GetCurrentAttackDamageMultiplier();
 		}
 
 		// 공격(휘두르기) 시작 시 사운드 재생
