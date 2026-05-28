@@ -57,6 +57,9 @@ void UAGSDInventoryComponent::InitializeSlots()
 	}
 
 	OnInventoryFullyUpdated.Broadcast();
+	
+	// 초기 핫바 선택 상태 알림 (UI 동기화용)
+	OnHotbarSelectionChanged.Broadcast(-1, CurrentSelectedHotbar);
 }
 
 // ═══════════════════════════════════════════════════

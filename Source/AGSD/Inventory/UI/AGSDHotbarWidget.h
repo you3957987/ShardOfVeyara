@@ -9,6 +9,7 @@ class USizeBox;
 class UTextBlock;
 class UAGSDInventoryComponent;
 class UAGSDHotbarSlotWidget;
+class UWidgetAnimation;
 
 /**
  * UAGSDHotbarWidget

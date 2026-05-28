@@ -63,7 +63,7 @@ public:
 	bool bHasPet = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
-	int32 CurrentSelectedHotbar = 1;
+	int32 CurrentSelectedHotbar = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
 	TArray<FStruct_InventorySlotData> TempInventory;

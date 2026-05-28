@@ -2,6 +2,8 @@
 
 #include "AGSDCharacter.h"
 #include "Inventory/AGSDInventoryComponent.h"
+#include "Inventory/UI/AGSDPlayerHUD.h"
+#include "Blueprint/UserWidget.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -393,6 +395,41 @@ void AAGSDCharacter::BeginPlay()
 	}
 	SpawnMyPetAfterTravel(); // 펫 있으면 오픈 레벨 이후 펫 스폰
 	
+	// 인벤토리 컴포넌트 핫바 변경 델리게이트 바인딩
+	if (InventoryComponent)
+	{
+		InventoryComponent->OnHotbarSelectionChanged.AddDynamic(this, &AAGSDCharacter::OnHotbarSelectionChanged);
+		InventoryComponent->OnInventorySlotUpdated.AddDynamic(this, &AAGSDCharacter::OnInventorySlotUpdated);
+	}
+
+	// C++ 레벨에서 PlayerHUD 생성 및 뷰포트 추가
+	if (PlayerHUDClass)
+	{
+		APlayerController* PlayerController = Cast<APlayerController>(GetController());
+		if (PlayerController && PlayerController->IsLocalController())
+		{
+			PlayerHUDRef = CreateWidget<UAGSDPlayerHUD>(PlayerController, PlayerHUDClass);
+			if (PlayerHUDRef)
+			{
+				PlayerHUDRef->AddToViewport();
+				PlayerHUDRef->InitializeHUD(InventoryComponent);
+				UE_LOG(LogTemp, Log, TEXT("AAGSDCharacter::BeginPlay - PlayerHUDRef successfully created."));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("AAGSDCharacter::BeginPlay - Failed to create PlayerHUDRef widget."));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("AAGSDCharacter::BeginPlay - PlayerController or LocalController is invalid."));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AAGSDCharacter::BeginPlay - PlayerHUDClass is NULL. Please set WBP_PlayerHUD in BP_Farmer details panel."));
+	}
+	
 	HealthBar = getHealthBar();
 	if (HealthBar)
 	{
@@ -405,13 +442,10 @@ void AAGSDCharacter::BeginPlay()
 	}
 	playFadeWidget(1.0f, 0.0f);
 	
-	// 인벤토리 컴포넌트 핫바 변경 델리게이트 바인딩
-	if (InventoryComponent)
-	{
-		InventoryComponent->OnHotbarSelectionChanged.AddDynamic(this, &AAGSDCharacter::OnHotbarSelectionChanged);
-	}
-	
 	MouseSensitivity = GI->MouseSensitivity;
+
+	// 게임 시작 시 현재 선택된 핫바 슬롯의 아이템을 즉시 장착합니다.
+	UpdateEquippedActor();
 }
 
 void AAGSDCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -630,6 +664,11 @@ void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		if (SelectHotbarAction)
 		{
 			EnhancedInputComponent->BindAction(SelectHotbarAction, ETriggerEvent::Started, this, &AAGSDCharacter::Input_SelectHotbar);
+		}
+
+		if (ToggleInventoryAction)
+		{
+			EnhancedInputComponent->BindAction(ToggleInventoryAction, ETriggerEvent::Started, this, &AAGSDCharacter::Input_ToggleInventory);
 		}
 	}
 	else
@@ -1729,6 +1768,15 @@ void AAGSDCharacter::OnHotbarSelectionChanged(int32 PreviousIndex, int32 NewInde
 	UpdateEquippedActor();
 }
 
+void AAGSDCharacter::OnInventorySlotUpdated(int32 SlotIndex)
+{
+	// 현재 선택된 핫바 슬롯의 데이터가 변경된 경우 장착 아이템 갱신
+	if (InventoryComponent && SlotIndex == InventoryComponent->GetCurrentHotbarIndex())
+	{
+		UpdateEquippedActor();
+	}
+}
+
 void AAGSDCharacter::UpdateEquippedActor()
 {
 	if (!InventoryComponent) return;
@@ -1793,8 +1841,8 @@ void AAGSDCharacter::Input_HotbarScroll(const FInputActionValue& Value)
 
 	if (InventoryComponent)
 	{
-		// ScrollValue가 양수이면 다음 슬롯(Forward=true), 음수이면 이전 슬롯(Forward=false)
-		InventoryComponent->CycleHotbar(ScrollValue > 0.0f);
+		// 휠을 아래로 내릴 때(ScrollValue < 0) 슬롯 번호가 올라가도록(Forward=true) 수정
+		InventoryComponent->CycleHotbar(ScrollValue < 0.0f);
 	}
 }
 
@@ -1816,5 +1864,45 @@ void AAGSDCharacter::Input_SelectHotbar(const FInputActionValue& Value)
 	if (InventoryComponent)
 	{
 		InventoryComponent->SelectHotbar(TargetIndex);
+	}
+}
+
+FString AAGSDCharacter::SubItemAmount()
+{
+	if (!InventoryComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SubItemAmount: 인벤토리 컴포넌트가 존재하지 않습니다."));
+		return FString();
+	}
+
+	int32 HotbarIndex = InventoryComponent->GetCurrentHotbarIndex();
+	FStruct_InventorySlotData SlotData = InventoryComponent->GetSlotData(HotbarIndex);
+
+	if (SlotData.IsEmpty || SlotData.ItemData.ItemID.IsEmpty())
+	{
+		return FString();
+	}
+
+	FString ConsumedItemID = SlotData.ItemData.ItemID;
+	InventoryComponent->RemoveItem(HotbarIndex, 1);
+
+	return ConsumedItemID;
+}
+
+FString AAGSDCharacter::GetPlayerHoldingItemID() const
+{
+	return HoldingItemData.ItemID;
+}
+
+void AAGSDCharacter::Input_ToggleInventory()
+{
+	if (PlayerHUDRef)
+	{
+		PlayerHUDRef->ToggleInventory();
+		UE_LOG(LogTemp, Log, TEXT("AAGSDCharacter::Input_ToggleInventory - Inventory Toggle Successful."));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AAGSDCharacter::Input_ToggleInventory - PlayerHUDRef is invalid."));
 	}
 }

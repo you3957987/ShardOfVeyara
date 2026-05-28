@@ -5,6 +5,7 @@
 #include "AGSDInventoryWidget.h"
 #include "Inventory/AGSDInventoryComponent.h"
 #include "GameFramework/PlayerController.h"
+#include "Animation/WidgetAnimation.h"
 
 void UAGSDPlayerHUD::NativeConstruct()
 {
@@ -20,10 +21,7 @@ void UAGSDPlayerHUD::NativeConstruct()
 	}
 
 	// 기본적으로 메인 인벤토리 창은 닫힌 상태로 시작
-	if (WBP_InventoryUI)
-	{
-		WBP_InventoryUI->SetVisibility(ESlateVisibility::Collapsed);
-	}
+	CloseInventory();
 }
 
 void UAGSDPlayerHUD::InitializeHUD(UAGSDInventoryComponent* InInventoryComponent)
@@ -56,6 +54,11 @@ void UAGSDPlayerHUD::ToggleInventory()
 			WBP_InventoryUI->SetVisibility(ESlateVisibility::Visible);
 		}
 
+		if (HotbarSlide)
+		{
+			PlayAnimation(HotbarSlide, 0.0f, 1, EUMGSequencePlayMode::Forward);
+		}
+
 		if (APlayerController* PC = GetOwningPlayer())
 		{
 			PC->SetShowMouseCursor(true);
@@ -73,6 +76,11 @@ void UAGSDPlayerHUD::CloseInventory()
 	if (WBP_InventoryUI)
 	{
 		WBP_InventoryUI->SetVisibility(ESlateVisibility::Collapsed);
+	}
+
+	if (HotbarSlide)
+	{
+		PlayAnimation(HotbarSlide, 0.0f, 1, EUMGSequencePlayMode::Reverse);
 	}
 
 	if (APlayerController* PC = GetOwningPlayer())

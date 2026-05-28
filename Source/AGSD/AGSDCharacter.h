@@ -100,6 +100,10 @@ protected:
 	// 핫바 숫자키 선택 액션 (단일 액션에 Scalar Modifier가 적용된 형태)
 	UPROPERTY(EditAnywhere, Category="Input|Hotbar")
 	class UInputAction* SelectHotbarAction;
+
+	// 인벤토리 창 개폐 토글 액션
+	UPROPERTY(EditAnywhere, Category="Input")
+	class UInputAction* ToggleInventoryAction;
 	
 	// 락온 타겟
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat|LockOn")
@@ -127,9 +131,10 @@ protected:
 	void SwitchTargetRight();
 	void SwitchTarget(bool bLookLeft);
 
-	// 핫바 입력 핸들러
+	// 핫바 및 인벤토리 입력 핸들러
 	void Input_HotbarScroll(const FInputActionValue& Value);
 	void Input_SelectHotbar(const FInputActionValue& Value);
+	void Input_ToggleInventory();
 	void OnLineOfSightTimeout();
 
 	// 모션 워핑 컴포넌트
@@ -253,6 +258,16 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="HoldingState")
 	AActor* HoldingActor;
 
+	// ── 플레이어 UI 및 HUD ──
+
+	/** 생성할 PlayerHUD 위젯 클래스 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerUI")
+	TSubclassOf<class UAGSDPlayerHUD> PlayerHUDClass;
+
+	/** 생성 및 캐싱된 PlayerHUD 레퍼런스 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerUI")
+	class UAGSDPlayerHUD* PlayerHUDRef;
+
 	// ── 인벤토리 컴포넌트 (C++ 마이그레이션) ──
 
 	/** C++ 인벤토리 컴포넌트 (BP에서 추가하거나 C++에서 CreateDefaultSubobject로 생성) */
@@ -266,11 +281,18 @@ public:
 	/** 핫바 선택 변경 델리게이트 콜백 */
 	UFUNCTION()
 	void OnHotbarSelectionChanged(int32 PreviousIndex, int32 NewIndex);
+
+	/** 인벤토리 슬롯 업데이트 콜백 */
+	UFUNCTION()
+	void OnInventorySlotUpdated(int32 SlotIndex);
 	
 	AActor* MinDistActor();
 
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interaction")
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	FString SubItemAmount();
+
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	FString GetPlayerHoldingItemID() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	UHealthBar* getHealthBar();

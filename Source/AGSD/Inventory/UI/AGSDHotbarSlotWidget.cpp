@@ -96,4 +96,27 @@ void UAGSDHotbarSlotWidget::NativeOnDragCancelled(const FDragDropEvent& DragDrop
 			}
 		}
 	}
+
+	// 취소 시에도 노란 테두리 제거
+	if (IMG_HotbarSelectedYellow)
+	{
+		IMG_HotbarSelectedYellow->SetVisibility(ESlateVisibility::Collapsed);
+	}
+}
+
+bool UAGSDHotbarSlotWidget::NativeOnDrop(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent, UDragDropOperation* Operation)
+{
+	bool bSuccess = Super::NativeOnDrop(MyGeometry, DragDropEvent, Operation);
+
+	// 드롭 성공 시에도 노란 테두리 제거
+	if (IMG_HotbarSelectedYellow)
+	{
+		IMG_HotbarSelectedYellow->SetVisibility(ESlateVisibility::Collapsed);
+	}
+
+	// 상태 플래그 초기화
+	bDragToHotbar = false;
+	SelectedHotbar = nullptr;
+
+	return bSuccess;
 }

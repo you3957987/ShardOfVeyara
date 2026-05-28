@@ -6,7 +6,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Inventory/AGSDInventoryComponent.h"
 #include "AGSDSlotDragDropOperation.h"
+#include "AGSDDragVisualWidget.h"
 #include "Input/Events.h"
+#include "Struct_ItemData.h"
 
 void UAGSDSlotWidgetBase::NativeConstruct()
 {
@@ -57,8 +59,8 @@ void UAGSDSlotWidgetBase::UpdateVisual()
 
 		if (TXT_ItemAmount)
 		{
-			// 수량이 1개보다 많을 때만 수량 텍스트를 노출합니다.
-			if (SlotItemData.ItemData.CurrentQuantity > 1)
+			// MaxQuantity가 1보다 크고, 현재 수량이 1개보다 많을 때만 수량 텍스트를 노출합니다.
+			if (SlotItemData.ItemData.MaxQuantity > 1 && SlotItemData.ItemData.CurrentQuantity >= 1)
 			{
 				TXT_ItemAmount->SetVisibility(ESlateVisibility::Visible);
 				TXT_ItemAmount->SetText(FText::AsNumber(SlotItemData.ItemData.CurrentQuantity));
@@ -116,20 +118,23 @@ void UAGSDSlotWidgetBase::NativeOnDragDetected(const FGeometry& InGeometry, cons
 		// 인벤토리 컴포넌트 핫바 영역 상수 범위(0~9)로 핫바 출발 여부 판단
 		DragOp->bFromHotbar = (SlotIndex >= 0 && SlotIndex <= 9);
 
-		// 드래그 비주얼 생성
+		// 드래그 비주얼 생성 및 아이템 데이터 주입
 		if (DragVisualClass)
 		{
-			UUserWidget* DragVisual = CreateWidget<UUserWidget>(this, DragVisualClass);
-			if (DragVisual)
+			// UAGSDDragVisualWidget으로 직접 생성하여 타입 안전하게 데이터를 전달합니다.
+			if (UAGSDDragVisualWidget* DragVisual = CreateWidget<UAGSDDragVisualWidget>(this, DragVisualClass))
 			{
+				DragVisual->SetDragItemData(SlotItemData.ItemData);
 				DragOp->DefaultDragVisual = DragVisual;
-				DragOp->Pivot = EDragPivot::MouseDown;
+				// CenterCenter: 위젯 중심이 마우스 커서에 오도록 설정
+				DragOp->Pivot = EDragPivot::CenterCenter;
 			}
 		}
 
 		OutOperation = DragOp;
 	}
 }
+
 
 void UAGSDSlotWidgetBase::NativeOnDragEnter(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent, UDragDropOperation* Operation)
 {

@@ -9,6 +9,7 @@ class UImage;
 class UTextBlock;
 class UAGSDInventoryComponent;
 class UAGSDSlotWidgetBase;
+class UAGSDDragVisualWidget;
 
 // ── 더블클릭 델리게이트 선언 ──
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSlotDoubleClicked, UAGSDSlotWidgetBase*, SlotWidget);
@@ -32,9 +33,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Slot Data")
 	FStruct_InventorySlotData SlotItemData;
 
-	/** 드래그 시 마우스 밑에 띄울 비주얼 위젯 클래스 */
+	/** 드래그 시 마우스 밑에 띄울 비주얼 위젯 클래스 (UAGSDDragVisualWidget 또는 그 파생 BP) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slot Config")
-	TSubclassOf<UUserWidget> DragVisualClass;
+	TSubclassOf<UAGSDDragVisualWidget> DragVisualClass;
 
 	// ── 공통 UI 컴포넌트 바인딩 ──
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "UI")

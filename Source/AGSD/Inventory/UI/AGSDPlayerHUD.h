@@ -26,6 +26,10 @@ public:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget), Category = "UI")
 	TObjectPtr<UAGSDInventoryWidget> WBP_InventoryUI;
 
+	// ── 애니메이션 ──
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	TObjectPtr<UWidgetAnimation> HotbarSlide;
+
 	// ── 참조 ──
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory")
 	TObjectPtr<UAGSDInventoryComponent> InventoryComponent;

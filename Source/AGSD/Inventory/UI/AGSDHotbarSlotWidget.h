@@ -68,4 +68,5 @@ protected:
 	virtual void NativeOnDragEnter(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent, UDragDropOperation* Operation) override;
 	virtual void NativeOnDragLeave(const FDragDropEvent& DragDropEvent, UDragDropOperation* Operation) override;
 	virtual void NativeOnDragCancelled(const FDragDropEvent& DragDropEvent, UDragDropOperation* Operation) override;
+	virtual bool NativeOnDrop(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent, UDragDropOperation* Operation) override;
 };
