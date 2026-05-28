@@ -97,9 +97,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input|Hotbar")
 	class UInputAction* HotbarScrollAction;
 
-	// 핫바 숫자키 선택 액션 배열 (1~10번 슬롯 대응)
+	// 핫바 숫자키 선택 액션 (단일 액션에 Scalar Modifier가 적용된 형태)
 	UPROPERTY(EditAnywhere, Category="Input|Hotbar")
-	TArray<class UInputAction*> SelectHotbarActions;
+	class UInputAction* SelectHotbarAction;
 	
 	// 락온 타겟
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat|LockOn")
@@ -129,7 +129,7 @@ protected:
 
 	// 핫바 입력 핸들러
 	void Input_HotbarScroll(const FInputActionValue& Value);
-	void Input_SelectHotbar(int32 SlotIndex);
+	void Input_SelectHotbar(const FInputActionValue& Value);
 	void OnLineOfSightTimeout();
 
 	// 모션 워핑 컴포넌트

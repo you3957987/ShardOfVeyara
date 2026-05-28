@@ -627,12 +627,9 @@ void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 			EnhancedInputComponent->BindAction(HotbarScrollAction, ETriggerEvent::Triggered, this, &AAGSDCharacter::Input_HotbarScroll);
 		}
 
-		for (int32 i = 0; i < SelectHotbarActions.Num(); ++i)
+		if (SelectHotbarAction)
 		{
-			if (SelectHotbarActions[i])
-			{
-				EnhancedInputComponent->BindAction(SelectHotbarActions[i], ETriggerEvent::Started, this, &AAGSDCharacter::Input_SelectHotbar, i);
-			}
+			EnhancedInputComponent->BindAction(SelectHotbarAction, ETriggerEvent::Started, this, &AAGSDCharacter::Input_SelectHotbar);
 		}
 	}
 	else
@@ -1801,10 +1798,23 @@ void AAGSDCharacter::Input_HotbarScroll(const FInputActionValue& Value)
 	}
 }
 
-void AAGSDCharacter::Input_SelectHotbar(int32 SlotIndex)
+void AAGSDCharacter::Input_SelectHotbar(const FInputActionValue& Value)
 {
+	float KeyValue = Value.Get<float>();
+	int32 TargetIndex = FMath::RoundToInt(KeyValue);
+
+	// 입력 인덱스 보정 (1~9는 0~8로 변환, 10 또는 0은 9번 핫바 슬롯으로 매핑)
+	if (TargetIndex >= 1 && TargetIndex <= 9)
+	{
+		TargetIndex = TargetIndex - 1;
+	}
+	else if (TargetIndex == 10 || TargetIndex == 0)
+	{
+		TargetIndex = 9;
+	}
+
 	if (InventoryComponent)
 	{
-		InventoryComponent->SelectHotbar(SlotIndex);
+		InventoryComponent->SelectHotbar(TargetIndex);
 	}
 }
