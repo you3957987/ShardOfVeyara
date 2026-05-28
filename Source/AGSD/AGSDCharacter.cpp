@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "AGSDCharacter.h"
+#include "Inventory/AGSDInventoryComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -85,6 +86,9 @@ AAGSDCharacter::AAGSDCharacter()
 	// 오디오 리스너 컴포넌트 생성 및 부착
 	AudioListenerComponent = CreateDefaultSubobject<USceneComponent>(TEXT("AudioListenerComponent"));
 	AudioListenerComponent->SetupAttachment(RootComponent);
+
+	// 인벤토리 컴포넌트 생성
+	InventoryComponent = CreateDefaultSubobject<UAGSDInventoryComponent>(TEXT("InventoryComponent"));
 }
 
 void AAGSDCharacter::HandleAttackInput(FName ActionName)
@@ -401,6 +405,11 @@ void AAGSDCharacter::BeginPlay()
 	}
 	playFadeWidget(1.0f, 0.0f);
 	
+	// 인벤토리 컴포넌트 핫바 변경 델리게이트 바인딩
+	if (InventoryComponent)
+	{
+		InventoryComponent->OnHotbarSelectionChanged.AddDynamic(this, &AAGSDCharacter::OnHotbarSelectionChanged);
+	}
 	
 	MouseSensitivity = GI->MouseSensitivity;
 }
@@ -610,6 +619,20 @@ void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		if (SkipTutorialAction)
 		{
 			EnhancedInputComponent->BindAction(SkipTutorialAction, ETriggerEvent::Triggered, this, &AAGSDCharacter::SkipTutorialPressed);
+		}
+
+		// 핫바 입력 바인딩
+		if (HotbarScrollAction)
+		{
+			EnhancedInputComponent->BindAction(HotbarScrollAction, ETriggerEvent::Triggered, this, &AAGSDCharacter::Input_HotbarScroll);
+		}
+
+		for (int32 i = 0; i < SelectHotbarActions.Num(); ++i)
+		{
+			if (SelectHotbarActions[i])
+			{
+				EnhancedInputComponent->BindAction(SelectHotbarActions[i], ETriggerEvent::Started, this, &AAGSDCharacter::Input_SelectHotbar, i);
+			}
 		}
 	}
 	else
@@ -1697,5 +1720,91 @@ void AAGSDCharacter::ExecuteTutorialSkipLevelTransition()
 	{
 		// 설정되지 않았을 경우 기본값
 		UGameplayStatics::OpenLevel(this, FName("Farm_Sky_Island"));
+	}
+}
+
+// ═══════════════════════════════════════════════════
+// 인벤토리 - 장착 액터 갱신
+// ═══════════════════════════════════════════════════
+
+void AAGSDCharacter::OnHotbarSelectionChanged(int32 PreviousIndex, int32 NewIndex)
+{
+	UpdateEquippedActor();
+}
+
+void AAGSDCharacter::UpdateEquippedActor()
+{
+	if (!InventoryComponent) return;
+
+	const FStruct_ItemData NewItemData = InventoryComponent->GetCurrentHotbarItemData();
+
+	// 같은 아이템이면 갱신 불필요
+	if (HoldingItemData.ItemID == NewItemData.ItemID && !NewItemData.ItemID.IsEmpty())
+	{
+		return;
+	}
+
+	// 1. 기존 장착 액터 파괴
+	if (IsValid(HoldingActor))
+	{
+		HoldingActor->Destroy();
+		HoldingActor = nullptr;
+	}
+
+	// 2. 새 아이템 데이터 갱신
+	HoldingItemData = NewItemData;
+
+	// 빈 슬롯이면 장착 해제 상태
+	if (NewItemData.ItemID.IsEmpty())
+	{
+		HoldingState = EHoldingState::EHS_None;
+		return;
+	}
+
+	// 3. HoldingState 갱신 (EquipHoldingState 사용)
+	HoldingState = NewItemData.EquipHoldingState;
+
+	// 4. 새 액터 스폰 및 소켓 부착
+	if (NewItemData.ItemBPClass)
+	{
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+			HoldingActor = World->SpawnActor<AActor>(NewItemData.ItemBPClass, GetActorLocation(), FRotator::ZeroRotator, SpawnParams);
+
+			if (HoldingActor)
+			{
+				// "ItemSocket" 소켓에 부착 (블루프린트에서 소켓 이름 조정 가능)
+				HoldingActor->AttachToComponent(
+					GetMesh(),
+					FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+					FName("ItemSocket")
+				);
+			}
+		}
+	}
+}
+
+void AAGSDCharacter::Input_HotbarScroll(const FInputActionValue& Value)
+{
+	float ScrollValue = Value.Get<float>();
+	if (FMath::IsNearlyZero(ScrollValue)) return;
+
+	if (InventoryComponent)
+	{
+		// ScrollValue가 양수이면 다음 슬롯(Forward=true), 음수이면 이전 슬롯(Forward=false)
+		InventoryComponent->CycleHotbar(ScrollValue > 0.0f);
+	}
+}
+
+void AAGSDCharacter::Input_SelectHotbar(int32 SlotIndex)
+{
+	if (InventoryComponent)
+	{
+		InventoryComponent->SelectHotbar(SlotIndex);
 	}
 }

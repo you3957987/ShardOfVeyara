@@ -27,6 +27,7 @@ class UInputAction;
 struct FInputActionValue;
 class AACultivationPlot;
 class UMotionWarpingComponent;
+class UAGSDInventoryComponent;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -91,6 +92,14 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category="Input")
 	class UInputAction* SwitchTargetRightAction;
+
+	// 핫바 휠 스크롤 액션
+	UPROPERTY(EditAnywhere, Category="Input|Hotbar")
+	class UInputAction* HotbarScrollAction;
+
+	// 핫바 숫자키 선택 액션 배열 (1~10번 슬롯 대응)
+	UPROPERTY(EditAnywhere, Category="Input|Hotbar")
+	TArray<class UInputAction*> SelectHotbarActions;
 	
 	// 락온 타겟
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat|LockOn")
@@ -117,6 +126,10 @@ protected:
 	void SwitchTargetLeft();
 	void SwitchTargetRight();
 	void SwitchTarget(bool bLookLeft);
+
+	// 핫바 입력 핸들러
+	void Input_HotbarScroll(const FInputActionValue& Value);
+	void Input_SelectHotbar(int32 SlotIndex);
 	void OnLineOfSightTimeout();
 
 	// 모션 워핑 컴포넌트
@@ -239,6 +252,20 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="HoldingState")
 	AActor* HoldingActor;
+
+	// ── 인벤토리 컴포넌트 (C++ 마이그레이션) ──
+
+	/** C++ 인벤토리 컴포넌트 (BP에서 추가하거나 C++에서 CreateDefaultSubobject로 생성) */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
+	TObjectPtr<UAGSDInventoryComponent> InventoryComponent;
+
+	/** 핫바 선택 변경 시 장착 액터를 갱신합니다 */
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void UpdateEquippedActor();
+
+	/** 핫바 선택 변경 델리게이트 콜백 */
+	UFUNCTION()
+	void OnHotbarSelectionChanged(int32 PreviousIndex, int32 NewIndex);
 	
 	AActor* MinDistActor();
 
