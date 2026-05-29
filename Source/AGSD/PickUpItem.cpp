@@ -5,6 +5,11 @@
 #include "Components/SphereComponent.h"
 #include "AGSDPlayerController.h"
 #include "AGSDCharacter.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Engine/DataTable.h"
+#include "Struct_ItemData.h"
+#include "Inventory/AGSDInventoryComponent.h"
+#include "Inventory/UI/AGSDPlayerHUD.h"
 
 APickUpItem::APickUpItem()
 {
@@ -34,6 +39,7 @@ APickUpItem::APickUpItem()
 	CollisionBox->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
 	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &APickUpItem::OnBeginOverlap);
 	CollisionBox->OnComponentEndOverlap.AddDynamic(this, &APickUpItem::OnEndOverlap);
+
 }
 
 void APickUpItem::BeginPlay()
@@ -68,7 +74,38 @@ void APickUpItem::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 
 void APickUpItem::Interact_Implementation(AAGSDCharacter* player)
 {
-	PickUpInteract(player);
+	if (!player || !player->InventoryComponent)
+	{
+		return;
+	}
+
+	int32 OutRemainingQty = 0;
+	FStruct_ItemData OutItemData;
+
+	// 인벤토리 컴포넌트의 AddItemByID를 호출하여 공용 데이터 테이블에서 처리하도록 함
+	bool bAdded = player->InventoryComponent->AddItemByID(ItemID, Amount, OutRemainingQty, OutItemData);
+
+	if (bAdded)
+	{
+		// 실제 획득 수량 계산
+		int32 AcquiredQty = Amount - OutRemainingQty;
+
+		// 플레이어 HUD에 아이템 획득 알림 출력
+		if (player->PlayerHUDRef)
+		{
+			player->PlayerHUDRef->AddItemNotification(OutItemData, AcquiredQty);
+		}
+
+		// 부분 획득 정책 반영 (완전히 획득했으면 소멸, 남았다면 수량 갱신 후 월드 잔류)
+		if (OutRemainingQty <= 0)
+		{
+			Destroy();
+		}
+		else
+		{
+			Amount = OutRemainingQty;
+		}
+	}
 }
 
 void APickUpItem::ShowWidget_Implementation(ACharacter* player)
@@ -81,4 +118,21 @@ bool APickUpItem::CanInteract_Implementation(AAGSDCharacter* player)
 {
 	return true;
 }
+
+void APickUpItem::DisableCollisionForHolding()
+{
+	Holding = true;
+	if (CollisionBox)
+	{
+		CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		CollisionBox->SetGenerateOverlapEvents(false);
+	}
+	if (Mesh)
+	{
+		Mesh->SetSimulatePhysics(false);
+		Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		Mesh->SetGenerateOverlapEvents(false);
+	}
+}
+
 

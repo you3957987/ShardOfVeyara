@@ -10,6 +10,8 @@
 /**
  * 
  */
+class UDataTable;
+
 UCLASS()
 class AGSD_API APickUpItem : public AActor, public IInteraction
 {
@@ -34,6 +36,14 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn = "true"))
 	bool Holding = false;
+
+	/** 아이템 고유 ID */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pick Up Item")
+	FString ItemID;
+
+	/** 아이템 수량 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pick Up Item")
+	int32 Amount = 1;
 	
 	FText InteractActionText = FText::FromString(TEXT("수집하기"));
 
@@ -44,6 +54,9 @@ public:
 	virtual void Interact_Implementation(AAGSDCharacter* player) override;
 	virtual void ShowWidget_Implementation(ACharacter* player) override;
 	virtual bool CanInteract_Implementation(AAGSDCharacter* player) override;
+
+	/** 손에 들어져 장착 상태가 될 때 물리 및 모든 콜리전을 강제 비활성화합니다. */
+	void DisableCollisionForHolding();
 
 	FORCEINLINE UStaticMeshComponent* GetMeshComponent() const { return Mesh; };
 private:

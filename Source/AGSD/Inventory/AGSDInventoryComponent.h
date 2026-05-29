@@ -9,6 +9,8 @@
 #include "Inventory/EItemType.h"
 #include "AGSDInventoryComponent.generated.h"
 
+class UDataTable;
+
 // ── 델리게이트 선언 ──
 // 특정 슬롯이 갱신되었을 때 (UI 바인딩용)
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventorySlotUpdated, int32, SlotIndex);
@@ -79,6 +81,18 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	bool AddItem(FStruct_ItemData ItemData, int32& OutRemainingQty);
+
+	/**
+	 * 아이템 ID 기반으로 아이템을 인벤토리에 추가합니다.
+	 * 
+	 * @param ItemID 추가할 아이템 ID
+	 * @param Amount 추가할 수량
+	 * @param OutRemainingQty 추가 후 남은 수량
+	 * @param OutItemData 데이터 테이블에서 찾은 실제 아이템 정보 반환
+	 * @return 아이템이 1개 이상 추가되었으면 true
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	bool AddItemByID(const FString& ItemID, int32 Amount, int32& OutRemainingQty, FStruct_ItemData& OutItemData);
 
 	/**
 	 * 특정 슬롯에서 아이템을 제거합니다.
@@ -232,6 +246,10 @@ protected:
 	/** 최대 슬롯 수 (핫바 10 + 가방 20 = 30) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory|Config")
 	int32 MaxSlots = 30;
+
+	/** 아이템 데이터를 조회할 공용 데이터 테이블 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory|Config")
+	TObjectPtr<UDataTable> ItemDataTable;
 
 	/** 인벤토리 슬롯 배열 (인덱스 0~9: 핫바, 10~MaxSlots-1: 가방) */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory|Data")

@@ -5,6 +5,7 @@
 #include "SOVGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
+#include "Engine/DataTable.h"
 
 UAGSDInventoryComponent::UAGSDInventoryComponent()
 {
@@ -119,6 +120,34 @@ bool UAGSDInventoryComponent::AddItem(FStruct_ItemData ItemData, int32& OutRemai
 	}
 
 	return bAddedAny;
+}
+
+bool UAGSDInventoryComponent::AddItemByID(const FString& ItemID, int32 Amount, int32& OutRemainingQty, FStruct_ItemData& OutItemData)
+{
+	OutRemainingQty = Amount;
+
+	if (OutRemainingQty <= 0)
+	{
+		return false;
+	}
+
+	if (!ItemDataTable)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UAGSDInventoryComponent::AddItemByID - ItemDataTable is null."));
+		return false;
+	}
+
+	FStruct_ItemData* RowData = ItemDataTable->FindRow<FStruct_ItemData>(FName(*ItemID), TEXT("AddItemByID"));
+	if (!RowData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UAGSDInventoryComponent::AddItemByID - Failed to find Item ID [%s] in DataTable."), *ItemID);
+		return false;
+	}
+
+	OutItemData = *RowData;
+	OutItemData.CurrentQuantity = Amount;
+
+	return AddItem(OutItemData, OutRemainingQty);
 }
 
 // ═══════════════════════════════════════════════════

@@ -2,11 +2,14 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Struct_ItemData.h"
 #include "AGSDPlayerHUD.generated.h"
 
 class UAGSDHotbarWidget;
 class UAGSDInventoryWidget;
 class UAGSDInventoryComponent;
+class UVerticalBox;
+class UAGSDItemNotificationWidget;
 
 /**
  * UAGSDPlayerHUD
@@ -26,6 +29,10 @@ public:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget), Category = "UI")
 	TObjectPtr<UAGSDInventoryWidget> WBP_InventoryUI;
 
+	/** 아이템 획득 알림들이 쌓이는 수직 박스 컨테이너 */
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget), Category = "UI")
+	TObjectPtr<UVerticalBox> VB_ItemNotificationList;
+
 	// ── 애니메이션 ──
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	TObjectPtr<UWidgetAnimation> HotbarSlide;
@@ -33,6 +40,11 @@ public:
 	// ── 참조 ──
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory")
 	TObjectPtr<UAGSDInventoryComponent> InventoryComponent;
+
+	// ── 설정 데이터 ──
+	/** 스폰할 아이템 획득 알림 위젯의 C++ / Blueprint 템플릿 클래스 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player HUD|Config")
+	TSubclassOf<UAGSDItemNotificationWidget> ItemNotificationClass;
 
 	// ── 기능 함수 ──
 
@@ -52,6 +64,11 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Player HUD")
 	bool IsInventoryOpen() const;
 
+	/** 새로운 아이템 획득 알림 위젯을 생성하여 알림 리스트에 추가합니다. */
+	UFUNCTION(BlueprintCallable, Category = "Player HUD")
+	void AddItemNotification(FStruct_ItemData ItemData, int32 Amount);
+
 protected:
 	virtual void NativeConstruct() override;
 };
+

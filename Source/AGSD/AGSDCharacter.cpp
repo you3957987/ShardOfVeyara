@@ -2,6 +2,7 @@
 
 #include "AGSDCharacter.h"
 #include "Inventory/AGSDInventoryComponent.h"
+#include "PickUpItem.h"
 #include "Inventory/UI/AGSDPlayerHUD.h"
 #include "Blueprint/UserWidget.h"
 #include "Engine/LocalPlayer.h"
@@ -91,6 +92,11 @@ AAGSDCharacter::AAGSDCharacter()
 
 	// 인벤토리 컴포넌트 생성
 	InventoryComponent = CreateDefaultSubobject<UAGSDInventoryComponent>(TEXT("InventoryComponent"));
+
+	// 기본 장착 소켓 매핑 데이터 세팅 (블루프린트에서 편집 가능)
+	EquipSocketMappings.Add(FEquipSocketMapping(TEXT("forke"), FName("Weapon"), EHoldingWeapon::Spear, false));
+	EquipSocketMappings.Add(FEquipSocketMapping(TEXT("torch"), FName("Torch"), EHoldingWeapon::Torch, false));
+	EquipSocketMappings.Add(FEquipSocketMapping(TEXT("potion"), FName("PotionSocket"), EHoldingWeapon::Potion, true));
 }
 
 void AAGSDCharacter::HandleAttackInput(FName ActionName)
@@ -614,6 +620,12 @@ void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 				}
 			}
 		}
+		// Attack
+		if (AttackAction)
+		{
+			EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AAGSDCharacter::UseEquippedItem);
+		}
+
 		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AAGSDCharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AAGSDCharacter::StopJumping);
@@ -833,6 +845,27 @@ void AAGSDCharacter::ProcessAttackInput()
 	// 완전히 Idle 상태인 경우 새로운 콤보 시작
 	
 	StartNewCombo();
+}
+
+void AAGSDCharacter::UseEquippedItem()
+{
+	// 1. 포션을 들고 있는 상태인 경우
+	if (HoldingWeapon == EHoldingWeapon::Potion)
+	{
+		if (HoldingItemData.ItemBPClass)
+		{
+			AActor* DefaultActor = Cast<AActor>(HoldingItemData.ItemBPClass->GetDefaultObject());
+			if (DefaultActor && DefaultActor->Implements<UUsableItem>())
+			{
+				IUsableItem::Execute_UseItem(DefaultActor, this);
+			}
+		}
+	}
+	// 2. 무기(Spear)나 낫(Sickle) 등 공격 가능한 도구/무기인 경우
+	else if (HoldingWeapon == EHoldingWeapon::Spear || HoldingWeapon == EHoldingWeapon::Sickle)
+	{
+		ProcessAttackInput();
+	}
 }
 
 void AAGSDCharacter::ActivateAttackRotate()
@@ -1803,11 +1836,61 @@ void AAGSDCharacter::UpdateEquippedActor()
 	if (NewItemData.ItemID.IsEmpty())
 	{
 		HoldingState = EHoldingState::EHS_None;
+		HoldingWeapon = EHoldingWeapon::None;
 		return;
 	}
 
-	// 3. HoldingState 갱신 (EquipHoldingState 사용)
+	// 아이템 ID에 따른 부착 소켓 및 장착 무기 상태 결정
+	FName AttachSocketName = NAME_None;
+	EHoldingWeapon TargetHoldingWeapon = EHoldingWeapon::None;
+
+	// 방법 1 적용: 장착 상태가 포션(EHS_Potion)이면 ID와 무관하게 무조건 PotionSocket에 부착
+	if (NewItemData.EquipHoldingState == EHoldingState::EHS_Potion)
+	{
+		AttachSocketName = FName("PotionSocket");
+		TargetHoldingWeapon = EHoldingWeapon::Potion;
+	}
+	else
+	{
+		FString TargetItemID = NewItemData.ItemID.ToLower();
+
+		// 설정된 맵핑 배열을 순회하며 조건 체크 (ID 기반 무기/도구)
+		for (const FEquipSocketMapping& Mapping : EquipSocketMappings)
+		{
+			FString MapItemID = Mapping.ItemID.ToLower();
+
+			if (Mapping.bContainsCheck)
+			{
+				if (TargetItemID.Contains(MapItemID))
+				{
+					AttachSocketName = Mapping.SocketName;
+					TargetHoldingWeapon = Mapping.HoldingWeaponState;
+					break;
+				}
+			}
+			else
+			{
+				if (TargetItemID == MapItemID)
+				{
+					AttachSocketName = Mapping.SocketName;
+					TargetHoldingWeapon = Mapping.HoldingWeaponState;
+					break;
+				}
+			}
+		}
+	}
+
+	// 그 외 아이템은 손에 들어지지 않아야 함
+	if (AttachSocketName == NAME_None)
+	{
+		HoldingState = EHoldingState::EHS_None;
+		HoldingWeapon = EHoldingWeapon::None;
+		return;
+	}
+
+	// 3. 상태 갱신
 	HoldingState = NewItemData.EquipHoldingState;
+	HoldingWeapon = TargetHoldingWeapon;
 
 	// 4. 새 액터 스폰 및 소켓 부착
 	if (NewItemData.ItemBPClass)
@@ -1823,11 +1906,33 @@ void AAGSDCharacter::UpdateEquippedActor()
 
 			if (HoldingActor)
 			{
-				// "ItemSocket" 소켓에 부착 (블루프린트에서 소켓 이름 조정 가능)
+				// APickUpItem 타입인 경우, 손에 들렸을 때의 콜리전/물리 끄기 함수 호출
+				if (APickUpItem* PickUpItem = Cast<APickUpItem>(HoldingActor))
+				{
+					PickUpItem->DisableCollisionForHolding();
+				}
+
+				// 물리 시뮬레이션 및 충돌로 인해 소켓 부착이 해제되거나 캐릭터가 밀리는 현상 방지
+				if (USceneComponent* RootComp = HoldingActor->GetRootComponent())
+				{
+					RootComp->SetMobility(EComponentMobility::Movable);
+				}
+
+				TArray<UPrimitiveComponent*> PrimitiveComponents;
+				HoldingActor->GetComponents<UPrimitiveComponent>(PrimitiveComponents);
+				for (UPrimitiveComponent* PrimComp : PrimitiveComponents)
+				{
+					if (PrimComp)
+					{
+						PrimComp->SetSimulatePhysics(false);
+						PrimComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+					}
+				}
+
 				HoldingActor->AttachToComponent(
 					GetMesh(),
 					FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-					FName("ItemSocket")
+					AttachSocketName
 				);
 			}
 		}

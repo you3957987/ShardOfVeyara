@@ -6,6 +6,8 @@
 #include "Inventory/AGSDInventoryComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "Animation/WidgetAnimation.h"
+#include "Components/VerticalBox.h"
+#include "Inventory/UI/AGSDItemNotificationWidget.h"
 
 void UAGSDPlayerHUD::NativeConstruct()
 {
@@ -100,3 +102,25 @@ bool UAGSDPlayerHUD::IsInventoryOpen() const
 	}
 	return false;
 }
+
+void UAGSDPlayerHUD::AddItemNotification(FStruct_ItemData ItemData, int32 Amount)
+{
+	if (!VB_ItemNotificationList || !ItemNotificationClass)
+	{
+		return;
+	}
+
+	APlayerController* PC = GetOwningPlayer();
+	if (!PC)
+	{
+		return;
+	}
+
+	UAGSDItemNotificationWidget* NotiWidget = CreateWidget<UAGSDItemNotificationWidget>(PC, ItemNotificationClass);
+	if (NotiWidget)
+	{
+		NotiWidget->SetupNotification(ItemData.ItemName.ToString(), Amount, ItemData.ItemIcon);
+		VB_ItemNotificationList->AddChild(NotiWidget);
+	}
+}
+

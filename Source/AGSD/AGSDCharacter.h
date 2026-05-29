@@ -21,6 +21,33 @@
 #include "SpearComboData.h"
 #include "AGSDCharacter.generated.h"
 
+USTRUCT(BlueprintType)
+struct FEquipSocketMapping
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equip Config")
+	FString ItemID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equip Config")
+	FName SocketName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equip Config")
+	EHoldingWeapon HoldingWeaponState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equip Config")
+	bool bContainsCheck;
+
+	FEquipSocketMapping()
+		: ItemID(TEXT("")), SocketName(NAME_None), HoldingWeaponState(EHoldingWeapon::None), bContainsCheck(false)
+	{}
+
+	FEquipSocketMapping(const FString& InItemID, const FName& InSocketName, EHoldingWeapon InState, bool bInContains = false)
+		: ItemID(InItemID), SocketName(InSocketName), HoldingWeaponState(InState), bContainsCheck(bInContains)
+	{}
+};
+
 class USpringArmComponent;
 class UCameraComponent;
 class UInputAction;
@@ -58,6 +85,10 @@ class AGSD_API AAGSDCharacter : public ACharacter, public IPetConversationInterf
 	bool bIsJustGuardWindow = false;
 
 protected:
+	/** Attack Input Action */
+	UPROPERTY(EditAnywhere, Category="Input")
+	class UInputAction* AttackAction;
+
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* JumpAction;
@@ -257,6 +288,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="HoldingState")
 	AActor* HoldingActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="HoldingState|Config")
+	TArray<FEquipSocketMapping> EquipSocketMappings;
 
 	// ── 플레이어 UI 및 HUD ──
 
@@ -510,6 +544,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ProcessAttackInput();
+
+	/** 현재 장착된 아이템을 사용합니다. 무기면 공격, 포션이면 포션 사용 인터페이스를 실행합니다. */
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void UseEquippedItem();
 	
 	//-----------------------------------
 	void ActivateAttackRotate();
