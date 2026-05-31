@@ -38,6 +38,10 @@
 		{
 			"Name": "VARCO3DPlugin",
 			"Enabled": false
+		},
+		{
+			"Name": "USDImporter",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
