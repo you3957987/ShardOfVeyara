@@ -5,6 +5,7 @@
 #include "AGSDCharacter.h"
 #include "AGSDPlayerController.h"
 #include "PotionDataTable.h"
+#include "Components/Button.h"
 // #include "../../../../../../../Program Files/Epic Games/UE_5.6/Engine/Plugins/FX/Niagara/Source/Niagara/Public/NiagaraComponent.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
@@ -73,26 +74,7 @@ void AAlchemyTable::BeginPlay()
 	{
 		InsertedItemID = ItemIDData.ItemID;
 
-		if (InsertedItemID.Num() == 2)
-		{
-			TargetRecipe.ItemID = TEXT("Sludge");
-			TargetRecipe.LiquidColor = FLinearColor(0.1f, 0.05f, 0.1f, 1.0f); // 어두운 보라색 (찌꺼기 색상)
-
-			TArray<FString> TempItemID = InsertedItemID;
-			TempItemID.Sort();
-		
-			for (FPotionData* Recipe : AlchemyRecipes)
-			{
-				TArray<FString> RecipeMaterial = {Recipe->IngredientA, Recipe->IngredientB};
-				RecipeMaterial.Sort();
-				if (RecipeMaterial == TempItemID)
-				{
-					TargetRecipe = *Recipe;
-					break;
-				}
-			}
-			LerpMixLiquidColor();
-		}
+		UpdateTargetRecipe();
 	}
 }
 
@@ -149,7 +131,7 @@ void AAlchemyTable::EndAlchemy()
 	if (AlchemyWidget)
 	{
 		AlchemyWidget->getCloseButton()->OnClicked.RemoveDynamic(this, &AAlchemyTable::EndAlchemy);
-		AlchemyWidget->getEmptyButton()->OnClicked.AddDynamic(this, &AAlchemyTable::EmptyPot);
+		AlchemyWidget->getEmptyButton()->OnClicked.RemoveDynamic(this, &AAlchemyTable::EmptyPot);
 		AlchemyWidget->RemoveFromParent();
 		// 메모리 관리를 위해 필요하다면 AlchemyWidget = nullptr; 를 해줄 수도 있지만, 
 		// 다시 열 때를 대비해 유지하는 것이 일반적입니다.
@@ -165,26 +147,7 @@ void AAlchemyTable::SplashPot(bool clear)
 		UGameplayStatics::PlaySoundAtLocation(this, SplashSound, GetActorLocation());
 	}
 
-	if (InsertedItemID.Num() == 2)
-	{
-		TargetRecipe.ItemID = TEXT("Sludge");
-		TargetRecipe.LiquidColor = FLinearColor(0.1f, 0.05f, 0.1f, 1.0f); // 어두운 보라색 (찌꺼기 색상)
-
-		TArray<FString> TempItemID = InsertedItemID;
-		TempItemID.Sort();
-		
-		for (FPotionData* Recipe : AlchemyRecipes)
-		{
-			TArray<FString> RecipeMaterial = {Recipe->IngredientA, Recipe->IngredientB};
-			RecipeMaterial.Sort();
-			if (RecipeMaterial == TempItemID)
-			{
-				TargetRecipe = *Recipe;
-				break;
-			}
-		}
-		LerpMixLiquidColor();
-	}
+	UpdateTargetRecipe();
 	if (clear)
 	{
 		TargetRecipe.LiquidColor = BaseLiquidColor;
@@ -205,15 +168,19 @@ void AAlchemyTable::Interact_Implementation(AAGSDCharacter* player)
 		// 위젯이 아직 없다면 여기서 생성
 		if (!AlchemyWidget && AlchemyWidgetClass)
 		{
-			AlchemyWidget = CreateWidget<UAlchemyUI>(GetWorld(), AlchemyWidgetClass);
+			AlchemyWidget = CreateWidget<UAlchemyUI>(PlayerController, AlchemyWidgetClass);
 		}
 		if (AlchemyWidget)
 		{
 			AlchemyWidget->setOwnerActor(this);
+
+			// 중복 바인딩 방지: 추가 전에 항상 먼저 제거
+			AlchemyWidget->getCloseButton()->OnClicked.RemoveDynamic(this, &AAlchemyTable::EndAlchemy);
 			AlchemyWidget->getCloseButton()->OnClicked.AddDynamic(this, &AAlchemyTable::EndAlchemy);
 			
 			if (UButton* EmptyButton = AlchemyWidget->getEmptyButton())
 			{
+				EmptyButton->OnClicked.RemoveDynamic(this, &AAlchemyTable::EmptyPot);
 				EmptyButton->OnClicked.AddDynamic(this, &AAlchemyTable::EmptyPot);
 			}
 			AlchemyWidget->AddToViewport();
@@ -256,6 +223,30 @@ void AAlchemyTable::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Ot
 	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
 	{
 		player->RemoveInteractableActor(this);
+	}
+}
+
+void AAlchemyTable::UpdateTargetRecipe()
+{
+	if (InsertedItemID.Num() == 2)
+	{
+		TargetRecipe.ItemID = TEXT("Sludge");
+		TargetRecipe.LiquidColor = FLinearColor(0.1f, 0.05f, 0.1f, 1.0f); // 어두운 보라색 (찌꺼기 색상)
+
+		TArray<FString> TempItemID = InsertedItemID;
+		TempItemID.Sort();
+		
+		for (FPotionData* Recipe : AlchemyRecipes)
+		{
+			TArray<FString> RecipeMaterial = {Recipe->IngredientA, Recipe->IngredientB};
+			RecipeMaterial.Sort();
+			if (RecipeMaterial == TempItemID)
+			{
+				TargetRecipe = *Recipe;
+				break;
+			}
+		}
+		LerpMixLiquidColor();
 	}
 }
 

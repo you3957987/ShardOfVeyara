@@ -117,20 +117,6 @@ void AAGSDCharacter::TryInteract()
 		IInteraction::Execute_Interact(CurrentInteractableActor, this);
 		return;
 	}
-
-	// 2. 상호작용 가능한 오브젝트가 없으면, 들고 있는 아이템 데이터(HoldingItemData)의 클래스로부터 CDO를 가져와 사용 시도
-	if (HoldingItemData.ItemBPClass)
-	{
-		// 클래스 디폴트 오브젝트(CDO)를 가져와 전용 사용 인터페이스(IUsableItem) 실행 (스폰 없음)
-		AActor* DefaultActor = Cast<AActor>(HoldingItemData.ItemBPClass->GetDefaultObject());
-		if (DefaultActor)
-		{
-			if (DefaultActor->Implements<UUsableItem>())
-			{
-				IUsableItem::Execute_UseItem(DefaultActor, this);
-			}
-		}
-	}
 }
 
 void AAGSDCharacter::AddInteractableActor(AActor* NewActor)
@@ -849,20 +835,20 @@ void AAGSDCharacter::ProcessAttackInput()
 
 void AAGSDCharacter::UseEquippedItem()
 {
-	// 1. 포션을 들고 있는 상태인 경우
-	if (HoldingWeapon == EHoldingWeapon::Potion)
+	// 1. 들고 있는 아이템이 UsableItem 인터페이스를 구현한 경우 최우선 실행
+	bool bUsed = false;
+	if (HoldingItemData.ItemBPClass)
 	{
-		if (HoldingItemData.ItemBPClass)
+		AActor* DefaultActor = Cast<AActor>(HoldingItemData.ItemBPClass->GetDefaultObject());
+		if (DefaultActor && DefaultActor->Implements<UUsableItem>())
 		{
-			AActor* DefaultActor = Cast<AActor>(HoldingItemData.ItemBPClass->GetDefaultObject());
-			if (DefaultActor && DefaultActor->Implements<UUsableItem>())
-			{
-				IUsableItem::Execute_UseItem(DefaultActor, this);
-			}
+			IUsableItem::Execute_UseItem(DefaultActor, this);
+			bUsed = true;
 		}
 	}
-	// 2. 무기(Spear)나 낫(Sickle) 등 공격 가능한 도구/무기인 경우
-	else if (HoldingWeapon == EHoldingWeapon::Spear || HoldingWeapon == EHoldingWeapon::Sickle)
+
+	// 2. UsableItem이 아니고 무기(Spear)나 낫(Sickle) 등 공격 가능한 도구/무기인 경우
+	if (!bUsed && (HoldingWeapon == EHoldingWeapon::Spear || HoldingWeapon == EHoldingWeapon::Sickle))
 	{
 		ProcessAttackInput();
 	}
@@ -1880,17 +1866,15 @@ void AAGSDCharacter::UpdateEquippedActor()
 		}
 	}
 
-	// 그 외 아이템은 손에 들어지지 않아야 함
-	if (AttachSocketName == NAME_None)
-	{
-		HoldingState = EHoldingState::EHS_None;
-		HoldingWeapon = EHoldingWeapon::None;
-		return;
-	}
-
 	// 3. 상태 갱신
 	HoldingState = NewItemData.EquipHoldingState;
 	HoldingWeapon = TargetHoldingWeapon;
+
+	// 부착할 액터가 없는 아이템은 여기서 장착 상태만 유지한 채 안전하게 종료
+	if (AttachSocketName == NAME_None)
+	{
+		return;
+	}
 
 	// 4. 새 액터 스폰 및 소켓 부착
 	if (NewItemData.ItemBPClass)

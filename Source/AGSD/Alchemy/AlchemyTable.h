@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AGSDCharacter.h"
-#include "AlchemyUI.h"
+#include "UI/AlchemyUI.h"
 #include "Interaction.h"
 #include "PotionDataTable.h"
 #include "Camera/CameraComponent.h"
@@ -70,6 +70,8 @@ public:
 	virtual void ShowWidget_Implementation(ACharacter* player) override;
 	virtual bool CanInteract_Implementation(AAGSDCharacter* player) override;
 
+	FORCEINLINE TArray<FString>& GetInsertedItemID() { return InsertedItemID; }
+
 	//오버랩 시작 시 작동할 함수
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -103,6 +105,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void SplashPot(bool clear);
+	
+	UFUNCTION(BlueprintCallable, Category = "Alchemy")
+	void UpdateTargetRecipe();
 	
 	UFUNCTION()
 	void EndAlchemy();

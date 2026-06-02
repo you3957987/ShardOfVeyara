@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PlotSaveData.h"
-#include "AlchemySaveData.h"
+#include "Alchemy/AlchemySaveData.h"
 #include "SaveData.h"
 #include "Struct_InventorySlotData.h"
 #include "Struct_WorldChestData.h"

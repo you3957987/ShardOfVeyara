@@ -1,0 +1,55 @@
+# 🔧 연금술 시스템 - 현재 수정 필요 항목
+
+> 최종 업데이트: 2026-06-02
+
+---
+
+## 🟠 C++ 수정 완료 (라이브 코딩 or 에디터 재시작 필요)
+
+- [x] **다중 바인딩 크래시 수정** (`AlchemyTable.cpp` L176~180)
+  - 솥을 다시 상호작용할 때마다 `CloseButton`, `EmptyButton`에 `AddDynamic`이 누적되어 발생하던 Access Violation 크래시
+  - `AddDynamic` 호출 전 `RemoveDynamic`을 선제 호출하여 해결
+
+---
+
+## 🔵 블루프린트 수정 필요 (에디터 직접 수정)
+
+- [x] **`BP_AlchemyTable` - EmptyPot 이벤트 노드 연결 복구**
+  - `Array Clear (InsertedItemID)` 후 `AlchemyWidget` 변수를 끌어 **`Init Inserted Slot`** 노드 배치 및 연결
+  - 타임라인(`타임라인_2`)의 `PlayFromStart` 핀에 연결
+  - 오래된 `InsertedSlotInit` 함수 노드 삭제
+
+- [x] **`BP_AlchemyTable` - AlchemyWidget 형변환 노드 복구**
+  - `AlchemyWidget` 변수(Get) → **Cast to AlchemyUI** 노드 재연결
+  - 이전 깨진 캐스트 노드(와일드카드 오류) 삭제 및 새로 배치
+
+---
+
+## 🔴 테스트 검증 필요
+
+- [ ] **솥 상호작용 → UI 오픈 정상 동작 확인** (크래시 재현 여부)
+- [ ] **작물 드래그 앤 드롭 후 InsertedCropSlot 이미지 표시 확인**
+- [ ] **차원 수정 투입 시 포션 지급 및 알림 위젯 출력 확인**
+- [ ] **비우기 버튼 클릭 시 솥 재료 초기화 및 UI 리셋 확인**
+- [ ] **솥 상호작용 종료 후 재진입 시 크래시 없는지 반복 검증**
+
+---
+
+## 🔶 연금술 추가 기능 수정
+
+- [ ] **레시피 없는 조합(Sludge) 시 차원 수정 투입 차단**
+  - `UpdateTargetRecipe()` 결과가 `Sludge`인 경우 차원 수정 드롭을 거부하도록 조건 추가
+  - `AlchemyUI.cpp`의 DimensionCrystal 투입 분기에 `Table->TargetRecipe.ItemID == "Sludge"` 체크 삽입
+
+---
+
+## 🟣 다른 시스템 수정 필요
+
+- [ ] **상자 시스템 수정**
+- [ ] **NPC 시스템 수정**
+
+---
+
+## 💜 완료 시 커밋 필요
+
+- [ ] 연금술 테스트가 모두 통과하면 전체 C++ 변경사항 커밋 요청 (사용자가 "커밋해줘" 명시 시)
