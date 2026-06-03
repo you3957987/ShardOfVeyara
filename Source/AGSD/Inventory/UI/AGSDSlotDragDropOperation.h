@@ -32,4 +32,11 @@ public:
 	/** 핫바 슬롯에서 드래그가 시작되었는지 여부 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drag Drop")
 	bool bFromHotbar;
+
+	/** 드래그를 시작한 슬롯의 소속 인벤토리 컴포넌트 (교차 인벤토리 이동 판별용) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drag Drop")
+	TObjectPtr<class UAGSDInventoryComponent> SourceInventoryComponent;
+
+public:
+	virtual void DragCancelled_Implementation(const FPointerEvent& PointerEvent) override;
 };

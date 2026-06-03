@@ -17,6 +17,7 @@
 #include "Engine/DataTable.h"
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/DragDropOperation.h"
+#include "EnhancedInputSubsystems.h"
 
 void UAlchemyUI::CallOnCropInserted()
 {
@@ -35,17 +36,33 @@ void UAlchemyUI::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	SetIsFocusable(true);
+
 	if (CloseButton)
 	{
+		CloseButton->OnClicked.RemoveDynamic(this, &UAlchemyUI::OnCloseButtonClicked);
 		CloseButton->OnClicked.AddDynamic(this, &UAlchemyUI::OnCloseButtonClicked);
 	}
 
 	RefreshMaterialAddresses();
 	InitInsertedSlot();
+
+	if (APlayerController* PC = GetOwningPlayer())
+	{
+		if (AAGSDCharacter* Character = Cast<AAGSDCharacter>(PC->GetPawn()))
+		{
+			OwningCharacter = Character;
+			Character->RegisterCloseableUI(this);
+		}
+	}
 }
 
 void UAlchemyUI::NativeDestruct()
 {
+	if (OwningCharacter.IsValid())
+	{
+		OwningCharacter->UnregisterCloseableUI(this);
+	}
 	Super::NativeDestruct();
 }
 
@@ -114,6 +131,15 @@ void UAlchemyUI::InsertMaterial(UAlchemyCropSlotBase* InsertedSlot)
 	{
 		// 솥에 이미 작물이 2개 채워져 있을 때만 투입 허용
 		if (Table->GetInsertedItemID().Num() != 2)
+		{
+			return;
+		}
+
+		// 차원 수정 투입 시점에 솥 내부 재료 기반으로 레시피 예비 검증
+		Table->UpdateTargetRecipe();
+
+		// 레시피 없는 조합(Sludge)인 경우 차원 수정 투입 자체를 차단
+		if (Table->TargetRecipe.ItemID.Equals(TEXT("Sludge"), ESearchCase::IgnoreCase))
 		{
 			return;
 		}
@@ -281,5 +307,13 @@ void UAlchemyUI::AddItemNotification(const FString& ItemID, int32 Amount)
 	{
 		NotiWidget->SetupNotification(ItemData->ItemName.ToString(), Amount, ItemData->ItemIcon);
 		VB_ItemNotificationList->AddChild(NotiWidget);
+	}
+}
+
+void UAlchemyUI::CloseUI_Implementation()
+{
+	if (AAlchemyTable* Table = Cast<AAlchemyTable>(OwnerActor))
+	{
+		Table->EndAlchemy();
 	}
 }

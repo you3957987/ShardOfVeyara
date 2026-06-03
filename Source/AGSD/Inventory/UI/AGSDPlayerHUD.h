@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Struct_ItemData.h"
+#include "AGSDCloseableUIInterface.h"
 #include "AGSDPlayerHUD.generated.h"
 
 class UAGSDHotbarWidget;
@@ -10,6 +11,7 @@ class UAGSDInventoryWidget;
 class UAGSDInventoryComponent;
 class UVerticalBox;
 class UAGSDItemNotificationWidget;
+class UHealthBar;
 
 /**
  * UAGSDPlayerHUD
@@ -17,7 +19,7 @@ class UAGSDItemNotificationWidget;
  * 단축 핫바 및 메인 가방 인벤토리 UI를 보유하며, 개폐 및 마우스 포커스 관리를 수행합니다.
  */
 UCLASS()
-class AGSD_API UAGSDPlayerHUD : public UUserWidget
+class AGSD_API UAGSDPlayerHUD : public UUserWidget, public IUIClosable
 {
 	GENERATED_BODY()
 
@@ -32,6 +34,10 @@ public:
 	/** 아이템 획득 알림들이 쌓이는 수직 박스 컨테이너 */
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget), Category = "UI")
 	TObjectPtr<UVerticalBox> VB_ItemNotificationList;
+
+	/** 플레이어 체력 바 위젯 */
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget), Category = "UI")
+	TObjectPtr<UHealthBar> WBP_HealthBar;
 
 	// ── 애니메이션 ──
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
@@ -67,6 +73,9 @@ public:
 	/** 새로운 아이템 획득 알림 위젯을 생성하여 알림 리스트에 추가합니다. */
 	UFUNCTION(BlueprintCallable, Category = "Player HUD")
 	void AddItemNotification(FStruct_ItemData ItemData, int32 Amount);
+
+public:
+	virtual void CloseUI_Implementation() override;
 
 protected:
 	virtual void NativeConstruct() override;

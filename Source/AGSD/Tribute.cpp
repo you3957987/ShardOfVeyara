@@ -109,13 +109,6 @@ void ATribute::ShowWidget_Implementation(ACharacter* player)
 
 bool ATribute::CanInteract_Implementation(AAGSDCharacter* player)
 {
-	/*
-	if (int* FoundAmount = CurrentLevelTributeItems.Find(player->getPlayerHoidingItemID()))
-	{
-		if (*FoundAmount > 0) return true;
-	}
-	return false;
-	*/
 	return bCanUseTribute;
 }
 

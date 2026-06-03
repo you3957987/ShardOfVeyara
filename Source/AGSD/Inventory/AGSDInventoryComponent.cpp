@@ -2,6 +2,8 @@
 // 기존 블루프린트 BPAC_InventoryComponent의 모든 로직을 C++로 재구현합니다.
 
 #include "AGSDInventoryComponent.h"
+#include "AGSDCharacter.h"
+#include "PickUpItem.h"
 #include "SOVGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
@@ -49,18 +51,54 @@ void UAGSDInventoryComponent::InitializeSlots()
 			InventorySlots[i].SlotIndex = i;
 			InventorySlots[i].IsEmpty = true;
 		}
+
+		// 빈 인벤토리로 최초 초기화되었으므로 에디터 지정 디폴트 아이템들을 슬롯에 지급
+		for (const FStruct_DefaultInventoryItem& DefaultItem : DefaultItems)
+		{
+			if (!DefaultItem.ItemID.IsEmpty() && DefaultItem.Amount > 0)
+			{
+				int32 RemainingQty = DefaultItem.Amount;
+				FStruct_ItemData OutItemData;
+				AddItemByID(DefaultItem.ItemID, DefaultItem.Amount, RemainingQty, OutItemData);
+			}
+		}
 	}
 
-	// 핫바 선택 인덱스도 GameInstance에서 복원
-	if (USOVGameInstance* GI = GetGameInstance())
+	AActor* Owner = GetOwner();
+	bool bIsPlayer = Owner && Owner->IsA(AAGSDCharacter::StaticClass());
+
+	// 핫바 선택 인덱스도 GameInstance에서 복원 (플레이어 캐릭터인 경우에만)
+	if (bIsPlayer)
 	{
-		CurrentSelectedHotbar = FMath::Clamp(GI->CurrentSelectedHotbar, HOTBAR_START_INDEX, HOTBAR_END_INDEX);
+		if (USOVGameInstance* GI = GetGameInstance())
+		{
+			CurrentSelectedHotbar = FMath::Clamp(GI->CurrentSelectedHotbar, HOTBAR_START_INDEX, HOTBAR_END_INDEX);
+		}
 	}
 
 	OnInventoryFullyUpdated.Broadcast();
 	
-	// 초기 핫바 선택 상태 알림 (UI 동기화용)
-	OnHotbarSelectionChanged.Broadcast(-1, CurrentSelectedHotbar);
+	// 초기 핫바 선택 상태 알림 (UI 동기화용, 플레이어 캐릭터인 경우에만)
+	if (bIsPlayer)
+	{
+		OnHotbarSelectionChanged.Broadcast(-1, CurrentSelectedHotbar);
+	}
+}
+
+void UAGSDInventoryComponent::ClearAllSlots()
+{
+	for (int32 i = 0; i < MaxSlots; ++i)
+	{
+		InventorySlots[i].IsEmpty = true;
+		InventorySlots[i].ItemData = FStruct_ItemData();
+		InventorySlots[i].SlotIndex = i;
+	}
+
+	// UI 갱신 이벤트 전달
+	if (OnInventoryFullyUpdated.IsBound())
+	{
+		OnInventoryFullyUpdated.Broadcast();
+	}
 }
 
 // ═══════════════════════════════════════════════════
@@ -314,12 +352,24 @@ bool UAGSDInventoryComponent::DropItem(int32 SlotIndex)
 				DropLocation = HitResult.Location;
 			}
 
+			// 겹침 방지 오프셋 적용: 바닥에서 약간 띄우고(Z+30), X/Y로 미세한 랜덤 오프셋을 부여해 튕겨나감 현상을 방지
+			FVector RandomOffset = FVector(FMath::RandRange(-15.0f, 15.0f), FMath::RandRange(-15.0f, 15.0f), 30.0f);
+			DropLocation += RandomOffset;
+
 			const FRotator DropRotation = FRotator::ZeroRotator;
 			
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-			World->SpawnActor<AActor>(ItemData.ItemBPClass, DropLocation, DropRotation, SpawnParams);
+			AActor* SpawnedActor = World->SpawnActor<AActor>(ItemData.ItemBPClass, DropLocation, DropRotation, SpawnParams);
+			if (SpawnedActor)
+			{
+				if (APickUpItem* PickUpItem = Cast<APickUpItem>(SpawnedActor))
+				{
+					PickUpItem->SetItemID(ItemData.ItemID);
+					PickUpItem->SetAmount(ItemData.CurrentQuantity);
+				}
+			}
 		}
 	}
 
@@ -449,22 +499,194 @@ bool UAGSDInventoryComponent::IsHotbarSlot(int32 SlotIndex) const
 	return SlotIndex >= HOTBAR_START_INDEX && SlotIndex <= HOTBAR_END_INDEX;
 }
 
+void UAGSDInventoryComponent::CrossInventorySwap(UAGSDInventoryComponent* SourceInv, int32 SourceIndex,
+                                                  UAGSDInventoryComponent* TargetInv, int32 TargetIndex)
+{
+	if (!SourceInv || !TargetInv) return;
+	if (!SourceInv->IsValidSlotIndex(SourceIndex) || !TargetInv->IsValidSlotIndex(TargetIndex)) return;
+
+	FStruct_InventorySlotData& SourceSlot = SourceInv->InventorySlots[SourceIndex];
+	FStruct_InventorySlotData& TargetSlot = TargetInv->InventorySlots[TargetIndex];
+
+	// 같은 아이템이면 합치기 시도
+	if (!SourceSlot.IsEmpty && !TargetSlot.IsEmpty &&
+		SourceSlot.ItemData.ItemID == TargetSlot.ItemData.ItemID)
+	{
+		const int32 SpaceAvailable = TargetSlot.ItemData.MaxQuantity - TargetSlot.ItemData.CurrentQuantity;
+		if (SpaceAvailable > 0)
+		{
+			const int32 AmountToMerge = FMath::Min(SpaceAvailable, SourceSlot.ItemData.CurrentQuantity);
+			TargetSlot.ItemData.CurrentQuantity += AmountToMerge;
+			SourceSlot.ItemData.CurrentQuantity -= AmountToMerge;
+
+			if (SourceSlot.ItemData.CurrentQuantity <= 0)
+			{
+				SourceSlot.IsEmpty = true;
+				SourceSlot.ItemData = FStruct_ItemData();
+			}
+
+			SourceInv->OnInventorySlotUpdated.Broadcast(SourceIndex);
+			TargetInv->OnInventorySlotUpdated.Broadcast(TargetIndex);
+			return;
+		}
+	}
+
+	// 다른 아이템이거나 합치기 불가 → 슬롯 데이터 교환
+	FStruct_InventorySlotData TempSource = SourceSlot;
+	FStruct_InventorySlotData TempTarget = TargetSlot;
+
+	SourceInv->InventorySlots[SourceIndex] = TempTarget;
+	SourceInv->InventorySlots[SourceIndex].SlotIndex = SourceIndex;
+
+	TargetInv->InventorySlots[TargetIndex] = TempSource;
+	TargetInv->InventorySlots[TargetIndex].SlotIndex = TargetIndex;
+
+	SourceInv->OnInventorySlotUpdated.Broadcast(SourceIndex);
+	TargetInv->OnInventorySlotUpdated.Broadcast(TargetIndex);
+}
+
+bool UAGSDInventoryComponent::CrossInventoryTransfer(UAGSDInventoryComponent* SourceInv, int32 SourceIndex, UAGSDInventoryComponent* TargetInv)
+{
+	if (!SourceInv || !TargetInv) return false;
+	if (!SourceInv->IsValidSlotIndex(SourceIndex)) return false;
+	if (SourceInv->InventorySlots[SourceIndex].IsEmpty) return false;
+
+	FStruct_InventorySlotData& SourceSlot = SourceInv->InventorySlots[SourceIndex];
+	int32 OutRemainingQty = SourceSlot.ItemData.CurrentQuantity;
+	int32 OriginalQty = OutRemainingQty;
+
+	FStruct_ItemData ItemToAdd = SourceSlot.ItemData;
+	
+	// 상대방 인벤토리에 아이템 추가
+	TargetInv->AddItem(ItemToAdd, OutRemainingQty);
+
+	int32 Transferred = OriginalQty - OutRemainingQty;
+	if (Transferred > 0)
+	{
+		SourceInv->RemoveItem(SourceIndex, Transferred);
+		return true;
+	}
+	return false;
+}
+
+bool UAGSDInventoryComponent::MoveHotbarToBag(int32 HotbarIndex)
+{
+	if (!IsHotbarSlot(HotbarIndex)) return false;
+	if (InventorySlots[HotbarIndex].IsEmpty) return false;
+
+	FStruct_InventorySlotData& SourceSlot = InventorySlots[HotbarIndex];
+	int32 OutRemainingQty = SourceSlot.ItemData.CurrentQuantity;
+	int32 OriginalQty = OutRemainingQty;
+
+	// 1단계: 가방 영역(10 ~ MaxSlots-1) 기존 스택 중첩
+	for (int32 i = BAG_START_INDEX; i < MaxSlots && OutRemainingQty > 0; ++i)
+	{
+		if (!InventorySlots[i].IsEmpty &&
+			InventorySlots[i].ItemData.ItemID == SourceSlot.ItemData.ItemID &&
+			InventorySlots[i].ItemData.CurrentQuantity < InventorySlots[i].ItemData.MaxQuantity)
+		{
+			const int32 SpaceAvailable = InventorySlots[i].ItemData.MaxQuantity - InventorySlots[i].ItemData.CurrentQuantity;
+			const int32 AmountToAdd = FMath::Min(SpaceAvailable, OutRemainingQty);
+
+			InventorySlots[i].ItemData.CurrentQuantity += AmountToAdd;
+			OutRemainingQty -= AmountToAdd;
+
+			OnInventorySlotUpdated.Broadcast(i);
+			OnItemAdded.Broadcast(i, InventorySlots[i].ItemData);
+		}
+	}
+
+	// 2단계: 가방 영역(10 ~ MaxSlots-1) 빈 슬롯 배치
+	for (int32 i = BAG_START_INDEX; i < MaxSlots && OutRemainingQty > 0; ++i)
+	{
+		if (InventorySlots[i].IsEmpty)
+		{
+			const int32 AmountToPlace = FMath::Min(SourceSlot.ItemData.MaxQuantity, OutRemainingQty);
+
+			InventorySlots[i].IsEmpty = false;
+			InventorySlots[i].ItemData = SourceSlot.ItemData;
+			InventorySlots[i].ItemData.CurrentQuantity = AmountToPlace;
+			OutRemainingQty -= AmountToPlace;
+
+			OnInventorySlotUpdated.Broadcast(i);
+			OnItemAdded.Broadcast(i, InventorySlots[i].ItemData);
+		}
+	}
+
+	int32 Transferred = OriginalQty - OutRemainingQty;
+	if (Transferred > 0)
+	{
+		RemoveItem(HotbarIndex, Transferred);
+		return true;
+	}
+
+	return false;
+}
+
+bool UAGSDInventoryComponent::MoveBagToHotbar(int32 BagIndex)
+{
+	if (IsHotbarSlot(BagIndex)) return false;
+	if (InventorySlots[BagIndex].IsEmpty) return false;
+
+	FStruct_InventorySlotData& SourceSlot = InventorySlots[BagIndex];
+	int32 OutRemainingQty = SourceSlot.ItemData.CurrentQuantity;
+	int32 OriginalQty = OutRemainingQty;
+
+	// 1단계: 핫바 영역(0 ~ 9) 기존 스택 중첩
+	for (int32 i = HOTBAR_START_INDEX; i <= HOTBAR_END_INDEX && OutRemainingQty > 0; ++i)
+	{
+		if (!InventorySlots[i].IsEmpty &&
+			InventorySlots[i].ItemData.ItemID == SourceSlot.ItemData.ItemID &&
+			InventorySlots[i].ItemData.CurrentQuantity < InventorySlots[i].ItemData.MaxQuantity)
+		{
+			const int32 SpaceAvailable = InventorySlots[i].ItemData.MaxQuantity - InventorySlots[i].ItemData.CurrentQuantity;
+			const int32 AmountToAdd = FMath::Min(SpaceAvailable, OutRemainingQty);
+
+			InventorySlots[i].ItemData.CurrentQuantity += AmountToAdd;
+			OutRemainingQty -= AmountToAdd;
+
+			OnInventorySlotUpdated.Broadcast(i);
+			OnItemAdded.Broadcast(i, InventorySlots[i].ItemData);
+		}
+	}
+
+	// 2단계: 핫바 영역(0 ~ 9) 빈 슬롯 배치
+	for (int32 i = HOTBAR_START_INDEX; i <= HOTBAR_END_INDEX && OutRemainingQty > 0; ++i)
+	{
+		if (InventorySlots[i].IsEmpty)
+		{
+			const int32 AmountToPlace = FMath::Min(SourceSlot.ItemData.MaxQuantity, OutRemainingQty);
+
+			InventorySlots[i].IsEmpty = false;
+			InventorySlots[i].ItemData = SourceSlot.ItemData;
+			InventorySlots[i].ItemData.CurrentQuantity = AmountToPlace;
+			OutRemainingQty -= AmountToPlace;
+
+			OnInventorySlotUpdated.Broadcast(i);
+			OnItemAdded.Broadcast(i, InventorySlots[i].ItemData);
+		}
+	}
+
+	int32 Transferred = OriginalQty - OutRemainingQty;
+	if (Transferred > 0)
+	{
+		RemoveItem(BagIndex, Transferred);
+		return true;
+	}
+
+	return false;
+}
+
 // ═══════════════════════════════════════════════════
 // GameInstance 연동 (영속성)
 // ═══════════════════════════════════════════════════
 
 void UAGSDInventoryComponent::SaveToGameInstance()
 {
-	// 튜토리얼 레벨에서는 백업하지 않음
-	UWorld* World = GetWorld();
-	if (World)
+	AActor* Owner = GetOwner();
+	if (!Owner || !Owner->IsA(AAGSDCharacter::StaticClass()))
 	{
-		const FString CurrentLevelName = World->GetMapName();
-		// GetMapName()이 "UEDPIE_0_Tutorial_Village" 등으로 반환할 수 있으므로 Contains 사용
-		if (CurrentLevelName.Contains(TutorialLevelName))
-		{
-			return;
-		}
+		return;
 	}
 
 	USOVGameInstance* GI = GetGameInstance();
@@ -479,6 +701,12 @@ void UAGSDInventoryComponent::SaveToGameInstance()
 
 void UAGSDInventoryComponent::LoadFromGameInstance()
 {
+	AActor* Owner = GetOwner();
+	if (!Owner || !Owner->IsA(AAGSDCharacter::StaticClass()))
+	{
+		return;
+	}
+
 	USOVGameInstance* GI = GetGameInstance();
 	if (!GI) return;
 
@@ -535,4 +763,14 @@ bool UAGSDInventoryComponent::ValidateSlotIndex(int32 SlotIndex, const FString& 
 		return false;
 	}
 	return true;
+}
+
+void UAGSDInventoryComponent::SetAllSlots(const TArray<FStruct_InventorySlotData>& NewSlots)
+{
+	InventorySlots = NewSlots;
+	// 전체 갱신 델리게이트 알림
+	if (OnInventoryFullyUpdated.IsBound())
+	{
+		OnInventoryFullyUpdated.Broadcast();
+	}
 }

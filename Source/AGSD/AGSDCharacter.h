@@ -248,8 +248,6 @@ public:
 	//AACultivationPlot에서 호출하여 상호작용 대상을 설정/초기화하는 함수
 	FORCEINLINE void SetCurrentInteractableActor(AActor* NewActor) { CurrentInteractableActor = NewActor;}
 
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Item")
-	FString getPlayerHoidingItemID();
 
 	UFUNCTION(BlueprintCallable)
 	//AACultivationPlot에서 호출하여 액터를 추가하는 함수
@@ -302,6 +300,38 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerUI")
 	class UAGSDPlayerHUD* PlayerHUDRef;
 
+	// 일시정지 액션
+	UPROPERTY(EditAnywhere, Category="Input")
+	class UInputAction* PauseAction;
+
+	/** 생성할 일시정지 메뉴 위젯 클래스 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerUI")
+	TSubclassOf<class UUserWidget> PauseMenuClass;
+
+	/** 생성 및 캐싱된 일시정지 메뉴 위젯 레퍼런스 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerUI")
+	class UUserWidget* PauseMenuWidgetRef;
+
+	/** 현재 퍼즈 키로 닫을 수 있는 활성화된 UI 참조 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "PlayerUI")
+	TWeakObjectPtr<class UUserWidget> ActiveCloseableUI;
+
+	/** 현재 열려있는 상자 액터 레퍼런스 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "PlayerUI")
+	class AChest* OpenedChest;
+
+	// 일시정지 해제 UI
+	UFUNCTION(BlueprintCallable, Category = "PlayerUI")
+	void RemovePauseUI();
+
+	// 액티브 UI 등록
+	UFUNCTION(BlueprintCallable, Category = "PlayerUI")
+	void RegisterCloseableUI(class UUserWidget* NewUI);
+
+	// 액티브 UI 해제
+	UFUNCTION(BlueprintCallable, Category = "PlayerUI")
+	void UnregisterCloseableUI(class UUserWidget* UI);
+
 	// ── 인벤토리 컴포넌트 (C++ 마이그레이션) ──
 
 	/** C++ 인벤토리 컴포넌트 (BP에서 추가하거나 C++에서 CreateDefaultSubobject로 생성) */
@@ -325,11 +355,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	FString SubItemAmount();
 
-	UFUNCTION(BlueprintCallable, Category = "Interaction")
-	FString GetPlayerHoldingItemID() const;
 
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
-	UHealthBar* getHealthBar();
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interaction")
 	void StrongAttack();
@@ -408,6 +434,12 @@ protected:
 	
 	// 선입력 및 방향 판정을 위한 원시 입력 벡터 (이동 제한 상태에서도 업데이트됨)
 	FVector LastRawInputVector = FVector::ZeroVector;
+
+	// 핫바 중복 입력 방지를 위한 이전 키 인덱스
+	int32 LastHotbarInputIndex = -1;
+
+	// 일시정지 처리 함수
+	void Input_Pause();
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);

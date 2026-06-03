@@ -11,6 +11,18 @@
 
 class UDataTable;
 
+USTRUCT(BlueprintType)
+struct FStruct_DefaultInventoryItem
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	FString ItemID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	int32 Amount = 1;
+};
+
 // ── 델리게이트 선언 ──
 // 특정 슬롯이 갱신되었을 때 (UI 바인딩용)
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventorySlotUpdated, int32, SlotIndex);
@@ -70,6 +82,10 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void InitializeSlots();
+
+	/** 인벤토리 내의 모든 슬롯을 완전히 비웁니다. */
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void ClearAllSlots();
 
 	/**
 	 * 아이템을 인벤토리에 추가합니다.
@@ -193,13 +209,41 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Inventory")
 	int32 GetBagSlotCount() const { return MaxSlots - HOTBAR_SLOT_COUNT; }
 
+	/** 현재 마우스가 호버링 중인 슬롯 인덱스 (-1이면 없음) */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory|UI")
+	int32 HoveredSlotIndex = -1;
+
 	/** 인벤토리 슬롯 배열 전체를 반환합니다 (읽기 전용) */
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Inventory")
 	const TArray<FStruct_InventorySlotData>& GetAllSlots() const { return InventorySlots; }
 
+	/** 외부에서 인벤토리 슬롯 데이터를 통째로 주입하여 갱신합니다 (상자 복원용) */
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void SetAllSlots(const TArray<FStruct_InventorySlotData>& NewSlots);
+
 	/** 특정 인덱스가 유효한 슬롯 범위인지 확인합니다 */
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Inventory")
 	bool IsValidSlotIndex(int32 SlotIndex) const;
+
+	/**
+	 * 서로 다른 인벤토리 컴포넌트 간 슬롯 데이터를 교환합니다 (플레이어 ↔ 상자).
+	 * 같은 아이템이면 합치기를 시도하고, 다른 아이템이면 위치를 교환합니다.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	static void CrossInventorySwap(UAGSDInventoryComponent* SourceInv, int32 SourceIndex,
+	                                UAGSDInventoryComponent* TargetInv, int32 TargetIndex);
+
+	/** 서로 다른 인벤토리 간 아이템을 자동 전송합니다 */
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	static bool CrossInventoryTransfer(UAGSDInventoryComponent* SourceInv, int32 SourceIndex, UAGSDInventoryComponent* TargetInv);
+
+	/** 핫바 슬롯의 아이템을 가방 영역으로 이동시킵니다 */
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	bool MoveHotbarToBag(int32 HotbarIndex);
+
+	/** 가방 슬롯의 아이템을 핫바 영역으로 이동시킵니다 */
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	bool MoveBagToHotbar(int32 BagIndex);
 
 	/** 특정 인덱스가 핫바 슬롯인지 확인합니다 */
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Inventory|Hotbar")
@@ -243,6 +287,10 @@ protected:
 
 	// ── 멤버 변수 ──
 
+	/** 에디터 디테일 패널에서 지정할 초기 아이템 목록 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory|Config")
+	TArray<FStruct_DefaultInventoryItem> DefaultItems;
+
 	/** 최대 슬롯 수 (핫바 10 + 가방 20 = 30) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory|Config")
 	int32 MaxSlots = 30;
@@ -258,10 +306,6 @@ protected:
 	/** 현재 선택된 핫바 인덱스 (0~9) */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory|Hotbar")
 	int32 CurrentSelectedHotbar = 0;
-
-	/** 튜토리얼 레벨 이름 (이 레벨에서는 GameInstance 백업 건너뜀) */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory|Config")
-	FString TutorialLevelName = TEXT("Tutorial_Village");
 
 private:
 	/** GameInstance 캐싱된 포인터 */

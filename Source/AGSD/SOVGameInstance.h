@@ -118,6 +118,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GameInstance")
 	void InitializeVariables();
 
+
+
+	/** GameInstance 메모리에 저장된 인벤토리 데이터를 완전히 비웁니다. */
+	UFUNCTION(BlueprintCallable, Category = "SaveGame")
+	void ClearGameInstanceInventory();
+
+	/** GameInstance의 인벤토리 데이터에 ID 기반으로 아이템을 추가합니다. (기존 중첩 스택 반영 및 빈 슬롯 배치) */
+	UFUNCTION(BlueprintCallable, Category = "SaveGame")
+	bool AddGameInstanceItemByID(const FString& ItemID, int32 Amount, class UDataTable* ItemDataTable);
+
 protected:
 	// 게임 인스턴스가 초기화될 때 호출되는 함수 오버라이드
 	virtual void Init() override;

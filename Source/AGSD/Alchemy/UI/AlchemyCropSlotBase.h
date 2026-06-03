@@ -44,9 +44,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Alchemy Slot")
 	TObjectPtr<UAlchemyInventoryUI> AlchemyInventoryUI;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alchemy Slot")
+	bool bIsInsertedSlot = false;
+
 	// ── 위젯 인터페이스 함수 ──
 	UFUNCTION(BlueprintCallable, Category = "Alchemy Slot")
-	void InitSlot(bool bInCantDrag);
+	void InitSlot(bool bInCantDrag, bool bInIsInsertedSlot = false);
 
 	UFUNCTION(BlueprintCallable, Category = "Alchemy Slot")
 	void UpdateSlot(UTexture2D* InTexture, int32 InAmount);

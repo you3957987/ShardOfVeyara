@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Alchemy/Struct_MaterialAddress.h"
+#include "AGSDCloseableUIInterface.h"
 #include "AlchemyUI.generated.h"
 
 class UButton;
@@ -21,7 +22,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCropInserted);
  * 연금술 전체 UI 화면을 총괄하는 C++ 부모 클래스입니다.
  */
 UCLASS()
-class AGSD_API UAlchemyUI : public UUserWidget
+class AGSD_API UAlchemyUI : public UUserWidget, public IUIClosable
 {
 	GENERATED_BODY()
 
@@ -65,6 +66,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Alchemy")
 	void InsertMaterial(UAlchemyCropSlotBase* InsertedSlot);
+
+public:
+	virtual void CloseUI_Implementation() override;
 
 protected:
 	virtual void NativeConstruct() override;
@@ -111,4 +115,7 @@ protected:
 	// ── 가방 및 핫바의 연금술 재료 맵 데이터 ──
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Alchemy")
 	TMap<FString, FStruct_MaterialAddress> MaterialAddress;
+
+protected:
+	TWeakObjectPtr<class AAGSDCharacter> OwningCharacter;
 };

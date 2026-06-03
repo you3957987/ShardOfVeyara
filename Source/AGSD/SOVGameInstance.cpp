@@ -4,6 +4,8 @@
 #include "SOVGameInstance.h"
 #include "SOVSaveGame.h"
 #include "Kismet/GameplayStatics.h"
+#include "Struct_ItemData.h"
+#include "Engine/DataTable.h"
 
 USOVGameInstance::USOVGameInstance()
 {
@@ -191,4 +193,107 @@ void USOVGameInstance::HandleWorldInitialized(UWorld* World, const UWorld::Initi
 		// 현재 설정된 스트링(SaveGameSlot)으로 저장 실행
 		SaveGame();
 	}
+}
+
+void USOVGameInstance::ClearGameInstanceInventory()
+{
+	// 기본 30칸으로 설정하여 비운 상태의 인벤토리 생성
+	TempInventory.Empty();
+	TempInventory.SetNum(30);
+
+	for (int32 i = 0; i < 30; ++i)
+	{
+		TempInventory[i] = FStruct_InventorySlotData();
+		TempInventory[i].SlotIndex = i;
+		TempInventory[i].IsEmpty = true;
+	}
+
+	// Hotbar 선택 인덱스 초기화
+	CurrentSelectedHotbar = 0;
+
+	UE_LOG(LogTemp, Log, TEXT("ClearGameInstanceInventory - GameInstance inventory has been cleared."));
+}
+
+bool USOVGameInstance::AddGameInstanceItemByID(const FString& ItemID, int32 Amount, UDataTable* ItemDataTable)
+{
+	if (Amount <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("USOVGameInstance::AddGameInstanceItemByID - Amount is less than or equal to 0."));
+		return false;
+	}
+
+	if (!ItemDataTable)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("USOVGameInstance::AddGameInstanceItemByID - ItemDataTable is null."));
+		return false;
+	}
+
+	FStruct_ItemData* RowData = ItemDataTable->FindRow<FStruct_ItemData>(FName(*ItemID), TEXT("AddGameInstanceItemByID"));
+	if (!RowData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("USOVGameInstance::AddGameInstanceItemByID - Failed to find Item ID [%s] in DataTable."), *ItemID);
+		return false;
+	}
+
+	// TempInventory가 비어있다면, 기본 크기(30칸)로 초기화
+	if (TempInventory.Num() <= 0)
+	{
+		TempInventory.SetNum(30);
+		for (int32 i = 0; i < 30; ++i)
+		{
+			TempInventory[i] = FStruct_InventorySlotData();
+			TempInventory[i].SlotIndex = i;
+			TempInventory[i].IsEmpty = true;
+		}
+	}
+
+	int32 OutRemainingQty = Amount;
+	bool bAddedAny = false;
+
+	FStruct_ItemData ItemDataToAdd = *RowData;
+	ItemDataToAdd.CurrentQuantity = Amount; // 추가할 수량 정보 임시 저장
+
+	// 1단계: 기존 스택에 중첩 시도
+	for (int32 i = 0; i < TempInventory.Num() && OutRemainingQty > 0; ++i)
+	{
+		if (!TempInventory[i].IsEmpty &&
+			TempInventory[i].ItemData.ItemID == ItemID &&
+			TempInventory[i].ItemData.CurrentQuantity < TempInventory[i].ItemData.MaxQuantity)
+		{
+			const int32 SpaceAvailable = TempInventory[i].ItemData.MaxQuantity - TempInventory[i].ItemData.CurrentQuantity;
+			const int32 AmountToAdd = FMath::Min(SpaceAvailable, OutRemainingQty);
+
+			TempInventory[i].ItemData.CurrentQuantity += AmountToAdd;
+			OutRemainingQty -= AmountToAdd;
+			bAddedAny = true;
+		}
+	}
+
+	// 2단계: 빈 슬롯에 배치
+	for (int32 i = 0; i < TempInventory.Num() && OutRemainingQty > 0; ++i)
+	{
+		if (TempInventory[i].IsEmpty)
+		{
+			const int32 AmountToPlace = FMath::Min(ItemDataToAdd.MaxQuantity, OutRemainingQty);
+
+			TempInventory[i].IsEmpty = false;
+			TempInventory[i].ItemData = ItemDataToAdd;
+			TempInventory[i].ItemData.CurrentQuantity = AmountToPlace;
+			TempInventory[i].SlotIndex = i;
+			
+			OutRemainingQty -= AmountToPlace;
+			bAddedAny = true;
+		}
+	}
+
+	if (bAddedAny)
+	{
+		UE_LOG(LogTemp, Log, TEXT("AddGameInstanceItemByID - Successfully added Item [%s], Remaining Amount to add: %d"), *ItemID, OutRemainingQty);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AddGameInstanceItemByID - Failed to add Item [%s] (Inventory might be full)."), *ItemID);
+	}
+
+	return bAddedAny;
 }

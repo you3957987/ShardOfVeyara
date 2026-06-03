@@ -29,6 +29,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slot Data", meta = (ExposeOnSpawn = "true"))
 	int32 SlotIndex;
 
+	/** 이 슬롯이 소속된 인벤토리 컴포넌트 (상자/플레이어 구분용) */
+	UPROPERTY(BlueprintReadWrite, Category = "Slot Data")
+	TObjectPtr<UAGSDInventoryComponent> OwningInventoryComponent;
+
 	/** 슬롯이 현재 보유 중인 백엔드 데이터 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Slot Data")
 	FStruct_InventorySlotData SlotItemData;
@@ -65,8 +69,14 @@ public:
 protected:
 	virtual void NativeConstruct() override;
 
+	/** 더블클릭 발생 시 아이템 자동 이동을 처리합니다. */
+	virtual void HandleSlotDoubleClicked();
+
 	// ── 마우스 및 드래그 앤 드롭 기본 처리 ──
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual FReply NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
 	virtual void NativeOnDragEnter(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent, UDragDropOperation* Operation) override;
 	virtual void NativeOnDragLeave(const FDragDropEvent& DragDropEvent, UDragDropOperation* Operation) override;

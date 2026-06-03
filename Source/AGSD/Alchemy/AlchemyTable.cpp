@@ -13,6 +13,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Inventory/UI/AGSDPlayerHUD.h"
 
 #if WITH_EDITOR
 #include "Commandlets/WorldPartitionCommandletHelpers.h"
@@ -124,6 +125,10 @@ void AAlchemyTable::EndAlchemy()
 	if (Player)
 	{
 		Player->Mining = false; // 이동 가능하게 변경
+		if (Player->PlayerHUDRef)
+		{
+			Player->PlayerHUDRef->SetVisibility(ESlateVisibility::Visible);
+		}
 	}
 	bCanUseAlchemyTable = true; // 다시 상호작용 가능하게
 
@@ -163,6 +168,11 @@ void AAlchemyTable::Interact_Implementation(AAGSDCharacter* player)
 		Player->Mining = true;
 		bCanUseAlchemyTable = false;
 		
+		if (Player->PlayerHUDRef)
+		{
+			Player->PlayerHUDRef->SetVisibility(ESlateVisibility::Collapsed);
+		}
+		
 		PlayerController->SetViewTargetWithBlend(this, BlendTime);
 
 		// 위젯이 아직 없다면 여기서 생성
@@ -187,8 +197,9 @@ void AAlchemyTable::Interact_Implementation(AAGSDCharacter* player)
 
 			AlchemyWidget->PlayFadeIn();
 			
-			FInputModeUIOnly InputMode;
+			FInputModeGameAndUI InputMode;
 			InputMode.SetWidgetToFocus(AlchemyWidget->TakeWidget());
+			InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 			PlayerController->SetInputMode(InputMode);
 			PlayerController->bShowMouseCursor = true;
 		}

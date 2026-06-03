@@ -1,6 +1,7 @@
 // AGSDPlayerHUD.cpp - HUD 위젯 구현
 
 #include "AGSDPlayerHUD.h"
+#include "AGSDCharacter.h"
 #include "AGSDHotbarWidget.h"
 #include "AGSDInventoryWidget.h"
 #include "Inventory/AGSDInventoryComponent.h"
@@ -70,6 +71,14 @@ void UAGSDPlayerHUD::ToggleInventory()
 			InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 			PC->SetInputMode(InputMode);
 		}
+
+		if (APawn* OwningPawn = GetOwningPlayerPawn())
+		{
+			if (AAGSDCharacter* Character = Cast<AAGSDCharacter>(OwningPawn))
+			{
+				Character->RegisterCloseableUI(this);
+			}
+		}
 	}
 }
 
@@ -91,6 +100,14 @@ void UAGSDPlayerHUD::CloseInventory()
 		
 		FInputModeGameOnly InputMode;
 		PC->SetInputMode(InputMode);
+	}
+
+	if (APawn* OwningPawn = GetOwningPlayerPawn())
+	{
+		if (AAGSDCharacter* Character = Cast<AAGSDCharacter>(OwningPawn))
+		{
+			Character->UnregisterCloseableUI(this);
+		}
 	}
 }
 
@@ -122,5 +139,10 @@ void UAGSDPlayerHUD::AddItemNotification(FStruct_ItemData ItemData, int32 Amount
 		NotiWidget->SetupNotification(ItemData.ItemName.ToString(), Amount, ItemData.ItemIcon);
 		VB_ItemNotificationList->AddChild(NotiWidget);
 	}
+}
+
+void UAGSDPlayerHUD::CloseUI_Implementation()
+{
+	CloseInventory();
 }
 

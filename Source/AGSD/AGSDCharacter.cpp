@@ -1,9 +1,12 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "AGSDCharacter.h"
+#include "AGSDCloseableUIInterface.h"
 #include "Inventory/AGSDInventoryComponent.h"
 #include "PickUpItem.h"
 #include "Inventory/UI/AGSDPlayerHUD.h"
+#include "Framework/Application/SlateApplication.h"
+#include "Chest.h"
 #include "Blueprint/UserWidget.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
@@ -92,6 +95,8 @@ AAGSDCharacter::AAGSDCharacter()
 
 	// 인벤토리 컴포넌트 생성
 	InventoryComponent = CreateDefaultSubobject<UAGSDInventoryComponent>(TEXT("InventoryComponent"));
+
+	OpenedChest = nullptr;
 
 	// 기본 장착 소켓 매핑 데이터 세팅 (블루프린트에서 편집 가능)
 	EquipSocketMappings.Add(FEquipSocketMapping(TEXT("forke"), FName("Weapon"), EHoldingWeapon::Spear, false));
@@ -422,10 +427,14 @@ void AAGSDCharacter::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("AAGSDCharacter::BeginPlay - PlayerHUDClass is NULL. Please set WBP_PlayerHUD in BP_Farmer details panel."));
 	}
 	
-	HealthBar = getHealthBar();
+	if (PlayerHUDRef)
+	{
+		HealthBar = PlayerHUDRef->WBP_HealthBar;
+	}
+
 	if (HealthBar)
 	{
-		if (GI->MaxPlayerHealth != 0.f)
+		if (GI && GI->MaxPlayerHealth != 0.f)
 		{
 			Health = GI->PlayerHealth;
 			MaxHealth = GI->MaxPlayerHealth;
@@ -661,12 +670,18 @@ void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 		if (SelectHotbarAction)
 		{
-			EnhancedInputComponent->BindAction(SelectHotbarAction, ETriggerEvent::Started, this, &AAGSDCharacter::Input_SelectHotbar);
+			EnhancedInputComponent->BindAction(SelectHotbarAction, ETriggerEvent::Triggered, this, &AAGSDCharacter::Input_SelectHotbar);
+			EnhancedInputComponent->BindAction(SelectHotbarAction, ETriggerEvent::Completed, this, &AAGSDCharacter::Input_SelectHotbar);
 		}
 
 		if (ToggleInventoryAction)
 		{
 			EnhancedInputComponent->BindAction(ToggleInventoryAction, ETriggerEvent::Started, this, &AAGSDCharacter::Input_ToggleInventory);
+		}
+
+		if (PauseAction)
+		{
+			EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &AAGSDCharacter::Input_Pause);
 		}
 	}
 	else
@@ -835,6 +850,20 @@ void AAGSDCharacter::ProcessAttackInput()
 
 void AAGSDCharacter::UseEquippedItem()
 {
+	// 인벤토리, 상자 등 UI가 열려있는 동안에는 무기 공격이나 아이템 사용이 나가지 않도록 차단합니다.
+	if (PlayerHUDRef && PlayerHUDRef->IsInventoryOpen())
+	{
+		return;
+	}
+	if (ActiveCloseableUI.IsValid())
+	{
+		return;
+	}
+	if (OpenedChest != nullptr)
+	{
+		return;
+	}
+
 	// 1. 들고 있는 아이템이 UsableItem 인터페이스를 구현한 경우 최우선 실행
 	bool bUsed = false;
 	if (HoldingItemData.ItemBPClass)
@@ -1514,6 +1543,20 @@ void AAGSDCharacter::DoMove(float Right, float Forward)
 
 void AAGSDCharacter::DoLook(float Yaw, float Pitch)
 {
+	// 인벤토리, 상자 등 UI가 열려있는 동안에는 마우스 드래그에 의한 카메라 회전(화면 돌아감)을 무시합니다.
+	if (PlayerHUDRef && PlayerHUDRef->IsInventoryOpen())
+	{
+		return;
+	}
+	if (ActiveCloseableUI.IsValid())
+	{
+		return;
+	}
+	if (OpenedChest != nullptr)
+	{
+		return;
+	}
+
 	if (GetController() != nullptr)
 	{
 		// MouseSensitivity가 5일 때 (5/5 = 1)이 되어 기존 속도와 동일해집니다.
@@ -1938,6 +1981,14 @@ void AAGSDCharacter::Input_HotbarScroll(const FInputActionValue& Value)
 void AAGSDCharacter::Input_SelectHotbar(const FInputActionValue& Value)
 {
 	float KeyValue = Value.Get<float>();
+
+	// 입력이 0이거나 거의 없는 경우(키를 뗐을 때) 이전 입력값을 리셋합니다.
+	if (FMath::IsNearlyZero(KeyValue))
+	{
+		LastHotbarInputIndex = -1;
+		return;
+	}
+
 	int32 TargetIndex = FMath::RoundToInt(KeyValue);
 
 	// 입력 인덱스 보정 (1~9는 0~8로 변환, 10 또는 0은 9번 핫바 슬롯으로 매핑)
@@ -1950,8 +2001,40 @@ void AAGSDCharacter::Input_SelectHotbar(const FInputActionValue& Value)
 		TargetIndex = 9;
 	}
 
+	// [중복 방지] 이미 처리된 키 입력이라면 무시 (한 번 누를 때 한 번만 실행)
+	if (TargetIndex == LastHotbarInputIndex)
+	{
+		return;
+	}
+
+	// 상태 업데이트
+	LastHotbarInputIndex = TargetIndex;
+
 	if (InventoryComponent)
 	{
+		// [스왑 기능] 
+		bool bSwapped = false;
+		if (PlayerHUDRef && PlayerHUDRef->IsInventoryOpen() && InventoryComponent->HoveredSlotIndex != -1)
+		{
+			InventoryComponent->SwapSlots(TargetIndex, InventoryComponent->HoveredSlotIndex);
+			bSwapped = true;
+		}
+		
+		// 상자가 열려있는 경우의 스왑 처리 (상자 슬롯 또는 플레이어 가방 슬롯 대상)
+		if (!bSwapped && OpenedChest && OpenedChest->GetInventoryComponent())
+		{
+			UAGSDInventoryComponent* ChestInv = OpenedChest->GetInventoryComponent();
+			if (InventoryComponent->HoveredSlotIndex != -1)
+			{
+				InventoryComponent->SwapSlots(TargetIndex, InventoryComponent->HoveredSlotIndex);
+			}
+			else if (ChestInv->HoveredSlotIndex != -1)
+			{
+				UAGSDInventoryComponent::CrossInventorySwap(InventoryComponent, TargetIndex, ChestInv, ChestInv->HoveredSlotIndex);
+			}
+		}
+		
+		// 항상 해당 슬롯을 선택 상태로 변경
 		InventoryComponent->SelectHotbar(TargetIndex);
 	}
 }
@@ -1978,13 +2061,24 @@ FString AAGSDCharacter::SubItemAmount()
 	return ConsumedItemID;
 }
 
-FString AAGSDCharacter::GetPlayerHoldingItemID() const
-{
-	return HoldingItemData.ItemID;
-}
 
 void AAGSDCharacter::Input_ToggleInventory()
 {
+	// 현재 드래그 중인 상태라면 인벤토리 닫기를 무시합니다.
+	if (FSlateApplication::IsInitialized() && FSlateApplication::Get().IsDragDropping())
+	{
+		if (PlayerHUDRef && PlayerHUDRef->IsInventoryOpen())
+		{
+			return;
+		}
+	}
+
+	// 상자 등이 열려있어 bCanOpenChest가 false이고, 인벤토리 UI가 현재 열려있지 않은 경우 인벤토리 열기를 차단합니다.
+	if (!bCanOpenChest && PlayerHUDRef && !PlayerHUDRef->IsInventoryOpen())
+	{
+		return;
+	}
+
 	if (PlayerHUDRef)
 	{
 		PlayerHUDRef->ToggleInventory();
@@ -1993,5 +2087,93 @@ void AAGSDCharacter::Input_ToggleInventory()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AAGSDCharacter::Input_ToggleInventory - PlayerHUDRef is invalid."));
+	}
+}
+
+void AAGSDCharacter::Input_Pause()
+{
+	// 현재 드래그 중인 상태라면 UI 닫기 처리를 무시합니다.
+	if (FSlateApplication::IsInitialized() && FSlateApplication::Get().IsDragDropping())
+	{
+		return;
+	}
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (!PlayerController) return;
+
+	// 1. 활성화된 닫기 가능 UI가 있을 경우 인터페이스를 통해 닫기
+	if (ActiveCloseableUI.IsValid() && ActiveCloseableUI->GetClass()->ImplementsInterface(UUIClosable::StaticClass()))
+	{
+		IUIClosable::Execute_CloseUI(ActiveCloseableUI.Get());
+		return;
+	}
+
+	// 2. 활성화된 UI가 없을 경우 기존 일시정지 로직 수행
+	if (bCanOpenChest)
+	{
+		if (PauseMenuClass)
+		{
+			if (!PauseMenuWidgetRef)
+			{
+				PauseMenuWidgetRef = CreateWidget<UUserWidget>(PlayerController, PauseMenuClass);
+			}
+
+			if (PauseMenuWidgetRef)
+			{
+				if (!PauseMenuWidgetRef->IsInViewport())
+				{
+					PauseMenuWidgetRef->AddToViewport();
+				}
+
+				PlayerController->SetShowMouseCursor(true);
+
+				FInputModeGameAndUI InputMode;
+				InputMode.SetWidgetToFocus(PauseMenuWidgetRef->TakeWidget());
+				InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+				PlayerController->SetInputMode(InputMode);
+
+				UGameplayStatics::SetGamePaused(GetWorld(), true);
+			}
+		}
+	}
+}
+
+void AAGSDCharacter::RemovePauseUI()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (!PlayerController) return;
+
+	if (PauseMenuWidgetRef)
+	{
+		if (PauseMenuWidgetRef->IsInViewport())
+		{
+			PauseMenuWidgetRef->RemoveFromParent();
+		}
+		PauseMenuWidgetRef = nullptr;
+	}
+
+	PlayerController->SetShowMouseCursor(false);
+
+	FInputModeGameOnly InputMode;
+	PlayerController->SetInputMode(InputMode);
+
+	UGameplayStatics::SetGamePaused(GetWorld(), false);
+}
+
+void AAGSDCharacter::RegisterCloseableUI(UUserWidget* NewUI)
+{
+	if (NewUI && NewUI->GetClass()->ImplementsInterface(UUIClosable::StaticClass()))
+	{
+		ActiveCloseableUI = NewUI;
+		UE_LOG(LogTemp, Log, TEXT("RegisterCloseableUI - Successfully registered: %s"), *NewUI->GetName());
+	}
+}
+
+void AAGSDCharacter::UnregisterCloseableUI(UUserWidget* UI)
+{
+	if (ActiveCloseableUI.Get() == UI)
+	{
+		ActiveCloseableUI = nullptr;
+		UE_LOG(LogTemp, Log, TEXT("UnregisterCloseableUI - Successfully unregistered"));
 	}
 }

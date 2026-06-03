@@ -36,6 +36,7 @@ void UAGSDHotbarWidget::InitializeHotbar(UAGSDInventoryComponent* InInventoryCom
 			if (NewSlot)
 			{
 				NewSlot->SlotIndex = i;
+				NewSlot->OwningInventoryComponent = InventoryComponent;
 				
 				// 백엔드 데이터에서 데이터 가져와 설정
 				FStruct_InventorySlotData SlotData = InventoryComponent->GetSlotData(i);

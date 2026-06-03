@@ -31,6 +31,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory|Config")
 	int32 SlotsPerRow = 5;
 
+	/** 슬롯 표시 시작 인덱스 (기본: 10=가방 영역, 상자는 0으로 설정) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory|Config")
+	int32 StartSlotIndex = 10;
+
 	// ── 참조 및 캐싱 ──
 	UPROPERTY(BlueprintReadOnly, Category = "Inventory")
 	TObjectPtr<UAGSDInventoryComponent> InventoryComponent;
@@ -55,4 +59,7 @@ public:
 	/** 인벤토리 전체 업데이트(정렬 등) 콜백 */
 	UFUNCTION()
 	void OnInventoryFullyUpdated();
+
+protected:
+	virtual void NativeDestruct() override;
 };

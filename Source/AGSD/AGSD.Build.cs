@@ -43,6 +43,7 @@ public class AGSD : ModuleRules
 			"AGSD",
 			"AGSD/Inventory",
 			"AGSD/Inventory/UI",
+			"AGSD/FarmingSystem",
 			"AGSD/Variant_Platforming",
 			"AGSD/Variant_Platforming/Animation",
 			"AGSD/Variant_Combat",
