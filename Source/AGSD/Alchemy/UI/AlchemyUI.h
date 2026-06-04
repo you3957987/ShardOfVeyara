@@ -57,6 +57,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Alchemy")
 	FORCEINLINE UButton* getEmptyButton() const { return EmptyButton; }
 
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Alchemy")
+	FORCEINLINE AActor* GetOwnerActor() const { return OwnerActor; }
+
 	UFUNCTION(BlueprintCallable, Category = "Alchemy")
 	FORCEINLINE void setOwnerActor(AActor* owner) { OwnerActor = owner; }
 

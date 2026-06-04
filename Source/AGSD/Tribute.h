@@ -41,21 +41,15 @@ protected:
 
 	FText InteractActionText = FText::FromString(TEXT("봉헌하기"));
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tribute")
-	TMap<FString, int32> CurrentLevelTributeItems = {};
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tribute")
-	AAGSDCharacter* Player;
-
 	bool bCanUseTribute = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tribute")
 	float BlendTime = 0.8f;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tribute")
 	TSubclassOf<UTributeUI> TributeWidgetClass;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widget")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tribute")
 	UTributeUI* TributeWidget;
 	
 	USOVGameInstance* GI;
@@ -64,6 +58,12 @@ protected:
 	void SetNextTributeUI(int32 level);
 	
 public:	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tribute")
+	TMap<FString, int32> CurrentLevelTributeItems = {};
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Tribute")
+	AAGSDCharacter* Player;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -84,6 +84,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Tribute")
 	void PlayFireExplosionNiagara();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Tribute")
+	void SetFireBurnActive(bool bActive);
 
 	UFUNCTION()
 	void EndTribute();

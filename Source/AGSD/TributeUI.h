@@ -7,11 +7,13 @@
 #include "Engine/DataTable.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
+#include "Alchemy/Struct_MaterialAddress.h"
 #include "TributeUI.generated.h"
 
-/**
- * 
- */
+class UAlchemyInventoryUI;
+class UTributeTextUI;
+class UDragEnterWidget;
+
 USTRUCT(BlueprintType)
 struct FTributeData : public FTableRowBase
 {
@@ -42,6 +44,18 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tribute")
 	float FadeSpeed = 10.0f;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tribute")
+	TMap<FString, FStruct_MaterialAddress> MaterialAddress;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tribute")
+	class AAGSDCharacter* FarmerChar;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tribute")
+	class ATribute* TributeActor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tribute")
+	bool bHovered = false;
+
 public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Tribute")
 	void SetTributeItemData(const FString& ItemID, int32 Amount, UTributeItem* TargetWidget);
@@ -59,15 +73,41 @@ public:
 	FORCEINLINE UButton* getCloseButton() const {return CloseButton;};
 	
 	UFUNCTION()
-	FORCEINLINE void setOwnerActor(AActor* owner) {OwnerActor = owner;};
+	void setOwnerActor(AActor* owner);
+
+	UFUNCTION(BlueprintCallable, Category = "Tribute")
+	FORCEINLINE class ATribute* GetTributeActor() const { return TributeActor; }
+
+	UFUNCTION(BlueprintCallable, Category = "Tribute")
+	void RebuildMaterialAddresses();
+
+	UFUNCTION(BlueprintCallable, Category = "Tribute")
+	void InsertMaterial(class UAlchemyCropSlotBase* InsertedSlot);
+
+	UFUNCTION(BlueprintCallable, Category = "Tribute")
+	void SubHotbarItemAmount(int32 Index, int32 AmountToRemove);
 	
 protected:
 	virtual void NativeConstruct() override;
-	//위젯이 제거될 때 호출되는 엔진 함수 오버라이드
 	virtual void NativeDestruct() override;
+
+	virtual bool NativeOnDrop(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent, UDragDropOperation* Operation) override;
+
+#if WITH_EDITOR
+	virtual EDataValidationResult IsDataValid(class FDataValidationContext& Context) const override;
+#endif
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* CloseButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UAlchemyInventoryUI* CropSlot;
+
+	UPROPERTY(meta = (BindWidget, OptionalWidget = true))
+	UDragEnterWidget* WBP_DragEnterWidget;
+
+	UPROPERTY(meta = (BindWidget))
+	UTributeTextUI* WBP_TributeTextUI;
 	
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	class UWidgetAnimation* FadeinAnim;

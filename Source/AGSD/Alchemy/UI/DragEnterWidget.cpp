@@ -4,6 +4,11 @@
 #include "DragEnterWidget.h"
 #include "Blueprint/DragDropOperation.h"
 #include "AlchemyCropSlotBase.h"
+#include "TributeUI.h"
+#include "Tribute.h"
+#include "Alchemy/UI/AlchemyUI.h"
+#include "Alchemy/AlchemyTable.h"
+#include "Components/StaticMeshComponent.h"
 
 void UDragEnterWidget::NativeOnDragEnter(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent, UDragDropOperation* Operation)
 {
@@ -20,6 +25,24 @@ void UDragEnterWidget::NativeOnDragEnter(const FGeometry& MyGeometry, const FDra
 			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, TEXT("Hovered"));
 		}
 #endif
+
+		if (UAlchemyUI* AlchemyUI = GetTypedOuter<UAlchemyUI>())
+		{
+			if (AAlchemyTable* Table = Cast<AAlchemyTable>(AlchemyUI->GetOwnerActor()))
+			{
+				if (Table->PotMeshComponent)
+				{
+					Table->PotMeshComponent->SetRenderCustomDepth(true);
+				}
+			}
+		}
+		else if (UTributeUI* TributeUI = GetTypedOuter<UTributeUI>())
+		{
+			if (ATribute* Tribute = Cast<ATribute>(TributeUI->GetTributeActor()))
+			{
+				Tribute->SetFireBurnActive(true);
+			}
+		}
 	}
 }
 
@@ -38,5 +61,23 @@ void UDragEnterWidget::NativeOnDragLeave(const FDragDropEvent& DragDropEvent, UD
 			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, TEXT("UnHovered"));
 		}
 #endif
+
+		if (UAlchemyUI* AlchemyUI = GetTypedOuter<UAlchemyUI>())
+		{
+			if (AAlchemyTable* Table = Cast<AAlchemyTable>(AlchemyUI->GetOwnerActor()))
+			{
+				if (Table->PotMeshComponent)
+				{
+					Table->PotMeshComponent->SetRenderCustomDepth(false);
+				}
+			}
+		}
+		else if (UTributeUI* TributeUI = GetTypedOuter<UTributeUI>())
+		{
+			if (ATribute* Tribute = Cast<ATribute>(TributeUI->GetTributeActor()))
+			{
+				Tribute->SetFireBurnActive(false);
+			}
+		}
 	}
 }
