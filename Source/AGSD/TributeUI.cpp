@@ -68,6 +68,11 @@ void UTributeUI::setOwnerActor(AActor* owner)
 		FarmerChar = Cast<AAGSDCharacter>(PC->GetPawn());
 	}
 
+	if (FarmerChar)
+	{
+		FarmerChar->RegisterCloseableUI(this);
+	}
+
 	RebuildMaterialAddresses();
 
 	if (WBP_TributeTextUI && TributeActor)
@@ -199,3 +204,15 @@ EDataValidationResult UTributeUI::IsDataValid(FDataValidationContext& Context) c
 	return Result;
 }
 #endif
+
+void UTributeUI::CloseUI_Implementation()
+{
+	if (FarmerChar)
+	{
+		FarmerChar->UnregisterCloseableUI(this);
+	}
+	if (TributeActor)
+	{
+		TributeActor->EndTribute();
+	}
+}

@@ -8,6 +8,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
 #include "Alchemy/Struct_MaterialAddress.h"
+#include "AGSDCloseableUIInterface.h"
 #include "TributeUI.generated.h"
 
 class UAlchemyInventoryUI;
@@ -27,7 +28,7 @@ public:
 };
 
 UCLASS()
-class AGSD_API UTributeUI : public UUserWidget
+class AGSD_API UTributeUI : public UUserWidget, public IUIClosable
 {
 	GENERATED_BODY()
 
@@ -86,6 +87,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Tribute")
 	void SubHotbarItemAmount(int32 Index, int32 AmountToRemove);
+
+public:
+	virtual void CloseUI_Implementation() override;
 	
 protected:
 	virtual void NativeConstruct() override;

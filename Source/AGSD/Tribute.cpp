@@ -10,6 +10,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Inventory/UI/AGSDPlayerHUD.h"
 
 // Sets default values
 ATribute::ATribute()
@@ -97,6 +98,12 @@ void ATribute::Interact_Implementation(AAGSDCharacter* player)
 			InputMode.SetWidgetToFocus(TributeWidget->TakeWidget());
 			PlayerController->SetInputMode(InputMode);
 			PlayerController->bShowMouseCursor = true;
+
+			// 봉헌 UI 활성화 시 기존 PlayerHUD 숨기기
+			if (Player && Player->PlayerHUDRef)
+			{
+				Player->PlayerHUDRef->SetVisibility(ESlateVisibility::Collapsed);
+			}
 		}
 	}
 }
@@ -148,6 +155,12 @@ void ATribute::EndTribute()
 	if (Player)
 	{
 		Player->Mining = false; // 이동 가능하게 변경
+
+		// 봉헌 UI 종료 시 PlayerHUD 복구
+		if (Player->PlayerHUDRef)
+		{
+			Player->PlayerHUDRef->SetVisibility(ESlateVisibility::Visible);
+		}
 	}
 	bCanUseTribute = true; // 다시 상호작용 가능하게
 
