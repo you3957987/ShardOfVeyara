@@ -78,28 +78,9 @@ void UTributeUI::setOwnerActor(AActor* owner)
 
 void UTributeUI::RebuildMaterialAddresses()
 {
-	if (!FarmerChar || !FarmerChar->InventoryComponent) return;
+	if (!FarmerChar) return;
 
-	MaterialAddress.Empty();
-
-	const TArray<FStruct_InventorySlotData>& AllSlots = FarmerChar->InventoryComponent->GetAllSlots();
-
-	for (int32 Index = 0; Index < AllSlots.Num(); ++Index)
-	{
-		const FStruct_InventorySlotData& SlotData = AllSlots[Index];
-
-		if (!SlotData.IsEmpty && !SlotData.ItemData.ItemID.IsEmpty() && SlotData.ItemData.CurrentQuantity > 0)
-		{
-			FString ItemID = SlotData.ItemData.ItemID;
-
-			FStruct_SlotAddress SlotAddr;
-			// C++ 인벤토리 컴포넌트의 절대 인덱스(0~29)를 그대로 대입
-			SlotAddr.Index = Index;
-			SlotAddr.Amount = SlotData.ItemData.CurrentQuantity;
-
-			MaterialAddress.FindOrAdd(ItemID).Address.Add(SlotAddr);
-		}
-	}
+	MaterialAddress = UAlchemyInventoryUI::ScanInventoryForMaterials(FarmerChar);
 
 	if (CropSlot)
 	{

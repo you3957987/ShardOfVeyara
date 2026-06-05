@@ -11,6 +11,7 @@
 class UUniformGridPanel;
 class UAlchemyCropSlotBase;
 class UDataTable;
+class AAGSDCharacter;
 
 /**
  * UAlchemyInventoryUI
@@ -39,4 +40,8 @@ public:
 	// ── 초기화 함수 ──
 	UFUNCTION(BlueprintCallable, Category = "Alchemy Inventory")
 	void InitializeSlots(const TMap<FString, FStruct_MaterialAddress>& MaterialAddress, EHoldingState Category, bool bInsertedSlot);
+
+	// ── 인벤토리 스캔 유틸리티 함수 ──
+	UFUNCTION(BlueprintCallable, Category = "Alchemy Inventory")
+	static TMap<FString, FStruct_MaterialAddress> ScanInventoryForMaterials(AAGSDCharacter* Character);
 };

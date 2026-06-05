@@ -6,6 +6,9 @@
 #include "Engine/DataTable.h"
 #include "Struct_ItemData.h"
 #include "AlchemyCropSlotBase.h"
+#include "AGSDCharacter.h"
+#include "Inventory/AGSDInventoryComponent.h"
+#include "Alchemy/Struct_SlotAddress.h"
 
 void UAlchemyInventoryUI::InitializeSlots(const TMap<FString, FStruct_MaterialAddress>& MaterialAddress, EHoldingState Category, bool bInsertedSlot)
 {
@@ -147,4 +150,30 @@ void UAlchemyInventoryUI::InitializeSlots(const TMap<FString, FStruct_MaterialAd
 			}
 		}
 	}
+}
+
+TMap<FString, FStruct_MaterialAddress> UAlchemyInventoryUI::ScanInventoryForMaterials(AAGSDCharacter* Character)
+{
+	TMap<FString, FStruct_MaterialAddress> TempMaterialAddress;
+	if (!Character || !Character->InventoryComponent) return TempMaterialAddress;
+
+	const TArray<FStruct_InventorySlotData>& AllSlots = Character->InventoryComponent->GetAllSlots();
+
+	for (int32 Index = 0; Index < AllSlots.Num(); ++Index)
+	{
+		const FStruct_InventorySlotData& SlotData = AllSlots[Index];
+		
+		if (!SlotData.IsEmpty && !SlotData.ItemData.ItemID.IsEmpty() && SlotData.ItemData.CurrentQuantity > 0)
+		{
+			FString ItemID = SlotData.ItemData.ItemID;
+
+			FStruct_SlotAddress SlotAddr;
+			SlotAddr.Index = Index;
+			SlotAddr.Amount = SlotData.ItemData.CurrentQuantity;
+
+			TempMaterialAddress.FindOrAdd(ItemID).Address.Add(SlotAddr);
+		}
+	}
+
+	return TempMaterialAddress;
 }

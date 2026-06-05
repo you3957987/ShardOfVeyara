@@ -77,27 +77,9 @@ void UAlchemyUI::RefreshMaterialAddresses()
 	if (!PC) return;
 
 	AAGSDCharacter* Character = Cast<AAGSDCharacter>(PC->GetPawn());
-	if (!Character || !Character->InventoryComponent) return;
+	if (!Character) return;
 
-	MaterialAddress.Empty();
-
-	const TArray<FStruct_InventorySlotData>& AllSlots = Character->InventoryComponent->GetAllSlots();
-
-	for (int32 Index = 0; Index < AllSlots.Num(); ++Index)
-	{
-		const FStruct_InventorySlotData& SlotData = AllSlots[Index];
-		
-		if (!SlotData.IsEmpty && !SlotData.ItemData.ItemID.IsEmpty() && SlotData.ItemData.CurrentQuantity > 0)
-		{
-			FString ItemID = SlotData.ItemData.ItemID;
-
-			FStruct_SlotAddress SlotAddr;
-			SlotAddr.Index = Index;
-			SlotAddr.Amount = SlotData.ItemData.CurrentQuantity;
-
-			MaterialAddress.FindOrAdd(ItemID).Address.Add(SlotAddr);
-		}
-	}
+	MaterialAddress = UAlchemyInventoryUI::ScanInventoryForMaterials(Character);
 
 	// 자식 인벤토리 UI 초기화 및 슬롯 생성 (작물 및 차원 수정 분리 표시)
 	if (CropSlot)
