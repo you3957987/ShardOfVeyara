@@ -12,6 +12,9 @@ void UAlchemyCropSlotBase::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	UTexture2D* Texture = SlotItemData.ItemData.ItemIcon;
+	int32 Amount = SlotItemData.ItemData.CurrentQuantity;
+
 	if (IMG_ItemIcon)
 	{
 		if (Texture)
@@ -33,6 +36,21 @@ void UAlchemyCropSlotBase::NativeConstruct()
 
 	// 렌더링 시점에 드래그 불가 및 가마솥 투입구 분기 처리를 일괄 적용합니다.
 	InitSlot(bCantDrag, bIsInsertedSlot);
+}
+
+FString UAlchemyCropSlotBase::GetItemID() const
+{
+	return SlotItemData.ItemData.ItemID;
+}
+
+int32 UAlchemyCropSlotBase::GetAmount() const
+{
+	return SlotItemData.ItemData.CurrentQuantity;
+}
+
+UTexture2D* UAlchemyCropSlotBase::GetTexture() const
+{
+	return SlotItemData.ItemData.ItemIcon;
 }
 
 void UAlchemyCropSlotBase::InitSlot(bool bInCantDrag, bool bInIsInsertedSlot)
@@ -82,14 +100,15 @@ void UAlchemyCropSlotBase::InitSlot(bool bInCantDrag, bool bInIsInsertedSlot)
 
 void UAlchemyCropSlotBase::UpdateSlot(UTexture2D* InTexture, int32 InAmount)
 {
-	Texture = InTexture;
-	Amount = InAmount;
+	SlotItemData.ItemData.ItemIcon = InTexture;
+	SlotItemData.ItemData.CurrentQuantity = InAmount;
+	SlotItemData.IsEmpty = (InTexture == nullptr);
 
 	if (IMG_ItemIcon)
 	{
-		if (Texture)
+		if (InTexture)
 		{
-			IMG_ItemIcon->SetBrushFromTexture(Texture);
+			IMG_ItemIcon->SetBrushFromTexture(InTexture);
 			IMG_ItemIcon->SetVisibility(ESlateVisibility::Visible);
 		}
 		else
@@ -100,27 +119,28 @@ void UAlchemyCropSlotBase::UpdateSlot(UTexture2D* InTexture, int32 InAmount)
 
 	if (TXT_ItemAmount)
 	{
-		TXT_ItemAmount->SetText(FText::AsNumber(Amount));
+		TXT_ItemAmount->SetText(FText::AsNumber(InAmount));
 	}
 }
 
 FReply UAlchemyCropSlotBase::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	FReply Reply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+	if (bCantDrag)
+	{
+		return FReply::Unhandled();
+	}
 
-	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton && !bCantDrag)
+	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
 	{
 		// 왼쪽 클릭이고 드래그가 가능한 상태라면 드래그 탐지 요청
 		return FReply::Handled().DetectDrag(TakeWidget(), EKeys::LeftMouseButton);
 	}
 
-	return Reply;
+	return FReply::Unhandled();
 }
 
 void UAlchemyCropSlotBase::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
-	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
-
 	if (bCantDrag) return;
 
 	UDragDropOperation* DragOp = NewObject<UDragDropOperation>(this);
@@ -136,13 +156,8 @@ void UAlchemyCropSlotBase::NativeOnDragDetected(const FGeometry& InGeometry, con
 		UAGSDDragVisualWidget* DragVisual = CreateWidget<UAGSDDragVisualWidget>(GetWorld(), DragVisualClass);
 		if (DragVisual)
 		{
-			// 데이터 세팅
-			FStruct_ItemData TempItemData;
-			TempItemData.ItemID = ItemID;
-			TempItemData.CurrentQuantity = Amount;
-			TempItemData.ItemIcon = Texture;
-			
-			DragVisual->SetDragItemData(TempItemData);
+			// 부모의 데이터 모델에서 데이터 세팅
+			DragVisual->SetDragItemData(SlotItemData.ItemData);
 			DragOp->DefaultDragVisual = DragVisual;
 		}
 	}

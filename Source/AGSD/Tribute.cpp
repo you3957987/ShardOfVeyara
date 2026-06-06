@@ -94,8 +94,9 @@ void ATribute::Interact_Implementation(AAGSDCharacter* player)
 
 			TributeWidget->PlayFadeIn();
 			
-			FInputModeUIOnly InputMode;
+			FInputModeGameAndUI InputMode;
 			InputMode.SetWidgetToFocus(TributeWidget->TakeWidget());
+			InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 			PlayerController->SetInputMode(InputMode);
 			PlayerController->bShowMouseCursor = true;
 

@@ -3,6 +3,8 @@
 #include "AGSDSlotWidgetBase.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Inventory/AGSDInventoryComponent.h"
 #include "AGSDSlotDragDropOperation.h"
@@ -14,11 +16,35 @@
 #include "Framework/Application/SlateApplication.h"
 #include "Inventory/UI/AGSDPlayerHUD.h"
 #include "Inventory/UI/AGSDHotbarSlotWidget.h"
+#include "Inventory/UI/AGSDItemTooltipWidget.h"
+#include "Blueprint/SlateBlueprintLibrary.h"
+#include "Engine/Engine.h"
+
+UAGSDSlotWidgetBase::UAGSDSlotWidgetBase(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	static ConstructorHelpers::FClassFinder<UAGSDItemTooltipWidget> TooltipClassFinder(TEXT("/Game/HYH/Blueprints/Widgets/UIWidget/Inventory/WBP_AGSDItemTooltip"));
+	if (TooltipClassFinder.Succeeded())
+	{
+		TooltipWidgetClass = TooltipClassFinder.Class;
+	}
+}
 
 void UAGSDSlotWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
 	UpdateVisual();
+}
+
+void UAGSDSlotWidgetBase::NativeDestruct()
+{
+	if (ActiveTooltipInstance)
+	{
+		ActiveTooltipInstance->RemoveFromParent();
+		ActiveTooltipInstance = nullptr;
+	}
+
+	Super::NativeDestruct();
 }
 
 void UAGSDSlotWidgetBase::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -28,6 +54,90 @@ void UAGSDSlotWidgetBase::NativeOnMouseEnter(const FGeometry& InGeometry, const 
 	if (UAGSDInventoryComponent* InvComp = GetInventoryComponent())
 	{
 		InvComp->HoveredSlotIndex = SlotIndex;
+	}
+
+	// 호버 시 설명 툴팁 동적 생성 로직
+	if (!SlotItemData.IsEmpty && !SlotItemData.ItemData.ItemID.IsEmpty() && TooltipWidgetClass)
+	{
+		if (ActiveTooltipInstance)
+		{
+			ActiveTooltipInstance->RemoveFromParent();
+			ActiveTooltipInstance = nullptr;
+		}
+
+		ActiveTooltipInstance = CreateWidget<UAGSDItemTooltipWidget>(this, TooltipWidgetClass);
+		if (ActiveTooltipInstance)
+		{
+			ActiveTooltipInstance->SetTooltipData(SlotItemData.ItemData);
+			ActiveTooltipInstance->AddToViewport(100); // 인벤토리보다는 위, 페이드 위젯보다는 아래로 배치 (ZOrder 100)
+
+			// 1. 슬롯의 절대 상단 좌측 및 우측 좌표 계산 (LocalToAbsolute를 사용해 정확성 보장)
+			FVector2D AbsoluteLeft = InGeometry.GetAbsolutePosition();
+			FVector2D AbsoluteRight = InGeometry.LocalToAbsolute(FVector2D(InGeometry.GetLocalSize().X, 0.f));
+
+			// 2. 각각을 뷰포트 좌표로 변환하여 DPI 스케일링 보정
+			FVector2D ViewportLeftPixel, ViewportLeft;
+			USlateBlueprintLibrary::AbsoluteToViewport(GetWorld(), AbsoluteLeft, ViewportLeftPixel, ViewportLeft);
+
+			FVector2D ViewportRightPixel, ViewportRight;
+			USlateBlueprintLibrary::AbsoluteToViewport(GetWorld(), AbsoluteRight, ViewportRightPixel, ViewportRight);
+
+			float SlotViewportWidth = ViewportRight.X - ViewportLeft.X;
+
+			// 3. 화면 크기 가져오기 및 DPI 스케일링 보정
+			FVector2D ViewportSize = FVector2D::ZeroVector;
+			if (GEngine && GEngine->GameViewport)
+			{
+				GEngine->GameViewport->GetViewportSize(ViewportSize);
+			}
+
+			float ViewportScale = UWidgetLayoutLibrary::GetViewportScale(GetWorld());
+			FVector2D TrueViewportSize = ViewportSize;
+			if (ViewportScale > 0.0f)
+			{
+				TrueViewportSize = ViewportSize / ViewportScale;
+			}
+
+			if (TrueViewportSize.X > 0.f)
+			{
+				// 4. 툴팁 위젯의 크기(가로/세로)를 미리 계산
+				ActiveTooltipInstance->ForceLayoutPrepass();
+				FVector2D TooltipSize = ActiveTooltipInstance->GetDesiredSize();
+
+				FVector2D TargetPosition;
+				FVector2D Alignment;
+
+				// 5. 기본적으로 우측에 툴팁 배치 시도
+				float RightTargetX = ViewportRight.X + 10.f;
+
+				// 우측 배치 시 툴팁이 화면 가로 해상도를 넘어가 잘리는지 검사
+				if (RightTargetX + TooltipSize.X > TrueViewportSize.X)
+				{
+					// 공간이 부족하면 좌측 배치로 자동 반전 (Alignment X = 1.0f)
+					TargetPosition.X = ViewportLeft.X - 10.f;
+					Alignment.X = 1.f;
+				}
+				else
+				{
+					// 공간이 충분하면 우측 배치 유지 (Alignment X = 0.0f)
+					TargetPosition.X = RightTargetX;
+					Alignment.X = 0.f;
+				}
+
+				// 6. Y축 세로 방향 뷰포트 하단 잘림 감지 및 위로 밀기 보정 (Clamp)
+				float SafetyPadding = 35.f; // 텍스트 자동 개행 등으로 인한 동적 세로 크기 증가 대비 안전 여백
+				float Margin = 20.f; // 화면 가장자리와의 여유 마진
+				float MaxAllowedY = TrueViewportSize.Y - (TooltipSize.Y + SafetyPadding) - Margin;
+
+				// Y축 툴팁 기본 정렬은 슬롯 상단선에 맞춤
+				TargetPosition.Y = FMath::Clamp(ViewportLeft.Y, Margin, FMath::Max(Margin, MaxAllowedY));
+				Alignment.Y = 0.f; // 상단 기준 정렬 유지
+
+				// bRemoveDPIScale = false 파라미터를 명시하여 이중 DPI 보정 현상 차단
+				ActiveTooltipInstance->SetPositionInViewport(TargetPosition, false);
+				ActiveTooltipInstance->SetAlignmentInViewport(Alignment);
+			}
+		}
 	}
 }
 
@@ -42,6 +152,13 @@ void UAGSDSlotWidgetBase::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 		{
 			InvComp->HoveredSlotIndex = -1;
 		}
+	}
+
+	// 호버 해제 시 툴팁 인스턴스 파괴
+	if (ActiveTooltipInstance)
+	{
+		ActiveTooltipInstance->RemoveFromParent();
+		ActiveTooltipInstance = nullptr;
 	}
 }
 
