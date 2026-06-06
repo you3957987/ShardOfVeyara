@@ -1,6 +1,7 @@
 #include "EnemySpawner/EnemySpawner.h"
 
 #include "BaseEnemy.h"
+#include "CSVLog.h"
 #include "EnemyLogManager.h"
 #include "NavigationSystem.h"
 #include "NiagaraFunctionLibrary.h"
@@ -114,6 +115,8 @@ float AEnemySpawner::TakeDamage(float DamageAmount, struct FDamageEvent const& D
 	float DamageToApply = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	UE_LOG(LogTemp, Warning, TEXT("Enemy Take Damage : %f"), DamageToApply);
+	
+	EnemyLogData.TotalDamageReceived += DamageToApply; // 로그 데이터에 받은 대미지 누적
 	
 	if ( DamageToApply > 0.f )
 	{
@@ -281,6 +284,11 @@ void AEnemySpawner::SpawnEnemy()
 					SpawnParams
 				);
 				
+				if (SpawnedEnemy)
+				{
+					SpawnedEnemy->EnemyLogID = FString::Printf(TEXT("%s_SpawnedEnemy_%d"), *EnemyLogID,SpawnEnemyId);
+				}
+				
 				// 스켈레톤 메시 이름 가져오기
 				FString MeshName = TEXT("Unknown");
 				if (SpawnedEnemy && SpawnedEnemy->GetMesh() && SpawnedEnemy->GetMesh()->GetSkeletalMeshAsset())
@@ -294,6 +302,9 @@ void AEnemySpawner::SpawnEnemy()
 					UGameplayStatics::PlaySound2D(this, SpawnSound);
 				}
 
+				EnemyLogData.SpawnCount += 1; // 로그 데이터에 스폰 횟수 누적
+				SpawnEnemyId++;
+				
 				// 로그에 메시 이름 추가 출력
 				UEnemyLogManager::EnemyLog(EEnemyLogType::Spawner, FString::Printf(TEXT("적 [스포너]가 [%s] 스폰"), *MeshName));
 			}
@@ -324,6 +335,13 @@ void AEnemySpawner::Die()
 
 	// 액터 삭제 전에 아이템 드롭 함수 호출
 	DropItemsAfterDead();
+	
+	// 최종적으로 CSV 로그 파일에 추가
+	UCSVLog::AddEnemyLog(TEXT("Test"), 
+		EnemyLogID, TEXT("Spanwer"), EnemyLogData);
+	
+	// EnemyLogData 초기화 (다음 전투를 위해)
+	EnemyLogData = FEnemyLogData();
 	
 	Destroy(); 
 }

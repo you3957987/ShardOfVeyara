@@ -22,6 +22,7 @@ public class AGSD : ModuleRules
 			"SlateCore",
 			"Enemy",
 			"Pet",
+			"LogData",
 			"Niagara",
 			"NavigationSystem",
 			"PhysicsCore",

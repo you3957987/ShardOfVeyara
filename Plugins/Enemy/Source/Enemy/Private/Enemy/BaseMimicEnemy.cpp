@@ -102,6 +102,8 @@ void ABaseMimicEnemy::CheckMeleeAttackHit(float DeltaTime)
 							MeleeAttackDamage));
 				}
 				
+				EnemyLogData.TotalDamageDealt += MeleeAttackDamage; // 로그 데이터에 입힌 대미지 누적
+				
 				// 플레이어에게 대미지를 적용합니다.
 				UGameplayStatics::ApplyDamage(
 					OverlappingActor,

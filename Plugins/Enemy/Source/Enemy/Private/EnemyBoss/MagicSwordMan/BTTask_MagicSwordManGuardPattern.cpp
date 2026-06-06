@@ -31,6 +31,8 @@ EBTNodeResult::Type UBTTask_MagicSwordManGuardPattern::ExecuteTask(UBehaviorTree
 		Boss->bIsGuarding = true;
 		Boss->DamageWhileGuarding = 0.0f;
 		
+		Boss->BossMagicSwordManLogData.GuardCount++;
+		
 		Blackboard->SetValueAsFloat("AttackDelay", Boss->AttackStruct.GuardDelay); // 행동 딜레이 설정
 	}
 	

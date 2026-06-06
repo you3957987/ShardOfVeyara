@@ -5,6 +5,7 @@
 #include "EnemyLogManager.h"
 #include "Interface/ItemDropInterface.h"
 #include "Interface/InteractionInterface.h"
+#include "CSVLogType.h" 
 #include "BaseBossEnemy.generated.h"
 
 UCLASS()
@@ -12,6 +13,12 @@ class ENEMY_API ABaseBossEnemy : public ACharacter, public IItemDropInterface, p
 {
 	GENERATED_BODY()
 
+public:
+	UPROPERTY(EditAnywhere, Category="자체설정")
+	FString BossLogId;
+	UPROPERTY(BlueprintReadOnly)
+	FCommonBossLogData CommonBossLogData;
+	
 protected:
 	virtual void BeginPlay() override;
 	
@@ -156,9 +163,9 @@ public:
 	float BattleStartTime = 0.f;
 	bool bIsInBattle = false;
 	void StartBattleLog();
-	void EndBattleLog();
+	virtual void EndBattleLog();
 	void AttackPatternLog(FString PatternName) const;
-	FString SelectedRangeName = TEXT("플레이어 첫 조우");
+	FString SelectedRangeName = TEXT("Long Range");
 	EEnemyLogType GetLogTypeFromEnemyType() const;
 	UFUNCTION()
 	void PlayerDeadLog();

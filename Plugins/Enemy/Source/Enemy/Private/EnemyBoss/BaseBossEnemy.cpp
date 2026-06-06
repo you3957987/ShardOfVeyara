@@ -166,6 +166,8 @@ float ABaseBossEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 	FString MeshName = GetMesh() && GetMesh()->GetSkeletalMeshAsset() ? 
 		GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
 	
+	CommonBossLogData.TotalDamageReceived += DamageToApply; // 로그 데이터에 받은 대미지 누적
+	
 	if ( DamageToApply > 0.f )
 	{
 		Health -= DamageToApply;
@@ -174,6 +176,8 @@ float ABaseBossEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 		{
 			UEnemyLogManager::EnemyLog( GetLogTypeFromEnemyType(), 
 				FString::Printf(TEXT("[%s]가 [%.f] 대미지 받아 사망"), *MeshName, DamageToApply));
+			
+			CommonBossLogData.Result = TEXT("BossDead"); // 로그 데이터에 결과 기록
 			
 			Die();
 			return DamageToApply;
@@ -479,6 +483,8 @@ void ABaseBossEnemy::StartBattleLog()
 
 	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
 		FString::Printf(TEXT("[%s] 전투 진입 (시작 시간: %.2f)"), *MeshName, BattleStartTime));
+	
+	CommonBossLogData.StartWorldTime = BattleStartTime; // 로그 데이터에 시작 시간 기록
 }
 
 void ABaseBossEnemy::EndBattleLog()
@@ -496,6 +502,11 @@ void ABaseBossEnemy::EndBattleLog()
 		FString::Printf(TEXT("[%s] 전투 종료 | 소요 시간: %.2f초 (시작: %.2f / 종료: %.2f)"), 
 			*MeshName, BattleDuration, BattleStartTime, EndTime));
 
+	CommonBossLogData.EndWorldTime = EndTime; // 로그 데이터에 종료 시간 기록
+	CommonBossLogData.ElapsedTime = BattleDuration; // 로그 데이터에 소요 시간 기록
+	
+	//CommonBossLogData = FCommonBossLogData(); 이거는 자식 쪽에서 오버라이드 해서 거기서 자기꺼랑 같이 초기화
+	
 	// 상태 초기화
 	bIsInBattle = false;
 	BattleStartTime = 0.f;
@@ -509,6 +520,8 @@ void ABaseBossEnemy::PlayerDeadLog()
 	
 	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
 		FString::Printf(TEXT("보스 [%s] 의 공격으로 플레이어 사망"), *MeshName));
+	
+	CommonBossLogData.Result = TEXT("PlayerDead"); // 로그 데이터에 결과 기록
 	
 	if ( BlackboardComp )
 	{
@@ -528,6 +541,9 @@ void ABaseBossEnemy::AttackPatternLog(FString PatternName) const
 	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
 		FString::Printf(TEXT("[%s] 패턴 결정 | 거리: [%s] | 패턴: [%s] "), 
 			*MeshName, *SelectedRangeName ,*PatternName));
+	
+	
+	
 }
 
 EEnemyLogType ABaseBossEnemy::GetLogTypeFromEnemyType() const

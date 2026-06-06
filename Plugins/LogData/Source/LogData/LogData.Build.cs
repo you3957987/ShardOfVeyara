@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class Pet : ModuleRules
+public class LogData : ModuleRules
 {
-	public Pet(ReadOnlyTargetRules Target) : base(Target)
+	public LogData(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -38,11 +38,6 @@ public class Pet : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-				"UMG",
-				"Niagara",
-				"InputCore",
-				"EnhancedInput",
-				"LogData",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

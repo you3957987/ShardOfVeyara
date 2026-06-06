@@ -13,6 +13,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Interface/PlayerDeadInterface.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "CSVLog.h"  
 
 ABaseEnemy::ABaseEnemy()
 {
@@ -208,6 +209,8 @@ float ABaseEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& Dama
 	FString MeshName = GetMesh() && GetMesh()->GetSkeletalMeshAsset() ? 
 		GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
 	
+	EnemyLogData.TotalDamageReceived += DamageToApply; // 로그 데이터에 받은 대미지 누적
+	
 	if ( DamageToApply > 0.f )
 	{
 		Health -= DamageToApply;
@@ -249,6 +252,8 @@ void ABaseEnemy::Die()
 	{
 		HealthBarWidget->SetVisibility(false);
 	}
+	
+	EnemyLogData.Result = TEXT("EnemyDead"); // 로그 데이터에 결과 기록
 	
 	EndBattleLog(); // 전투 로그 종료
 }
@@ -396,6 +401,28 @@ void ABaseEnemy::StartBattleLog()
 
 	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), // 적절한 타입으로 변경 가능
 		FString::Printf(TEXT("적 [%s] 전투 진입 (시작 시간: %.2f)"), *MeshName, BattleStartTime));
+	
+	EnemyLogData.StartWorldTime = BattleStartTime; // 로그 데이터에 시작 시간 기록
+	
+}
+
+void ABaseEnemy::PlayerDeadLog()
+{
+	// 메쉬 이름 가져오기 헬퍼
+	FString MeshName = GetMesh() && GetMesh()->GetSkeletalMeshAsset() ? 
+		GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
+	
+	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
+		FString::Printf(TEXT("적 [%s] 의 공격으로 플레이어 사망"), *MeshName));
+	
+	EnemyLogData.Result = TEXT("PlayerDead"); // 로그 데이터에 결과 기록
+	
+	if ( BlackboardComp )
+	{
+		BlackboardComp->SetValueAsBool(TEXT("IsDead"), true);
+	} 
+	
+	EndBattleLog();
 }
 
 void ABaseEnemy::EndBattleLog()
@@ -413,26 +440,45 @@ void ABaseEnemy::EndBattleLog()
 		FString::Printf(TEXT("적 [%s] 전투 종료 | 소요 시간: %.2f초 (시작: %.2f / 종료: %.2f)"), 
 			*MeshName, BattleDuration, BattleStartTime, EndTime));
 
+	EnemyLogData.EndWorldTime = EndTime; // 로그 데이터에 종료 시간 기록
+	EnemyLogData.ElapsedTime = BattleDuration; // 로그 데이터에 소요 시간 기록
+	
+	// 최종적으로 CSV 로그 파일에 추가
+	UCSVLog::AddEnemyLog(TEXT("Test"), 
+		EnemyLogID, GetEnemyTypeAsString(), EnemyLogData);
+	
+	// EnemyLogData 초기화 (다음 전투를 위해)
+	EnemyLogData = FEnemyLogData();
+	
 	// 상태 초기화
 	bIsInBattle = false;
 	BattleStartTime = 0.f;
 }
 
-void ABaseEnemy::PlayerDeadLog()
+FString ABaseEnemy::GetEnemyTypeAsString() const
 {
-	// 메쉬 이름 가져오기 헬퍼
-	FString MeshName = GetMesh() && GetMesh()->GetSkeletalMeshAsset() ? 
-		GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
-	
-	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
-		FString::Printf(TEXT("적 [%s] 의 공격으로 플레이어 사망"), *MeshName));
-	
-	if ( BlackboardComp )
+	// 이름에 Rebirth가 포함된 특수 케이스 처리
+	if (GetName().Contains(TEXT("Rebirth")))
 	{
-		BlackboardComp->SetValueAsBool(TEXT("IsDead"), true);
-	} 
-	
-	EndBattleLog();
+		return TEXT("Revive");
+	}
+
+	// 각 타입에 맞는 명확한 문자열 반환
+	switch (EnemyType)
+	{
+		case EEnemyType::EET_Melee:     return TEXT("Melee");
+		case EEnemyType::EET_Ranged:    return TEXT("Ranged");
+		case EEnemyType::EET_Exploder:  return TEXT("Exploder");
+		case EEnemyType::EET_Transpar:  return TEXT("Transpar");
+		case EEnemyType::EET_Mimic:     return TEXT("Mimic");
+		case EEnemyType::EET_Slime:     return TEXT("Slime");
+		case EEnemyType::EET_Mage:      return TEXT("Mage");
+		case EEnemyType::EET_Guard:     return TEXT("Guard");
+		case EEnemyType::EET_Passive:   return TEXT("Passive");
+		case EEnemyType::EET_Burrow:    return TEXT("Burrow");
+		case EEnemyType::EET_Revive:    return TEXT("Revive");
+	default:                        return TEXT("Melee");
+	}
 }
 
 EEnemyLogType ABaseEnemy::GetLogTypeFromEnemyType() const

@@ -105,6 +105,8 @@ void ABaseBurrowEnemy::OnBeginOverlapAttackCollisionSphere(UPrimitiveComponent* 
 					AttackDamage));
 		}
 		
+		EnemyLogData.TotalDamageDealt += AttackDamage; // 로그 데이터에 입힌 대미지 누적
+		
 		// 대미지 적용 ( 어택 대미지는 공격 전 가드 공격인지 아님 일반 공격인지에 따라 각각 함수에서 설정 )
 		UGameplayStatics::ApplyDamage(OtherActor, AttackDamage, GetController(),
 			this, UDamageType::StaticClass());
@@ -216,6 +218,8 @@ void ABaseBurrowEnemy::FinishUnburrow()
 								*MeshName, 
 								UnburrowAttackDamage));
 					}
+					
+					EnemyLogData.TotalDamageDealt += UnburrowAttackDamage; // 로그 데이터에 입힌 대미지 누적
 					
 					// 대미지 적용 
 					UGameplayStatics::ApplyDamage(PlayerCharacter, UnburrowAttackDamage, GetController(),

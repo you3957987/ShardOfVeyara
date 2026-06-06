@@ -42,6 +42,7 @@ float ARanged_RebirthEnemy::TakeDamage(float DamageAmount, struct FDamageEvent c
 			}
    
 			bReviveFlag = false;
+			EndBattleLog(); // 전투 로그 종료
 			SpawnDeadEffectAndDestroy(); 
 		}
 
@@ -68,11 +69,37 @@ void ARanged_RebirthEnemy::AfterDieMontageEnd()
 		GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this,
 			&ABaseEnemy::SpawnDeadEffectAndDestroy, 1.0f, false);
 
+		EnemyLogData.Result = TEXT("EnemyDead"); // 로그 데이터에 결과 기록
+		
+		EndBattleLog(); // 전투 로그 종료
+		
 		return;
 	}
 	else
 	{
 		SpawnSoul(); // 소울 생성 함수 호출
+	}
+}
+
+void ARanged_RebirthEnemy::Die()
+{
+	//Super::Die(); // 부모꺼 안씀
+	
+	if ( DeathMontage ) PlayAnimMontage(DeathMontage);
+	
+	// 충돌 비활성화
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCharacterMovement()->DisableMovement();
+
+	// AI 로직 중지
+	if (BlackboardComp)
+	{
+		BlackboardComp->SetValueAsBool(TEXT("IsDead"), true);
+	}
+	
+	if (HealthBarWidget)
+	{
+		HealthBarWidget->SetVisibility(false);
 	}
 }
 
@@ -147,6 +174,8 @@ void ARanged_RebirthEnemy::Revive()
 			FString::Printf(TEXT("적 [%s]가 부활"), 
 				*MeshName));
 	}
+	
+	EnemyLogData.ReviveCount++; // 로그 데이터에 부활 횟수 누적
 }
 
 void ARanged_RebirthEnemy::AfterReviveMontageEnd()
