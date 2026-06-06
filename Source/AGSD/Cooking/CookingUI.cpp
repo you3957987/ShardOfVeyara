@@ -122,15 +122,6 @@ void UCookingUI::OnCloseButtonClicked()
 
 void UCookingUI::CloseUI_Implementation()
 {
-	// UI를 닫을 때 입력 모드를 게임 모드로 복구하고 마우스 커서를 숨김
-	if (APlayerController* PC = GetOwningPlayer())
-	{
-		FInputModeGameOnly InputMode;
-		PC->SetInputMode(InputMode);
-		PC->bShowMouseCursor = false;
-	}
-
-	// 부모 위젯으로부터 제거하여 UI 닫기
 	RemoveFromParent();
 }
 
