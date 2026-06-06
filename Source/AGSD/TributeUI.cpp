@@ -41,6 +41,10 @@ void UTributeUI::NativeConstruct()
 
 void UTributeUI::NativeDestruct()
 {
+	if (FarmerChar)
+	{
+		FarmerChar->UnregisterCloseableUI(this);
+	}
 	Super::NativeDestruct();
 }
 
@@ -54,7 +58,14 @@ void UTributeUI::PlayFadeIn()
 
 void UTributeUI::OnCloseButtonClicked()
 {
-	RemoveFromParent();
+	if (GetClass()->ImplementsInterface(UUIClosable::StaticClass()))
+	{
+		IUIClosable::Execute_CloseUI(this);
+	}
+	else
+	{
+		RemoveFromParent();
+	}
 }
 
 void UTributeUI::setOwnerActor(AActor* owner)
@@ -66,6 +77,11 @@ void UTributeUI::setOwnerActor(AActor* owner)
 	if (PC)
 	{
 		FarmerChar = Cast<AAGSDCharacter>(PC->GetPawn());
+	}
+
+	if (FarmerChar)
+	{
+		FarmerChar->RegisterCloseableUI(this);
 	}
 
 	RebuildMaterialAddresses();
@@ -92,8 +108,8 @@ void UTributeUI::InsertMaterial(UAlchemyCropSlotBase* InsertedSlot)
 {
 	if (!InsertedSlot || !FarmerChar || !FarmerChar->InventoryComponent || !TributeActor) return;
 
-	FString ItemID = InsertedSlot->ItemID;
-	int32 Amount = InsertedSlot->Amount;
+	FString ItemID = InsertedSlot->GetItemID();
+	int32 Amount = InsertedSlot->GetAmount();
 
 	int32* RequiredAmountPtr = TributeActor->CurrentLevelTributeItems.Find(ItemID);
 	if (!RequiredAmountPtr) return; // 필요한 제물이 아닌 경우 무시
@@ -199,3 +215,16 @@ EDataValidationResult UTributeUI::IsDataValid(FDataValidationContext& Context) c
 	return Result;
 }
 #endif
+
+void UTributeUI::CloseUI_Implementation()
+{
+	if (FarmerChar)
+	{
+		FarmerChar->UnregisterCloseableUI(this);
+	}
+	if (TributeActor)
+	{
+		TributeActor->EndTribute();
+	}
+	RemoveFromParent();
+}

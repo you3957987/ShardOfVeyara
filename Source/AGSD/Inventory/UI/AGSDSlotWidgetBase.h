@@ -10,6 +10,7 @@ class UTextBlock;
 class UAGSDInventoryComponent;
 class UAGSDSlotWidgetBase;
 class UAGSDDragVisualWidget;
+class UAGSDItemTooltipWidget;
 
 // ── 더블클릭 델리게이트 선언 ──
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSlotDoubleClicked, UAGSDSlotWidgetBase*, SlotWidget);
@@ -25,6 +26,8 @@ class AGSD_API UAGSDSlotWidgetBase : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	UAGSDSlotWidgetBase(const FObjectInitializer& ObjectInitializer);
+
 	/** 백엔드 인벤토리 컴포넌트 내 실제 슬롯 인덱스 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slot Data", meta = (ExposeOnSpawn = "true"))
 	int32 SlotIndex;
@@ -40,6 +43,14 @@ public:
 	/** 드래그 시 마우스 밑에 띄울 비주얼 위젯 클래스 (UAGSDDragVisualWidget 또는 그 파생 BP) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slot Config")
 	TSubclassOf<UAGSDDragVisualWidget> DragVisualClass;
+
+	/** 마우스 호버 시 띄울 설명 툴팁 위젯 클래스 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slot Config")
+	TSubclassOf<UAGSDItemTooltipWidget> TooltipWidgetClass;
+
+	/** 현재 화면에 생성된 툴팁 인스턴스 */
+	UPROPERTY()
+	TObjectPtr<UAGSDItemTooltipWidget> ActiveTooltipInstance;
 
 	// ── 공통 UI 컴포넌트 바인딩 ──
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "UI")
@@ -68,6 +79,7 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 
 	/** 더블클릭 발생 시 아이템 자동 이동을 처리합니다. */
 	virtual void HandleSlotDoubleClicked();

@@ -3,41 +3,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "Inventory/UI/AGSDSlotWidgetBase.h"
 #include "AlchemyCropSlotBase.generated.h"
 
-class UImage;
-class UTextBlock;
-class UTexture2D;
 class UAlchemyInventoryUI;
 
 /**
  * UAlchemyCropSlotBase
  * WBP_AlchemyCropSlotBase 위젯의 C++ 부모 클래스입니다.
+ * AGSDSlotWidgetBase를 상속받아 기본 슬롯 기능 및 호버 툴팁 기능을 상속받습니다.
  */
 UCLASS()
-class AGSD_API UAlchemyCropSlotBase : public UUserWidget
+class AGSD_API UAlchemyCropSlotBase : public UAGSDSlotWidgetBase
 {
 	GENERATED_BODY()
 
 public:
-	// ── UI 바인딩 ──
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget), Category = "UI")
-	TObjectPtr<UImage> IMG_ItemIcon;
-
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget), Category = "UI")
-	TObjectPtr<UTextBlock> TXT_ItemAmount;
-
 	// ── 슬롯 상태 및 데이터 ──
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alchemy Slot")
-	FString ItemID;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alchemy Slot")
-	int32 Amount = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alchemy Slot")
-	TObjectPtr<UTexture2D> Texture;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alchemy Slot")
 	bool bCantDrag = false;
 
@@ -46,6 +28,16 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alchemy Slot")
 	bool bIsInsertedSlot = false;
+
+	// ── 외부 참조 호환용 Getter 함수들 ──
+	UFUNCTION(BlueprintCallable, Category = "Alchemy Slot")
+	FString GetItemID() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Alchemy Slot")
+	int32 GetAmount() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Alchemy Slot")
+	UTexture2D* GetTexture() const;
 
 	// ── 위젯 인터페이스 함수 ──
 	UFUNCTION(BlueprintCallable, Category = "Alchemy Slot")
@@ -58,7 +50,4 @@ protected:
 	virtual void NativeConstruct() override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Alchemy Drag")
-	TSubclassOf<class UAGSDDragVisualWidget> DragVisualClass;
 };

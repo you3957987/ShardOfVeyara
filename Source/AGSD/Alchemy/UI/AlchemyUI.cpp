@@ -106,7 +106,7 @@ void UAlchemyUI::InsertMaterial(UAlchemyCropSlotBase* InsertedSlot)
 	AAlchemyTable* Table = Cast<AAlchemyTable>(OwnerActor);
 	if (!Table) return;
 
-	FString ItemID = InsertedSlot->ItemID;
+	FString ItemID = InsertedSlot->GetItemID();
 
 	// 1. 차원 수정 투입 처리
 	if (ItemID.Equals(TEXT("DimensionCrystal"), ESearchCase::IgnoreCase))

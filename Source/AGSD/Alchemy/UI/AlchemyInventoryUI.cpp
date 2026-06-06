@@ -57,9 +57,10 @@ void UAlchemyInventoryUI::InitializeSlots(const TMap<FString, FStruct_MaterialAd
 						UAlchemyCropSlotBase* NewSlot = PC ? CreateWidget<UAlchemyCropSlotBase>(PC, CropSlotClass) : nullptr;
 						if (NewSlot)
 						{
-							NewSlot->ItemID = ItemID;
-							NewSlot->Amount = TotalAmount;
-							NewSlot->Texture = ItemData->ItemIcon;
+							FStruct_ItemData TempItemData = *ItemData;
+							TempItemData.CurrentQuantity = TotalAmount;
+							NewSlot->SetItemData(TempItemData, false);
+
 							NewSlot->AlchemyInventoryUI = this;
 							NewSlot->InitSlot(true, true); // 드래그 불가 및 가마솥 투입 슬롯 활성화
 
@@ -81,9 +82,8 @@ void UAlchemyInventoryUI::InitializeSlots(const TMap<FString, FStruct_MaterialAd
 			UAlchemyCropSlotBase* NewSlot = PC ? CreateWidget<UAlchemyCropSlotBase>(PC, CropSlotClass) : nullptr;
 			if (NewSlot)
 			{
-				NewSlot->ItemID = TEXT("");
-				NewSlot->Amount = 0;
-				NewSlot->Texture = nullptr;
+				NewSlot->SetItemData(FStruct_ItemData(), true); // 빈 슬롯 상태 설정
+
 				NewSlot->AlchemyInventoryUI = this;
 				NewSlot->InitSlot(true, true); // 드래그 불가 및 가마솥 투입 슬롯 활성화
 
@@ -132,9 +132,10 @@ void UAlchemyInventoryUI::InitializeSlots(const TMap<FString, FStruct_MaterialAd
 						UAlchemyCropSlotBase* NewSlot = PC ? CreateWidget<UAlchemyCropSlotBase>(PC, CropSlotClass) : nullptr;
 						if (NewSlot)
 						{
-							NewSlot->ItemID = ItemID;
-							NewSlot->Amount = TotalAmount;
-							NewSlot->Texture = ItemData->ItemIcon;
+							FStruct_ItemData TempItemData = *ItemData;
+							TempItemData.CurrentQuantity = TotalAmount;
+							NewSlot->SetItemData(TempItemData, false);
+
 							NewSlot->AlchemyInventoryUI = this;
 							
 							// 인벤토리에 실질적으로 수량이 있을 때만 드래그 가능, 없으면 드래그 불가(흐려짐) 처리
