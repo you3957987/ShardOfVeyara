@@ -13,7 +13,9 @@ void UAGSDItemTooltipWidget::SetTooltipData(const FStruct_ItemData& InItemData)
 	// 2. 아이템 설명 설정
 	if (TXT_ItemDescription)
 	{
-		TXT_ItemDescription->SetText(InItemData.ItemDescription);
+		FString CleanedDesc = InItemData.ItemDescription.ToString();
+		CleanedDesc = CleanedDesc.Replace(TEXT("\\n"), TEXT("\n"));
+		TXT_ItemDescription->SetText(FText::FromString(CleanedDesc));
 	}
 
 	// 3. 아이템 분류 타입 한국어 변환 및 설정

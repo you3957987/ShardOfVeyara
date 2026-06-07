@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "TributeTextUI.h"
+#include "Tribute/TributeTextUI.h"
 #include "Components/UniformGridPanel.h"
 
 void UTributeTextUI::SetNextTributeItem(const TMap<FString, int32>& ItemMap)

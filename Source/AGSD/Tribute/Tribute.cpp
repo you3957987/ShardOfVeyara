@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Tribute.h"
+#include "Tribute/Tribute.h"
 
 #include "AGSDCharacter.h"
-#include "TributeTextUI.h"
-#include "TributeUI.h"
+#include "Tribute/TributeTextUI.h"
+#include "Tribute/TributeUI.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"

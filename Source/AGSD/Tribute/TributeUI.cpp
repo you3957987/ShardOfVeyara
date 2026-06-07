@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "TributeUI.h"
-#include "Tribute.h"
+#include "Tribute/TributeUI.h"
+#include "Tribute/Tribute.h"
 #include "AGSDCharacter.h"
 #include "Inventory/AGSDInventoryComponent.h"
 #include "Alchemy/UI/AlchemyInventoryUI.h"
 #include "Alchemy/UI/AlchemyCropSlotBase.h"
-#include "TributeTextUI.h"
+#include "Tribute/TributeTextUI.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/DragDropOperation.h"

@@ -164,6 +164,13 @@ void UAGSDSlotWidgetBase::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 
 void UAGSDSlotWidgetBase::SetItemData(FStruct_ItemData ItemData, bool bClear)
 {
+	// 데이터가 변경(교체/초기화)되면 기존 툴팁을 즉시 제거합니다.
+	if (ActiveTooltipInstance)
+	{
+		ActiveTooltipInstance->RemoveFromParent();
+		ActiveTooltipInstance = nullptr;
+	}
+
 	if (bClear)
 	{
 		SlotItemData.IsEmpty = true;
@@ -252,6 +259,13 @@ FReply UAGSDSlotWidgetBase::NativeOnMouseButtonDoubleClick(const FGeometry& InGe
 void UAGSDSlotWidgetBase::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
+
+	// 드래그가 감지되면 화면에 떠 있는 기존 툴팁을 즉시 제거합니다.
+	if (ActiveTooltipInstance)
+	{
+		ActiveTooltipInstance->RemoveFromParent();
+		ActiveTooltipInstance = nullptr;
+	}
 
 	UAGSDSlotDragDropOperation* DragOp = NewObject<UAGSDSlotDragDropOperation>(this);
 	if (DragOp)

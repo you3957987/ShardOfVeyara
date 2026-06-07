@@ -59,7 +59,7 @@ AAGSDCharacter::AAGSDCharacter()
 	// instead of recompiling to adjust them
 	GetCharacterMovement()->JumpZVelocity = 500.f;
 	GetCharacterMovement()->AirControl = 0.35f;
-	GetCharacterMovement()->MaxWalkSpeed = 500.f;
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
@@ -97,6 +97,16 @@ AAGSDCharacter::AAGSDCharacter()
 	InventoryComponent = CreateDefaultSubobject<UAGSDInventoryComponent>(TEXT("InventoryComponent"));
 
 	OpenedChest = nullptr;
+
+	bIsFaceCameraPressed = false;
+
+	TurnLeft90Montage = nullptr;
+	TurnRight90Montage = nullptr;
+	TurnThresholdAngle = 45.0f;
+	bIsTurning = false;
+	TurnDuration = 0.75f;
+	TurnTimer = 0.0f;
+	StartRotation = FRotator::ZeroRotator;
 
 	// 기본 장착 소켓 매핑 데이터 세팅 (블루프린트에서 편집 가능)
 	EquipSocketMappings.Add(FEquipSocketMapping(TEXT("forke"), FName("Weapon"), EHoldingWeapon::Spear, false));
@@ -203,6 +213,56 @@ bool AAGSDCharacter::CheckSingleInput(const TArray<FInputBufferEntry>& Buffer, F
 void AAGSDCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	UpdateCharacterRotationSettings();
+	TryStartTurn();
+
+	// 턴이 활성화된 상태일 때 설정한 지속 시간 동안 마우스 회전을 향해 쿼터니언 Slerp 보간 회전
+	if (bIsTurning)
+	{
+		// 회전 중 이동을 시작하면 턴을 즉시 종료하고 일반 이동 회전으로 전환
+		if (GetCharacterMovement() && GetCharacterMovement()->Velocity.SizeSquared2D() > 100.0f)
+		{
+			bIsTurning = false;
+			TurnTimer = 0.0f;
+		}
+		else
+		{
+			TurnTimer -= DeltaSeconds;
+			if (TurnTimer <= 0.0f)
+			{
+				bIsTurning = false;
+				TurnTimer = 0.0f;
+			}
+			else if (GetController() && TurnDuration > 0.0f)
+			{
+				// 경과 시간에 따른 보간 비율 Alpha 계산 (0.0 ~ 1.0)
+				float Alpha = FMath::Clamp((TurnDuration - TurnTimer) / TurnDuration, 0.0f, 1.0f);
+
+				FRotator TargetRot = GetControlRotation();
+				TargetRot.Pitch = 0.0f;
+				TargetRot.Roll = 0.0f;
+
+				// 쿼터니언을 이용해 최단 경로로 구면 선형 보간 (Slerp)
+				FQuat StartQuat = FQuat(StartRotation);
+				FQuat TargetQuat = FQuat(TargetRot);
+				FQuat NewQuat = FQuat::Slerp(StartQuat, TargetQuat, Alpha);
+
+				SetActorRotation(NewQuat);
+			}
+		}
+	}
+
+	if (GetController())
+	{
+		float ControlYaw = GetController()->GetControlRotation().Yaw;
+		float ActorYaw = GetActorRotation().Yaw;
+		TurnYawDelta = FRotator::NormalizeAxis(ControlYaw - ActorYaw);
+	}
+	else
+	{
+		TurnYawDelta = 0.0f;
+	}
 
 	// 선입력 유효 시간 초과 체크 및 해제
 	if (bHasBufferedInput)
@@ -370,6 +430,19 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 void AAGSDCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (GetCharacterMovement())
+	{
+		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	}
+
+	if (CameraBoom)
+	{
+		CameraBoom->bEnableCameraLag = true;
+		CameraBoom->CameraLagSpeed = DefaultCameraLagSpeed;
+	}
+
+	UpdateCharacterRotationSettings();
 
 	OnLockOnStateChanged.AddDynamic(this, &AAGSDCharacter::HandleLockOn);
 
@@ -625,6 +698,13 @@ void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AAGSDCharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AAGSDCharacter::StopJumping);
 
+		// Sprinting
+		if (SprintAction)
+		{
+			EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AAGSDCharacter::SprintStart);
+			EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AAGSDCharacter::SprintEnd);
+		}
+
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAGSDCharacter::Move);
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &AAGSDCharacter::StopMove);
@@ -679,6 +759,13 @@ void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 			EnhancedInputComponent->BindAction(ToggleInventoryAction, ETriggerEvent::Started, this, &AAGSDCharacter::Input_ToggleInventory);
 		}
 
+		if (FaceCameraAction)
+		{
+			EnhancedInputComponent->BindAction(FaceCameraAction, ETriggerEvent::Triggered, this, &AAGSDCharacter::FaceCameraInput);
+			EnhancedInputComponent->BindAction(FaceCameraAction, ETriggerEvent::Completed, this, &AAGSDCharacter::FaceCameraInput);
+			EnhancedInputComponent->BindAction(FaceCameraAction, ETriggerEvent::Canceled, this, &AAGSDCharacter::FaceCameraInput);
+		}
+
 		if (PauseAction)
 		{
 			EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &AAGSDCharacter::Input_Pause);
@@ -731,6 +818,8 @@ void AAGSDCharacter::Move(const FInputActionValue& Value)
 	// 움직이면 안될 때
 	if (Mining)	return;
 	
+	UpdateSprintSpeed();
+
 	// route the input
 	DoMove(MovementVector.X, MovementVector.Y);
 }
@@ -738,6 +827,7 @@ void AAGSDCharacter::Move(const FInputActionValue& Value)
 void AAGSDCharacter::StopMove()
 {
 	LastRawInputVector = FVector::ZeroVector;
+	UpdateSprintSpeed();
 
 	if (Running && Running->IsPlaying())
 	{
@@ -761,6 +851,46 @@ void AAGSDCharacter::StopJumping()
 	Super::StopJumping();
 }
 
+void AAGSDCharacter::SprintStart()
+{
+	bIsSprinting = true;
+	UpdateSprintSpeed();
+}
+
+void AAGSDCharacter::SprintEnd()
+{
+	bIsSprinting = false;
+	UpdateSprintSpeed();
+}
+
+void AAGSDCharacter::UpdateSprintSpeed()
+{
+	if (!GetCharacterMovement()) return;
+
+	bool bIsMovingBackward = false;
+	if (!LastRawInputVector.IsNearlyZero())
+	{
+		FVector ActorForward = GetActorForwardVector().GetSafeNormal2D();
+		FVector InputDir = LastRawInputVector.GetSafeNormal2D();
+		float Dot = FVector::DotProduct(ActorForward, InputDir);
+
+		// 내적이 -0.2f보다 작다면 캐릭터의 전방과 이동 입력 방향이 100도 이상 벌어졌으므로 뒷걸음질(후진)로 판단
+		if (Dot < -0.2f)
+		{
+			bIsMovingBackward = true;
+		}
+	}
+
+	if (bIsSprinting && !bIsMovingBackward)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+	}
+	else
+	{
+		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	}
+}
+
 void AAGSDCharacter::Look(const FInputActionValue& Value)
 {
 	// input is a Vector2D
@@ -769,6 +899,30 @@ void AAGSDCharacter::Look(const FInputActionValue& Value)
 	// route the input
 	DoLook(LookAxisVector.X, LookAxisVector.Y);
 }
+
+void AAGSDCharacter::FaceCameraInput(const FInputActionValue& Value)
+{
+	// 인벤토리, 상자 등 UI가 열려있는 동안에는 무시합니다.
+	if (PlayerHUDRef && PlayerHUDRef->IsInventoryOpen())
+	{
+		bIsFaceCameraPressed = false;
+		return;
+	}
+	if (ActiveCloseableUI.IsValid())
+	{
+		bIsFaceCameraPressed = false;
+		return;
+	}
+	if (OpenedChest != nullptr)
+	{
+		bIsFaceCameraPressed = false;
+		return;
+	}
+
+	bIsFaceCameraPressed = Value.Get<bool>();
+	UpdateCharacterRotationSettings();
+}
+
 
 void AAGSDCharacter::playFadeWidget(float startOpacity, float endOpacity, float fadeSpeed)
 {
@@ -1725,11 +1879,9 @@ void AAGSDCharacter::HandleLockOn(bool bLockOn)
 {
 	if (PC)
 	{
-		if (bLockOn)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("LockOn True - Note: Manual lock-on logic might be needed if this should trigger a lock-on"));
-		}
-		else
+		UpdateCharacterRotationSettings();
+
+		if (!bLockOn)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("LockOn False - Releasing LockOn"));
 			if (LockedTarget)
@@ -2175,5 +2327,44 @@ void AAGSDCharacter::UnregisterCloseableUI(UUserWidget* UI)
 	{
 		ActiveCloseableUI = nullptr;
 		UE_LOG(LogTemp, Log, TEXT("UnregisterCloseableUI - Successfully unregistered"));
+	}
+}
+
+void AAGSDCharacter::UpdateCharacterRotationSettings()
+{
+	if (!GetCharacterMovement()) return;
+
+	if (LockedTarget != nullptr || bIsFaceCameraPressed)
+	{
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+		GetCharacterMovement()->bUseControllerDesiredRotation = (LockedTarget != nullptr);
+	}
+	else
+	{
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+		GetCharacterMovement()->bUseControllerDesiredRotation = false;
+	}
+}
+
+void AAGSDCharacter::TryStartTurn()
+{
+	// 락온 중이거나, 조준 키를 안 누르고 있거나, 이미 턴 중이거나, 공격/가드/스킬 모션 중일 때는 패스
+	if (LockedTarget != nullptr || !bIsFaceCameraPressed || bIsTurning || bIsAttacking || bIsBlocking || SkillMotion)
+	{
+		return;
+	}
+
+	// 캐릭터가 이동 중일 때는 제자리 턴을 하지 않고 움직임 회전을 따르도록 패스
+	if (GetCharacterMovement() && GetCharacterMovement()->Velocity.SizeSquared2D() > 100.0f)
+	{
+		return;
+	}
+
+	float AbsYaw = FMath::Abs(TurnYawDelta);
+	if (AbsYaw >= TurnThresholdAngle)
+	{
+		bIsTurning = true;
+		StartRotation = GetActorRotation(); // 턴 시작 각도 기록
+		TurnTimer = TurnDuration; // 블루프린트에서 수정한 회전 지속 시간 적용
 	}
 }

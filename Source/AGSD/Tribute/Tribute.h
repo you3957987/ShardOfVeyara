@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "AGSDCharacter.h"
 #include "Interaction.h"
-#include "TributeUI.h"
+#include "Tribute/TributeUI.h"
 #include "GameFramework/Actor.h"
 #include "Tribute.generated.h"
 

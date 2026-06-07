@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "TributeItem.h"
+#include "Tribute/TributeItem.h"
 #include "Engine/DataTable.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"

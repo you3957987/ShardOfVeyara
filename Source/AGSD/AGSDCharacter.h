@@ -93,6 +93,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* JumpAction;
 
+	/** Sprint Input Action */
+	UPROPERTY(EditAnywhere, Category="Input")
+	class UInputAction* SprintAction;
+
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* MoveAction;
@@ -135,6 +139,10 @@ protected:
 	// 인벤토리 창 개폐 토글 액션
 	UPROPERTY(EditAnywhere, Category="Input")
 	class UInputAction* ToggleInventoryAction;
+
+	// 카메라 방향 바라보기 액션
+	UPROPERTY(EditAnywhere, Category="Input")
+	class UInputAction* FaceCameraAction;
 	
 	// 락온 타겟
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat|LockOn")
@@ -421,6 +429,45 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState")
 	float Damage = 100.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState|Movement")
+	float WalkSpeed = 400.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState|Movement")
+	float SprintSpeed = 600.0f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "PlayerState|Movement")
+	bool bIsSprinting = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState|Movement|Camera")
+	float DefaultCameraLagSpeed = 12.0f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "PlayerState|Movement|Animation")
+	float TurnYawDelta = 0.0f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "PlayerState|Movement|Camera")
+	bool bIsFaceCameraPressed = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState|Movement|Animation")
+	class UAnimMontage* TurnLeft90Montage = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState|Movement|Animation")
+	class UAnimMontage* TurnRight90Montage = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState|Movement|Animation")
+	float TurnThresholdAngle = 45.0f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "PlayerState|Movement|Animation")
+	bool bIsTurning = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerState|Movement|Animation")
+	float TurnDuration = 0.75f;
+
+	float TurnTimer = 0.0f;
+	FRotator StartRotation;
+
+	void UpdateCharacterRotationSettings();
+	void TryStartTurn();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "PlayerState")
 	bool bCanBeDamage = true;
 	
@@ -450,6 +497,11 @@ protected:
 
 	
 	virtual void StopJumping() override;
+
+	void SprintStart();
+	void SprintEnd();
+	void UpdateSprintSpeed();
+	void FaceCameraInput(const FInputActionValue& Value);
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 

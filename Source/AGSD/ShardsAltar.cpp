@@ -4,7 +4,7 @@
 #include "ShardsAltar.h"
 
 #include "NiagaraComponent.h"
-#include "Tribute.h"
+#include "Tribute/Tribute.h"
 #include "Components/SphereComponent.h"
 
 // Sets default values
