@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "CSVLogType.h" 
 #include "EnemySpawner.generated.h"
 
 UCLASS()
@@ -16,6 +17,13 @@ protected:
 		class AController* EventInstigator, AActor* DamageCauser) override;
 	
 	void PollInit(); // 틱에서 하는 초기화
+	
+	// 로그 데이터에 사용할 EnemyID
+	UPROPERTY(EditAnywhere, Category="자체설정")
+	FString EnemyLogID;
+	// 이번 전투 세션의 데이터를 실시간으로 누적할 바구니
+	UPROPERTY(BlueprintReadOnly)
+	FEnemyLogData EnemyLogData;
 	
 	UPROPERTY(EditAnywhere, Category = "자체설정")
 	bool bDebugMode = false;
@@ -92,6 +100,8 @@ protected:
 	void SpawnEnemy(); // 적 스폰 함수
 
 	void Die();
+	
+	int32 SpawnEnemyId = 0; // 스폰한 적의 고유 ID를 위한 카운터
 	
 	// 스폰시 재생할 2D 사운드
 	UPROPERTY(EditDefaultsOnly, Category="자체설정")

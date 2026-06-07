@@ -1,5 +1,6 @@
 #include "EnemyBoss/SkeletonMage/BossSkeletonMage.h"
 #include "BaseEnemy.h"
+#include "CSVLog.h"
 #include "NavigationSystem.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/SphereComponent.h"
@@ -30,7 +31,9 @@ ABossSkeletonMage::ABossSkeletonMage()
 void ABossSkeletonMage::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
+	CommonBossLogData.BossID = BossLogId; // 로그 데이터에 보스 ID 기록
+	
 	// 이 액터에 속한 모든 USceneComponent를 가져옵니다.
 	TArray<USceneComponent*> SceneComponents;
 	GetComponents<USceneComponent>(SceneComponents);
@@ -185,6 +188,8 @@ void ABossSkeletonMage::PlayTeleportMontage(const FVector& Destination)
 
 	TeleportDestination = Destination;
 	
+	BossSkeletonMageLogData.TeleportCount++;
+	
 	if ( TeleportMontage )
 	{
 		PlayAnimMontage(TeleportMontage);
@@ -272,6 +277,8 @@ void ABossSkeletonMage::PlayFireBallMontage()
 	
 	BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.FireBallDelay); // 행동 딜레이 설정
 	
+	BossSkeletonMageLogData.FireBallCount++;
+	
 	if ( FireBallMontage )
 	{
 		PlayAnimMontage(FireBallMontage);
@@ -315,6 +322,8 @@ void ABossSkeletonMage::StartSummoning(const FVector& Location1, const FVector& 
 	SummonLocations.Empty();
 	SummonLocations.Add(Location1);
 	SummonLocations.Add(Location2);
+	
+	BossSkeletonMageLogData.SummonCount++;
 	
 	if ( SummonEnemyMontage )
 	{
@@ -376,6 +385,11 @@ void ABossSkeletonMage::SummonEnemy()
 					FRotator::ZeroRotator, FVector(20.f));
 			}
 			
+			if ( SpawnedEnemy )
+			{
+				SpawnedEnemy->EnemyLogID = FString::Printf(TEXT("%s_SummonedEnemy"), *BossLogId);
+			}
+			
 			// 보스와 소환되는 거리 로그 매니저로 출력
 			UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, FString::Printf(TEXT("[스켈레톤 메이지] 적 소환: %s (거리: %.2f)"), 
 				*SpawnedEnemy->GetName(), FVector::Dist(GetActorLocation(), SpawnLocation)));
@@ -426,6 +440,8 @@ void ABossSkeletonMage::PlayGroundAreaAttackMontage()
 	
 	BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.GroundAttackDelay); // 행동 딜레이 설정
 
+	BossSkeletonMageLogData.GroundAttackCount++;
+	
 	GroundTargetingComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
 		GetWorld(),
 		GroundTargetingEffect,
@@ -544,6 +560,8 @@ void ABossSkeletonMage::PlayPushTargetMontage()
 	
 	BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.PushTargetDelay); // 행동 딜레이 설정
 	
+	BossSkeletonMageLogData.PushTargetCount++;
+	
 	if ( PushTargetMontage )
 	{
 		PlayAnimMontage(PushTargetMontage);
@@ -566,6 +584,8 @@ void ABossSkeletonMage::GravityAttack()
 	if ( BlackboardComp == nullptr ) return;
 	
 	BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.GravityAttackDelay);
+	
+	BossSkeletonMageLogData.GravityAttackCount++;
 	
 	if ( GravityAttackMontage )
 	{
@@ -675,8 +695,13 @@ void ABossSkeletonMage::EndGravityAttack()
 					UGameplayStatics::ApplyDamage(OverlappedChar, 
 						AttackStruct.GravityAttackDamage, GetController(), this, UDamageType::StaticClass());
 					
+					CommonBossLogData.TotalDamageDealt += AttackStruct.GravityAttackDamage;
+					BossSkeletonMageLogData.GravityAttackDamage += AttackStruct.GravityAttackDamage;
+					
 					UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, 
 						FString::Printf(TEXT("[스켈레톤 메이지] 중력 공격으로 플레이어에게 %.2f 대미지"), AttackStruct.GravityAttackDamage));
+					
+					BossSkeletonMageLogData.GravityAttackDamage += AttackStruct.GravityAttackDamage;
 				}
 			}
 		}
@@ -906,6 +931,9 @@ void ABossSkeletonMage::SummonThunderToPlayer()
 					// 대미지 수치는 AttackStruct나 별도 변수에서 가져오시면 됩니다.
 					UGameplayStatics::ApplyDamage(HitActor, AttackStruct.SecondPhaseThunderAttackDamage, GetController(), this, UDamageType::StaticClass());
 					
+					BossSkeletonMageLogData.SecondPhaseThunderAttackDamage += AttackStruct.SecondPhaseThunderAttackDamage;
+					CommonBossLogData.TotalDamageDealt += AttackStruct.SecondPhaseThunderAttackDamage;
+					
 					UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, 
 						FString::Printf(TEXT("[스켈레톤 메이지] 2페이즈 번개 공격으로 플레이어에게 %.2f 대미지"), AttackStruct.SecondPhaseThunderAttackDamage));
 				}
@@ -980,9 +1008,24 @@ void ABossSkeletonMage::StartSummonRandomMeteor()
                         
                         UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, 
                             TEXT("[스켈레톤 메이지] 단일 메테오 적중"));
+                    	
+                    	BossSkeletonMageLogData.SecondPhaseMeteorAttackDamage += AttackStruct.SecondPhaseMeteorAttackDamage;
+						CommonBossLogData.TotalDamageDealt += AttackStruct.SecondPhaseMeteorAttackDamage;
                     }
                 }
             }
         }, FallDelay, false);
     }
+}
+
+void ABossSkeletonMage::EndBattleLog()
+{
+	Super::EndBattleLog();
+	
+	BossSkeletonMageLogData.Base = CommonBossLogData;
+	
+	UCSVLog::AddSkeletonMageLog( TEXT("Test"), BossSkeletonMageLogData );
+	
+	CommonBossLogData = FCommonBossLogData();
+	BossSkeletonMageLogData = FBossSkeletonMageLogData();
 }

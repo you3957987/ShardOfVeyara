@@ -43,34 +43,35 @@ EBTNodeResult::Type UBTTask_BossSelectWeight::ExecuteTask(UBehaviorTreeComponent
 	ABaseBossEnemy* Boss = Cast<ABaseBossEnemy>(ControlledPawn);
 	FString SelectedRangeName;
 	
-	// 거리별 분기 처리
-	if (Distance <= CloseRangeDistance) // 근거리
+	if ( Boss )
 	{
-		ApplyWeights(CloseRangeWeights);
-		// 로그
-		UE_LOG(LogTemp, Warning, TEXT("Distance: %f - Close Range Weights Applied"), Distance);
-		SelectedRangeName = TEXT("근거리");
-	}
-	else if (Distance > CloseRangeDistance && Distance <= MidRangeDistance) // 중거리
-	{
-		ApplyWeights(MidRangeWeights);
-		// 로그
-		UE_LOG(LogTemp, Warning, TEXT("Distance: %f - Mid Range Weights Applied"), Distance);
-		SelectedRangeName = TEXT("중거리");
-	}
-	else // 원거리
-	{
-		ApplyWeights(FarRangeWeights);
-		// 로그
-		UE_LOG(LogTemp, Warning, TEXT("Distance: %f - Far Range Weights Applied"), Distance);
-		SelectedRangeName = TEXT("원거리");
-	}
-	
-	// 보스에게 로그 전송
-	if (Boss)
-	{
+		// 거리별 분기 처리
+		if (Distance <= CloseRangeDistance) // 근거리
+		{
+			ApplyWeights(CloseRangeWeights);
+			// 로그
+			UE_LOG(LogTemp, Warning, TEXT("Distance: %f - Close Range Weights Applied"), Distance);
+			SelectedRangeName = TEXT("Short Range");
+			Boss->CommonBossLogData.ShortRangePatternCount++; // 로그 데이터에 근거리 패턴 선택 횟수 누적
+		}
+		else if (Distance > CloseRangeDistance && Distance <= MidRangeDistance) // 중거리
+		{
+			ApplyWeights(MidRangeWeights);
+			// 로그
+			UE_LOG(LogTemp, Warning, TEXT("Distance: %f - Mid Range Weights Applied"), Distance);
+			SelectedRangeName = TEXT("Mid Range");
+			Boss->CommonBossLogData.MidRangePatternCount++; // 로그 데이터에 중거리 패턴 선택 횟수 누적
+		}
+		else // 원거리
+		{
+			ApplyWeights(FarRangeWeights);
+			// 로그
+			UE_LOG(LogTemp, Warning, TEXT("Distance: %f - Far Range Weights Applied"), Distance);
+			SelectedRangeName = TEXT("Long Range");
+			Boss->CommonBossLogData.LongRangePatternCount++; // 로그 데이터에 원거리 패턴 선택 횟수 누적
+		}
 		Boss->SelectedRangeName = SelectedRangeName; // 선택된 거리 범주 이름 저장
 	}
-
+	
 	return EBTNodeResult::Succeeded;
 }

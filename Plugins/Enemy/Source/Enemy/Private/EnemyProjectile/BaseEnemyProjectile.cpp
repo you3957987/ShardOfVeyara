@@ -4,6 +4,8 @@
 #include "NiagaraComponent.h"
 #include "Components/SphereComponent.h"
 #include "Enemy/BaseRangedEnemy.h"
+#include "EnemyBoss/MagicSwordMan/BossMagicSwordMan.h"
+#include "EnemyBoss/SkeletonMage/BossSkeletonMage.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -119,14 +121,36 @@ void ABaseEnemyProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedCompone
 				
 				if (OwnerMeshName.Contains(TEXT("MagicSwordMan")))
 				{
+					ABossMagicSwordMan* BossOwner = Cast<ABossMagicSwordMan>(GetOwner());
+					
+					if ( BossOwner )
+					{
+						BossOwner->BossMagicSwordManLogData.BladeWaveAttackDamage += Damage; // 로그 데이터에 입힌 대미지 누적
+						BossOwner->CommonBossLogData.TotalDamageDealt += Damage; // 공통 로그 데이터에도 누적
+					}
+					
 					UEnemyLogManager::EnemyLog(EEnemyLogType::MagicSwordMan, FString::Printf(TEXT("[소드맨] 검기가 [%.f] 대미지 줌"), Damage));
 				}
 				else if ( OwnerMeshName.Contains(TEXT("Skeleton_Mage")) )
 				{
 					UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, FString::Printf(TEXT("[스켈레톤 메이지] 마법구 충돌 [%.f] 대미지 줌"), Damage ));
+					
+					ABossSkeletonMage* BossOwner = Cast<ABossSkeletonMage>(GetOwner());
+					
+					if ( BossOwner )
+					{
+						BossOwner->BossSkeletonMageLogData.FireBallDamage += Damage; // 로그 데이터에 입힌 대미지 누적
+						BossOwner->CommonBossLogData.TotalDamageDealt += Damage; // 공통 로그 데이터에도 누적
+					}
+					
 				}
 				else
 				{
+					
+					ABaseEnemy* EnemyOwner = Cast<ABaseEnemy>(GetOwner());
+					
+					if ( EnemyOwner ) EnemyOwner->EnemyLogData.TotalDamageDealt += Damage; // 로그 데이터에 입힌 대미지 누적
+					
 					ABaseRangedEnemy* RangedCharacter = Cast<ABaseRangedEnemy>(GetOwner());
 					
 					UEnemyLogManager::EnemyLog( RangedCharacter->GetEnemyType() == EEnemyType::EET_Ranged ? EEnemyLogType::Ranged : EEnemyLogType::Revive,

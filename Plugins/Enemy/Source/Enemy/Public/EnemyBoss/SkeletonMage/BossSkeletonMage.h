@@ -76,8 +76,13 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 		class AController* EventInstigator, AActor* DamageCauser) override;
 	
+	virtual void EndBattleLog() override;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	FBossSkeletonMageAttackStruct AttackStruct;
+	
+	UPROPERTY(BlueprintReadOnly)
+	FBossSkeletonMageLogData BossSkeletonMageLogData;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "자체설정")
 	class UAnimMontage* TeleportMontage;

@@ -89,6 +89,8 @@ float ABaseGuardEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const&
 					*MeshName, DamageAmount, DamageWhileGuarding, MaxDamageToReaction));
 		}
 		
+		EnemyLogData.TotalDamageGuarded += DamageAmount; // 로그 데이터에 가드한 대미지 누적
+		
 		return 0.f; // 대미지 무효화
 	}
 	
@@ -101,6 +103,8 @@ void ABaseGuardEnemy::GuardReactionAttack()
 	{
 		PlayAnimMontage(GuardReactionAttackMontage); // 공격 애니메이션 재생
 	}
+	
+	EnemyLogData.CounterAttackCount += 1; // 로그 데이터에 가드 반격 횟수 누적
 	
 	AttackDamage = GuardReactionDamage; // 공격 대미지를 가드 리액션 공격 대미지로 설정
 
@@ -130,6 +134,8 @@ void ABaseGuardEnemy::OnBeginOverlapWeaponCollisionSphere(UPrimitiveComponent* O
 					*AttackTypeName,
 					AttackDamage));
 		}
+		
+		EnemyLogData.TotalDamageDealt += AttackDamage; // 로그 데이터에 입힌 대미지 누적
 		
 		// 대미지 적용 ( 어택 대미지는 공격 전 가드 공격인지 아님 일반 공격인지에 따라 각각 함수에서 설정 )
 		UGameplayStatics::ApplyDamage(OtherActor, AttackDamage, GetController(),

@@ -1,5 +1,6 @@
 #include "EnemyProjectile/BaseDelayedBurstProjectile.h"
 
+#include "BaseEnemy.h"
 #include "EnemyLogManager.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
@@ -84,6 +85,11 @@ void ABaseDelayedBurstProjectile::Explode()
 		// 자기 자신 무시, 플레이어 태그 확인 (필요시 태그 조건 제거 가능)
 		if (Actor && Actor != this && Actor->ActorHasTag("Player"))
 		{
+			if ( ABaseEnemy* EnemyOwner = Cast<ABaseEnemy>(GetOwner()) )
+			{
+				EnemyOwner->EnemyLogData.TotalDamageDealt += ExplosionDamage; // 로그 데이터에 입힌 대미지 누적
+			}
+			
 			// 사체의 소유자(Owner)를 가져와서 캐릭터인지 확인
 			if (ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner()))
 			{

@@ -52,6 +52,7 @@ public:
 	// 죽음 몽타주 끝난 후 호출되는 함수 - 애님 노티파이에서 호출 -> 부모꺼 안쓰고 수정
 	//UFUNCTION(BlueprintCallable) // 오버라이드시에는 UFUNCTION 필요 없음
 	virtual void AfterDieMontageEnd() override; 
+	virtual void Die() override; // 죽음 처리 함수도 오버라이드해서 소울 생성 로직 추가
 	
 	// 부활 처리 함수
 	void Revive();

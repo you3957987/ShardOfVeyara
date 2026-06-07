@@ -1,5 +1,6 @@
 #include "EnemyBoss/MagicSwordMan/BossMagicSwordMan.h"
 
+#include "CSVLog.h"
 #include "MotionWarpingComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -23,6 +24,8 @@ ABossMagicSwordMan::ABossMagicSwordMan()
 void ABossMagicSwordMan::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	CommonBossLogData.BossID = BossLogId; // 로그 데이터에 보스 ID 기록
 	
 	TArray<UCapsuleComponent*> CapsuleCollisionComps;
 	GetComponents<UCapsuleComponent>(CapsuleCollisionComps);
@@ -71,6 +74,8 @@ float ABossMagicSwordMan::TakeDamage(float DamageAmount, struct FDamageEvent con
 			FString::Printf(TEXT("[소드맨] 가드 성공 | 가드로 막은 대미지: [%.f] | 가드중 받은 대미지 / 반격 임계치[%.f / %.f]"), 
 				DamageAmount, DamageWhileGuarding, AttackStruct.MaxDamageToReaction));
 		
+		BossMagicSwordManLogData.TotalDamageGuarded += DamageAmount; // 로그 데이터에 가드로 막은 대미지 누적
+		
 		return 0.f; // 대미지 무효화
 	}
 	
@@ -96,7 +101,7 @@ float ABossMagicSwordMan::TakeDamage(float DamageAmount, struct FDamageEvent con
 }
 
 void ABossMagicSwordMan::OnBeginOverlapWeaponCollisionSphere(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                                             UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if ( AttackDamage == 0.f ) return; // 대미지가 0이면 피격 처리 안 함
 	
@@ -109,7 +114,8 @@ void ABossMagicSwordMan::OnBeginOverlapWeaponCollisionSphere(UPrimitiveComponent
 		UGameplayStatics::ApplyDamage(OtherActor, AttackDamage, GetController(),
 			this, UDamageType::StaticClass());
 
-		if ( AttackType == EMagicSwordManAttackType::JumpUpAttack )
+		if ( AttackType == EMagicSwordManAttackType::CloseJumpUpAttack || 
+			AttackType == EMagicSwordManAttackType::DashJumpUpAttack )
 		{
 			// 플레이어 캐릭터 캐스팅
 			ACharacter* HitCharacter = Cast<ACharacter>(OtherActor);
@@ -129,25 +135,40 @@ void ABossMagicSwordMan::OnBeginOverlapWeaponCollisionSphere(UPrimitiveComponent
 			}
 		}
 		
-		if ( AttackType == EMagicSwordManAttackType::SimpleAttack )
+		if ( AttackType == EMagicSwordManAttackType::CloseAttack )
 		{
-			UEnemyLogManager::EnemyLog(EEnemyLogType::MagicSwordMan, FString::Printf(TEXT("[소드맨] 일반 공격 적중 | 대미지: [%.f]"), AttackDamage));
+			BossMagicSwordManLogData.CloseAttackDamage += AttackDamage;
+			CommonBossLogData.TotalDamageDealt += AttackDamage;
 		}
-		else if ( AttackType == EMagicSwordManAttackType::JumpUpAttack )
+		else if ( AttackType == EMagicSwordManAttackType::DashAttack )
 		{
-			UEnemyLogManager::EnemyLog(EEnemyLogType::MagicSwordMan, FString::Printf(TEXT("[소드맨] 띄우기 공격 적중 | 대미지: [%.f]"), AttackDamage));
+			BossMagicSwordManLogData.DashAttackDamage += AttackDamage;
+			CommonBossLogData.TotalDamageDealt += AttackDamage;
 		}
+		else if ( AttackType == EMagicSwordManAttackType::CloseJumpUpAttack )
+		{
+			BossMagicSwordManLogData.CloseJumpUpAttackDamage += AttackDamage;
+			CommonBossLogData.TotalDamageDealt += AttackDamage;
+		}
+		else if ( AttackType == EMagicSwordManAttackType::DashJumpUpAttack )
+		{
+			BossMagicSwordManLogData.DashJumpUpAttackDamage += AttackDamage;
+			CommonBossLogData.TotalDamageDealt += AttackDamage;
+		}
+		else if ( AttackType == EMagicSwordManAttackType::GuardCounterAttack )
+		{
+			BossMagicSwordManLogData.GuardCounterAttackDamage += AttackDamage;
+			CommonBossLogData.TotalDamageDealt += AttackDamage;
+		} 
 		else if ( AttackType == EMagicSwordManAttackType::AirAttack )
 		{
-			UEnemyLogManager::EnemyLog(EEnemyLogType::MagicSwordMan, FString::Printf(TEXT("[소드맨] 공중 공격 적중 | 대미지: [%.f]"), AttackDamage));
+			BossMagicSwordManLogData.AirAttackDamage += AttackDamage;
+			CommonBossLogData.TotalDamageDealt += AttackDamage;
 		}
 		else if ( AttackType == EMagicSwordManAttackType::JumpAttack )
 		{
-			UEnemyLogManager::EnemyLog(EEnemyLogType::MagicSwordMan, FString::Printf(TEXT("[소드맨] 점프 공격 적중 | 대미지: [%.f]"), AttackDamage));
-		} 
-		else if ( AttackType == EMagicSwordManAttackType::GuardReaction )
-		{
-			UEnemyLogManager::EnemyLog(EEnemyLogType::MagicSwordMan, FString::Printf(TEXT("[소드맨] 가드 반격 공격 적중 | 대미지: [%.f]"), AttackDamage));
+			BossMagicSwordManLogData.JumpAttackDamage += AttackDamage;
+			CommonBossLogData.TotalDamageDealt += AttackDamage;
 		}
 		
 		// 다시 콜리전 끄기
@@ -180,7 +201,10 @@ UAnimMontage* ABossMagicSwordMan::StartCloseAttack()
 		if (CloseAttackMontages[RandomIndex])
 		{
 			PlayAnimMontage(CloseAttackMontages[RandomIndex]);
-			AttackType = EMagicSwordManAttackType::SimpleAttack;
+			AttackType = EMagicSwordManAttackType::CloseAttack;
+			
+			BossMagicSwordManLogData.CloseAttackCount++;
+			
 			if (BlackboardComp) BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.CloseAttackDelay);
 			return CloseAttackMontages[RandomIndex];
 		}
@@ -199,7 +223,10 @@ UAnimMontage* ABossMagicSwordMan::StartDashAttack()
 		if (DashAttackMontages[RandomIndex])
 		{
 			PlayAnimMontage(DashAttackMontages[RandomIndex]);
-			AttackType = EMagicSwordManAttackType::SimpleAttack;
+			AttackType = EMagicSwordManAttackType::DashAttack;
+			
+			BossMagicSwordManLogData.DashAttackCount++;
+			
 			if (BlackboardComp) BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.DashAttackDelay);
 			return DashAttackMontages[RandomIndex];
 		}
@@ -214,7 +241,10 @@ UAnimMontage* ABossMagicSwordMan::StartCloseJumpUpAttack()
 	if (CloseJumpUpAttackMontage)
 	{
 		PlayAnimMontage(CloseJumpUpAttackMontage);
-		AttackType = EMagicSwordManAttackType::JumpUpAttack;
+		AttackType = EMagicSwordManAttackType::CloseJumpUpAttack;
+		
+		BossMagicSwordManLogData.CloseJumpUpAttackCount++;
+		
 		// 플라잉 모드로 전환
 		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
 		bSuccessJumpUpAttack = false; // 공격 시작 시점에는 띄우기 성공 여부를 false로 초기화
@@ -233,7 +263,10 @@ UAnimMontage* ABossMagicSwordMan::StartDashJumpUpAttack()
 	if (DashJumpUpAttackMontage)
 	{
 		PlayAnimMontage(DashJumpUpAttackMontage);
-		AttackType = EMagicSwordManAttackType::JumpUpAttack;
+		AttackType = EMagicSwordManAttackType::DashJumpUpAttack;
+		
+		BossMagicSwordManLogData.DashJumpUpAttackCount++;
+		
 		// 플라잉 모드로 전환
 		GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
 		bSuccessJumpUpAttack = false; // 공격 시작 시점에는 띄우기 성공 여부를 false로 초기화
@@ -257,6 +290,8 @@ void ABossMagicSwordMan::JumpUpAttackCheck()
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	if ( bSuccessJumpUpAttack == true )
 	{
+		BossMagicSwordManLogData.JumpUpAttackSuccessCount++;
+		
 		// 띄우기 성공 시 공중 공격 패턴으로 전환
 		BlackboardComp->SetValueAsBool("AirAttack", true);
 		
@@ -315,6 +350,9 @@ UAnimMontage* ABossMagicSwordMan::StartJumpAttack()
 		{
 			PlayAnimMontage(JumpAttackMontages[RandomIndex]);
 			AttackType = EMagicSwordManAttackType::JumpAttack;
+			
+			BossMagicSwordManLogData.JumpAttackCount++;
+			
 			if (BlackboardComp) BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.JumpAttackDelay);
 			return JumpAttackMontages[RandomIndex];
 		}
@@ -337,8 +375,10 @@ UAnimMontage* ABossMagicSwordMan::StartGuardReactionAttack()
 		
 		if (GuardReactionMontages[RandomIndex])
 		{
+			BossMagicSwordManLogData.GuardCounterAttackCount++;
+			
 			PlayAnimMontage(GuardReactionMontages[RandomIndex]);
-			AttackType = EMagicSwordManAttackType::GuardReaction;
+			AttackType = EMagicSwordManAttackType::GuardCounterAttack;
 			return GuardReactionMontages[RandomIndex];
 		}
 	}
@@ -404,6 +444,9 @@ void ABossMagicSwordMan::HandlePowerAttackDamage(AActor* OtherActor)
 
 	UEnemyLogManager::EnemyLog(EEnemyLogType::MagicSwordMan, FString::Printf(TEXT("[소드맨] 궁극기 대미지 적용 | 대미지: [%.f]"), AttackDamage));
 	
+	BossMagicSwordManLogData.PowerAttackDamage += AttackDamage;
+	CommonBossLogData.TotalDamageDealt += AttackDamage;
+	
 	// 2. 파라미터(OtherActor)를 전달하기 위해 델리게이트 생성
 	FTimerDelegate TimerCallback;
 	TimerCallback.BindUObject(this, &ABossMagicSwordMan::OnPowerAttackTimerTick, OtherActor);
@@ -460,6 +503,9 @@ void ABossMagicSwordMan::FinishPowerAttack()
 		// 피니쉬 대미지 로그
 		UE_LOG(LogTemp, Warning, TEXT("Boss Power Attack Finish Damage : %f"), AttackStruct.PowerAttackFinishDamage);
 		
+		BossMagicSwordManLogData.PowerAttackDamage += AttackStruct.PowerAttackFinishDamage;
+		CommonBossLogData.TotalDamageDealt += AttackStruct.PowerAttackFinishDamage;
+		
 		// 타겟 움직임 및 입력 복구 
 		if (ACharacter* HitCharacter = Cast<ACharacter>(TargetCharacter))
 		{
@@ -488,8 +534,9 @@ UAnimMontage* ABossMagicSwordMan::StartBladeWaveAttack()
 {
 	if (BladeWaveAttackMontage)
 	{
+		BossMagicSwordManLogData.BladeWaveAttackCount++;
+		
 		PlayAnimMontage(BladeWaveAttackMontage);
-		AttackType = EMagicSwordManAttackType::SimpleAttack;
 		if (BlackboardComp) BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.BladeWaveAttackDelay);
 		return BladeWaveAttackMontage;
 	}
@@ -511,6 +558,8 @@ UAnimMontage* ABossMagicSwordMan::StartDashBack()
 {
 	if ( DashBackMontage )
 	{
+		BossMagicSwordManLogData.BackDashCount++;
+		
 		PlayAnimMontage(DashBackMontage);
 		
 		if (BlackboardComp) BlackboardComp->SetValueAsFloat("AttackDelay", AttackStruct.BackDashDelay);
@@ -630,6 +679,9 @@ void ABossMagicSwordMan::RushStrike()
 					PlayerChar->LaunchCharacter(LaunchVelocity, true, true);
 				}
 
+				BossMagicSwordManLogData.RushStrikeAttackDamage += AttackStruct.RushStrikeAttackDamage;
+				CommonBossLogData.TotalDamageDealt += AttackStruct.RushStrikeAttackDamage;
+				
 				UEnemyLogManager::EnemyLog(EEnemyLogType::MagicSwordMan, 
 					FString::Printf(TEXT("[소드맨] RushStrike 적중 | 대미지: [%.f] | 밀치기 적용"),  AttackStruct.RushStrikeAttackDamage));
 			}
@@ -638,6 +690,18 @@ void ABossMagicSwordMan::RushStrike()
 	if ( bDebugMode == true )DrawDebugSphere(GetWorld(), FootLocation, DamageRadius, 12, FColor::Red, false, 2.0f);
 
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+}
+
+void ABossMagicSwordMan::EndBattleLog()
+{
+	Super::EndBattleLog();
+	
+	BossMagicSwordManLogData.Base = CommonBossLogData;
+	
+	UCSVLog::AddMagicSwordManLog( TEXT("Test"), BossMagicSwordManLogData);
+	
+	CommonBossLogData = FCommonBossLogData(); // 공통 로그 데이터 초기화
+	BossMagicSwordManLogData = FBossMagicSwordManLogData(); // 보스별 로그 데이터 초기화
 }
 
 #if WITH_EDITOR

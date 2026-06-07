@@ -98,11 +98,13 @@ struct FBossMagicSwordManAttackStruct
 UENUM(BlueprintType)
 enum class EMagicSwordManAttackType : uint8
 {
-	SimpleAttack UMETA(DisplayName = "SimpleAttack"), 
-	JumpUpAttack UMETA(DisplayName = "JumpUpAttack"),
-	AirAttack UMETA(DisplayName = "AirAttack"),
+	CloseAttack UMETA(DisplayName = "CloseAttack"),
+	DashAttack UMETA(DisplayName = "DashAttack"),
+	CloseJumpUpAttack UMETA(DisplayName = "CloseJumpUpAttack"),
+	DashJumpUpAttack UMETA(DisplayName = "DashJumpUpAttack"),
 	JumpAttack UMETA(DisplayName = "JumpAttack"),
-	GuardReaction UMETA(DisplayName = "GuardReaction"),
+	GuardCounterAttack UMETA(DisplayName = "GuardCounterAttack"),
+	AirAttack UMETA(DisplayName = "AirAttack"),
 };
 
 UCLASS()
@@ -121,6 +123,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, 
 		class AController* EventInstigator, AActor* DamageCauser) override;
+	virtual void EndBattleLog() override;
 	
 	UFUNCTION()
 	void OnBeginOverlapWeaponCollisionSphere(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -138,7 +141,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "자체설정")
 	FBossMagicSwordManAttackStruct AttackStruct;
 	
-	EMagicSwordManAttackType AttackType = EMagicSwordManAttackType::SimpleAttack;
+	UPROPERTY(BlueprintReadOnly)
+	FBossMagicSwordManLogData BossMagicSwordManLogData;
+	
+	EMagicSwordManAttackType AttackType = EMagicSwordManAttackType::CloseAttack; // 기본값은 근접 공격으로 설정
 	
 	// 가드시 히트 몽타주
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "자체설정")

@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "EnemyLogManager.h"
 #include "Interface/ItemDropInterface.h"
+#include "CSVLogType.h" 
 #include "BaseEnemy.generated.h"
 
 // 에디터 에너미 폴더 안의 ENUM 안에다가도 추가해줘야함!!!!!!!!!!!!!!!!!!!!!!!!
@@ -65,6 +66,16 @@ public:
 	class UBlackboardComponent* BlackboardComp; // 블랙보드 컴포넌트 포인터
 	bool bBlackboardInitialized = false;
 	
+	// 로그 데이터에 사용할 EnemyID
+	UPROPERTY(EditAnywhere, Category="자체설정")
+	FString EnemyLogID;
+	// 이번 전투 세션의 데이터를 실시간으로 누적할 바구니
+	UPROPERTY(BlueprintReadOnly)
+	FEnemyLogData EnemyLogData;
+	// 적 타입
+	UPROPERTY(EditAnywhere, Category="자체설정")
+	EEnemyType EnemyType = EEnemyType::EET_Melee;
+	FString GetEnemyTypeAsString() const;
 	// 아이템 드롭 테이블에 사용하는 에너미 ID
 	UPROPERTY(EditAnywhere, Category="자체설정")
 	FName ItemDropTableEnemyID;
@@ -93,9 +104,6 @@ public:
 	UPROPERTY(EditAnywhere, Category="자체설정")
 	bool bCheckDeadLogic = false;
 	void TestDeadLogic(); // 테스트용 죽음 로직 함수
-	// 적 타입
-	UPROPERTY(EditAnywhere, Category="자체설정")
-	EEnemyType EnemyType = EEnemyType::EET_Melee;
 	// 최대 체력
 	UPROPERTY(EditAnywhere, Category="자체설정")
 	float MaxHealth = 50.f;
@@ -149,7 +157,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="자체설정")
 	float DeadEffectScale = 1.0f;
 	// 죽음 처리 함수
-	void Die();
+	virtual void Die();
 	// 죽음 몽타주 끝난 후 호출되는 함수 - 애님 노티파이에서 호출
 	UFUNCTION(BlueprintCallable)
 	virtual void AfterDieMontageEnd();

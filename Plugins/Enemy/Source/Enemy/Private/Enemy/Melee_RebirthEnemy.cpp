@@ -30,7 +30,6 @@ AMelee_RebirthEnemy::AMelee_RebirthEnemy()
 float AMelee_RebirthEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 	class AController* EventInstigator, AActor* DamageCauser)
 {
-	
 	// 소울 상태인지 먼저 확인하
 	if (bIsActiveSoul)
 	{
@@ -45,7 +44,8 @@ float AMelee_RebirthEnemy::TakeDamage(float DamageAmount, struct FDamageEvent co
 			}
    
 			bReviveFlag = false;
-			SpawnDeadEffectAndDestroy(); 
+			EndBattleLog(); // 전투 로그 종료
+			SpawnDeadEffectAndDestroy();
 		}
 
 		// 소울 상태에서는 물리 데미지 수치 반환 or 0 반환
@@ -71,11 +71,36 @@ void AMelee_RebirthEnemy::AfterDieMontageEnd()
 		GetWorld()->GetTimerManager().SetTimer(DeathTimerHandle, this,
 			&ABaseEnemy::SpawnDeadEffectAndDestroy, 1.0f, false);
 
+		EnemyLogData.Result = TEXT("EnemyDead"); // 로그 데이터에 결과 기록
+		
+		EndBattleLog();
 		return;
 	}
 	else
 	{
 		SpawnSoul(); // 소울 생성 함수 호출
+	}
+}
+
+void AMelee_RebirthEnemy::Die()
+{
+	//Super::Die(); // 부모꺼 안씀
+	
+	if ( DeathMontage ) PlayAnimMontage(DeathMontage);
+	
+	// 충돌 비활성화
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCharacterMovement()->DisableMovement();
+
+	// AI 로직 중지
+	if (BlackboardComp)
+	{
+		BlackboardComp->SetValueAsBool(TEXT("IsDead"), true);
+	}
+	
+	if (HealthBarWidget)
+	{
+		HealthBarWidget->SetVisibility(false);
 	}
 }
 
@@ -150,6 +175,8 @@ void AMelee_RebirthEnemy::Revive()
 			FString::Printf(TEXT("적 [%s]가 부활"), 
 				*MeshName));
 	}
+	
+	EnemyLogData.ReviveCount++; // 로그 데이터에 부활 횟수 누적
 }
 
 void AMelee_RebirthEnemy::AfterReviveMontageEnd()

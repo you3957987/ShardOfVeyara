@@ -44,6 +44,8 @@ void ABaseExploderEnemy::Explode()
 					);
 				}
 				
+				EnemyLogData.TotalDamageDealt += ExplosionDamage; // 로그 데이터에 입힌 대미지 누적
+				
 				//액터에게 데미지 적용
 				UGameplayStatics::ApplyDamage(
 					Actor,
