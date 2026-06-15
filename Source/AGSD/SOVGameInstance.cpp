@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Struct_ItemData.h"
 #include "Engine/DataTable.h"
+#include "GameplayLogSubsystem.h"
 
 USOVGameInstance::USOVGameInstance()
 {
@@ -102,6 +103,11 @@ FSaveData USOVGameInstance::GetSaveData()
 	SaveData.AlreadyDroppedItems = AlreadyDroppedItems;
 	SaveData.MouseSensitivity = MouseSensitivity;
 	
+	if (UGameplayLogSubsystem* LogSubsystem = GetSubsystem<UGameplayLogSubsystem>())
+	{
+		SaveData.LogData = LogSubsystem->GetLogData();
+	}
+	
 	return SaveData; 
 }
 
@@ -127,6 +133,11 @@ void USOVGameInstance::SetSaveData(FSaveData SaveData)
 	CurrentLevelTributeItems = SaveData.CurrentLevelTributeItems;
 	AlreadyDroppedItems = SaveData.AlreadyDroppedItems;
 	MouseSensitivity = SaveData.MouseSensitivity;
+
+	if (UGameplayLogSubsystem* LogSubsystem = GetSubsystem<UGameplayLogSubsystem>())
+	{
+		LogSubsystem->SetLogData(SaveData.LogData);
+	}
 }
 
 void USOVGameInstance::SaveGame()

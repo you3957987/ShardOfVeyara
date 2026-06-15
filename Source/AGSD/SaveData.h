@@ -3,6 +3,7 @@
 #include "Alchemy/AlchemySaveData.h"
 #include "Struct_InventorySlotData.h"
 #include "Struct_WorldChestData.h"
+#include "Struct_GameplayLogData.h"
 #include "SaveData.generated.h"
 
 USTRUCT(BlueprintType)
@@ -72,6 +73,9 @@ struct FSaveData : public FTableRowBase
 
 	UPROPERTY()
 	float Damage;
+
+	UPROPERTY()
+	FGameplayLogData LogData;
 
 	FSaveData()
 	{
