@@ -5,6 +5,27 @@
 
 
 
+/*
+특징 5개 :
+전투 (액션) - 시스템/콘텐츠
+플랫포머 - 콘텐츠/조작
+농사 - 콘텐츠/루프
+스테이지 - 레벨 디자인
+성장 시스템 - 시스템/기획
+
+거점 : 성장, 농사, 
+숲 : 플랫포머, 
+던전 : 퍼즐(기믹), 전투,  
+
+로그 데이터 설문 조사 목록
+[전투 피로도 및 템포] 몬스터 및 보스와의 평균 교전 시간(전투 호흡)은 지루하거나 늘어지지 않고 적절했습니까?
+[공격 직관성 및 대처] 적들의 공격 패턴(근거리/원거리 등)은 유저가 전조 증상을 인지하고 대응하기에 공정했습니까?
+[공격성 및 난이도] 적이 가하는 데미지의 양이나 공격의 빈도가 불쾌감을 주지 않고 긴장감을 유지하기에 적절했습니까?
+[방어 기믹 및 타격감] 적이 나의 공격을 방어(가드)하거나 반격하는 시스템이 전투의 전략성을 높여주었습니까, 아니면 맥을 끊어 답답했습니까?
+[맷집 및 성취감] 적들의 체력은 내가 넣는 대미지에 비해 과도하게 많지 않고 사냥의 성취감을 주기에 적절했습니까?
+[개체 수 및 배치 피로도] 맵에 등장하는 몬스터의 스폰 양이나 부활 빈도가 동선을 지나치게 방해하거나 피로감을 주지 않았습니까?
+*/
+
 USTRUCT(BlueprintType)
 struct FEnemyLogData
 {
@@ -262,4 +283,16 @@ struct FBossMagicSwordManLogData
 		return FString::Printf(TEXT("%s,CloseAttackCount,CloseAttackDamage,DashAttackCount,DashAttackDamage,CloseJumpUpAttackCount,CloseJumpUpAttackDamage,DashJumpUpAttackCount,DashJumpUpAttackDamage,JumpUpAttackSuccessCount,AirAttackDamage,JumpAttackCount,JumpAttackDamage,GuardCount,TotalDamageGuarded,GuardCounterAttackCount,GuardCounterAttackDamage,BladeWaveAttackCount,BladeWaveAttackDamage,BackDashCount,PowerAttackDamage,RushStrikeAttackDamage"), 
 		   *FCommonBossLogData::GetCSVHeader());
 	}
+};
+
+USTRUCT(BlueprintType)
+struct FHechiLogData
+{
+	GENERATED_BODY();
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCommonBossLogData Base; // 공통 데이터 포함
+	
+	
+	
 };
