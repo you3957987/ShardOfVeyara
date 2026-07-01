@@ -109,9 +109,9 @@ AAGSDCharacter::AAGSDCharacter()
 	StartRotation = FRotator::ZeroRotator;
 
 	// 기본 장착 소켓 매핑 데이터 세팅 (블루프린트에서 편집 가능)
-	EquipSocketMappings.Add(FEquipSocketMapping(TEXT("forke"), FName("Weapon"), EHoldingWeapon::Spear, false));
-	EquipSocketMappings.Add(FEquipSocketMapping(TEXT("torch"), FName("Torch"), EHoldingWeapon::Torch, false));
-	EquipSocketMappings.Add(FEquipSocketMapping(TEXT("potion"), FName("PotionSocket"), EHoldingWeapon::Potion, true));
+	EquipSocketMappings.Add(FEquipSocketMapping(TEXT("forke"), FName("Weapon_Actor_R"), FName("Weapon_Holder"), EHoldingWeapon::Spear, false));
+	EquipSocketMappings.Add(FEquipSocketMapping(TEXT("torch"), FName("Torch"), NAME_None, EHoldingWeapon::Torch, false));
+	EquipSocketMappings.Add(FEquipSocketMapping(TEXT("potion"), FName("PotionSocket"), NAME_None, EHoldingWeapon::Potion, true));
 }
 
 void AAGSDCharacter::HandleAttackInput(FName ActionName)
@@ -517,6 +517,9 @@ void AAGSDCharacter::BeginPlay()
 	playFadeWidget(1.0f, 0.0f);
 	
 	MouseSensitivity = GI->MouseSensitivity;
+
+	// 시작 시 등 뒤 무기 거치 상태 초기 업데이트
+	UpdateBackWeapon();
 
 	// 게임 시작 시 현재 선택된 핫바 슬롯의 아이템을 즉시 장착합니다.
 	UpdateEquippedActor();
@@ -1989,6 +1992,9 @@ void AAGSDCharacter::OnInventorySlotUpdated(int32 SlotIndex)
 	{
 		UpdateEquippedActor();
 	}
+
+	// 인벤토리 상태 변경에 따라 등 뒤 무기도 실시간으로 업데이트
+	UpdateBackWeapon();
 }
 
 void AAGSDCharacter::UpdateEquippedActor()
@@ -2116,6 +2122,9 @@ void AAGSDCharacter::UpdateEquippedActor()
 			}
 		}
 	}
+
+	// 손 장착 무기 상태가 변경되었으므로 등 뒤 무기도 갱신
+	UpdateBackWeapon();
 }
 
 void AAGSDCharacter::Input_HotbarScroll(const FInputActionValue& Value)
@@ -2366,5 +2375,149 @@ void AAGSDCharacter::TryStartTurn()
 		bIsTurning = true;
 		StartRotation = GetActorRotation(); // 턴 시작 각도 기록
 		TurnTimer = TurnDuration; // 블루프린트에서 수정한 회전 지속 시간 적용
+	}
+}
+
+void AAGSDCharacter::UpdateBackWeapon()
+{
+	if (!InventoryComponent) return;
+
+	UWorld* World = GetWorld();
+	if (!World) return;
+
+	// 인벤토리의 모든 슬롯 데이터를 가져옴
+	const TArray<FStruct_InventorySlotData>& InventorySlots = InventoryComponent->GetAllSlots();
+
+	// 등 뒤 거치 상태를 결정하기 위해 현재 인벤토리에 어떤 아이템 ID들이 있는지 수집
+	TSet<FString> InventoryItemIDs;
+	for (const FStruct_InventorySlotData& Slot : InventorySlots)
+	{
+		if (!Slot.ItemData.ItemID.IsEmpty() && Slot.Quantity > 0)
+		{
+			InventoryItemIDs.Add(Slot.ItemData.ItemID.ToLower());
+		}
+	}
+
+	// 매핑 설정을 순회하며 등 뒤에 메야 하는 각 무기류의 스폰/해제 결정
+	for (const FEquipSocketMapping& Mapping : EquipSocketMappings)
+	{
+		// 등 뒤 소켓 이름이 지정되지 않은 경우 패스
+		if (Mapping.BackSocketName == NAME_None)
+		{
+			continue;
+		}
+
+		FString MapItemID = Mapping.ItemID.ToLower();
+		EHoldingWeapon WeaponType = Mapping.HoldingWeaponState;
+
+		// 인벤토리에 해당 무기 ID가 존재하는지 체크
+		bool bHasInInventory = false;
+		FStruct_ItemData FoundItemData;
+
+		if (Mapping.bContainsCheck)
+		{
+			for (const FString& InvItemID : InventoryItemIDs)
+			{
+				if (InvItemID.Contains(MapItemID))
+				{
+					bHasInInventory = true;
+					// 실제 아이템 데이터 탐색
+					for (const FStruct_InventorySlotData& Slot : InventorySlots)
+					{
+						if (Slot.ItemData.ItemID.ToLower().Contains(MapItemID))
+						{
+							FoundItemData = Slot.ItemData;
+							break;
+						}
+					}
+					break;
+				}
+			}
+		}
+		else
+		{
+			if (InventoryItemIDs.Contains(MapItemID))
+			{
+				bHasInInventory = true;
+				// 실제 아이템 데이터 탐색
+				for (const FStruct_InventorySlotData& Slot : InventorySlots)
+				{
+					if (Slot.ItemData.ItemID.ToLower() == MapItemID)
+					{
+						FoundItemData = Slot.ItemData;
+						break;
+					}
+				}
+			}
+		}
+
+		// 손에 장착하고 있는 상태인지 여부 체크
+		// 현재 쥐고 있는 아이템 ID가 이 매핑의 ID와 일치(또는 포함)하는지 확인
+		bool bIsCurrentlyHolding = false;
+		if (HoldingWeapon == WeaponType)
+		{
+			bIsCurrentlyHolding = true;
+		}
+
+		// 조건 A: 인벤토리에 있고, 손에 쥐고 있지 않을 때 -> 등 뒤에 거치되어야 함
+		if (bHasInInventory && !bIsCurrentlyHolding)
+		{
+			// 아직 액터가 스폰되지 않았다면 스폰 후 부착
+			if (!BackWeaponActors.Contains(WeaponType) || !IsValid(BackWeaponActors[WeaponType]))
+			{
+				if (FoundItemData.ItemBPClass)
+				{
+					FActorSpawnParameters SpawnParams;
+					SpawnParams.Owner = this;
+					SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+					AActor* NewBackActor = World->SpawnActor<AActor>(FoundItemData.ItemBPClass, GetActorLocation(), FRotator::ZeroRotator, SpawnParams);
+					if (NewBackActor)
+					{
+						// 물리 및 콜리전 비활성화 (손에 들었을 때와 유사)
+						if (APickUpItem* PickUpItem = Cast<APickUpItem>(NewBackActor))
+						{
+							PickUpItem->DisableCollisionForHolding();
+						}
+
+						if (USceneComponent* RootComp = NewBackActor->GetRootComponent())
+						{
+							RootComp->SetMobility(EComponentMobility::Movable);
+						}
+
+						TArray<UPrimitiveComponent*> PrimitiveComponents;
+						NewBackActor->GetComponents<UPrimitiveComponent>(PrimitiveComponents);
+						for (UPrimitiveComponent* Comp : PrimitiveComponents)
+						{
+							if (Comp)
+							{
+								Comp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+								Comp->SetSimulatePhysics(false);
+							}
+						}
+
+						// 등 뒤 소켓에 부착
+						FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, true);
+						NewBackActor->AttachToComponent(GetMesh(), AttachRules, Mapping.BackSocketName);
+
+						BackWeaponActors.Add(WeaponType, NewBackActor);
+					}
+				}
+			}
+		}
+		// 조건 B: 인벤토리에 없거나, 손에 쥐고 있을 때 -> 등 뒤에서 떼어내야 함
+		else
+		{
+			// 액터가 스폰되어 있다면 파괴 및 맵에서 제거
+			if (BackWeaponActors.Contains(WeaponType))
+			{
+				AActor* ExistentActor = BackWeaponActors[WeaponType];
+				if (IsValid(ExistentActor))
+				{
+					ExistentActor->Destroy();
+				}
+				BackWeaponActors.Remove(WeaponType);
+			}
+		}
 	}
 }

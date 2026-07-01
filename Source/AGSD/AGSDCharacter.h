@@ -34,17 +34,20 @@ public:
 	FName SocketName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equip Config")
+	FName BackSocketName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equip Config")
 	EHoldingWeapon HoldingWeaponState;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Equip Config")
 	bool bContainsCheck;
 
 	FEquipSocketMapping()
-		: ItemID(TEXT("")), SocketName(NAME_None), HoldingWeaponState(EHoldingWeapon::None), bContainsCheck(false)
+		: ItemID(TEXT("")), SocketName(NAME_None), BackSocketName(NAME_None), HoldingWeaponState(EHoldingWeapon::None), bContainsCheck(false)
 	{}
 
-	FEquipSocketMapping(const FString& InItemID, const FName& InSocketName, EHoldingWeapon InState, bool bInContains = false)
-		: ItemID(InItemID), SocketName(InSocketName), HoldingWeaponState(InState), bContainsCheck(bInContains)
+	FEquipSocketMapping(const FString& InItemID, const FName& InSocketName, const FName& InBackSocketName, EHoldingWeapon InState, bool bInContains = false)
+		: ItemID(InItemID), SocketName(InSocketName), BackSocketName(InBackSocketName), HoldingWeaponState(InState), bContainsCheck(bInContains)
 	{}
 };
 
@@ -297,6 +300,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="HoldingState|Config")
 	TArray<FEquipSocketMapping> EquipSocketMappings;
+
+	// 무기 종류별 등 뒤/허리에 부착된 액터들을 관리할 맵 (예: Spear -> BackWeaponActor)
+	UPROPERTY()
+	TMap<EHoldingWeapon, AActor*> BackWeaponActors;
+
+	// 등 뒤 무기 거치 상태를 동적으로 갱신하는 함수
+	void UpdateBackWeapon();
 
 	// ── 플레이어 UI 및 HUD ──
 
