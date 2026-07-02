@@ -109,7 +109,7 @@ AAGSDCharacter::AAGSDCharacter()
 	StartRotation = FRotator::ZeroRotator;
 
 	// 기본 장착 소켓 매핑 데이터 세팅 (블루프린트에서 편집 가능)
-	EquipSocketMappings.Add(FEquipSocketMapping(TEXT("forke"), FName("Weapon_Actor_R"), FName("Weapon_Holder"), EHoldingWeapon::Spear, false));
+	EquipSocketMappings.Add(FEquipSocketMapping(TEXT("forke"), FName("Weapon_Actor_R"), FName("Weapon_Actor_R"), EHoldingWeapon::Spear, false));
 	EquipSocketMappings.Add(FEquipSocketMapping(TEXT("torch"), FName("Torch"), NAME_None, EHoldingWeapon::Torch, false));
 	EquipSocketMappings.Add(FEquipSocketMapping(TEXT("potion"), FName("PotionSocket"), NAME_None, EHoldingWeapon::Potion, true));
 }
@@ -2024,6 +2024,7 @@ void AAGSDCharacter::UpdateEquippedActor()
 	{
 		HoldingState = EHoldingState::EHS_None;
 		HoldingWeapon = EHoldingWeapon::None;
+		UpdateBackWeapon();
 		return;
 	}
 
@@ -2077,8 +2078,8 @@ void AAGSDCharacter::UpdateEquippedActor()
 		return;
 	}
 
-	// 4. 새 액터 스폰 및 소켓 부착
-	if (NewItemData.ItemBPClass)
+	// 4. 새 액터 스폰 및 소켓 부착 (Forke는 이미 UpdateBackWeapon에서 스폰되었으므로 스폰 제외)
+	if (NewItemData.ItemBPClass && NewItemData.ItemID.ToLower() != TEXT("forke"))
 	{
 		UWorld* World = GetWorld();
 		if (World)
@@ -2392,7 +2393,7 @@ void AAGSDCharacter::UpdateBackWeapon()
 	TSet<FString> InventoryItemIDs;
 	for (const FStruct_InventorySlotData& Slot : InventorySlots)
 	{
-		if (!Slot.ItemData.ItemID.IsEmpty() && Slot.Quantity > 0)
+		if (!Slot.ItemData.ItemID.IsEmpty() && Slot.ItemData.CurrentQuantity > 0)
 		{
 			InventoryItemIDs.Add(Slot.ItemData.ItemID.ToLower());
 		}
@@ -2456,7 +2457,11 @@ void AAGSDCharacter::UpdateBackWeapon()
 		bool bIsCurrentlyHolding = false;
 		if (HoldingWeapon == WeaponType)
 		{
-			bIsCurrentlyHolding = true;
+			// forke 아이템은 손에 들고 있더라도 소켓에서 유지해야 하므로 bIsCurrentlyHolding을 false로 유지합니다.
+			if (MapItemID != TEXT("forke"))
+			{
+				bIsCurrentlyHolding = true;
+			}
 		}
 
 		// 조건 A: 인벤토리에 있고, 손에 쥐고 있지 않을 때 -> 등 뒤에 거치되어야 함
