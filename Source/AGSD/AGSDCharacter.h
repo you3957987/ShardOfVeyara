@@ -19,6 +19,7 @@
 #include "Interface/ItemDropInterface.h"
 #include "Interface/InteractionInterface.h"
 #include "SpearComboData.h"
+#include "ECharacterState.h"
 #include "AGSDCharacter.generated.h"
 
 USTRUCT(BlueprintType)
@@ -82,8 +83,6 @@ class AGSD_API AAGSDCharacter : public ACharacter, public IPetConversationInterf
 	/** Audio listener target component that follows character position but rotates with camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* AudioListenerComponent;
-	
-	bool bIsBlocking = false;
 	
 	bool bIsJustGuardWindow = false;
 
@@ -237,9 +236,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PlayerState")
 	UDataTable* SpearComboDataTable;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="PlayerState")
-	class UAnimMontage* BlockStartMontage;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="PlayerState")
 	FStruct_ItemData HoldingItemData;
 	
@@ -289,6 +285,9 @@ public:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="PlayerState")
+	ECharacterState CharacterState = ECharacterState::Idle;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="HoldingState")
 	EHoldingState HoldingState = EHoldingState::EHS_None;
 
@@ -652,8 +651,6 @@ public:
 	float MaxRotationTime = 0.2f;   
 	float RotationSpeed = 500.0f; 
 	
-	void HandleRotateCharacterStartGuard(float DeltaSeconds);
-	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GuardEffect")
 	class UNiagaraSystem* GuardEffect;
 	
@@ -695,6 +692,14 @@ public:
 	
 	UFUNCTION()
 	void ExecuteTutorialSkipLevelTransition();
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerState")
+	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }
+
+	UFUNCTION(BlueprintCallable, Category = "PlayerState")
+	void SetCharacterState(ECharacterState NewState);
+
+	void UpdateCharacterStateFromEquip();
 	
 };
 

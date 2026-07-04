@@ -255,9 +255,20 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 
 	if (GetController())
 	{
-		float ControlYaw = GetController()->GetControlRotation().Yaw;
+		float TargetYaw = 0.0f;
+		if (LockedTarget)
+		{
+			FVector TargetLocation = LockedTarget->GetActorLocation();
+			FVector CharacterLocation = GetActorLocation();
+			FRotator LookAtRotation = (TargetLocation - CharacterLocation).Rotation();
+			TargetYaw = LookAtRotation.Yaw;
+		}
+		else
+		{
+			TargetYaw = GetController()->GetControlRotation().Yaw;
+		}
 		float ActorYaw = GetActorRotation().Yaw;
-		TurnYawDelta = FRotator::NormalizeAxis(ControlYaw - ActorYaw);
+		TurnYawDelta = FRotator::NormalizeAxis(TargetYaw - ActorYaw);
 	}
 	else
 	{
@@ -280,7 +291,7 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 	}
 	
 	HandleRotateCharacterStartAttack(DeltaSeconds);
-	HandleRotateCharacterStartGuard(DeltaSeconds);
+	//HandleRotateCharacterStartGuard(DeltaSeconds);
 	
 	// --- [락온 카메라 회전 및 유지 상태 처리] ---
 	if (LockedTarget)
@@ -384,7 +395,7 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 		}
 	}
 
-	if (!SkillMotion)
+	if (!SkillMotion && CharacterState != ECharacterState::Block)
 	{
 		// 2. 가장 복잡한 커맨드 (StrongAttack 콤보) 먼저 확인
 		// CheckCombo는 Input1="Attack", Input2="Attack"으로 설정해야 합니다. (Attack 2번 연속 입력 가정)
@@ -637,10 +648,9 @@ float AAGSDCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 	}
 	
 	if (bIsJustGuardWindow) DamageToApply = 0.f;
-	else if (bIsBlocking) DamageToApply = DamageToApply = 0;
-	//else if (bIsBlocking) DamageToApply = DamageToApply / 2.f;
+	else if (CharacterState == ECharacterState::Block) DamageToApply = 0.f;
 
-	if ( bIsJustGuardWindow || bIsBlocking )
+	if ( bIsJustGuardWindow || CharacterState == ECharacterState::Block )
 	{
 		if ( DamageToApply >= 0.f && GuardEffect )
 		{		
@@ -841,6 +851,7 @@ void AAGSDCharacter::StopMove()
 void AAGSDCharacter::Jump()
 {
 	if (Mining) return;
+	if (CharacterState == ECharacterState::Block) return;
  	if (Jumping && !GetCharacterMovement()->IsFalling())
 	{
 		Jumping->Play();
@@ -869,6 +880,13 @@ void AAGSDCharacter::SprintEnd()
 void AAGSDCharacter::UpdateSprintSpeed()
 {
 	if (!GetCharacterMovement()) return;
+
+	if (CharacterState == ECharacterState::Block)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 170.f;
+		GetCharacterMovement()->MaxWalkSpeedCrouched = 170.f;
+		return;
+	}
 
 	bool bIsMovingBackward = false;
 	if (!LastRawInputVector.IsNearlyZero())
@@ -1007,6 +1025,12 @@ void AAGSDCharacter::ProcessAttackInput()
 
 void AAGSDCharacter::UseEquippedItem()
 {
+	// 가드(Block) 상태 중에는 공격이나 아이템 사용 차단
+	if (CharacterState == ECharacterState::Block)
+	{
+		return;
+	}
+
 	// 인벤토리, 상자 등 UI가 열려있는 동안에는 무기 공격이나 아이템 사용이 나가지 않도록 차단합니다.
 	if (PlayerHUDRef && PlayerHUDRef->IsInventoryOpen())
 	{
@@ -1081,29 +1105,6 @@ void AAGSDCharacter::HandleRotateCharacterStartAttack(float DeltaSeconds)
 			TargetAttackRotation, 
 			DeltaSeconds, 
 			RotationSpeed
-		);
-
-		SetActorRotation(NewRotation);
-	}
-}
-
-void AAGSDCharacter::HandleRotateCharacterStartGuard(float DeltaSeconds)
-{
-	if (bIsBlocking == true)
-	{
-		// 1. 매 프레임 실시간으로 카메라(컨트롤러)의 Yaw 방향을 목표로 설정
-		const FRotator ControlRot = GetControlRotation();
-		FRotator TargetGuardRotation = FRotator(0.f, ControlRot.Yaw, 0.f);
-
-		FRotator CurrentRotation = GetActorRotation();
-
-		// 2. 시간 초과나 목표 도달 체크 없이, 가드 중이라면 계속 보간 회전
-		// RotationSpeed 값이 너무 낮으면 회전이 카메라를 못 따라갈 수 있으니 적절히 조절하세요.
-		FRotator NewRotation = FMath::RInterpConstantTo(
-			CurrentRotation, 
-			TargetGuardRotation, 
-			DeltaSeconds, 
-			200.f // 또는 더 빠른 팔로잉을 원하면 특정 수치(예: 720.0f) 대입
 		);
 
 		SetActorRotation(NewRotation);
@@ -1242,11 +1243,12 @@ void AAGSDCharacter::StartBlock()
 {
 	if (Mining) return;
 	if (HoldingWeapon != EHoldingWeapon::Spear) return;
+
+	SetCharacterState(ECharacterState::Block);
+	UpdateSprintSpeed();
 	
-	bIsBlocking = true;
-	PlayAnimMontage(BlockStartMontage);
+	UpdateCharacterRotationSettings();
 	
-	Mining = true;
 	// 가드 시작 후 0.2초간 저스트 가드 판정 활성화
 	bIsJustGuardWindow = true;
 	GetWorldTimerManager().SetTimer(JustGuardTimerHandle, this, &AAGSDCharacter::EndJustGuardWindow, 0.2f, false);
@@ -1254,11 +1256,11 @@ void AAGSDCharacter::StartBlock()
 
 void AAGSDCharacter::StopBlock()
 {
-	if (bIsBlocking)
+	if (CharacterState == ECharacterState::Block)
 	{
-		bIsBlocking = false;
-		StopAnimMontage(BlockStartMontage);
-		Mining = false;
+		SetCharacterState(ECharacterState::Combat);
+		UpdateSprintSpeed();
+		UpdateCharacterRotationSettings();
 	}
 }
 
@@ -2015,6 +2017,12 @@ void AAGSDCharacter::UpdateEquippedActor()
 		return;
 	}
 
+	// 장착 아이템이 교체되는데 가드(Block) 상태라면 가드를 먼저 해제하여 내부 플래그를 정상 정리
+	if (CharacterState == ECharacterState::Block)
+	{
+		StopBlock();
+	}
+
 	// 1. 기존 장착 액터 파괴
 	if (IsValid(HoldingActor))
 	{
@@ -2031,6 +2039,7 @@ void AAGSDCharacter::UpdateEquippedActor()
 		HoldingState = EHoldingState::EHS_None;
 		HoldingWeapon = EHoldingWeapon::None;
 		UpdateBackWeapon();
+		UpdateCharacterStateFromEquip();
 
 		if (LockedTarget)
 		{
@@ -2143,6 +2152,7 @@ void AAGSDCharacter::UpdateEquippedActor()
 
 	// 손 장착 무기 상태가 변경되었으므로 등 뒤 무기도 갱신
 	UpdateBackWeapon();
+	UpdateCharacterStateFromEquip();
 }
 
 void AAGSDCharacter::Input_HotbarScroll(const FInputActionValue& Value)
@@ -2361,7 +2371,7 @@ void AAGSDCharacter::UpdateCharacterRotationSettings()
 {
 	if (!GetCharacterMovement()) return;
 
-	if (LockedTarget != nullptr || bIsFaceCameraPressed)
+	if (LockedTarget != nullptr || bIsFaceCameraPressed || CharacterState == ECharacterState::Block)
 	{
 		GetCharacterMovement()->bOrientRotationToMovement = false;
 		GetCharacterMovement()->bUseControllerDesiredRotation = (LockedTarget != nullptr);
@@ -2375,8 +2385,14 @@ void AAGSDCharacter::UpdateCharacterRotationSettings()
 
 void AAGSDCharacter::TryStartTurn()
 {
-	// 락온 중이거나, 조준 키를 안 누르고 있거나, 이미 턴 중이거나, 공격/가드/스킬 모션 중일 때는 패스
-	if (LockedTarget != nullptr || !bIsFaceCameraPressed || bIsTurning || bIsAttacking || bIsBlocking || SkillMotion)
+	// 락온 중이거나, 이미 턴 중이거나, 공격/스킬 모션 중일 때는 패스
+	if (LockedTarget != nullptr || bIsTurning || bIsAttacking || SkillMotion)
+	{
+		return;
+	}
+
+	// FaceCamera 조준 키를 누르지 않았고, 동시에 가드(Block) 상태도 아니라면 패스 (가드 중이거나 조준 키를 누른 경우 턴 허용)
+	if (!bIsFaceCameraPressed && CharacterState != ECharacterState::Block)
 	{
 		return;
 	}
@@ -2541,5 +2557,33 @@ void AAGSDCharacter::UpdateBackWeapon()
 				BackWeaponActors.Remove(WeaponType);
 			}
 		}
+	}
+}
+
+void AAGSDCharacter::SetCharacterState(ECharacterState NewState)
+{
+	if (CharacterState == NewState) return;
+
+	ECharacterState OldState = CharacterState;
+	CharacterState = NewState;
+
+	FString OldStateStr = OldState == ECharacterState::Idle ? TEXT("Idle") : (OldState == ECharacterState::Combat ? TEXT("Combat") : TEXT("Block"));
+	FString NewStateStr = NewState == ECharacterState::Idle ? TEXT("Idle") : (NewState == ECharacterState::Combat ? TEXT("Combat") : TEXT("Block"));
+
+	UE_LOG(LogTemp, Log, TEXT("Character State Changed: %s -> %s"), *OldStateStr, *NewStateStr);
+}
+
+void AAGSDCharacter::UpdateCharacterStateFromEquip()
+{
+	if (HoldingWeapon == EHoldingWeapon::Spear)
+	{
+		if (CharacterState != ECharacterState::Block)
+		{
+			SetCharacterState(ECharacterState::Combat);
+		}
+	}
+	else
+	{
+		SetCharacterState(ECharacterState::Idle);
 	}
 }
