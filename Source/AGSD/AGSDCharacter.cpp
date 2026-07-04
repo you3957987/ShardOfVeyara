@@ -1378,6 +1378,12 @@ void AAGSDCharacter::ToggleLockOn()
 	}
 	else
 	{
+		// Spear를 들고 있을 때만 LockOn 가능
+		if (HoldingWeapon != EHoldingWeapon::Spear)
+		{
+			return;
+		}
+
 		// 2. 락온 중이 아니라면 주변의 가장 가까운 적 탐색
 		LockedTarget = FindNearestLockOnTarget();
 		if (LockedTarget)
@@ -2025,6 +2031,11 @@ void AAGSDCharacter::UpdateEquippedActor()
 		HoldingState = EHoldingState::EHS_None;
 		HoldingWeapon = EHoldingWeapon::None;
 		UpdateBackWeapon();
+
+		if (LockedTarget)
+		{
+			ToggleLockOn();
+		}
 		return;
 	}
 
@@ -2071,6 +2082,12 @@ void AAGSDCharacter::UpdateEquippedActor()
 	// 3. 상태 갱신
 	HoldingState = NewItemData.EquipHoldingState;
 	HoldingWeapon = TargetHoldingWeapon;
+
+	// HoldingWeapon이 Spear가 아니면 기존 LockOn 해제
+	if (HoldingWeapon != EHoldingWeapon::Spear && LockedTarget)
+	{
+		ToggleLockOn();
+	}
 
 	// 부착할 액터가 없는 아이템은 여기서 장착 상태만 유지한 채 안전하게 종료
 	if (AttachSocketName == NAME_None)
