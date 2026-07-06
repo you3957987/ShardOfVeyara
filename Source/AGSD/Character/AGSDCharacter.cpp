@@ -3,6 +3,7 @@
 #include "AGSDCharacter.h"
 #include "AGSDCloseableUIInterface.h"
 #include "Inventory/AGSDInventoryComponent.h"
+#include "AGSDLockOnComponent.h"
 #include "PickUpItem.h"
 #include "Inventory/UI/AGSDPlayerHUD.h"
 #include "Framework/Application/SlateApplication.h"
@@ -95,6 +96,9 @@ AAGSDCharacter::AAGSDCharacter()
 
 	// 인벤토리 컴포넌트 생성
 	InventoryComponent = CreateDefaultSubobject<UAGSDInventoryComponent>(TEXT("InventoryComponent"));
+
+	// 락온 컴포넌트 생성
+	LockOnComponent = CreateDefaultSubobject<UAGSDLockOnComponent>(TEXT("LockOnComponent"));
 
 	OpenedChest = nullptr;
 
@@ -256,9 +260,10 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 	if (GetController())
 	{
 		float TargetYaw = 0.0f;
-		if (LockedTarget)
+		AActor* TargetActor = LockOnComponent ? LockOnComponent->GetLockedTarget() : nullptr;
+		if (TargetActor)
 		{
-			FVector TargetLocation = LockedTarget->GetActorLocation();
+			FVector TargetLocation = TargetActor->GetActorLocation();
 			FVector CharacterLocation = GetActorLocation();
 			FRotator LookAtRotation = (TargetLocation - CharacterLocation).Rotation();
 			TargetYaw = LookAtRotation.Yaw;
@@ -293,93 +298,10 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 	HandleRotateCharacterStartAttack(DeltaSeconds);
 	//HandleRotateCharacterStartGuard(DeltaSeconds);
 	
-	// --- [락온 카메라 회전 및 유지 상태 처리] ---
-	if (LockedTarget)
+	// --- [락온 업데이트] ---
+	if (LockOnComponent)
 	{
-		bool bShouldRelease = false;
-
-		// 1. 적이 파괴되었는지 검사 (기존 예외 처리)
-		if (!IsValid(LockedTarget)) 
-		{
-			bShouldRelease = true;
-		}
-		else
-		{
-			// 2. 락온 유지 한계 거리(1800.0f) 체크
-			float Distance = FVector::Dist(GetActorLocation(), LockedTarget->GetActorLocation());
-			if (Distance > 1800.0f)
-			{
-				bShouldRelease = true;
-			}
-		}
-
-		if (bShouldRelease)
-		{
-			ToggleLockOn();
-		}
-		else
-		{
-			// 3. 장애물 시야 차단 체크 (Line of Sight - Visibility 채널)
-			FVector TraceStart = GetFollowCamera()->GetComponentLocation();
-			
-			// 대상의 피벗 높이 보정 (캡슐 절반 높이 또는 기본 오프셋 적용하여 중심 높이 계산)
-			float TargetHalfHeight = LockedTarget->GetSimpleCollisionHalfHeight();
-			FVector TargetVisualCenter = LockedTarget->GetActorLocation();
-			TargetVisualCenter.Z += (TargetHalfHeight > 0.0f) ? TargetHalfHeight : 50.0f;
-
-			FVector TraceEnd = TargetVisualCenter;
-			
-			FCollisionQueryParams TraceParams;
-			TraceParams.AddIgnoredActor(this);
-			TraceParams.AddIgnoredActor(LockedTarget);
-
-			FHitResult HitResult;
-			bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_Visibility, TraceParams);
-
-			if (bHit && HitResult.GetActor())
-			{
-				AActor* HitActor = HitResult.GetActor();
-				if (HitActor->GetClass()->ImplementsInterface(UInteraction::StaticClass()) ||
-					HitActor->ActorHasTag(FName("Item")) ||
-					HitActor->ActorHasTag(FName("Interactable")))
-				{
-					bHit = false;
-				}
-			}
-
-			if (bHit)
-			{
-				// 장애물에 가려진 상태
-				if (!bIsLineOfSightBlocked)
-				{
-					bIsLineOfSightBlocked = true;
-					// 1.2초 후 OnLineOfSightTimeout 실행
-					GetWorldTimerManager().SetTimer(LineOfSightTimerHandle, this, &AAGSDCharacter::OnLineOfSightTimeout, 1.2f, false);
-				}
-			}
-			else
-			{
-				// 시야가 확보된 상태
-				if (bIsLineOfSightBlocked)
-				{
-					bIsLineOfSightBlocked = false;
-					GetWorldTimerManager().ClearTimer(LineOfSightTimerHandle);
-				}
-			}
-
-			// 4. 카메라 회전 보간 처리
-			FVector CameraLocation = GetFollowCamera()->GetComponentLocation();
-			FVector TargetLocation = TargetVisualCenter; // 발끝 Z축 감산 대신 가슴 높이 중심(TargetVisualCenter) 지정
-
-			FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(CameraLocation, TargetLocation);
-			FRotator CurrentRotation = GetController()->GetControlRotation();
-			
-			TargetRotation.Pitch = CurrentRotation.Pitch;
-			TargetRotation.Roll = 0.0f;
-
-			FRotator SmoothedRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaSeconds, 8.0f);
-			GetController()->SetControlRotation(SmoothedRotation);
-		}
+		LockOnComponent->UpdateLockOnState(DeltaSeconds);
 	}
 	// ---------------------------------------------
 
@@ -734,19 +656,19 @@ void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(GuardAction, ETriggerEvent::Completed, this, &AAGSDCharacter::StopBlock);
 
 		// 락온 기능 바인딩
-		if (LockOnAction)
+		if (LockOnAction && LockOnComponent)
 		{
-			EnhancedInputComponent->BindAction(LockOnAction, ETriggerEvent::Started, this, &AAGSDCharacter::ToggleLockOn);
+			EnhancedInputComponent->BindAction(LockOnAction, ETriggerEvent::Started, LockOnComponent.Get(), &UAGSDLockOnComponent::ToggleLockOn);
 		}
 
-		if (SwitchTargetLeftAction)
+		if (SwitchTargetLeftAction && LockOnComponent)
 		{
-			EnhancedInputComponent->BindAction(SwitchTargetLeftAction, ETriggerEvent::Started, this, &AAGSDCharacter::SwitchTargetLeft);
+			EnhancedInputComponent->BindAction(SwitchTargetLeftAction, ETriggerEvent::Started, LockOnComponent.Get(), &UAGSDLockOnComponent::SwitchTargetLeft);
 		}
 
-		if (SwitchTargetRightAction)
+		if (SwitchTargetRightAction && LockOnComponent)
 		{
-			EnhancedInputComponent->BindAction(SwitchTargetRightAction, ETriggerEvent::Started, this, &AAGSDCharacter::SwitchTargetRight);
+			EnhancedInputComponent->BindAction(SwitchTargetRightAction, ETriggerEvent::Started, LockOnComponent.Get(), &UAGSDLockOnComponent::SwitchTargetRight);
 		}
 
 		// 튜토리얼 스킵 기능 바인딩
@@ -1359,210 +1281,14 @@ void AAGSDCharacter::ResetAttackState()
 	}
 }
 
-void AAGSDCharacter::ToggleLockOn()
-{
-	if (LockedTarget)
-	{
-		// 1. 이미 락온 중이라면 조준선 끄고 락온 해제
-		SetLockOnMarkerState(LockedTarget, false);
-		LockedTarget = nullptr;
-		TargetLockOnDistance = 0.0f;
 
-		// 시야 차단 타이머 및 상태 초기화
-		GetWorldTimerManager().ClearTimer(LineOfSightTimerHandle);
-		bIsLineOfSightBlocked = false;
-
-		// 모션 워프 타겟 제거
-		if (MotionWarpingComponent)
-		{
-			MotionWarpingComponent->RemoveWarpTarget(FName("WarpTarget"));
-		}
-	}
-	else
-	{
-		// Spear를 들고 있을 때만 LockOn 가능
-		if (HoldingWeapon != EHoldingWeapon::Spear)
-		{
-			return;
-		}
-
-		// 2. 락온 중이 아니라면 주변의 가장 가까운 적 탐색
-		LockedTarget = FindNearestLockOnTarget();
-		if (LockedTarget)
-		{
-			// 조준선 켜고 애니메이션 재생
-			SetLockOnMarkerState(LockedTarget, true);
-			TargetLockOnDistance = 0.0f;
-		}
-	}
-
-	OnLockOnStateChanged.Broadcast(LockedTarget != nullptr);
-}
-
-AActor* AAGSDCharacter::FindNearestLockOnTarget()
-{
-	TArray<AActor*> OverlappingActors;
-	TArray<AActor*> ActorsToIgnore;
-	ActorsToIgnore.Add(this);
-
-	UKismetSystemLibrary::SphereOverlapActors(
-		this,
-		GetActorLocation(),
-		LockOnRadius,
-		{ UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn) },
-		AActor::StaticClass(),
-		ActorsToIgnore,
-		OverlappingActors
-	);
-
-	AActor* BestTarget = nullptr;
-	float BestScore = FLT_MAX;
-
-	FVector CameraLocation = GetFollowCamera()->GetComponentLocation();
-	FVector CameraForward = GetFollowCamera()->GetForwardVector();
-
-	for (AActor* Actor : OverlappingActors)
-	{
-		if (Actor && Actor->ActorHasTag(FName("Enemy")))
-		{
-			// 1. 캐릭터와의 거리 계산
-			float Distance = FVector::Dist(GetActorLocation(), Actor->GetActorLocation());
-			if (Distance > LockOnRadius) continue;
-
-			// 2. 카메라 전방 기준 시야각 오프셋(AngleOffset) 계산
-			FVector DirToTarget = (Actor->GetActorLocation() - CameraLocation).GetSafeNormal();
-			float Dot = FVector::DotProduct(CameraForward, DirToTarget);
-			float AngleOffset = FMath::RadiansToDegrees(FMath::Acos(Dot));
-
-			// 3. 시야각 120도 이내 필터링 (중앙선 기준 좌우 60도)
-			if (AngleOffset <= 60.0f)
-			{
-				// 4. Normalized Score (가중치 1:1) 계산
-				float NormDistance = Distance / LockOnRadius;
-				float NormAngle = AngleOffset / 60.0f;
-				float Score = (NormDistance * 1.0f) + (NormAngle * 1.0f);
-
-				if (Score < BestScore)
-				{
-					BestScore = Score;
-					BestTarget = Actor;
-				}
-			}
-		}
-	}
-	return BestTarget;
-}
-
-void AAGSDCharacter::SwitchTargetLeft()
-{
-	SwitchTarget(true);
-}
-
-void AAGSDCharacter::SwitchTargetRight()
-{
-	SwitchTarget(false);
-}
-
-void AAGSDCharacter::SwitchTarget(bool bLookLeft)
-{
-	if (!LockedTarget) return;
-
-	TArray<AActor*> OverlappingActors;
-	TArray<AActor*> ActorsToIgnore;
-	ActorsToIgnore.Add(this);
-
-	UKismetSystemLibrary::SphereOverlapActors(
-		this,
-		GetActorLocation(),
-		LockOnRadius,
-		{ UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn) },
-		AActor::StaticClass(),
-		ActorsToIgnore,
-		OverlappingActors
-	);
-
-	AActor* NewTarget = nullptr;
-	float MinYDiff = FLT_MAX;
-
-	FTransform CameraTransform = GetFollowCamera()->GetComponentTransform();
-	FVector CurrentTargetLocal = CameraTransform.InverseTransformPosition(LockedTarget->GetActorLocation());
-
-	FVector CameraLocation = GetFollowCamera()->GetComponentLocation();
-	FVector CameraForward = GetFollowCamera()->GetForwardVector();
-
-	for (AActor* Actor : OverlappingActors)
-	{
-		if (Actor && Actor->ActorHasTag(FName("Enemy")) && Actor != LockedTarget)
-		{
-			// 1. 시야각 120도 필터링
-			FVector DirToTarget = (Actor->GetActorLocation() - CameraLocation).GetSafeNormal();
-			float Dot = FVector::DotProduct(CameraForward, DirToTarget);
-			float AngleOffset = FMath::RadiansToDegrees(FMath::Acos(Dot));
-
-			if (AngleOffset > 60.0f) continue;
-
-			// 2. 카메라 공간 상의 위치 계산 (Y축: Right)
-			FVector EnemyLocal = CameraTransform.InverseTransformPosition(Actor->GetActorLocation());
-			float YDiff = EnemyLocal.Y - CurrentTargetLocal.Y;
-
-			if (bLookLeft)
-			{
-				// 좌측에 있는 적: 현재 타겟의 로컬 Y보다 작은 Y값을 가짐
-				if (YDiff < 0.0f)
-				{
-					float AbsDiff = FMath::Abs(YDiff);
-					if (AbsDiff < MinYDiff)
-					{
-						MinYDiff = AbsDiff;
-						NewTarget = Actor;
-					}
-				}
-			}
-			else
-			{
-				// 우측에 있는 적: 현재 타겟의 로컬 Y보다 큰 Y값을 가짐
-				if (YDiff > 0.0f)
-				{
-					float AbsDiff = FMath::Abs(YDiff);
-					if (AbsDiff < MinYDiff)
-					{
-						MinYDiff = AbsDiff;
-						NewTarget = Actor;
-					}
-				}
-			}
-		}
-	}
-
-	if (NewTarget)
-	{
-		// 마커 전환 및 락온 대상 변경
-		SetLockOnMarkerState(LockedTarget, false);
-		LockedTarget = NewTarget;
-		TargetLockOnDistance = 0.0f;
-		SetLockOnMarkerState(LockedTarget, true);
-
-		// 시야 차단 타이머 상태 초기화
-		GetWorldTimerManager().ClearTimer(LineOfSightTimerHandle);
-		bIsLineOfSightBlocked = false;
-
-		OnLockOnStateChanged.Broadcast(true);
-	}
-}
-
-void AAGSDCharacter::OnLineOfSightTimeout()
-{
-	if (LockedTarget && bIsLineOfSightBlocked)
-	{
-		ToggleLockOn();
-	}
-}
 
 void AAGSDCharacter::UpdateMotionWarpTarget()
 {
 	if (MotionWarpingComponent)
 	{
-		if (!LockedTarget)
+		AActor* TargetActor = LockOnComponent ? LockOnComponent->GetLockedTarget() : nullptr;
+		if (!TargetActor)
 		{
 			// 락온 타겟이 없을 때 모션 워프 타겟 제거
 			MotionWarpingComponent->RemoveWarpTarget(FName("WarpTarget"));
@@ -1570,7 +1296,7 @@ void AAGSDCharacter::UpdateMotionWarpTarget()
 		}
 
 		FVector PlayerLoc = GetActorLocation();
-		FVector TargetLoc = LockedTarget->GetActorLocation();
+		FVector TargetLoc = TargetActor->GetActorLocation();
 
 		// 1. 플레이어 캐릭터 전방 120도 시야 범위(좌우 60도) 내에 타겟이 있는지 검사
 		FVector Forward = GetActorForwardVector();
@@ -1639,10 +1365,11 @@ void AAGSDCharacter::DoMove(float Right, float Forward)
 		FVector ForwardDirection;
 		FVector RightDirection;
 
-		if (IsValid(LockedTarget))
+		AActor* TargetActor = LockOnComponent ? LockOnComponent->GetLockedTarget() : nullptr;
+		if (IsValid(TargetActor))
 		{
 			FVector PlayerLoc = GetActorLocation();
-			FVector TargetLoc = LockedTarget->GetActorLocation();
+			FVector TargetLoc = TargetActor->GetActorLocation();
 			FVector DirectionToTarget = TargetLoc - PlayerLoc;
 			DirectionToTarget.Z = 0.0f;
 
@@ -1895,44 +1622,10 @@ void AAGSDCharacter::HandleLockOn(bool bLockOn)
 		if (!bLockOn)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("LockOn False - Releasing LockOn"));
-			if (LockedTarget)
+			if (LockOnComponent && LockOnComponent->IsTargetLocked())
 			{
-				ToggleLockOn();
+				LockOnComponent->ToggleLockOn();
 			}
-		}
-	}
-}
-
-void AAGSDCharacter::SetLockOnMarkerState(AActor* TargetActor, bool bActive)
-{
-	if (!TargetActor) return;
-
-	TArray<UWidgetComponent*> WidgetComps;
-	TargetActor->GetComponents<UWidgetComponent>(WidgetComps);
-
-	for (UWidgetComponent* Comp : WidgetComps)
-	{
-		if (Comp && Comp->ComponentHasTag(FName("LockOnMarker")))
-		{
-			Comp->SetVisibility(bActive);
-
-			UUserWidget* UserWidget = Comp->GetUserWidgetObject();
-			if (UserWidget)
-			{
-				UFunction* AnimFunc = UserWidget->FindFunction(FName("PlayLockOnAnim"));
-				if (AnimFunc)
-				{
-					struct FPlayLockOnAnimArgs
-					{
-						bool bPlay;
-					};
-					FPlayLockOnAnimArgs Args;
-					Args.bPlay = bActive;
-					
-					UserWidget->ProcessEvent(AnimFunc, &Args);
-				}
-			}
-			break;
 		}
 	}
 }
@@ -2041,9 +1734,9 @@ void AAGSDCharacter::UpdateEquippedActor()
 		UpdateBackWeapon();
 		UpdateCharacterStateFromEquip();
 
-		if (LockedTarget)
+		if (LockOnComponent && LockOnComponent->IsTargetLocked())
 		{
-			ToggleLockOn();
+			LockOnComponent->ToggleLockOn();
 		}
 		return;
 	}
@@ -2093,9 +1786,9 @@ void AAGSDCharacter::UpdateEquippedActor()
 	HoldingWeapon = TargetHoldingWeapon;
 
 	// HoldingWeapon이 Spear가 아니면 기존 LockOn 해제
-	if (HoldingWeapon != EHoldingWeapon::Spear && LockedTarget)
+	if (HoldingWeapon != EHoldingWeapon::Spear && LockOnComponent && LockOnComponent->IsTargetLocked())
 	{
-		ToggleLockOn();
+		LockOnComponent->ToggleLockOn();
 	}
 
 	// 부착할 액터가 없는 아이템은 여기서 장착 상태만 유지한 채 안전하게 종료
@@ -2104,8 +1797,25 @@ void AAGSDCharacter::UpdateEquippedActor()
 		return;
 	}
 
-	// 4. 새 액터 스폰 및 소켓 부착 (Forke는 이미 UpdateBackWeapon에서 스폰되었으므로 스폰 제외)
-	if (NewItemData.ItemBPClass && NewItemData.ItemID.ToLower() != TEXT("forke"))
+	// 4. 새 액터 스폰 및 소켓 부착 (Forke는 이미 UpdateBackWeapon에서 스폰되었으므로 스폰 제외하고 기존 액터 이동)
+	if (NewItemData.ItemID.ToLower() == TEXT("forke"))
+	{
+		if (BackWeaponActors.Contains(EHoldingWeapon::Spear) && IsValid(BackWeaponActors[EHoldingWeapon::Spear]))
+		{
+			HoldingActor = BackWeaponActors[EHoldingWeapon::Spear];
+			BackWeaponActors.Remove(EHoldingWeapon::Spear);
+
+			if (HoldingActor)
+			{
+				HoldingActor->AttachToComponent(
+					GetMesh(),
+					FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+					AttachSocketName
+				);
+			}
+		}
+	}
+	else if (NewItemData.ItemBPClass)
 	{
 		UWorld* World = GetWorld();
 		if (World)
@@ -2371,10 +2081,12 @@ void AAGSDCharacter::UpdateCharacterRotationSettings()
 {
 	if (!GetCharacterMovement()) return;
 
-	if (LockedTarget != nullptr || bIsFaceCameraPressed || CharacterState == ECharacterState::Block)
+	bool bIsLockedOn = LockOnComponent && LockOnComponent->IsTargetLocked();
+
+	if (bIsLockedOn || bIsFaceCameraPressed || CharacterState == ECharacterState::Block)
 	{
 		GetCharacterMovement()->bOrientRotationToMovement = false;
-		GetCharacterMovement()->bUseControllerDesiredRotation = (LockedTarget != nullptr);
+		GetCharacterMovement()->bUseControllerDesiredRotation = bIsLockedOn;
 	}
 	else
 	{
@@ -2385,8 +2097,10 @@ void AAGSDCharacter::UpdateCharacterRotationSettings()
 
 void AAGSDCharacter::TryStartTurn()
 {
+	bool bIsLockedOn = LockOnComponent && LockOnComponent->IsTargetLocked();
+
 	// 락온 중이거나, 이미 턴 중이거나, 공격/스킬 모션 중일 때는 패스
-	if (LockedTarget != nullptr || bIsTurning || bIsAttacking || SkillMotion)
+	if (bIsLockedOn || bIsTurning || bIsAttacking || SkillMotion)
 	{
 		return;
 	}

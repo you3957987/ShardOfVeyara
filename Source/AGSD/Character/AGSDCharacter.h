@@ -59,6 +59,7 @@ struct FInputActionValue;
 class AACultivationPlot;
 class UMotionWarpingComponent;
 class UAGSDInventoryComponent;
+class UAGSDLockOnComponent;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -146,37 +147,13 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	class UInputAction* FaceCameraAction;
 	
-	// 락온 타겟
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat|LockOn")
-	AActor* LockedTarget = nullptr;
-
 	// 락온 시 유지할 목표 거리
 	float TargetLockOnDistance = 0.0f;
-
-	// 락온 탐색 반경
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|LockOn")
-	float LockOnRadius = 1500.0f;
-
-	// 시야 차단 상태 플래그
-	UPROPERTY(BlueprintReadOnly, Category="Combat|LockOn")
-	bool bIsLineOfSightBlocked = false;
-
-	// 시야 차단 타이머 핸들
-	FTimerHandle LineOfSightTimerHandle;
-
-	// 락온 관련 함수
-	void ToggleLockOn();
-	AActor* FindNearestLockOnTarget();
-	void SetLockOnMarkerState(AActor* TargetActor, bool bActive);
-	void SwitchTargetLeft();
-	void SwitchTargetRight();
-	void SwitchTarget(bool bLookLeft);
 
 	// 핫바 및 인벤토리 입력 핸들러
 	void Input_HotbarScroll(const FInputActionValue& Value);
 	void Input_SelectHotbar(const FInputActionValue& Value);
 	void Input_ToggleInventory();
-	void OnLineOfSightTimeout();
 
 	// 모션 워핑 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat|Warping")
@@ -354,6 +331,10 @@ public:
 	/** C++ 인벤토리 컴포넌트 (BP에서 추가하거나 C++에서 CreateDefaultSubobject로 생성) */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	TObjectPtr<UAGSDInventoryComponent> InventoryComponent;
+
+	/** 락온 컴포넌트 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "LockOn", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAGSDLockOnComponent> LockOnComponent;
 
 	/** 핫바 선택 변경 시 장착 액터를 갱신합니다 */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
@@ -698,6 +679,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerState")
 	void SetCharacterState(ECharacterState NewState);
+
+	UFUNCTION(BlueprintCallable, Category = "LockOn")
+	FORCEINLINE UAGSDLockOnComponent* GetLockOnComponent() const { return LockOnComponent; }
 
 	void UpdateCharacterStateFromEquip();
 	
