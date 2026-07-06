@@ -2,6 +2,8 @@
 
 #include "Chest.h"
 #include "AGSDCharacter.h"
+#include "AGSDInteractionComponent.h"
+#include "InteractionOwnerInterface.h"
 #include "Components/BoxComponent.h"
 #include "Inventory/AGSDInventoryComponent.h"
 #include "AGSDChestAndInventory.h"
@@ -85,18 +87,30 @@ void AChest::Tick(float DeltaTime)
 void AChest::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
+	if (OtherActor && OtherActor->Implements<UInteractionOwnerInterface>())
 	{		
-		player->AddInteractableActor(this);
+		if (IInteractionOwnerInterface* InteractOwner = Cast<IInteractionOwnerInterface>(OtherActor))
+		{
+			if (UAGSDInteractionComponent* InteractionComp = InteractOwner->GetInteractionComponent())
+			{
+				InteractionComp->AddInteractableActor(this);
+			}
+		}
 	}
 }
 
 void AChest::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex)
 {
-	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
+	if (OtherActor && OtherActor->Implements<UInteractionOwnerInterface>())
 	{
-		player->RemoveInteractableActor(this);
+		if (IInteractionOwnerInterface* InteractOwner = Cast<IInteractionOwnerInterface>(OtherActor))
+		{
+			if (UAGSDInteractionComponent* InteractionComp = InteractOwner->GetInteractionComponent())
+			{
+				InteractionComp->RemoveInteractableActor(this);
+			}
+		}
 	}
 }
 

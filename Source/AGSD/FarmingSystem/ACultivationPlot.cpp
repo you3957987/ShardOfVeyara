@@ -5,6 +5,8 @@
 #include "Components/BoxComponent.h"
 #include "AGSDPlayerController.h"
 #include "AGSDCharacter.h"
+#include "AGSDInteractionComponent.h"
+#include "InteractionOwnerInterface.h"
 #include "UsableItem.h"
 #include "SeedDataTable.h"
 #include "Kismet/GameplayStatics.h"
@@ -49,9 +51,15 @@ void AACultivationPlot::HandleDayPassed(int32 CurrentDay)
 //오버랩 시작 함수 구현부
 void AACultivationPlot::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
+	if (OtherActor && OtherActor->Implements<UInteractionOwnerInterface>())
 	{		
-		player->AddInteractableActor(this);
+		if (IInteractionOwnerInterface* InteractOwner = Cast<IInteractionOwnerInterface>(OtherActor))
+		{
+			if (UAGSDInteractionComponent* InteractionComp = InteractOwner->GetInteractionComponent())
+			{
+				InteractionComp->AddInteractableActor(this);
+			}
+		}
 	}
 }
 
@@ -109,9 +117,15 @@ bool AACultivationPlot::CanInteract_Implementation(AAGSDCharacter* player)
 //오버랩 종료 함수 구현부
 void AACultivationPlot::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
+	if (OtherActor && OtherActor->Implements<UInteractionOwnerInterface>())
 	{
-		player->RemoveInteractableActor(this);
+		if (IInteractionOwnerInterface* InteractOwner = Cast<IInteractionOwnerInterface>(OtherActor))
+		{
+			if (UAGSDInteractionComponent* InteractionComp = InteractOwner->GetInteractionComponent())
+			{
+				InteractionComp->RemoveInteractableActor(this);
+			}
+		}
 	}
 }
 

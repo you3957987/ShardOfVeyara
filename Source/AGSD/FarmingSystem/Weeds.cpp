@@ -4,6 +4,8 @@
 #include "Weeds.h"
 
 #include "AGSDCharacter.h"
+#include "AGSDInteractionComponent.h"
+#include "InteractionOwnerInterface.h"
 #include "Components/BoxComponent.h"
 
 // Sets default values
@@ -77,18 +79,30 @@ void AWeeds::BeginPlay()
 void AWeeds::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
+	if (OtherActor && OtherActor->Implements<UInteractionOwnerInterface>())
 	{
-		player->AddInteractableActor(this);
+		if (IInteractionOwnerInterface* InteractOwner = Cast<IInteractionOwnerInterface>(OtherActor))
+		{
+			if (UAGSDInteractionComponent* InteractionComp = InteractOwner->GetInteractionComponent())
+			{
+				InteractionComp->AddInteractableActor(this);
+			}
+		}
 	}
 }
 
 void AWeeds::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex)
 {
-	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
+	if (OtherActor && OtherActor->Implements<UInteractionOwnerInterface>())
 	{
-		player->RemoveInteractableActor(this);
+		if (IInteractionOwnerInterface* InteractOwner = Cast<IInteractionOwnerInterface>(OtherActor))
+		{
+			if (UAGSDInteractionComponent* InteractionComp = InteractOwner->GetInteractionComponent())
+			{
+				InteractionComp->RemoveInteractableActor(this);
+			}
+		}
 	}
 }
 
@@ -142,7 +156,10 @@ void AWeeds::Interact_Implementation(AAGSDCharacter* player)
 	{
 		OnWeeding.Broadcast();
 	}
-	player->SetHighLight(player->getCurrentInteractableActor(), false);
+	if (UAGSDInteractionComponent* InteractionComp = player->GetInteractionComponent())
+	{
+		InteractionComp->SetHighLight(InteractionComp->GetCurrentInteractableActor(), false);
+	}
 	
 	PlayPullPlant(player);
 }

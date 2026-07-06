@@ -18,6 +18,7 @@
 #include "Interface/PlayerDeadInterface.h"
 #include "Interface/ItemDropInterface.h"
 #include "Interface/InteractionInterface.h"
+#include "InteractionOwnerInterface.h"
 #include "SpearComboData.h"
 #include "ECharacterState.h"
 #include "AGSDCharacter.generated.h"
@@ -60,6 +61,7 @@ class AACultivationPlot;
 class UMotionWarpingComponent;
 class UAGSDInventoryComponent;
 class UAGSDLockOnComponent;
+class UAGSDInteractionComponent;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -69,7 +71,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
  */
 UCLASS(abstract)
 class AGSD_API AAGSDCharacter : public ACharacter, public IPetConversationInterface, public IPlayerDeadInterface
-	, public IItemDropInterface, public IInteractionInterface
+	, public IItemDropInterface, public IInteractionInterface, public IInteractionOwnerInterface
 {
 	GENERATED_BODY()
 
@@ -226,23 +228,9 @@ public:
 
 	FORCEINLINE FStruct_ItemData GetHoldingItemData() const { return HoldingItemData; }
 
-	//G 키 입력과 바인딩될 함수
+	// G 키 입력 및 외부 상호작용 위임 함수
 	void TryInteract();
-
-	//AACultivationPlot에서 호출하여 상호작용 대상을 설정/초기화하는 함수
-	FORCEINLINE void SetCurrentInteractableActor(AActor* NewActor) { CurrentInteractableActor = NewActor;}
-
-
-	UFUNCTION(BlueprintCallable)
-	//AACultivationPlot에서 호출하여 액터를 추가하는 함수
-	void AddInteractableActor(AActor* NewActor);
-
-	UFUNCTION(BlueprintCallable)
-	//AACultivationPlot에서 호출하여 액터를 제거하는 함수
-	void RemoveInteractableActor(AActor* ActorToRemove);
-	//상호작용 가능 액터 개수
-	FORCEINLINE int32 GetInteractableActorNum() const {return InteractableActorsInRange.Num();}
-	FORCEINLINE float getDamage() const {return Damage;};
+	float getDamage() const {return Damage;};
 
 	UPROPERTY(EditAnywhere, Category="Input")
 	class UInputMappingContext* IMC_Farmer;
@@ -336,6 +324,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "LockOn", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAGSDLockOnComponent> LockOnComponent;
 
+	/** 상호작용 컴포넌트 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAGSDInteractionComponent> InteractionComponent;
+
 	/** 핫바 선택 변경 시 장착 액터를 갱신합니다 */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void UpdateEquippedActor();
@@ -348,12 +340,8 @@ public:
 	UFUNCTION()
 	void OnInventorySlotUpdated(int32 SlotIndex);
 	
-	AActor* MinDistActor();
-
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	FString SubItemAmount();
-
-
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Interaction")
 	void StrongAttack();
@@ -363,9 +351,6 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	FORCEINLINE void SetCanOpenChest(bool boolean) { bCanOpenChest = boolean; };
-
-	UFUNCTION(BlueprintCallable, Category = "Interaction")
-	void SetHighLight(AActor* TargetActor, bool bActive = true);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bCanOpenChest = true;
@@ -396,17 +381,6 @@ public:
 	FORCEINLINE bool HasBufferedInput() {return bHasBufferedInput;}
 	
 protected:
-	//현재 상호작용 가능한 액터 포인터 (AACultivationPlot 또는 ACrop 등)
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
-	AActor* CurrentInteractableActor = nullptr;
-	
-	//현재 상호작용 가능한 모든 액터를 저장하는 TSet (중복 없이 빠른 추가/제거)
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
-	TSet<AActor*> InteractableActorsInRange = {}; 
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
-    bool CanInteract = false;
-	
 	/** Initialize input action bindings */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -589,8 +563,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemDrop")
 	class UDataTable* EnemyDropDataTable;
 	virtual void HandleEnemyDeadAndDropItem_Implementation( AActor* DeadActor ) override;
-	
-	FORCEINLINE AActor* getCurrentInteractableActor() const { return CurrentInteractableActor; }
 	//--
 	// 펫 관련 추가
 	/** Returns CameraBoom subobject **/
@@ -682,6 +654,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "LockOn")
 	FORCEINLINE UAGSDLockOnComponent* GetLockOnComponent() const { return LockOnComponent; }
+
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	virtual UAGSDInteractionComponent* GetInteractionComponent() const override { return InteractionComponent; }
 
 	void UpdateCharacterStateFromEquip();
 	

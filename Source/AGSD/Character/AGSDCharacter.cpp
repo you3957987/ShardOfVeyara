@@ -4,6 +4,7 @@
 #include "AGSDCloseableUIInterface.h"
 #include "Inventory/AGSDInventoryComponent.h"
 #include "AGSDLockOnComponent.h"
+#include "AGSDInteractionComponent.h"
 #include "PickUpItem.h"
 #include "Inventory/UI/AGSDPlayerHUD.h"
 #include "Framework/Application/SlateApplication.h"
@@ -100,6 +101,9 @@ AAGSDCharacter::AAGSDCharacter()
 	// 락온 컴포넌트 생성
 	LockOnComponent = CreateDefaultSubobject<UAGSDLockOnComponent>(TEXT("LockOnComponent"));
 
+	// 상호작용 컴포넌트 생성
+	InteractionComponent = CreateDefaultSubobject<UAGSDInteractionComponent>(TEXT("InteractionComponent"));
+
 	OpenedChest = nullptr;
 
 	bIsFaceCameraPressed = false;
@@ -130,25 +134,13 @@ void AAGSDCharacter::HandleAttackInput(FName ActionName)
 
 void AAGSDCharacter::TryInteract()
 {
-	// 1. 플레이어 근처에 상호작용 가능한 오브젝트가 있으면 최우선으로 상호작용
-	if (CanInteract && IsValid(CurrentInteractableActor) && CurrentInteractableActor->Implements<UInteraction>())
+	if (InteractionComponent)
 	{
-		IInteraction::Execute_Interact(CurrentInteractableActor, this);
-		return;
+		InteractionComponent->TryInteract();
 	}
 }
 
-void AAGSDCharacter::AddInteractableActor(AActor* NewActor)
-{
-	if (NewActor) InteractableActorsInRange.Add(NewActor);
-	CanInteract = true;
-}
 
-void AAGSDCharacter::RemoveInteractableActor(AActor* ActorToRemove)
-{
-	if (ActorToRemove) InteractableActorsInRange.Remove(ActorToRemove);
-	if(InteractableActorsInRange.Num() <= 0) CanInteract = false;
-}
 
 void AAGSDCharacter::ConsumeInputs(TArray<FInputBufferEntry>& Buffer, int32 Count)
 {
@@ -341,22 +333,10 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 		}
 	}
 
-	AActor* MinDistanceActor = MinDistActor();
-
-	if (CurrentInteractableActor == MinDistanceActor) return;
-	
-	//CurrentInteractableActor 메시의 커스텀 텝스 패스 랜더 비활성화
-	SetHighLight(CurrentInteractableActor, false);
-	CurrentInteractableActor = MinDistanceActor;
-	if (CurrentInteractableActor != nullptr)
+	// --- [상호작용 업데이트] ---
+	if (InteractionComponent)
 	{
-		IInteraction::Execute_ShowWidget(CurrentInteractableActor, this);
-		//CurrentInteractableActor 메시의 커스텀 텝스 패스 랜더 활성화
-		SetHighLight(CurrentInteractableActor, true);
-	}
-	else
-	{
-		if(PC) PC->HideInteractionWidget();
+		InteractionComponent->UpdateInteractionState(DeltaSeconds);
 	}
 }
 
@@ -470,49 +450,7 @@ void AAGSDCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	GI->bHasPet = bHasPet;
 }
 
-AActor* AAGSDCharacter::MinDistActor()
-{
-	float MinDistance = FLT_MAX;
 
-	const FVector PlayerLocation = GetActorLocation();
-
-	AActor* MinDistanceActor = nullptr;
-	
-	for (AActor* CurrentActor : InteractableActorsInRange)
-	{
-		if (!CurrentActor) continue;
-
-		if (!IInteraction::Execute_CanInteract(CurrentActor, this)) continue;
-		
-		const float DistanceSq = FVector::DistSquared(PlayerLocation, CurrentActor->GetActorLocation());
-
-		if (DistanceSq < MinDistance)
-		{
-			MinDistance = DistanceSq;
-			MinDistanceActor = CurrentActor;
-		}
-	}
-
-	return MinDistanceActor;
-}
-
-void AAGSDCharacter::SetHighLight(AActor* TargetActor, bool bActive)
-{
-	if (TargetActor)
-	{
-		if (TargetActor->ActorHasTag(TEXT("NPC")))
-		{
-			return;
-		}
-
-		TArray<UPrimitiveComponent*> Comps;
-		TargetActor->GetComponents(Comps);
-		for (UPrimitiveComponent* Comp : Comps)
-		{
-			Comp->SetRenderCustomDepth(bActive);
-		}
-	}
-}
 
 void AAGSDCharacter::WakeUp()
 {
@@ -1688,14 +1626,14 @@ void AAGSDCharacter::OnHotbarSelectionChanged(int32 PreviousIndex, int32 NewInde
 
 void AAGSDCharacter::OnInventorySlotUpdated(int32 SlotIndex)
 {
+	// 인벤토리 상태 변경에 따라 등 뒤 무기를 먼저 업데이트하여 에셋을 정상 스폰 및 동기화합니다.
+	UpdateBackWeapon();
+
 	// 현재 선택된 핫바 슬롯의 데이터가 변경된 경우 장착 아이템 갱신
 	if (InventoryComponent && SlotIndex == InventoryComponent->GetCurrentHotbarIndex())
 	{
 		UpdateEquippedActor();
 	}
-
-	// 인벤토리 상태 변경에 따라 등 뒤 무기도 실시간으로 업데이트
-	UpdateBackWeapon();
 }
 
 void AAGSDCharacter::UpdateEquippedActor()
@@ -1794,6 +1732,8 @@ void AAGSDCharacter::UpdateEquippedActor()
 	// 부착할 액터가 없는 아이템은 여기서 장착 상태만 유지한 채 안전하게 종료
 	if (AttachSocketName == NAME_None)
 	{
+		UpdateBackWeapon();
+		UpdateCharacterStateFromEquip();
 		return;
 	}
 
@@ -2204,11 +2144,7 @@ void AAGSDCharacter::UpdateBackWeapon()
 		bool bIsCurrentlyHolding = false;
 		if (HoldingWeapon == WeaponType)
 		{
-			// forke 아이템은 손에 들고 있더라도 소켓에서 유지해야 하므로 bIsCurrentlyHolding을 false로 유지합니다.
-			if (MapItemID != TEXT("forke"))
-			{
-				bIsCurrentlyHolding = true;
-			}
+			bIsCurrentlyHolding = true;
 		}
 
 		// 조건 A: 인벤토리에 있고, 손에 쥐고 있지 않을 때 -> 등 뒤에 거치되어야 함
