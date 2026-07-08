@@ -9,7 +9,9 @@ enum class ESpearAttackDirection : uint8
 {
 	Neutral,
 	Forward,
-	Backward
+	Backward,
+	Sprint,
+	Parry
 };
 
 USTRUCT(BlueprintType)

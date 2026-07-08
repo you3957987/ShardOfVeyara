@@ -7,7 +7,6 @@
 #include "Logging/LogMacros.h"
 #include "HoldingState.h"
 #include "AGSDPlayerController.h"
-#include "AnimNotifyState_WeaponAttack.h"
 #include "FadeWidget.h"
 #include "HealthBar.h"
 #include "HoldingWeapon.h"
@@ -62,6 +61,7 @@ class UMotionWarpingComponent;
 class UAGSDInventoryComponent;
 class UAGSDLockOnComponent;
 class UAGSDInteractionComponent;
+class UAGSDGuardComponent;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -75,6 +75,8 @@ class AGSD_API AAGSDCharacter : public ACharacter, public IPetConversationInterf
 {
 	GENERATED_BODY()
 
+	friend class UAGSDGuardComponent;
+
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraBoom;
@@ -87,8 +89,6 @@ class AGSD_API AAGSDCharacter : public ACharacter, public IPetConversationInterf
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* AudioListenerComponent;
 	
-	bool bIsJustGuardWindow = false;
-
 protected:
 	/** Attack Input Action */
 	UPROPERTY(EditAnywhere, Category="Input")
@@ -327,6 +327,10 @@ public:
 	/** 상호작용 컴포넌트 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAGSDInteractionComponent> InteractionComponent;
+
+	/** 가드 컴포넌트 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Guard", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAGSDGuardComponent> GuardComponent;
 
 	/** 핫바 선택 변경 시 장착 액터를 갱신합니다 */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
@@ -604,11 +608,7 @@ public:
 	float MaxRotationTime = 0.2f;   
 	float RotationSpeed = 500.0f; 
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GuardEffect")
-	class UNiagaraSystem* GuardEffect;
-	
-	//-----------------------------------
-	
+	void StartParryCombo();
 	void StartNewCombo();
 	
 	FSpearComboData* GetComboDataByDirection(ESpearAttackDirection Direction);
@@ -621,22 +621,9 @@ public:
 	
 	void StartRecovery(UAnimMontage* RecoveryMontage);
 
-	FTimerHandle JustGuardTimerHandle;
-	void EndJustGuardWindow();
-
-	void StartBlock();
-	void StopBlock();
 	void OnHitReceived();
 
-	/** 저스트 가드 성공 효과 처리 */
-	void HandleJustGuardSuccess();
 	void ResetCombo();
-	/** 성공 시 재생할 이펙트 */
-	UPROPERTY(EditAnywhere, Category = "Combat|Effects")
-	UParticleSystem* JustGuardParticle;
-	/** 성공 시 재생할 사운드 */
-	UPROPERTY(EditAnywhere, Category = "Combat|Effects")
-	USoundBase* JustGuardSound;
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Tutorial")
 	void OnSkipTutorialTriggered();
@@ -657,6 +644,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	virtual UAGSDInteractionComponent* GetInteractionComponent() const override { return InteractionComponent; }
+
+	UFUNCTION(BlueprintCallable, Category = "Guard")
+	FORCEINLINE UAGSDGuardComponent* GetGuardComponent() const { return GuardComponent; }
 
 	void UpdateCharacterStateFromEquip();
 	

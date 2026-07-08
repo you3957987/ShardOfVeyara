@@ -5,6 +5,7 @@
 #include "Inventory/AGSDInventoryComponent.h"
 #include "AGSDLockOnComponent.h"
 #include "AGSDInteractionComponent.h"
+#include "AGSDGuardComponent.h"
 #include "PickUpItem.h"
 #include "Inventory/UI/AGSDPlayerHUD.h"
 #include "Framework/Application/SlateApplication.h"
@@ -103,6 +104,9 @@ AAGSDCharacter::AAGSDCharacter()
 
 	// 상호작용 컴포넌트 생성
 	InteractionComponent = CreateDefaultSubobject<UAGSDInteractionComponent>(TEXT("InteractionComponent"));
+
+	// 가드 컴포넌트 생성
+	GuardComponent = CreateDefaultSubobject<UAGSDGuardComponent>(TEXT("GuardComponent"));
 
 	OpenedChest = nullptr;
 
@@ -507,26 +511,17 @@ float AAGSDCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 		return DamageToApply;
 	}
 	
-	if (bIsJustGuardWindow) DamageToApply = 0.f;
-	else if (CharacterState == ECharacterState::Block) DamageToApply = 0.f;
-
-	if ( bIsJustGuardWindow || CharacterState == ECharacterState::Block )
+	if (DamageToApply >= 0.f)
 	{
-		if ( DamageToApply >= 0.f && GuardEffect )
-		{		
-			FVector SpawnLocation = GetActorLocation() 
-						+ (GetActorForwardVector() * 50.f) 
-						+ (GetActorUpVector() * 40.f); // 90.f에서 40.f로 수정 (밑으로 50 이동)
-			
-			//  이펙트 생성
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-				GetWorld(), 
-				GuardEffect, 
-				SpawnLocation, 
-				FRotator::ZeroRotator, 
-				FVector(0.5f), // 스케일
-				true
-			);
+		OnHitReceived();
+	}
+	
+	if (GuardComponent)
+	{
+		float MitigatedDamage = DamageToApply;
+		if (GuardComponent->ProcessDamageMitigation(DamageToApply, MitigatedDamage))
+		{
+			DamageToApply = MitigatedDamage;
 		}
 	}
 	
@@ -590,8 +585,12 @@ void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(Interaction, ETriggerEvent::Triggered, this, &AAGSDCharacter::TryInteract);
 
 		//
-		EnhancedInputComponent->BindAction(GuardAction, ETriggerEvent::Started, this, &AAGSDCharacter::StartBlock);
-		EnhancedInputComponent->BindAction(GuardAction, ETriggerEvent::Completed, this, &AAGSDCharacter::StopBlock);
+		// 가드 기능 바인딩
+		if (GuardAction && GuardComponent)
+		{
+			EnhancedInputComponent->BindAction(GuardAction, ETriggerEvent::Started, GuardComponent.Get(), &UAGSDGuardComponent::StartBlock);
+			EnhancedInputComponent->BindAction(GuardAction, ETriggerEvent::Completed, GuardComponent.Get(), &UAGSDGuardComponent::StopBlock);
+		}
 
 		// 락온 기능 바인딩
 		if (LockOnAction && LockOnComponent)
@@ -823,6 +822,17 @@ void AAGSDCharacter::playFadeWidget(float startOpacity, float endOpacity, float 
 
 ESpearAttackDirection AAGSDCharacter::GetAttackDirection()
 {
+	// 콤보 시작 시점(공격 중이 아닌 상태)이며, 스프린트 중이고, 평면 속도가 스프린트 설정 속도(SprintSpeed)에 근접한 경우 Sprint 전용 콤보 로드
+	if (bIsSprinting && !bIsAttacking)
+	{
+		float CurrentSpeed = GetVelocity().Size2D();
+		// 가속 상태를 고려해 스프린트 설정 속도의 90% 이상 속도일 때 대시 공격 허용
+		if (CurrentSpeed >= (SprintSpeed * 0.9f))
+		{
+			return ESpearAttackDirection::Sprint;
+		}
+	}
+
 	// [개선] GetLastMovementInputVector() 대신 직접 저장한 LastRawInputVector 사용
 	// 애니메이션 도중에는 캐릭터 이동이 멈춰있어 GetLastMovementInputVector()가 0이 되기 때문
 	FVector InputMoveVector = LastRawInputVector;
@@ -948,7 +958,7 @@ void AAGSDCharacter::HandleRotateCharacterStartAttack(float DeltaSeconds)
 		{
 			bIsRotatingToCamera = false;
 			return; // 시간 다 되면 종료
-		}
+ 		}
 
 		FRotator CurrentRotation = GetActorRotation();
 
@@ -968,6 +978,29 @@ void AAGSDCharacter::HandleRotateCharacterStartAttack(float DeltaSeconds)
 		);
 
 		SetActorRotation(NewRotation);
+	}
+}
+
+void AAGSDCharacter::StartParryCombo()
+{
+	// 1. 가드 상태 해제 (패리 성공했으므로 공격(Combat) 상태로 전이)
+	if (CharacterState == ECharacterState::Block)
+	{
+		SetCharacterState(ECharacterState::Combat);
+		UpdateSprintSpeed();
+		UpdateCharacterRotationSettings();
+	}
+
+	// 2. 기존 공격/콤보 상태 강제 클리어
+	ResetCombo();
+	Mining = true; // 공격 시작 표시
+
+	// 3. Parry 전용 콤보 로드 및 1타(튕겨내기) 재생
+	CurrentComboData = GetComboDataByDirection(ESpearAttackDirection::Parry);
+	if (CurrentComboData && CurrentComboData->Stages.Num() > 0)
+	{
+		CurrentStageIndex = 0;
+		PlayStage(0);
 	}
 }
 
@@ -1031,34 +1064,56 @@ void AAGSDCharacter::ExecuteNextStage()
 				CurrentStageIndex = 0;
 				PlayStage(0);
 			}
+			else
+			{
+				// 연계할 수 있는 다음 콤보 데이터가 없을 경우 안전하게 상태 초기화
+				ResetAttackState();
+			}
 		}
 	}
 }
 
 void AAGSDCharacter::PlayStage(int32 Index)
 {
-	if (!CurrentComboData) return;
+	if (!CurrentComboData || !CurrentComboData->Stages.IsValidIndex(Index))
+	{
+		ResetAttackState();
+		return;
+	}
 
 	FSpearStageData& Stage = CurrentComboData->Stages[Index];
+	bool bPlaySuccess = false;
+
 	if (Stage.AttackMontage)
 	{
 		UpdateMotionWarpTarget();
 
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-		float Duration = PlayAnimMontage(Stage.AttackMontage);
-        
-		if (Duration > 0.f)
+		if (AnimInstance)
 		{
-			bIsAttacking = true;
-			bIsRecovering = false; // 새로운 공격 시작 시 복귀 상태 해제
-			bCanCombo = false;
-			bHasBufferedInput = false;
+			float Duration = PlayAnimMontage(Stage.AttackMontage);
+			if (Duration > 0.f)
+			{
+				bIsAttacking = true;
+				bIsRecovering = false; // 새로운 공격 시작 시 복귀 상태 해제
+				bCanCombo = false;
+				bHasBufferedInput = false;
 
-			// 몽타주 종료 델리게이트 바인딩
-			FOnMontageEnded MontageEndedDelegate;
-			MontageEndedDelegate.BindUObject(this, &AAGSDCharacter::OnAttackMontageEnded);
-			AnimInstance->Montage_SetEndDelegate(MontageEndedDelegate, Stage.AttackMontage);
+				// 몽타주 종료 델리게이트 바인딩
+				FOnMontageEnded MontageEndedDelegate;
+				MontageEndedDelegate.BindUObject(this, &AAGSDCharacter::OnAttackMontageEnded);
+				AnimInstance->Montage_SetEndDelegate(MontageEndedDelegate, Stage.AttackMontage);
+				
+				bPlaySuccess = true;
+			}
 		}
+	}
+
+	// 몽타주 재생에 실패했거나 에셋이 없는 경우, 상태를 즉시 초기화하여 조작 불가 방지
+	if (!bPlaySuccess)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PlayStage failed at index %d! Resetting attack state."), Index);
+		ResetAttackState();
 	}
 }
 
@@ -1090,67 +1145,6 @@ void AAGSDCharacter::StartRecovery(UAnimMontage* RecoveryMontage)
 	AnimInstance->Montage_SetEndDelegate(RecoveryEndedDelegate, RecoveryMontage);
 }
 
-void AAGSDCharacter::EndJustGuardWindow()
-{
-	// 타이머에 의해 호출되면 이제 더 이상 저스트 가드 판정이 아님
-	bIsJustGuardWindow = false;
-
-	// (선택 사항) 로그를 남겨서 판정 종료를 확인해볼 수 있습니다.
-	// UE_LOG(LogTemp, Log, TEXT("Just Guard Window Closed"));
-}
-
-void AAGSDCharacter::StartBlock()
-{
-	if (Mining) return;
-	if (HoldingWeapon != EHoldingWeapon::Spear) return;
-
-	SetCharacterState(ECharacterState::Block);
-	UpdateSprintSpeed();
-	
-	UpdateCharacterRotationSettings();
-	
-	// 가드 시작 후 0.2초간 저스트 가드 판정 활성화
-	bIsJustGuardWindow = true;
-	GetWorldTimerManager().SetTimer(JustGuardTimerHandle, this, &AAGSDCharacter::EndJustGuardWindow, 0.2f, false);
-}
-
-void AAGSDCharacter::StopBlock()
-{
-	if (CharacterState == ECharacterState::Block)
-	{
-		SetCharacterState(ECharacterState::Combat);
-		UpdateSprintSpeed();
-		UpdateCharacterRotationSettings();
-	}
-}
-
-void AAGSDCharacter::HandleJustGuardSuccess()
-{
-	// 1. 상태 초기화 (연속 성공 방지 및 타이머 정리)
-	bIsJustGuardWindow = false;
-	GetWorldTimerManager().ClearTimer(JustGuardTimerHandle);
-	// 2. 사운드 재생
-	if (JustGuardSound)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, JustGuardSound, GetActorLocation());
-	}
-	// 3. 이펙트 스폰 (보통 창이나 방패 위치에 스폰하는 것이 좋음)
-	if (JustGuardParticle)
-	{
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), JustGuardParticle, GetActorLocation());
-	}
-	// 4. (고급 기능) 역경직(Hit-Stop) 연출
-	// 가드 성공의 쾌감을 위해 시간 배율을 아주 잠깐 동안 낮췄다 돌려주면 타격감이 훨씬 좋아집니다.
-	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.1f);
-    
-	FTimerHandle ResetTimeDilationTimer;
-	GetWorldTimerManager().SetTimer(ResetTimeDilationTimer, FTimerDelegate::CreateLambda([this]()
-	{
-		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
-	}), 0.05f, false); // 0.05초 뒤에 다시 원래 속도로
-	UE_LOG(LogTemp, Warning, TEXT("Just Guard Success!"));
-}
-
 void AAGSDCharacter::ResetCombo()
 {
 	// 1. 모든 상태 플래그 초기화
@@ -1158,16 +1152,16 @@ void AAGSDCharacter::ResetCombo()
 	bIsRecovering = false;
 	bCanCombo = false;
 	bHasBufferedInput = false;
+	Mining = false;
     
 	// 2. 콤보 데이터 초기화
 	CurrentStageIndex = -1;
 	CurrentComboData = nullptr;
 
 	// 3. (추가) 수비 시스템 관련 상태도 함께 초기화
-	bIsJustGuardWindow = false;
-	if (GetWorldTimerManager().IsTimerActive(JustGuardTimerHandle))
+	if (GuardComponent)
 	{
-		GetWorldTimerManager().ClearTimer(JustGuardTimerHandle);
+		GuardComponent->ResetGuardState();
 	}
 
 	// 몽타주가 실행 중이라면 정지 (선택 사항)
@@ -1178,9 +1172,9 @@ void AAGSDCharacter::ResetCombo()
 
 void AAGSDCharacter::OnHitReceived()
 {
-	if (bIsJustGuardWindow)
+	if (GuardComponent && GuardComponent->IsJustGuardActive())
 	{
-		HandleJustGuardSuccess();
+		GuardComponent->HandleJustGuardSuccess();
 	}
 	else
 	{
@@ -1649,9 +1643,9 @@ void AAGSDCharacter::UpdateEquippedActor()
 	}
 
 	// 장착 아이템이 교체되는데 가드(Block) 상태라면 가드를 먼저 해제하여 내부 플래그를 정상 정리
-	if (CharacterState == ECharacterState::Block)
+	if (CharacterState == ECharacterState::Block && GuardComponent)
 	{
-		StopBlock();
+		GuardComponent->StopBlock();
 	}
 
 	// 1. 기존 장착 액터 파괴
