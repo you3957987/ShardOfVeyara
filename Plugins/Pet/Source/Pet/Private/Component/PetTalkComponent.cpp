@@ -397,7 +397,7 @@ void UPetTalkComponent::StartConversation(FName DialogueID)
 
     	//  음성 재생 및 지속 시간 계산
     	float Duration = 10.0f;
-    	if (RowData->VoiceAudio)
+		if (RowData->VoiceAudio)
     	{
     		//  기존 음성 중지 로직 추가
     		if (CurrentConversationVoiceAudioComponent && CurrentConversationVoiceAudioComponent->IsPlaying())

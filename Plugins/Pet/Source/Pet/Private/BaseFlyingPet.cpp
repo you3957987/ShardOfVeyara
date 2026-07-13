@@ -171,7 +171,7 @@ void ABaseFlyingPet::FollowingTarget(float DeltaTime)
 	// 보간된 새로운 위치 계산
 	FVector NewLocation = FMath::VInterpTo(CurrentLocation, DesiredLocation, DeltaTime, FinalInterpSpeed);
 
-	// [핵심 변경 사항] bSweep을 true로 설정하여 충돌 감지 활성화
+	// bSweep을 true로 설정하여 충돌 감지 활성화
 	FHitResult Hit;
 	bool bMoved = SetActorLocation(NewLocation, true, &Hit);
 
@@ -300,7 +300,7 @@ void ABaseFlyingPet::CheckSurroundingEnemy()
 			if (Actor->ActorHasTag("Mimic") || Actor->ActorHasTag("Burrow") 
 				|| Actor->ActorHasTag("Trans")) continue;
 			
-			// Boss 태그가 있다면 무시 
+			// Boss 태그 
 			if (Actor->ActorHasTag("Boss"))
 			{
 				if (bBossBattleMode == false)
