@@ -1178,9 +1178,29 @@ void AAGSDCharacter::OnHitReceived()
 	}
 	else
 	{
-		// 일반 피격 시 콤보 리셋 및 모든 공격 상태 강제 종료
-		ResetCombo();
+		// 피격 경직(콤보 리셋)을 적용해야 하는 상황에서만 콤보를 끊고 리셋
+		if (ShouldApplyHitReaction())
+		{
+			ResetCombo();
+		}
 	}
+}
+
+bool AAGSDCharacter::ShouldApplyHitReaction() const
+{
+	// 캐릭터가 공격 중이 아니거나 복귀 중이 아닌 완전히 Idle 상태라면 피격 리액션 적용
+	if (!bIsAttacking && !bIsRecovering)
+	{
+		return true;
+	}
+
+	// 콤보 진행 중이라면 현재 단계의 bBreakComboOnHit 설정값을 따름
+	if (CurrentComboData && CurrentComboData->Stages.IsValidIndex(CurrentStageIndex))
+	{
+		return CurrentComboData->Stages[CurrentStageIndex].bBreakComboOnHit;
+	}
+
+	return true;
 }
 
 void AAGSDCharacter::OnRecoveryFinished(UAnimMontage* Montage, bool bInterrupted)

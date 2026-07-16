@@ -624,6 +624,9 @@ public:
 	void OnHitReceived();
 
 	void ResetCombo();
+
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	bool ShouldApplyHitReaction() const;
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Tutorial")
 	void OnSkipTutorialTriggered();

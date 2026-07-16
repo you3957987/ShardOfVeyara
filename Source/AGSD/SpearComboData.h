@@ -24,6 +24,9 @@ struct FSpearStageData // 각 단계별 개별 애니메이션 데이터
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DamageMultiplier = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combo")
+	bool bBreakComboOnHit = false;
 };
 
 USTRUCT(BlueprintType)
