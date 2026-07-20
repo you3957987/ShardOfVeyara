@@ -2,6 +2,7 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "TextLog.h"
 #include "Components/AudioComponent.h"
 #include "Components/Button.h"
 #include "Components/ScrollBox.h"
@@ -48,6 +49,9 @@ void UPetTalkComponent::BeginPlay()
 			
 			ConversationSubtitleInstance->OnSkipClicked.RemoveDynamic(this, &UPetTalkComponent::EndConversation);
 			ConversationSubtitleInstance->OnSkipClicked.AddDynamic(this, &UPetTalkComponent::EndConversation);
+			
+			ConversationSubtitleInstance->OnSkipClicked.RemoveDynamic(this, &UPetTalkComponent::CheckSkipButton);
+			ConversationSubtitleInstance->OnSkipClicked.AddDynamic(this, &UPetTalkComponent::CheckSkipButton);
 			
 			ConversationSubtitleInstance->OnConversationButtonClicked.RemoveDynamic(this, &UPetTalkComponent::SkipCurrentDialogue);
 			ConversationSubtitleInstance->OnConversationButtonClicked.AddDynamic(this, &UPetTalkComponent::SkipCurrentDialogue);
@@ -531,6 +535,11 @@ void UPetTalkComponent::EndConversation()
 	}
 }
 
+void UPetTalkComponent::CheckSkipButton()
+{
+	UTextLog::WriteTextLogByKeyword(TEXT("대화 스킵 버튼 사용"));
+}
+
 // 데이터 테이블에서 랜덤한 행 데이터 OutData 반환
 bool UPetTalkComponent::GetRandomDialogueFromTable(UDataTable* DataTable, FPetConversationData& OutData)
 {
@@ -572,6 +581,8 @@ void UPetTalkComponent::OnPressedLogButton()
 		{
 			ConversationSubtitleInstance->LogWidgetInstance->SetVisibility( ESlateVisibility::Visible );
 
+			UTextLog::WriteTextLogByKeyword(TEXT("대화 로그 버튼 사용"));
+			
 			// 대화 일시정지시켜서 다음으로 못 넘어가도록
 			GetWorld()->GetTimerManager().PauseTimer(ConversationTimerHandle);
 		}

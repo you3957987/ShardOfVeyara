@@ -7,6 +7,7 @@
 #include "AGSDInteractionComponent.h"
 #include "InteractionOwnerInterface.h"
 #include "FarmingGameMode.h"
+#include "TextLog.h"
 #include "Components/BoxComponent.h"
 
 // Sets default values
@@ -60,6 +61,8 @@ void ABed::Interact_Implementation(AAGSDCharacter* player)
 	FadeWidget->SetRenderOpacity(0.0f);
 	FadeWidget->SetTargetOpacity(1.0f);
 	if (!FadeWidget->IsInViewport()) FadeWidget->AddToViewport(100);
+	
+	UTextLog::WriteTextLogByKeyword(TEXT("잠자기"));
 }
 
 void ABed::ShowWidget_Implementation(ACharacter* player)
