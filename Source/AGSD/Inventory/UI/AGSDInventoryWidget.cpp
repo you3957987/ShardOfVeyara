@@ -2,6 +2,7 @@
 
 #include "AGSDInventoryWidget.h"
 #include "Components/UniformGridPanel.h"
+#include "Components/UniformGridSlot.h"
 #include "Inventory/AGSDInventoryComponent.h"
 #include "AGSDInventorySlotWidget.h"
 
@@ -43,16 +44,56 @@ void UAGSDInventoryWidget::InitializeInventory(UAGSDInventoryComponent* InInvent
 				FStruct_InventorySlotData SlotData = InventoryComponent->GetSlotData(i);
 				NewSlot->SetInventoryItem(SlotData.ItemData, SlotData.IsEmpty);
 
-				// 행/열 좌표 계산 (기본 SlotsPerRow개씩 한 행에 배치)
+				// 행/열 좌표 계산 (SlotsPerRow가 0 이하로 들어오지 않도록 방어)
+				const int32 EffectiveSlotsPerRow = FMath::Max(1, SlotsPerRow);
 				const int32 RelIndex = i - SlotStart;
-				const int32 Row = RelIndex / SlotsPerRow;
-				const int32 Col = RelIndex % SlotsPerRow;
+				const int32 Row = RelIndex / EffectiveSlotsPerRow;
+				const int32 Col = RelIndex % EffectiveSlotsPerRow;
 
-				UGP_InventorySlots->AddChildToUniformGrid(NewSlot, Row, Col);
+				if (UUniformGridSlot* GridSlot = Cast<UUniformGridSlot>(UGP_InventorySlots->AddChildToUniformGrid(NewSlot, Row, Col)))
+				{
+					GridSlot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
+					GridSlot->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
+				}
 				InventorySlotWidgets.Add(NewSlot);
 			}
 		}
 	}
+}
+
+void UAGSDInventoryWidget::SynchronizeProperties()
+{
+	Super::SynchronizeProperties();
+
+	// 에디터 프로퍼티 변경 시 SlotsPerRow 최소값(1) 안전 보장
+	SlotsPerRow = FMath::Max(1, SlotsPerRow);
+
+#if WITH_EDITOR
+	// 에디터 UMG 디자이너 창에서 SlotsPerRow 프로퍼티 변경 시 실시간 미리보기 갱신
+	if (IsDesignTime() && UGP_InventorySlots && SlotWidgetClass)
+	{
+		UGP_InventorySlots->ClearChildren();
+
+		const int32 PreviewSlotCount = 10;
+		const int32 EffectiveSlotsPerRow = FMath::Max(1, SlotsPerRow);
+
+		for (int32 i = 0; i < PreviewSlotCount; ++i)
+		{
+			UAGSDInventorySlotWidget* NewSlot = CreateWidget<UAGSDInventorySlotWidget>(this, SlotWidgetClass);
+			if (NewSlot)
+			{
+				const int32 Row = i / EffectiveSlotsPerRow;
+				const int32 Col = i % EffectiveSlotsPerRow;
+
+				if (UUniformGridSlot* GridSlot = Cast<UUniformGridSlot>(UGP_InventorySlots->AddChildToUniformGrid(NewSlot, Row, Col)))
+				{
+					GridSlot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
+					GridSlot->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
+				}
+			}
+		}
+	}
+#endif
 }
 
 void UAGSDInventoryWidget::RefreshInventory()

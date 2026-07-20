@@ -62,4 +62,5 @@ public:
 
 protected:
 	virtual void NativeDestruct() override;
+	virtual void SynchronizeProperties() override;
 };
