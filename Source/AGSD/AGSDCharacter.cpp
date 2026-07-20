@@ -24,6 +24,7 @@
 #include "BaseFlyingPet.h"
 #include "NiagaraFunctionLibrary.h"
 #include "SpearComboData.h"
+#include "TextLog.h"
 #include "Components/AudioComponent.h"
 #include "Interface/ItemDropInterface.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -95,6 +96,7 @@ void AAGSDCharacter::HandleAttackInput(FName ActionName)
 	FInputBufferEntry NewEntry(ActionName, CurrentTime, CurrentFrame);
 
 	InputBuffer.Add(NewEntry);
+	
 }
 
 void AAGSDCharacter::TryInteract()
@@ -102,6 +104,8 @@ void AAGSDCharacter::TryInteract()
 	// 1. 플레이어 근처에 상호작용 가능한 오브젝트가 있으면 최우선으로 상호작용
 	if (CanInteract && IsValid(CurrentInteractableActor) && CurrentInteractableActor->Implements<UInteraction>())
 	{
+		UTextLog::WriteTextLogByString(TEXT("상호작용 키 입력"), TEXT("단순 상호작용"));
+		
 		IInteraction::Execute_Interact(CurrentInteractableActor, this);
 		return;
 	}
@@ -115,6 +119,8 @@ void AAGSDCharacter::TryInteract()
 		{
 			if (DefaultActor->Implements<UUsableItem>())
 			{
+				UTextLog::WriteTextLogByString(TEXT("상호작용 키 입력"), TEXT("아이템 사용"));
+				
 				IUsableItem::Execute_UseItem(DefaultActor, this);
 			}
 		}
@@ -201,6 +207,8 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	SetTotalDistance();
+	
 	// 선입력 유효 시간 초과 체크 및 해제
 	if (bHasBufferedInput)
 	{
@@ -362,6 +370,9 @@ void AAGSDCharacter::Tick(float DeltaSeconds)
 	{
 		if(PC) PC->HideInteractionWidget();
 	}
+	
+	
+	
 }
 
 void AAGSDCharacter::BeginPlay()
@@ -403,13 +414,38 @@ void AAGSDCharacter::BeginPlay()
 	
 	
 	MouseSensitivity = GI->MouseSensitivity;
+	
+	LastLocation = GetActorLocation();
 }
 
 void AAGSDCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	DestroyPetBeforeTravel();
-	Super::EndPlay(EndPlayReason);
+	
+	// 현재 레벨 이름 가져오기
+	FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
 
+	// 어떤 스테이지가 종료되었는지를 로그 기록
+	UTextLog::WriteTextLogByString(TEXT("종료된 스테이지"), CurrentLevelName);
+	
+	// 현재 남은 체력 잔량 로그 기록을 스트링 형태로 == 최대 체력 / 현재 체력의 형태로	
+	FString HealthLog = FString::Printf(TEXT("%f / %f"), MaxHealth, Health);
+	UTextLog::WriteTextLogByString(TEXT("남은 체력 잔량"), HealthLog);
+	
+	// 현재 가지고 있는 골드 량 기록
+	UTextLog::WriteTextLogByFloat(TEXT("현재 골드 량"), static_cast<float>(Coin));
+	
+	// 총 이동 거리 기록
+	float DistanceInMeters = TotalDistance / 100.0f;
+	UTextLog::WriteTextLogByFloat(TEXT("총 이동 거리"), DistanceInMeters);
+    
+	// 현재 스테이지 플레이 시간 기록 (핵심 추가)
+	// GetTimeSeconds는 해당 레벨이 시작된 순간부터 현재까지 흐른 시간을 초(Second) 단위로 리턴합니다.
+	float StagePlayTime = UGameplayStatics::GetTimeSeconds(GetWorld());
+	UTextLog::WriteTextLogByFloat(TEXT("스테이지 플레이 시간"), StagePlayTime);
+	
+	Super::EndPlay(EndPlayReason);
+	
 	GI->Damage = Damage;
 	GI->Coin = Coin;
 	GI->PlayerHealth = Health;
@@ -548,6 +584,18 @@ float AAGSDCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 		if (HealthBar) HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 		if ( Health <= 0.f )
 		{
+			// ─── [사망 원인 로그 기록 추가] ───
+			FString CauseName = TEXT("알 수 없는 원인");
+			
+			// 대미지를 준 액터(DamageCauser)가 존재하는지 안전하게 검사합니다.
+			if (IsValid(DamageCauser))
+			{
+				// 액터의 기획상 에디터 이름(예: BP_SkeletonMage_C_1 등)을 가져옵니다.
+				CauseName = DamageCauser->GetName();
+				UTextLog::WriteTextLogByString(TEXT("플레이어 사망원인"), CauseName);
+			}
+			// ───────────────────────────────────
+			
 			bCanBeDamage = false;
 			Die();
 		}
@@ -679,6 +727,8 @@ void AAGSDCharacter::Jump()
  	if (Jumping && !GetCharacterMovement()->IsFalling())
 	{
 		Jumping->Play();
+ 		
+ 		UTextLog::WriteTextLogByKeyword(TEXT("점프"));
 	}
 	Super::Jump();
 }
@@ -928,11 +978,20 @@ void AAGSDCharacter::PlayStage(int32 Index)
 			bIsRecovering = false; // 새로운 공격 시작 시 복귀 상태 해제
 			bCanCombo = false;
 			bHasBufferedInput = false;
-
+			
 			// 몽타주 종료 델리게이트 바인딩
 			FOnMontageEnded MontageEndedDelegate;
 			MontageEndedDelegate.BindUObject(this, &AAGSDCharacter::OnAttackMontageEnded);
 			AnimInstance->Montage_SetEndDelegate(MontageEndedDelegate, Stage.AttackMontage);
+			
+			// ─── [실제 공격 발동 로그 기록 추가] ───
+			// 현재 콤보 단계(Index + 1)와 해당 공격의 대미지 배율을 로그로 남깁니다.
+			FString AttackLogInfo = FString::Printf(TEXT("%d타 연계"), Index + 1);
+			float DamageMultiplier = GetCurrentAttackDamageMultiplier();
+          
+			// 출력 형태 예시: [시간] [플레이어_공격발동] : 1타 연계 | 1.0
+			UTextLog::WriteTextLogByStringAndFloat(TEXT("플레이어_공격발동"), AttackLogInfo, DamageMultiplier);
+			// ───────────────────────────────────────
 		}
 	}
 }
@@ -1697,5 +1756,23 @@ void AAGSDCharacter::ExecuteTutorialSkipLevelTransition()
 	{
 		// 설정되지 않았을 경우 기본값
 		UGameplayStatics::OpenLevel(this, FName("Farm_Sky_Island"));
+	}
+}
+
+// 로그 데이터 관련
+
+void AAGSDCharacter::SetTotalDistance()
+{
+	FVector CurrentLocation = GetActorLocation();
+    
+	// Z축(점프, 낙사)을 제외한 평면 이동 거리만 재고 싶다면 FVector::Dist2D 사용
+	// 3차원 공간 이동을 전부 재고 싶다면 FVector::Distance 사용
+	float FrameDistance = FVector::Distance(CurrentLocation, LastLocation);
+    
+	// 플레이어가 실제로 움직였을 때만 누적 (미세한 프레임 떨림 오차 방지)
+	if (FrameDistance > 0.1f)
+	{
+		TotalDistance += FrameDistance;
+		LastLocation = CurrentLocation;
 	}
 }

@@ -515,5 +515,15 @@ public:
 	UFUNCTION()
 	void ExecuteTutorialSkipLevelTransition();
 	
+	// 로그 데이터 관련
+	FVector LastLocation;
+	float TotalDistance = 0.0f;
+	void SetTotalDistance();
+	
+	float GetTotalDistance() const { return TotalDistance / 100.0f; } // 미터(m) 단위 변환 시
+	
+	
+	//
+	
 };
 
