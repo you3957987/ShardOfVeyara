@@ -6,6 +6,7 @@
 #include "AGSDLockOnComponent.h"
 #include "AGSDInteractionComponent.h"
 #include "AGSDGuardComponent.h"
+#include "Character/Components/AGSDComboGuideComponent.h"
 #include "PickUpItem.h"
 #include "Inventory/UI/AGSDPlayerHUD.h"
 #include "Framework/Application/SlateApplication.h"
@@ -107,6 +108,9 @@ AAGSDCharacter::AAGSDCharacter()
 
 	// 가드 컴포넌트 생성
 	GuardComponent = CreateDefaultSubobject<UAGSDGuardComponent>(TEXT("GuardComponent"));
+
+	// 콤보 가이드 컴포넌트 생성
+	ComboGuideComponent = CreateDefaultSubobject<UAGSDComboGuideComponent>(TEXT("ComboGuideComponent"));
 
 	OpenedChest = nullptr;
 
@@ -213,6 +217,11 @@ bool AAGSDCharacter::CheckSingleInput(const TArray<FInputBufferEntry>& Buffer, F
 void AAGSDCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	if (ComboGuideComponent)
+	{
+		ComboGuideComponent->UpdateComboGuideUI();
+	}
 
 	UpdateCharacterRotationSettings();
 	TryStartTurn();
@@ -1099,6 +1108,11 @@ void AAGSDCharacter::PlayStage(int32 Index)
 				bCanCombo = false;
 				bHasBufferedInput = false;
 
+				if (ComboGuideComponent)
+				{
+					ComboGuideComponent->UpdateComboGuideUI();
+				}
+
 				// 몽타주 종료 델리게이트 바인딩
 				FOnMontageEnded MontageEndedDelegate;
 				MontageEndedDelegate.BindUObject(this, &AAGSDCharacter::OnAttackMontageEnded);
@@ -1226,6 +1240,11 @@ void AAGSDCharacter::ResetAttackState()
 	CurrentComboData = nullptr;
 	Mining = false;
 
+	if (ComboGuideComponent)
+	{
+		ComboGuideComponent->UpdateComboGuideUI();
+	}
+
 	// 공격 종료 시점에 선입력된 입력이 있다면 즉시 새로운 공격 실행
 	if (bShouldTriggerBufferedAttack)
 	{
@@ -1237,15 +1256,49 @@ void AAGSDCharacter::ResetAttackState()
 
 void AAGSDCharacter::UpdateMotionWarpTarget()
 {
-	if (MotionWarpingComponent)
+	if (!MotionWarpingComponent) return;
+
+	// 오직 현재 재생 중인 콤보 스테이지의 bUseBackwardWarp가 true로 체크된 몽타주에만 후퇴 워핑 적용
+	bool bIsBackwardWarp = false;
+	if (CurrentComboData && CurrentComboData->Stages.IsValidIndex(CurrentStageIndex))
 	{
+		bIsBackwardWarp = CurrentComboData->Stages[CurrentStageIndex].bUseBackwardWarp;
+	}
+
+	// 1. 특정 몽타주/스테이지에 후퇴 워핑(bUseBackwardWarp == true)이 설정되어 있는 경우
+	if (bIsBackwardWarp)
+	{
+		FVector PlayerLoc = GetActorLocation();
+		FVector BackwardDir = -GetActorForwardVector();
+
+		FRotator WarpRotation = GetActorRotation();
 		AActor* TargetActor = LockOnComponent ? LockOnComponent->GetLockedTarget() : nullptr;
-		if (!TargetActor)
+		if (TargetActor)
 		{
-			// 락온 타겟이 없을 때 모션 워프 타겟 제거
-			MotionWarpingComponent->RemoveWarpTarget(FName("WarpTarget"));
-			return;
+			FVector TargetLoc = TargetActor->GetActorLocation();
+			WarpRotation = UKismetMathLibrary::FindLookAtRotation(PlayerLoc, TargetLoc);
+			WarpRotation.Pitch = 0.f;
+			WarpRotation.Roll = 0.f;
 		}
+
+		FVector BackwardWarpLoc = PlayerLoc + (BackwardDir * BackwardWarpDistance);
+		BackwardWarpLoc.Z = PlayerLoc.Z;
+
+		MotionWarpingComponent->AddOrUpdateWarpTargetFromLocationAndRotation(
+			FName("WarpTarget"),
+			BackwardWarpLoc,
+			WarpRotation
+		);
+		return;
+	}
+
+	AActor* TargetActor = LockOnComponent ? LockOnComponent->GetLockedTarget() : nullptr;
+	if (!TargetActor)
+	{
+		// 락온 타겟이 없을 때 모션 워프 타겟 제거
+		MotionWarpingComponent->RemoveWarpTarget(FName("WarpTarget"));
+		return;
+	}
 
 		FVector PlayerLoc = GetActorLocation();
 		FVector TargetLoc = TargetActor->GetActorLocation();
@@ -1307,7 +1360,6 @@ void AAGSDCharacter::UpdateMotionWarpTarget()
 			WarpLocation,
 			TargetRotation
 		);
-	}
 }
 
 void AAGSDCharacter::DoMove(float Right, float Forward)
@@ -2251,3 +2303,5 @@ void AAGSDCharacter::UpdateCharacterStateFromEquip()
 		SetCharacterState(ECharacterState::Idle);
 	}
 }
+
+

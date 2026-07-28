@@ -130,7 +130,8 @@ void UAnimNotifyState_WeaponAttack::NotifyTick(USkeletalMeshComponent* MeshComp,
 						MeshComp->GetWorld(),
 						HitEffect,
 						Hit.ImpactPoint,
-						Hit.ImpactNormal.Rotation()
+						Hit.ImpactNormal.Rotation(),
+						HitEffectScale
 					);
 				}
 

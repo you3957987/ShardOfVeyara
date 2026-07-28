@@ -22,6 +22,8 @@
 #include "ECharacterState.h"
 #include "AGSDCharacter.generated.h"
 
+class UAGSDComboGuideComponent;
+
 USTRUCT(BlueprintType)
 struct FEquipSocketMapping
 {
@@ -76,6 +78,7 @@ class AGSD_API AAGSDCharacter : public ACharacter, public IPetConversationInterf
 	GENERATED_BODY()
 
 	friend class UAGSDGuardComponent;
+	friend class UAGSDComboGuideComponent;
 
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
@@ -167,6 +170,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Combat|Warping")
 	float MaxAngleDiff = 90.f;
+
+	// 후퇴 공격 시 뒤로 멀어질 모션 워핑 거리
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Warping")
+	float BackwardWarpDistance = 350.0f;
 	
 	AAGSDPlayerController* PC;
 	
@@ -331,6 +338,10 @@ public:
 	/** 가드 컴포넌트 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Guard", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAGSDGuardComponent> GuardComponent;
+
+	/** 콤보 가이드 UI 컴포넌트 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAGSDComboGuideComponent> ComboGuideComponent;
 
 	/** 핫바 선택 변경 시 장착 액터를 갱신합니다 */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
@@ -650,6 +661,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Guard")
 	FORCEINLINE UAGSDGuardComponent* GetGuardComponent() const { return GuardComponent; }
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	FORCEINLINE UAGSDComboGuideComponent* GetComboGuideComponent() const { return ComboGuideComponent; }
 
 	void UpdateCharacterStateFromEquip();
 	

@@ -26,7 +26,14 @@ struct FSpearStageData // 각 단계별 개별 애니메이션 데이터
 	float DamageMultiplier = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combo")
+	FText AttackName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combo")
 	bool bBreakComboOnHit = false;
+
+	// 이 공격 몽타주 실행 시 뒤로 멀어지는 후퇴 워핑 적용 여부
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combo")
+	bool bUseBackwardWarp = false;
 };
 
 USTRUCT(BlueprintType)

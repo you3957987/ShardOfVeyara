@@ -43,6 +43,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|VFX")
 	class UNiagaraSystem* HitEffect;
 
+	// 타격 이펙트의 크기 (스케일)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|VFX")
+	FVector HitEffectScale = FVector(0.5f, 0.5f, 0.5f);
+
 	// 공격(휘두르기) 시 재생할 사운드
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat|Audio")
 	class USoundBase* AttackSound;
