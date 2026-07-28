@@ -101,10 +101,12 @@ void AAGSDCharacter::HandleAttackInput(FName ActionName)
 
 void AAGSDCharacter::TryInteract()
 {
+	UTextLog::WriteTextLogByKeyword(TEXT("상호작용 키 입력"));
+	
 	// 1. 플레이어 근처에 상호작용 가능한 오브젝트가 있으면 최우선으로 상호작용
 	if (CanInteract && IsValid(CurrentInteractableActor) && CurrentInteractableActor->Implements<UInteraction>())
 	{
-		UTextLog::WriteTextLogByString(TEXT("상호작용 키 입력"), TEXT("단순 상호작용"));
+		UTextLog::WriteTextLogByString(TEXT("상호작용"), TEXT("단순 상호작용"));
 		
 		IInteraction::Execute_Interact(CurrentInteractableActor, this);
 		return;
@@ -119,7 +121,7 @@ void AAGSDCharacter::TryInteract()
 		{
 			if (DefaultActor->Implements<UUsableItem>())
 			{
-				UTextLog::WriteTextLogByString(TEXT("상호작용 키 입력"), TEXT("아이템 사용"));
+				UTextLog::WriteTextLogByString(TEXT("상호작용"), TEXT("아이템 사용"));
 				
 				IUsableItem::Execute_UseItem(DefaultActor, this);
 			}
