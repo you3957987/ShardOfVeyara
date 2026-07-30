@@ -34,7 +34,18 @@ public:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Combo UI")
 	TObjectPtr<UTextBlock> SecondaryAttackNameText;
 
-	/** 콤보 가이드 텍스트 업데이트 이벤트/함수 */
+	/** 현재 수행 중인 공격 명칭 텍스트 (예: "찌르기 1타") */
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "Combo UI")
+	TObjectPtr<UTextBlock> CurrentAttackText;
+
+	/** 현재 공격명 페이드 아웃 위젯 애니메이션 */
+	UPROPERTY(Transient, BlueprintReadOnly, meta = (BindWidgetAnimOptional), Category = "Combo UI")
+	TObjectPtr<UWidgetAnimation> CurrentAttackFadeOut;
+
+	/** 콤보 가이드 텍스트 및 현재 공격명 업데이트 함수 */
 	UFUNCTION(BlueprintCallable, Category = "Combo UI")
-	void UpdateComboGuide(const TArray<FComboGuideEntry>& GuideEntries);
+	void UpdateComboGuide(const TArray<FComboGuideEntry>& GuideEntries, const FText& CurrentAttackName);
+
+private:
+	bool bWasAttacking = false;
 };

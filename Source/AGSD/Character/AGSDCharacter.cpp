@@ -142,6 +142,12 @@ void AAGSDCharacter::HandleAttackInput(FName ActionName)
 
 void AAGSDCharacter::TryInteract()
 {
+	// 무기(Spear 등)를 장착 중이거나 공격 진행 중일 경우 우클릭(RMB) 콤보/스킬 신호 전송
+	if (HoldingWeapon == EHoldingWeapon::Spear || HoldingWeapon == EHoldingWeapon::Sickle || bIsAttacking)
+	{
+		ProcessAttackInputWithButton(ESpearAttackInput::RMB);
+	}
+
 	if (InteractionComponent)
 	{
 		InteractionComponent->TryInteract();
@@ -571,6 +577,12 @@ void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 			EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AAGSDCharacter::UseEquippedItem);
 		}
 
+		// Secondary Attack (RMB)
+		if (SecondaryAttackAction)
+		{
+			EnhancedInputComponent->BindAction(SecondaryAttackAction, ETriggerEvent::Started, this, &AAGSDCharacter::Input_SecondaryAttack);
+		}
+
 		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AAGSDCharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AAGSDCharacter::StopJumping);
@@ -590,8 +602,11 @@ void AAGSDCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AAGSDCharacter::Look);
 
-		//G 키를 누를 때 TryInteract 함수를 호출하도록 바인딩
-		EnhancedInputComponent->BindAction(Interaction, ETriggerEvent::Triggered, this, &AAGSDCharacter::TryInteract);
+		// 우클릭(IA_Interaction) 누르는 순간 TryInteract 호출하도록 바인딩
+		if (Interaction)
+		{
+			EnhancedInputComponent->BindAction(Interaction, ETriggerEvent::Started, this, &AAGSDCharacter::TryInteract);
+		}
 
 		//
 		// 가드 기능 바인딩
@@ -868,8 +883,53 @@ float AAGSDCharacter::GetCurrentAttackDamageMultiplier() const
 	return 1.0f;
 }
 
-void AAGSDCharacter::ProcessAttackInput()
+void AAGSDCharacter::SetCanCombo(bool b)
 {
+	bCanCombo = b;
+	if (bCanCombo)
+	{
+		ResetComboWindowBuffer();
+	}
+}
+
+void AAGSDCharacter::ResetComboWindowBuffer()
+{
+	bHasBufferedInput = false;
+	bLMBPressedInWindow = false;
+	bRMBPressedInWindow = false;
+}
+
+void AAGSDCharacter::OnComboWindowEnd()
+{
+	SetCanCombo(false);
+
+	// 콤보 윈도우 종료 시점에 수집된 버퍼된 입력이 있으면 연계 실행
+	if (bHasBufferedInput)
+	{
+		TryExecuteBufferedAttack();
+	}
+}
+
+void AAGSDCharacter::ProcessAttackInputWithButton(ESpearAttackInput PressedInput)
+{
+	float CurrentTime = GetWorld()->GetTimeSeconds();
+
+	if (PressedInput == ESpearAttackInput::LMB)
+	{
+		LastLMBTime = CurrentTime;
+	}
+	else if (PressedInput == ESpearAttackInput::RMB)
+	{
+		LastRMBTime = CurrentTime;
+	}
+
+	// 0.1초 이내 상대방 버튼이 입력된 경우 동시 입력(Both_LMB_RMB)으로 판정
+	ESpearAttackInput EffectiveInput = PressedInput;
+	if (FMath::Abs(LastLMBTime - LastRMBTime) <= SimultaneousInputWindow && LastLMBTime > 0.0f && LastRMBTime > 0.0f)
+	{
+		EffectiveInput = ESpearAttackInput::Both_LMB_RMB;
+	}
+
 	// 공중 상태 체크
 	if (GetCharacterMovement() && GetCharacterMovement()->IsFalling()) return;
 	
@@ -878,28 +938,59 @@ void AAGSDCharacter::ProcessAttackInput()
 	// 공격 중이거나 복귀 중인 경우
 	if (bIsAttacking || bIsRecovering) 
 	{
-		// 1. 공격 중 콤보 가능 구간인 경우 -> 다음 단계 연계
+		// 1. 공격 중 콤보 가능 구간(ComboWindow)인 경우: 수집 및 발동 조건 검사
 		if (bCanCombo)
 		{
-			ExecuteNextStage();
+			if (EffectiveInput == ESpearAttackInput::LMB)
+			{
+				bLMBPressedInWindow = true;
+			}
+			else if (EffectiveInput == ESpearAttackInput::RMB)
+			{
+				bRMBPressedInWindow = true;
+			}
+			else if (EffectiveInput == ESpearAttackInput::Both_LMB_RMB)
+			{
+				bLMBPressedInWindow = true;
+				bRMBPressedInWindow = true;
+			}
+
+			// ComboWindow 내에서 좌/우클릭이 모두 모였거나 Both_LMB_RMB 신호인 경우 -> 최고 우선순위 스킬 Both_LMB_RMB 즉시 발동!
+			if ((bLMBPressedInWindow && bRMBPressedInWindow) || EffectiveInput == ESpearAttackInput::Both_LMB_RMB)
+			{
+				ResetComboWindowBuffer();
+				ExecuteNextStageWithInput(ESpearAttackInput::Both_LMB_RMB);
+			}
+			else
+			{
+				// 단일 입력 수집: 버퍼에 보관하고 윈도우 끝점(NotifyEnd)에서 연계 실행할 준비
+				bHasBufferedInput = true;
+				BufferedInputTime = CurrentTime;
+				BufferedInput = EffectiveInput;
+			}
 		}
-		// 2. 복귀 중인 경우 -> 현재 복귀를 중단하고 새로운 콤보 시작 (Cancel Recovery)
+		// 2. 복귀 중인 경우
 		else if (bIsRecovering)
 		{
-			StartNewCombo();
+			StartNewComboWithInput(EffectiveInput);
 		}
-		// 3. 그 외 공격 중인 경우 -> 입력 버퍼링
+		// 3. 콤보 윈도우 전 (선입력 버퍼링)
 		else
 		{
 			bHasBufferedInput = true;
-			BufferedInputTime = GetWorld()->GetTimeSeconds(); // 선입력 시점 저장
+			BufferedInputTime = CurrentTime;
+			BufferedInput = EffectiveInput;
 		}
 		return;
 	}
 
 	// 완전히 Idle 상태인 경우 새로운 콤보 시작
-	
-	StartNewCombo();
+	StartNewComboWithInput(EffectiveInput);
+}
+
+void AAGSDCharacter::ProcessAttackInput()
+{
+	ProcessAttackInputWithButton(ESpearAttackInput::LMB);
 }
 
 void AAGSDCharacter::UseEquippedItem()
@@ -939,7 +1030,35 @@ void AAGSDCharacter::UseEquippedItem()
 	// 2. UsableItem이 아니고 무기(Spear)나 낫(Sickle) 등 공격 가능한 도구/무기인 경우
 	if (!bUsed && (HoldingWeapon == EHoldingWeapon::Spear || HoldingWeapon == EHoldingWeapon::Sickle))
 	{
-		ProcessAttackInput();
+		ProcessAttackInputWithButton(ESpearAttackInput::LMB);
+	}
+}
+
+void AAGSDCharacter::Input_SecondaryAttack()
+{
+	// 가드(Block) 상태 중에는 우클릭 공격 차단
+	if (CharacterState == ECharacterState::Block)
+	{
+		return;
+	}
+
+	// 인벤토리, 상자 등 UI가 열려있는 동안에는 우클릭 공격 차단
+	if (PlayerHUDRef && PlayerHUDRef->IsInventoryOpen())
+	{
+		return;
+	}
+	if (ActiveCloseableUI.IsValid())
+	{
+		return;
+	}
+	if (OpenedChest != nullptr)
+	{
+		return;
+	}
+
+	if (HoldingWeapon == EHoldingWeapon::Spear || HoldingWeapon == EHoldingWeapon::Sickle)
+	{
+		ProcessAttackInputWithButton(ESpearAttackInput::RMB);
 	}
 }
 
@@ -1013,34 +1132,43 @@ void AAGSDCharacter::StartParryCombo()
 	}
 }
 
-void AAGSDCharacter::StartNewCombo()
+void AAGSDCharacter::StartNewComboWithInput(ESpearAttackInput Input)
 {
 	if (Mining) return;
 	ESpearAttackDirection CurrentDir = GetAttackDirection();
 	Mining = true;
 	
-	// 방향에 맞는 콤보 데이터를 테이블에서 한 번만 가져옴
-	CurrentComboData = GetComboDataByDirection(CurrentDir);
+	// 방향과 버튼 입력 조건에 맞는 콤보 데이터 검색
+	CurrentComboData = GetComboDataByDirectionAndInput(CurrentDir, Input);
 
 	if (CurrentComboData && CurrentComboData->Stages.Num() > 0)
 	{
 		CurrentStageIndex = 0;
 		PlayStage(0);
 	}
+	else
+	{
+		Mining = false;
+	}
 }
 
-FSpearComboData* AAGSDCharacter::GetComboDataByDirection(ESpearAttackDirection Direction)
+void AAGSDCharacter::StartNewCombo()
+{
+	StartNewComboWithInput(ESpearAttackInput::LMB);
+}
+
+FSpearComboData* AAGSDCharacter::GetComboDataByDirectionAndInput(ESpearAttackDirection Direction, ESpearAttackInput Input)
 {
 	if (!SpearComboDataTable) return nullptr;
 
-	// 데이터 테이블의 모든 행을 순회하며 방향 조건이 맞는 데이터를 검색
 	static const FString ContextString(TEXT("Spear Attack Context"));
 	TArray<FSpearComboData*> AllRows;
 	SpearComboDataTable->GetAllRows<FSpearComboData>(ContextString, AllRows);
 
+	// 방향과 입력 요구사항이 모두 일치하는 항목 검색
 	for (FSpearComboData* ComboData : AllRows)
 	{
-		if (ComboData && ComboData->DirectionRequirement == Direction)
+		if (ComboData && ComboData->DirectionRequirement == Direction && ComboData->InputRequirement == Input)
 		{
 			return ComboData;
 		}
@@ -1049,23 +1177,45 @@ FSpearComboData* AAGSDCharacter::GetComboDataByDirection(ESpearAttackDirection D
 	return nullptr;
 }
 
-void AAGSDCharacter::ExecuteNextStage()
+FSpearComboData* AAGSDCharacter::GetComboDataByDirection(ESpearAttackDirection Direction)
+{
+	return GetComboDataByDirectionAndInput(Direction, ESpearAttackInput::LMB);
+}
+
+void AAGSDCharacter::ExecuteNextStageWithInput(ESpearAttackInput Input)
 {
 	int32 NextIndex = CurrentStageIndex + 1;
 
 	if (CurrentComboData)
 	{
-		// 다음 스테이지가 존재할 경우에만 실행
+		// 다음 스테이지가 존재할 경우에만 요구 입력 검증 후 실행
 		if (CurrentComboData->Stages.IsValidIndex(NextIndex))
 		{
-			CurrentStageIndex = NextIndex;
-			PlayStage(NextIndex);
+			const FSpearStageData& NextStage = CurrentComboData->Stages[NextIndex];
+
+			if (NextStage.InputRequirement == Input)
+			{
+				CurrentStageIndex = NextIndex;
+				PlayStage(NextIndex);
+			}
+			else
+			{
+				// 입력 버튼이 다를 경우 해당 입력 버튼에 어울리는 새로운 콤보 탐색
+				ESpearAttackDirection CurrentDir = GetAttackDirection();
+				FSpearComboData* NewComboData = GetComboDataByDirectionAndInput(CurrentDir, Input);
+				if (NewComboData && NewComboData->Stages.Num() > 0)
+				{
+					CurrentComboData = NewComboData;
+					CurrentStageIndex = 0;
+					PlayStage(0);
+				}
+			}
 		}
-		// 마지막 스테이지 다음으로 넘어가려고 하면 새로운 방향 입력에 따른 콤보 데이터 로드 후 순환
+		// 마지막 스테이지 다음으로 넘어가려고 하면 새로운 입력 및 방향 콤보 로드
 		else
 		{
 			ESpearAttackDirection CurrentDir = GetAttackDirection();
-			FSpearComboData* NewComboData = GetComboDataByDirection(CurrentDir);
+			FSpearComboData* NewComboData = GetComboDataByDirectionAndInput(CurrentDir, Input);
 
 			if (NewComboData && NewComboData->Stages.Num() > 0)
 			{
@@ -1075,10 +1225,31 @@ void AAGSDCharacter::ExecuteNextStage()
 			}
 			else
 			{
-				// 연계할 수 있는 다음 콤보 데이터가 없을 경우 안전하게 상태 초기화
 				ResetAttackState();
 			}
 		}
+	}
+}
+
+void AAGSDCharacter::ExecuteNextStage()
+{
+	ExecuteNextStageWithInput(BufferedInput);
+}
+
+void AAGSDCharacter::TryExecuteBufferedAttack()
+{
+	if (!bHasBufferedInput) return;
+
+	float CurrentTime = GetWorld()->GetTimeSeconds();
+	if (CurrentTime - BufferedInputTime <= AttackBufferDuration)
+	{
+		ESpearAttackInput InputToUse = BufferedInput;
+		bHasBufferedInput = false;
+		ExecuteNextStageWithInput(InputToUse);
+	}
+	else
+	{
+		bHasBufferedInput = false;
 	}
 }
 

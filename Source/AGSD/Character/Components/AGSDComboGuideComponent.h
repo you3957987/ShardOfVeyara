@@ -22,7 +22,7 @@ struct FComboGuideEntry
 		: InputText(InInput), AttackNameText(InName) {}
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnComboGuideUpdatedSignature, const TArray<FComboGuideEntry>&, GuideEntries);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnComboGuideUpdatedSignature, const TArray<FComboGuideEntry>&, GuideEntries, const FText&, CurrentAttackName);
 
 /**
  * UAGSDComboGuideComponent

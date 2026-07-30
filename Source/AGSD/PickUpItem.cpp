@@ -26,7 +26,7 @@ APickUpItem::APickUpItem()
 	ECR_Overlap
 	);
 	Mesh->SetCollisionResponseToChannel(
-		ECollisionChannel::ECC_Camera,
+		ECollisionChannel::ECC_Camera, 
 		ECR_Overlap
 		);
 	Mesh->SetCollisionResponseToChannel(

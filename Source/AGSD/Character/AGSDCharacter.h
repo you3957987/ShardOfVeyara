@@ -391,7 +391,7 @@ public:
 
 	FORCEINLINE float getPlayerMaxhealth() const { return MaxHealth;}
 
-	FORCEINLINE void SetCanCombo(bool b) {bCanCombo = b;}
+	void SetCanCombo(bool b);
 	
 	FORCEINLINE bool HasBufferedInput() {return bHasBufferedInput;}
 	
@@ -609,6 +609,10 @@ public:
 	/** 현재 장착된 아이템을 사용합니다. 무기면 공격, 포션이면 포션 사용 인터페이스를 실행합니다. */
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	void UseEquippedItem();
+
+	/** 보조/특수 공격 입력 (우클릭 RMB) 핸들러 */
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void Input_SecondaryAttack();
 	
 	//-----------------------------------
 	void ActivateAttackRotate();
@@ -621,11 +625,39 @@ public:
 	
 	void StartParryCombo();
 	void StartNewCombo();
+	void StartNewComboWithInput(ESpearAttackInput Input);
 	
 	FSpearComboData* GetComboDataByDirection(ESpearAttackDirection Direction);
+	FSpearComboData* GetComboDataByDirectionAndInput(ESpearAttackDirection Direction, ESpearAttackInput Input);
 	
+	void ProcessAttackInputWithButton(ESpearAttackInput PressedInput);
+
+	// 마우스 우클릭(RMB) 보조/특수 공격 액션
+	UPROPERTY(EditAnywhere, Category="Input")
+	class UInputAction* SecondaryAttackAction;
+
+	// 마우스 좌/우클릭 입력 타임스탬프 (동시 입력 판정용)
+	float LastLMBTime = -1.0f;
+	float LastRMBTime = -1.0f;
+
+	/** 좌/우클릭 동시 입력 유효 시간 범위 (초 단위, 에디터 및 블루프린트 조정 가능) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Input Buffer")
+	float SimultaneousInputWindow = 0.1f;
+	
+	// 선입력된 입력 버튼 종류
+	ESpearAttackInput BufferedInput = ESpearAttackInput::LMB;
+	
+	// ComboWindow 내 입력 수집용 상태 변수
+	bool bLMBPressedInWindow = false;
+	bool bRMBPressedInWindow = false;
+
+	void ResetComboWindowBuffer();
+	void OnComboWindowEnd();
+
 	void ExecuteNextStage();
-	
+	void ExecuteNextStageWithInput(ESpearAttackInput Input);
+	void TryExecuteBufferedAttack();
+
 	void PlayStage(int32 Index);
 	
 	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
