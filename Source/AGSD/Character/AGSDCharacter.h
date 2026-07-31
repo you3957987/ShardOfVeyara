@@ -636,13 +636,17 @@ public:
 	UPROPERTY(EditAnywhere, Category="Input")
 	class UInputAction* SecondaryAttackAction;
 
-	// 마우스 좌/우클릭 입력 타임스탬프 (동시 입력 판정용)
-	float LastLMBTime = -1.0f;
-	float LastRMBTime = -1.0f;
-
 	/** 좌/우클릭 동시 입력 유효 시간 범위 (초 단위, 에디터 및 블루프린트 조정 가능) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Input Buffer")
 	float SimultaneousInputWindow = 0.1f;
+	
+	// 콤보 결정 대기 타이머 핸들 및 상태
+	FTimerHandle ComboInputDecisionTimerHandle;
+	ESpearAttackInput PendingComboInput = ESpearAttackInput::LMB;
+	bool bIsWaitingForComboDecision = false;
+
+	void OnComboDecisionTimeout();
+	void ConfirmAndExecuteCombo(ESpearAttackInput DeterminedInput);
 	
 	// 선입력된 입력 버튼 종류
 	ESpearAttackInput BufferedInput = ESpearAttackInput::LMB;

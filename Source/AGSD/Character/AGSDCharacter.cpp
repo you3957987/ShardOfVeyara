@@ -912,80 +912,102 @@ void AAGSDCharacter::OnComboWindowEnd()
 
 void AAGSDCharacter::ProcessAttackInputWithButton(ESpearAttackInput PressedInput)
 {
-	float CurrentTime = GetWorld()->GetTimeSeconds();
-
-	if (PressedInput == ESpearAttackInput::LMB)
-	{
-		LastLMBTime = CurrentTime;
-	}
-	else if (PressedInput == ESpearAttackInput::RMB)
-	{
-		LastRMBTime = CurrentTime;
-	}
-
-	// 0.1초 이내 상대방 버튼이 입력된 경우 동시 입력(Both_LMB_RMB)으로 판정
-	ESpearAttackInput EffectiveInput = PressedInput;
-	if (FMath::Abs(LastLMBTime - LastRMBTime) <= SimultaneousInputWindow && LastLMBTime > 0.0f && LastRMBTime > 0.0f)
-	{
-		EffectiveInput = ESpearAttackInput::Both_LMB_RMB;
-	}
-
 	// 공중 상태 체크
 	if (GetCharacterMovement() && GetCharacterMovement()->IsFalling()) return;
-	
+
+	// 이미 콤보 결정 대기 중인 경우
+	if (bIsWaitingForComboDecision)
+	{
+		// 이전에 입력된 버튼과 반대쪽 버튼(좌클릭과 우클릭)이 입력된 경우 -> 즉시 양클릭(Both_LMB_RMB) 콤보 확정!
+		if (PendingComboInput != PressedInput && 
+		   (PendingComboInput == ESpearAttackInput::LMB || PendingComboInput == ESpearAttackInput::RMB) &&
+		   (PressedInput == ESpearAttackInput::LMB || PressedInput == ESpearAttackInput::RMB))
+		{
+			GetWorld()->GetTimerManager().ClearTimer(ComboInputDecisionTimerHandle);
+			bIsWaitingForComboDecision = false;
+			ConfirmAndExecuteCombo(ESpearAttackInput::Both_LMB_RMB);
+		}
+		// 동일한 버튼 추가 연타 시에는 기존 대기 상태 유지
+		return;
+	}
+
+	// 대기 중이 아닌 경우 -> 첫 입력 수집 및 대기 타이머 가동
+	PendingComboInput = PressedInput;
+
+	// 대기 유효 시간(SimultaneousInputWindow, 에디터/블루프린트 설정 가능)이 0 이하이면 즉시 확정
+	if (SimultaneousInputWindow <= 0.0f)
+	{
+		ConfirmAndExecuteCombo(PressedInput);
+		return;
+	}
+
+	bIsWaitingForComboDecision = true;
+	GetWorld()->GetTimerManager().SetTimer(
+		ComboInputDecisionTimerHandle,
+		this,
+		&AAGSDCharacter::OnComboDecisionTimeout,
+		SimultaneousInputWindow,
+		false
+	);
+}
+
+void AAGSDCharacter::OnComboDecisionTimeout()
+{
+	if (!bIsWaitingForComboDecision) return;
+
+	bIsWaitingForComboDecision = false;
+	ConfirmAndExecuteCombo(PendingComboInput);
+}
+
+void AAGSDCharacter::ConfirmAndExecuteCombo(ESpearAttackInput DeterminedInput)
+{
+	// 1. 콤보 결정 로그 및 화면 디버그 메시지 출력
+	FString InputStr = TEXT("LMB (Left Click)");
+	if (DeterminedInput == ESpearAttackInput::RMB)
+	{
+		InputStr = TEXT("RMB (Right Click)");
+	}
+	else if (DeterminedInput == ESpearAttackInput::Both_LMB_RMB)
+	{
+		InputStr = TEXT("Both_LMB_RMB (Both Click)");
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[Combo Decision] Determined Combo: %s"), *InputStr);
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan, FString::Printf(TEXT("[Combo Decision] %s"), *InputStr));
+	}
+
+	// 2. 캐릭터 회전 및 콤보 연계 실행
+	float CurrentTime = GetWorld()->GetTimeSeconds();
 	ActivateAttackRotate();
-	
+
 	// 공격 중이거나 복귀 중인 경우
 	if (bIsAttacking || bIsRecovering) 
 	{
-		// 1. 공격 중 콤보 가능 구간(ComboWindow)인 경우: 수집 및 발동 조건 검사
+		// 1. 공격 중 콤보 가능 구간(ComboWindow)인 경우 -> 대기 없이 즉시 다음 콤보 단계 연계 실행!
 		if (bCanCombo)
 		{
-			if (EffectiveInput == ESpearAttackInput::LMB)
-			{
-				bLMBPressedInWindow = true;
-			}
-			else if (EffectiveInput == ESpearAttackInput::RMB)
-			{
-				bRMBPressedInWindow = true;
-			}
-			else if (EffectiveInput == ESpearAttackInput::Both_LMB_RMB)
-			{
-				bLMBPressedInWindow = true;
-				bRMBPressedInWindow = true;
-			}
-
-			// ComboWindow 내에서 좌/우클릭이 모두 모였거나 Both_LMB_RMB 신호인 경우 -> 최고 우선순위 스킬 Both_LMB_RMB 즉시 발동!
-			if ((bLMBPressedInWindow && bRMBPressedInWindow) || EffectiveInput == ESpearAttackInput::Both_LMB_RMB)
-			{
-				ResetComboWindowBuffer();
-				ExecuteNextStageWithInput(ESpearAttackInput::Both_LMB_RMB);
-			}
-			else
-			{
-				// 단일 입력 수집: 버퍼에 보관하고 윈도우 끝점(NotifyEnd)에서 연계 실행할 준비
-				bHasBufferedInput = true;
-				BufferedInputTime = CurrentTime;
-				BufferedInput = EffectiveInput;
-			}
+			ResetComboWindowBuffer();
+			ExecuteNextStageWithInput(DeterminedInput);
 		}
 		// 2. 복귀 중인 경우
 		else if (bIsRecovering)
 		{
-			StartNewComboWithInput(EffectiveInput);
+			StartNewComboWithInput(DeterminedInput);
 		}
-		// 3. 콤보 윈도우 전 (선입력 버퍼링)
+		// 3. 콤보 윈도우 열리기 전 (선입력 버퍼링)
 		else
 		{
 			bHasBufferedInput = true;
 			BufferedInputTime = CurrentTime;
-			BufferedInput = EffectiveInput;
+			BufferedInput = DeterminedInput;
 		}
 		return;
 	}
 
 	// 완전히 Idle 상태인 경우 새로운 콤보 시작
-	StartNewComboWithInput(EffectiveInput);
+	StartNewComboWithInput(DeterminedInput);
 }
 
 void AAGSDCharacter::ProcessAttackInput()
@@ -1184,10 +1206,25 @@ FSpearComboData* AAGSDCharacter::GetComboDataByDirection(ESpearAttackDirection D
 
 void AAGSDCharacter::ExecuteNextStageWithInput(ESpearAttackInput Input)
 {
-	int32 NextIndex = CurrentStageIndex + 1;
+	ESpearAttackDirection CurrentDir = GetAttackDirection();
 
 	if (CurrentComboData)
 	{
+		// 방향 키 입력이 변경되어 현재 콤보 요구 방향과 다를 경우 해당 방향 및 버튼에 어울리는 새로운 콤보 1타로 전환
+		if (CurrentComboData->DirectionRequirement != CurrentDir)
+		{
+			FSpearComboData* NewComboData = GetComboDataByDirectionAndInput(CurrentDir, Input);
+			if (NewComboData && NewComboData->Stages.Num() > 0)
+			{
+				CurrentComboData = NewComboData;
+				CurrentStageIndex = 0;
+				PlayStage(0);
+				return;
+			}
+		}
+
+		int32 NextIndex = CurrentStageIndex + 1;
+
 		// 다음 스테이지가 존재할 경우에만 요구 입력 검증 후 실행
 		if (CurrentComboData->Stages.IsValidIndex(NextIndex))
 		{
@@ -1200,8 +1237,7 @@ void AAGSDCharacter::ExecuteNextStageWithInput(ESpearAttackInput Input)
 			}
 			else
 			{
-				// 입력 버튼이 다를 경우 해당 입력 버튼에 어울리는 새로운 콤보 탐색
-				ESpearAttackDirection CurrentDir = GetAttackDirection();
+				// 입력 버튼이 다를 경우 해당 입력 버튼 및 방향에 어울리는 새로운 콤보 탐색
 				FSpearComboData* NewComboData = GetComboDataByDirectionAndInput(CurrentDir, Input);
 				if (NewComboData && NewComboData->Stages.Num() > 0)
 				{
@@ -1214,7 +1250,6 @@ void AAGSDCharacter::ExecuteNextStageWithInput(ESpearAttackInput Input)
 		// 마지막 스테이지 다음으로 넘어가려고 하면 새로운 입력 및 방향 콤보 로드
 		else
 		{
-			ESpearAttackDirection CurrentDir = GetAttackDirection();
 			FSpearComboData* NewComboData = GetComboDataByDirectionAndInput(CurrentDir, Input);
 
 			if (NewComboData && NewComboData->Stages.Num() > 0)
@@ -1228,6 +1263,10 @@ void AAGSDCharacter::ExecuteNextStageWithInput(ESpearAttackInput Input)
 				ResetAttackState();
 			}
 		}
+	}
+	else
+	{
+		StartNewComboWithInput(Input);
 	}
 }
 
@@ -1399,6 +1438,12 @@ void AAGSDCharacter::OnRecoveryFinished(UAnimMontage* Montage, bool bInterrupted
 
 void AAGSDCharacter::ResetAttackState()
 {
+	if (bIsWaitingForComboDecision)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(ComboInputDecisionTimerHandle);
+		bIsWaitingForComboDecision = false;
+	}
+
 	// 선입력된 공격이 있고, 입력된 지 설정된 시간(AttackBufferDuration) 이내인 경우에만 유효한 것으로 판정
 	float CurrentTime = GetWorld()->GetTimeSeconds();
 	bool bShouldTriggerBufferedAttack = bHasBufferedInput && (CurrentTime - BufferedInputTime <= AttackBufferDuration);
