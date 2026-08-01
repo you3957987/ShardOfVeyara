@@ -4,6 +4,8 @@
 #include "Bed.h"
 
 #include "AGSDCharacter.h"
+#include "AGSDInteractionComponent.h"
+#include "InteractionOwnerInterface.h"
 #include "FarmingGameMode.h"
 #include "Components/BoxComponent.h"
 
@@ -41,7 +43,16 @@ void ABed::Interact_Implementation(AAGSDCharacter* player)
 {
 	TargetPlayer = player;
 	TargetPlayer->DisableInput(TargetPlayer->getPlayerController());
-	TargetPlayer->RemoveInteractableActor(this);
+	if (TargetPlayer && TargetPlayer->Implements<UInteractionOwnerInterface>())
+	{
+		if (IInteractionOwnerInterface* InteractOwner = Cast<IInteractionOwnerInterface>(TargetPlayer))
+		{
+			if (UAGSDInteractionComponent* InteractionComp = InteractOwner->GetInteractionComponent())
+			{
+				InteractionComp->RemoveInteractableActor(this);
+			}
+		}
+	}
 	if (!WBP_FadeWidget) return;
 	if (!FadeWidget) FadeWidget = CreateWidget<UFadeWidget>(TargetPlayer->getPlayerController(), WBP_FadeWidget);
 	FadeWidget->OnFadeFinished.RemoveDynamic(this, &ABed::WakeUp);
@@ -65,18 +76,30 @@ bool ABed::CanInteract_Implementation(AAGSDCharacter* player)
 void ABed::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
+	if (OtherActor && OtherActor->Implements<UInteractionOwnerInterface>())
 	{
-		player->AddInteractableActor(this);
+		if (IInteractionOwnerInterface* InteractOwner = Cast<IInteractionOwnerInterface>(OtherActor))
+		{
+			if (UAGSDInteractionComponent* InteractionComp = InteractOwner->GetInteractionComponent())
+			{
+				InteractionComp->AddInteractableActor(this);
+			}
+		}
 	}
 }
 
 void ABed::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                         int32 OtherBodyIndex)
 {
-	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
+	if (OtherActor && OtherActor->Implements<UInteractionOwnerInterface>())
 	{
-		player->RemoveInteractableActor(this);
+		if (IInteractionOwnerInterface* InteractOwner = Cast<IInteractionOwnerInterface>(OtherActor))
+		{
+			if (UAGSDInteractionComponent* InteractionComp = InteractOwner->GetInteractionComponent())
+			{
+				InteractionComp->RemoveInteractableActor(this);
+			}
+		}
 	}
 }
 

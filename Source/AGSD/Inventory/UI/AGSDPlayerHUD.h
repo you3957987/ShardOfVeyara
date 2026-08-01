@@ -12,6 +12,7 @@ class UAGSDInventoryComponent;
 class UVerticalBox;
 class UAGSDItemNotificationWidget;
 class UHealthBar;
+class UAGSDComboGuideWidget;
 
 /**
  * UAGSDPlayerHUD
@@ -30,6 +31,10 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget), Category = "UI")
 	TObjectPtr<UAGSDInventoryWidget> WBP_InventoryUI;
+
+	/** 몬헌 스타일 콤보 조작 가이드 위젯 */
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional), Category = "UI")
+	TObjectPtr<UAGSDComboGuideWidget> WBP_ComboGuide;
 
 	/** 아이템 획득 알림들이 쌓이는 수직 박스 컨테이너 */
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget), Category = "UI")

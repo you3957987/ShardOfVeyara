@@ -1,5 +1,6 @@
 #include "Anim_PullPlant.h"
-#include "AGSDCharacter.h"
+#include "AGSDInteractionComponent.h"
+#include "InteractionOwnerInterface.h"
 #include "Weeds.h"
 #include "NiagaraFunctionLibrary.h"
 
@@ -7,10 +8,18 @@ void UAnim_PullPlant::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase
                              const FAnimNotifyEventReference& EventReference)
 {
 	Super::Notify(MeshComp, Animation, EventReference);
-	AAGSDCharacter* Player = Cast<AAGSDCharacter>(MeshComp->GetOwner());
-	if (Player)
+	AActor* OwnerActor = MeshComp->GetOwner();
+	if (OwnerActor && OwnerActor->Implements<UInteractionOwnerInterface>())
 	{
-		AActor* InteractableActor = Player->getCurrentInteractableActor();
+		IInteractionOwnerInterface* InteractOwner = Cast<IInteractionOwnerInterface>(OwnerActor);
+		AActor* InteractableActor = nullptr;
+		if (InteractOwner)
+		{
+			if (UAGSDInteractionComponent* InteractionComp = InteractOwner->GetInteractionComponent())
+			{
+				InteractableActor = InteractionComp->GetCurrentInteractableActor();
+			}
+		}
 		if (InteractableActor)
 		{
 			InteractableActor->SetActorHiddenInGame(true);

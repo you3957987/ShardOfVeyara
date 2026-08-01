@@ -4,7 +4,8 @@
 #include "Crop.h"
 #include "Components/sphereComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "AGSDCharacter.h"
+#include "AGSDInteractionComponent.h"
+#include "InteractionOwnerInterface.h"
 #include "AGSDPlayerController.h"
 
 // Sets default values
@@ -38,18 +39,30 @@ ACrop::ACrop()
 //오버랩 시작 함수 구현부
 void ACrop::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
+	if (OtherActor && OtherActor->Implements<UInteractionOwnerInterface>())
 	{
-		player->AddInteractableActor(this);
+		if (IInteractionOwnerInterface* InteractOwner = Cast<IInteractionOwnerInterface>(OtherActor))
+		{
+			if (UAGSDInteractionComponent* InteractionComp = InteractOwner->GetInteractionComponent())
+			{
+				InteractionComp->AddInteractableActor(this);
+			}
+		}
 	}
 }
 
 //오버랩 종료 함수 구현부
 void ACrop::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (AAGSDCharacter* player = Cast<AAGSDCharacter>(OtherActor))
+	if (OtherActor && OtherActor->Implements<UInteractionOwnerInterface>())
 	{
-		player->RemoveInteractableActor(this);
+		if (IInteractionOwnerInterface* InteractOwner = Cast<IInteractionOwnerInterface>(OtherActor))
+		{
+			if (UAGSDInteractionComponent* InteractionComp = InteractOwner->GetInteractionComponent())
+			{
+				InteractionComp->RemoveInteractableActor(this);
+			}
+		}
 	}
 }
 

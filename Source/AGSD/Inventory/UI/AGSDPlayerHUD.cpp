@@ -9,14 +9,24 @@
 #include "Animation/WidgetAnimation.h"
 #include "Components/VerticalBox.h"
 #include "Inventory/UI/AGSDItemNotificationWidget.h"
+#include "Inventory/UI/AGSDComboGuideWidget.h"
+#include "Character/Components/AGSDComboGuideComponent.h"
 
 void UAGSDPlayerHUD::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	// 소유 캐릭터를 가져와 인벤토리 컴포넌트 자동 탐색 및 바인딩
+	// 소유 캐릭터를 가져와 콤보 가이드 컴포넌트 델리게이트 및 인벤토리 컴포넌트 바인딩
 	if (APawn* OwningPawn = GetOwningPlayerPawn())
 	{
+		if (AAGSDCharacter* Character = Cast<AAGSDCharacter>(OwningPawn))
+		{
+			if (WBP_ComboGuide && Character->GetComboGuideComponent())
+			{
+				Character->GetComboGuideComponent()->OnComboGuideUpdated.AddDynamic(WBP_ComboGuide, &UAGSDComboGuideWidget::UpdateComboGuide);
+			}
+		}
+
 		if (UAGSDInventoryComponent* InvComp = OwningPawn->FindComponentByClass<UAGSDInventoryComponent>())
 		{
 			InitializeHUD(InvComp);
