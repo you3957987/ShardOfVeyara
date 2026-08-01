@@ -889,6 +889,12 @@ void AAGSDCharacter::SetCanCombo(bool b)
 	if (bCanCombo)
 	{
 		ResetComboWindowBuffer();
+
+		// ComboWindow 진입 시점에 플레이어가 가드 키를 누르고(홀드) 있는 중이라면 즉시 막기로 캔슬 전환
+		if (GuardComponent && GuardComponent->IsGuardKeyPressed())
+		{
+			GuardComponent->StartBlock();
+		}
 	}
 }
 
@@ -1017,9 +1023,17 @@ void AAGSDCharacter::ProcessAttackInput()
 
 void AAGSDCharacter::UseEquippedItem()
 {
-	// 가드(Block) 상태 중에는 공격이나 아이템 사용 차단
+	// 가드(Block) 상태 중인 경우
 	if (CharacterState == ECharacterState::Block)
 	{
+		// 저스트가드가 성공한 상태라면 가드를 해제하고 카운터 콤보 시작
+		if (GuardComponent && GuardComponent->IsJustGuardSuccessful())
+		{
+			GuardComponent->StopBlock();
+			StartParryCombo();
+			return;
+		}
+		// 저스트가드 성공 상태가 아닌 일반 가드 중에는 공격 차단
 		return;
 	}
 
@@ -1058,7 +1072,7 @@ void AAGSDCharacter::UseEquippedItem()
 
 void AAGSDCharacter::Input_SecondaryAttack()
 {
-	// 가드(Block) 상태 중에는 우클릭 공격 차단
+	// 가드(Block) 상태 중에는 우클릭 일반 공격 차단
 	if (CharacterState == ECharacterState::Block)
 	{
 		return;
@@ -1134,7 +1148,12 @@ void AAGSDCharacter::HandleRotateCharacterStartAttack(float DeltaSeconds)
 void AAGSDCharacter::StartParryCombo()
 {
 	// 1. 가드 상태 해제 (패리 성공했으므로 공격(Combat) 상태로 전이)
-	if (CharacterState == ECharacterState::Block)
+	if (GuardComponent)
+	{
+		GuardComponent->StopBlock();
+		GuardComponent->ResetJustGuardSuccess();
+	}
+	else if (CharacterState == ECharacterState::Block)
 	{
 		SetCharacterState(ECharacterState::Combat);
 		UpdateSprintSpeed();
@@ -1210,8 +1229,9 @@ void AAGSDCharacter::ExecuteNextStageWithInput(ESpearAttackInput Input)
 
 	if (CurrentComboData)
 	{
-		// 방향 키 입력이 변경되어 현재 콤보 요구 방향과 다를 경우 해당 방향 및 버튼에 어울리는 새로운 콤보 1타로 전환
-		if (CurrentComboData->DirectionRequirement != CurrentDir)
+		// 방향 키 입력이 변경되어 현재 콤보 요구 방향과 다를 경우 해당 방향 및 버튼에 어울리는 새로운 콤보 1타로 전환 (Parry 콤보 진행 중일 경우 제외)
+		if (CurrentComboData->DirectionRequirement != ESpearAttackDirection::Parry &&
+			CurrentComboData->DirectionRequirement != CurrentDir)
 		{
 			FSpearComboData* NewComboData = GetComboDataByDirectionAndInput(CurrentDir, Input);
 			if (NewComboData && NewComboData->Stages.Num() > 0)
@@ -1237,13 +1257,16 @@ void AAGSDCharacter::ExecuteNextStageWithInput(ESpearAttackInput Input)
 			}
 			else
 			{
-				// 입력 버튼이 다를 경우 해당 입력 버튼 및 방향에 어울리는 새로운 콤보 탐색
-				FSpearComboData* NewComboData = GetComboDataByDirectionAndInput(CurrentDir, Input);
-				if (NewComboData && NewComboData->Stages.Num() > 0)
+				// 입력 버튼이 다를 경우 해당 입력 버튼 및 방향에 어울리는 새로운 콤보 탐색 (Parry 콤보일 경우 제외)
+				if (CurrentComboData->DirectionRequirement != ESpearAttackDirection::Parry)
 				{
-					CurrentComboData = NewComboData;
-					CurrentStageIndex = 0;
-					PlayStage(0);
+					FSpearComboData* NewComboData = GetComboDataByDirectionAndInput(CurrentDir, Input);
+					if (NewComboData && NewComboData->Stages.Num() > 0)
+					{
+						CurrentComboData = NewComboData;
+						CurrentStageIndex = 0;
+						PlayStage(0);
+					}
 				}
 			}
 		}

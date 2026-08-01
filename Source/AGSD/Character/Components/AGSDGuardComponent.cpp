@@ -22,20 +22,44 @@ void UAGSDGuardComponent::BeginPlay()
 
 void UAGSDGuardComponent::StartBlock()
 {
+	bGuardPressed = true;
+
 	if (!OwnerCharacter) return;
 
-	// 채광(Mining) 중이거나 가드 불가능한 무기 장착 상태면 무시
-	if (OwnerCharacter->Mining) return;
+	// 가드 불가능한 무기 장착 상태면 무시
 	if (!BlockableWeapons.Contains(OwnerCharacter->HoldingWeapon)) return;
+
+	// 공격 중인 경우 ComboWindow(bCanCombo) 상태일 때만 캔슬 후 막기 전환
+	if (OwnerCharacter->bIsAttacking)
+	{
+		if (OwnerCharacter->bCanCombo)
+		{
+			// 선입력 공격 버퍼 해제하여 캔슬 후 자동 연계 차단
+			OwnerCharacter->bHasBufferedInput = false;
+			OwnerCharacter->StopAnimMontage();
+			OwnerCharacter->ResetAttackState();
+		}
+		else
+		{
+			// ComboWindow 구간이 아니라면 막기 캔슬 불허
+			return;
+		}
+	}
+	else if (OwnerCharacter->Mining)
+	{
+		// 순수 채광/기타 행동 중일 때는 가드 불가
+		return;
+	}
 
 	OwnerCharacter->SetCharacterState(ECharacterState::Block);
 	OwnerCharacter->UpdateSprintSpeed();
 	OwnerCharacter->UpdateCharacterRotationSettings();
-
 }
 
 void UAGSDGuardComponent::StopBlock()
 {
+	bGuardPressed = false;
+
 	if (!OwnerCharacter) return;
 
 	if (OwnerCharacter->GetCharacterState() == ECharacterState::Block)
@@ -59,6 +83,7 @@ void UAGSDGuardComponent::HandleJustGuardSuccess()
 	if (!OwnerCharacter) return;
 
 	SetJustGuardWindowActive(false);
+	bJustGuardSuccessful = true;
 
 	if (JustGuardSound)
 	{
@@ -89,12 +114,15 @@ void UAGSDGuardComponent::HandleJustGuardSuccess()
 
 	UE_LOG(LogTemp, Warning, TEXT("Just Guard Success!"));
 
+	// 저스트 가드 성공 시 즉시 가드 상태 해제 후 패리 콤보 시작
+	StopBlock();
 	OwnerCharacter->StartParryCombo();
 }
 
 void UAGSDGuardComponent::ResetGuardState()
 {
 	SetJustGuardWindowActive(false);
+	bJustGuardSuccessful = false;
 }
 
 void UAGSDGuardComponent::SetJustGuardWindowActive(bool bActive)

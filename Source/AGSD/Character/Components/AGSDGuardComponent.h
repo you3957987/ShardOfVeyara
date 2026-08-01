@@ -35,7 +35,16 @@ public:
 	bool IsGuardActive() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Guard")
+	bool IsGuardKeyPressed() const { return bGuardPressed; }
+
+	UFUNCTION(BlueprintCallable, Category = "Guard")
 	bool IsJustGuardActive() const { return bIsJustGuardWindow; }
+
+	UFUNCTION(BlueprintCallable, Category = "Guard")
+	bool IsJustGuardSuccessful() const { return bJustGuardSuccessful; }
+
+	UFUNCTION(BlueprintCallable, Category = "Guard")
+	void ResetJustGuardSuccess() { bJustGuardSuccessful = false; }
 
 	// 저스트 가드 성공 연출 및 상태 리셋
 	UFUNCTION(BlueprintCallable, Category = "Guard")
@@ -57,6 +66,12 @@ public:
 private:
 	// 저스트 가드 활성화 여부
 	bool bIsJustGuardWindow = false;
+
+	// 저스트 가드 성공 여부 (카운터 공격 입력 대기용)
+	bool bJustGuardSuccessful = false;
+
+	// 가드 입력 버튼 누름/홀드 상태
+	bool bGuardPressed = false;
 
 
 
