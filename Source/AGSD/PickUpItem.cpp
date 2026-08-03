@@ -12,6 +12,7 @@
 #include "Struct_ItemData.h"
 #include "Inventory/AGSDInventoryComponent.h"
 #include "Inventory/UI/AGSDPlayerHUD.h"
+#include "TextLog.h"
 
 APickUpItem::APickUpItem()
 {
@@ -103,6 +104,9 @@ void APickUpItem::Interact_Implementation(AAGSDCharacter* player)
 	{
 		// 실제 획득 수량 계산
 		int32 AcquiredQty = Amount - OutRemainingQty;
+
+		// 아이템 획득 TextLog 기록
+		UTextLog::WriteTextLogByStringAndFloat(TEXT("아이템 획득"), OutItemData.ItemName.ToString(), static_cast<float>(AcquiredQty));
 
 		// 플레이어 HUD에 아이템 획득 알림 출력
 		if (player->PlayerHUDRef)
