@@ -69,7 +69,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="자체설정")
 	TSubclassOf<class UBossHealthBarWidget> BossHealthBarWidgetClass;
 	class UBossHealthBarWidget* BossHealthBar; // 보스 체력 바 위젯 캐스팅해서 저장할 변수
-
+	bool HealthBarFlag = false;
+	
 	// 락온용 위젯 컴포넌트
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "자체설정")
 	TObjectPtr<class UWidgetComponent> LockOnWidget;
@@ -143,7 +144,7 @@ public:
 	virtual void Die();
 	// 죽음 몽타주 끝난 후 호출되는 함수 - 애님 노티파이에서 호출
 	UFUNCTION(BlueprintCallable)
-	void AfterDieMontageEnd();
+	virtual void AfterDieMontageEnd();
 	
 	// 공격 후 플레이어 주시 여부
 	bool bFocusPlayerAfterAttack = true;

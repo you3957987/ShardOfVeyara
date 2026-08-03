@@ -4,6 +4,7 @@
 #include "NiagaraComponent.h"
 #include "Components/SphereComponent.h"
 #include "Enemy/BaseRangedEnemy.h"
+#include "EnemyBoss/Hechi/Hechi.h"
 #include "EnemyBoss/MagicSwordMan/BossMagicSwordMan.h"
 #include "EnemyBoss/SkeletonMage/BossSkeletonMage.h"
 #include "GameFramework/Character.h"
@@ -144,6 +145,15 @@ void ABaseEnemyProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedCompone
 					}
 					
 				}
+				else if ( OwnerMeshName.Contains(TEXT("Hechi")) )
+				{
+					AHechi* BossOwner = Cast<AHechi>(GetOwner());
+					
+					if ( BossOwner )
+					{
+						BossOwner->CommonBossLogData.TotalDamageDealt += Damage; // 공통 로그 데이터에도 누적
+					}
+				}
 				else
 				{
 					
@@ -153,9 +163,12 @@ void ABaseEnemyProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedCompone
 					
 					ABaseRangedEnemy* RangedCharacter = Cast<ABaseRangedEnemy>(GetOwner());
 					
-					UEnemyLogManager::EnemyLog( RangedCharacter->GetEnemyType() == EEnemyType::EET_Ranged ? EEnemyLogType::Ranged : EEnemyLogType::Revive,
-						FString::Printf(TEXT("적 [%s] 발사체가 [%.f] 대미지 줌"),
-						*OwnerMeshName, Damage));
+					if ( RangedCharacter )
+					{
+						UEnemyLogManager::EnemyLog( RangedCharacter->GetEnemyType() == EEnemyType::EET_Ranged ? EEnemyLogType::Ranged : EEnemyLogType::Revive,
+							FString::Printf(TEXT("적 [%s] 발사체가 [%.f] 대미지 줌"),
+							*OwnerMeshName, Damage));
+					}
 				}
 			}
 		}

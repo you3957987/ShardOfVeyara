@@ -7,7 +7,6 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/ProgressBar.h"
 #include "Components/sphereComponent.h"
-#include "EnemyBoss/SkeletonMage/BossSkeletonMage.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -103,13 +102,15 @@ void ABaseBossEnemy::PollInit(float DeltaTime)
 				DeadInterface->ReturnOnPlayerDeadDelegate().RemoveDynamic(this, &ABaseBossEnemy::PlayerDeadLog);
 				DeadInterface->ReturnOnPlayerDeadDelegate().AddDynamic(this, &ABaseBossEnemy::PlayerDeadLog);
             
-				UE_LOG(LogTemp, Error, TEXT("asdasdsad"));
+				UE_LOG(LogTemp, Error, TEXT("Player has DeadInterface"));
 				
 				bTargetInitalize = true; 
 			}
 			else 
 			{
 				UE_LOG(LogTemp, Error, TEXT("Player does not implement IPlayerDeadInterface"));
+				
+				bTargetInitalize = true; // 일단 없으면 그냥 없다 치고 진행 -> 나중에 플레이업 코드 기준으로는 캐릭터 만들어 지면 거기다는 똑같이 추가
 			}
 		}
 	}
@@ -123,6 +124,7 @@ void ABaseBossEnemy::OnPlayerDetectOverlapBegin(UPrimitiveComponent* OverlappedC
 	{
 		SpawnDefaultController();// 스폰 몽타주 사용 안하면 자동 빙의 설정
 		PlayerDetectRangeSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision); // 한 번 감지되면 비활성화
+		if ( HealthBarFlag == true ) return;
 		
 		StartBattleLog(); // 전투 로그 시작
 		
@@ -135,6 +137,8 @@ void ABaseBossEnemy::OnPlayerDetectOverlapBegin(UPrimitiveComponent* OverlappedC
 				BossHealthBar = CreateWidget<UBossHealthBarWidget>(PC, BossHealthBarWidgetClass);
 				if (BossHealthBar)
 				{
+					UE_LOG(LogTemp, Error, TEXT("BossHealthBarWidget"));
+					HealthBarFlag = true;
 					BossHealthBar->AddToViewport();
 					
 					if (BossHealthBar->FadeInAnim)
@@ -174,16 +178,13 @@ float ABaseBossEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 		
 		if ( Health <= 0.f )
 		{
-			UEnemyLogManager::EnemyLog( GetLogTypeFromEnemyType(), 
-				FString::Printf(TEXT("[%s]가 [%.f] 대미지 받아 사망"), *MeshName, DamageToApply));
-			
 			CommonBossLogData.Result = TEXT("BossDead"); // 로그 데이터에 결과 기록
 			
 			Die();
 			return DamageToApply;
 		}
 		
-		if (BossHealthBar->HealthProgressBar)
+		if (BossHealthBar && BossHealthBar->HealthProgressBar)
 		{
 			BossHealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 		}
@@ -214,6 +215,7 @@ void ABaseBossEnemy::Die()
 	
 	if ( BossHealthBar )
 	{
+		UE_LOG(LogTemp, Warning, TEXT("BossHealthBar FadeOutAnim played."));
 		BossHealthBar->PlayAnimation(BossHealthBar->FadeOutAnim);
 	}
 	
@@ -440,6 +442,8 @@ void ABaseBossEnemy::SetHitOverlay()
 	{
 		GetMesh()->SetOverlayMaterial(HitOverlayMaterial);
 		
+		GetWorld()->GetTimerManager().ClearTimer(HitFlashTimerHandle);
+		
 		// 0.2초 후에 ClearHitOverlay 함수를 호출하여 오버레이 제거
 		GetWorld()->GetTimerManager().SetTimer(HitFlashTimerHandle, this,
 			&ABaseBossEnemy::ClearHitOverlay, 0.2f, false);
@@ -460,12 +464,16 @@ void ABaseBossEnemy::TestDeadLogic()
 	if (bCheckDeadLogic)
 	{
 		FTimerHandle DeadTestTimerHandle;
-		// 5초 후에 체력을 0으로 만들고 Die() 함수를 호출합니다.
+		// 7초 후에 체력을 0으로 만들고 Die() 함수를 호출합니다.
 		GetWorld()->GetTimerManager().SetTimer(DeadTestTimerHandle, [this]()
 		{
 		 Health = 0.f;
+		 if (BossHealthBar && BossHealthBar->HealthProgressBar)
+		 {
+		 	BossHealthBar->HealthProgressBar->SetPercent(0.f);
+		 }
 		 Die();
-		}, 5.0f, false);
+		}, 7.0f, false);
 	}
 }
 
