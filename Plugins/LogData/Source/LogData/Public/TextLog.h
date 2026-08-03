@@ -9,6 +9,15 @@ class LOGDATA_API UTextLog : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
+	/* 
+	#include "TextLog.h" 필요
+	
+	UTextLog::WriteTextLogByKeyword(TEXT("점프")); 로 사용
+
+	Saved/TextLogs/PlayerDataLog.txt 에 저장
+
+	*/
+	
 public:
     
 	// 키워드 값만 있으면 가능한 로그 작성 함수
