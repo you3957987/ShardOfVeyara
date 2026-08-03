@@ -8,6 +8,7 @@
 #include "InteractionOwnerInterface.h"
 #include "FarmingGameMode.h"
 #include "Components/BoxComponent.h"
+#include "TextLog.h"
 
 // Sets default values
 ABed::ABed()
@@ -41,6 +42,8 @@ void ABed::WakeUp()
 
 void ABed::Interact_Implementation(AAGSDCharacter* player)
 {
+	UTextLog::WriteTextLogByKeyword(TEXT("잠자기"));
+
 	TargetPlayer = player;
 	TargetPlayer->DisableInput(TargetPlayer->getPlayerController());
 	if (TargetPlayer && TargetPlayer->Implements<UInteractionOwnerInterface>())

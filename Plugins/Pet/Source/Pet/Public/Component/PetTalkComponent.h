@@ -115,6 +115,8 @@ protected:
 	// 대화 종료 함수
 	UFUNCTION()
 	void EndConversation();
+	UFUNCTION()
+	void CheckSkipButton();
 	// 대화 지속 시간 타이머 핸들
 	FTimerHandle ConversationTimerHandle;
 	// 탐험용 연속 대화 타이머 핸들
