@@ -4,6 +4,28 @@
 #include "HAL/FileManager.h"
 #include "HAL/PlatformFileManager.h"
 
+#include "Engine/Engine.h"
+#include "Engine/World.h"
+
+static FString GetCurrentMapName()
+{
+	if (GEngine)
+	{
+		for (const FWorldContext& Context : GEngine->GetWorldContexts())
+		{
+			if (Context.WorldType == EWorldType::Game || Context.WorldType == EWorldType::PIE)
+			{
+				if (UWorld* World = Context.World())
+				{
+					FString MapName = World->GetOutermost()->GetName();
+					return FPaths::GetBaseFilename(MapName);
+				}
+			}
+		}
+	}
+	return TEXT("UnknownMap");
+}
+
 void UTextLog::WriteTextLogByKeyword(const FString& Keyword)
 {
 	WriteTextLogByString(Keyword, TEXT(""));
@@ -16,25 +38,28 @@ void UTextLog::WriteTextLogByString(const FString& Keyword, const FString& Value
 
 	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
 
-	if (!PlatformFile.DirectoryExists(*Directory)) // * 제거하여 표준 안전성 확보
+	if (!PlatformFile.DirectoryExists(*Directory))
 	{
 		PlatformFile.CreateDirectoryTree(*Directory);
 	}
 
+	const FString MapName = GetCurrentMapName();
 	FString FinalLine;
     
 	// Value가 비어있다면 콜론(:) 없이 깔끔하게 출력
 	if (Value.IsEmpty())
 	{
-		FinalLine = FString::Printf(TEXT("[%s] [%s]%s"), 
+		FinalLine = FString::Printf(TEXT("[%s] [%s] [%s]%s"), 
 		   *FDateTime::Now().ToString(), 
+		   *MapName,
 		   *Keyword, 
 		   LINE_TERMINATOR);
 	}
 	else
 	{
-		FinalLine = FString::Printf(TEXT("[%s] [%s] : %s%s"), 
+		FinalLine = FString::Printf(TEXT("[%s] [%s] [%s] : %s%s"), 
 		   *FDateTime::Now().ToString(), 
+		   *MapName,
 		   *Keyword, 
 		   *Value, 
 		   LINE_TERMINATOR);
