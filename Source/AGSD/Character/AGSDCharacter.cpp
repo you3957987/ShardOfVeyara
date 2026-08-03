@@ -35,6 +35,7 @@
 #include "BaseFlyingPet.h"
 #include "NiagaraFunctionLibrary.h"
 #include "SpearComboData.h"
+#include "TextLog.h"
 #include "Components/AudioComponent.h"
 #include "Interface/ItemDropInterface.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -142,6 +143,7 @@ void AAGSDCharacter::HandleAttackInput(FName ActionName)
 
 void AAGSDCharacter::TryInteract()
 {
+	UTextLog::WriteTextLogByString(TEXT("상호작용 키 입력"), TEXT("단순 상호작용"));
 	// 무기(Spear 등)를 장착 중이거나 공격 진행 중일 경우 우클릭(RMB) 콤보/스킬 신호 전송
 	if (HoldingWeapon == EHoldingWeapon::Spear || HoldingWeapon == EHoldingWeapon::Sickle || bIsAttacking)
 	{
@@ -223,6 +225,8 @@ bool AAGSDCharacter::CheckSingleInput(const TArray<FInputBufferEntry>& Buffer, F
 void AAGSDCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	SetTotalDistance();
 
 	if (ComboGuideComponent)
 	{
@@ -455,11 +459,35 @@ void AAGSDCharacter::BeginPlay()
 
 	// 게임 시작 시 현재 선택된 핫바 슬롯의 아이템을 즉시 장착합니다.
 	UpdateEquippedActor();
+
+	LastLocation = GetActorLocation();
 }
 
 void AAGSDCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	DestroyPetBeforeTravel();
+
+	// 현재 레벨 이름 가져오기
+	FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
+
+	// 어떤 스테이지가 종료되었는지를 로그 기록
+	UTextLog::WriteTextLogByString(TEXT("종료된 스테이지"), CurrentLevelName);
+
+	// 현재 남은 체력 잔량 로그 기록
+	FString HealthLog = FString::Printf(TEXT("%.1f / %.1f"), Health, MaxHealth);
+	UTextLog::WriteTextLogByString(TEXT("남은 체력 잔량"), HealthLog);
+
+	// 현재 가지고 있는 골드 량 기록
+	UTextLog::WriteTextLogByFloat(TEXT("현재 골드 량"), static_cast<float>(Coin));
+
+	// 총 이동 거리 기록 (m 단위)
+	float DistanceInMeters = TotalDistance / 100.0f;
+	UTextLog::WriteTextLogByFloat(TEXT("총 이동 거리"), DistanceInMeters);
+
+	// 현재 스테이지 플레이 시간 기록 (초 단위)
+	float StagePlayTime = UGameplayStatics::GetTimeSeconds(GetWorld());
+	UTextLog::WriteTextLogByFloat(TEXT("스테이지 플레이 시간"), StagePlayTime);
+
 	Super::EndPlay(EndPlayReason);
 
 	GI->Damage = Damage;
@@ -548,6 +576,15 @@ float AAGSDCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 		if (HealthBar) HealthBar->HealthProgressBar->SetPercent(Health / MaxHealth);
 		if ( Health <= 0.f )
 		{
+			// ─── [사망 원인 로그 기록 추가] ───
+			FString CauseName = TEXT("알 수 없는 원인");
+			if (IsValid(DamageCauser))
+			{
+				CauseName = DamageCauser->GetName();
+			}
+			UTextLog::WriteTextLogByString(TEXT("플레이어 사망원인"), CauseName);
+			// ───────────────────────────────────
+
 			bCanBeDamage = false;
 			Die();
 		}
@@ -738,6 +775,7 @@ void AAGSDCharacter::Jump()
  	if (Jumping && !GetCharacterMovement()->IsFalling())
 	{
 		Jumping->Play();
+		UTextLog::WriteTextLogByKeyword(TEXT("점프"));
 	}
 	Super::Jump();
 }
@@ -2543,4 +2581,16 @@ void AAGSDCharacter::UpdateCharacterStateFromEquip()
 	}
 }
 
+// ─── [로그 데이터 관련: 이동 거리 측정] ───
+void AAGSDCharacter::SetTotalDistance()
+{
+	FVector CurrentLocation = GetActorLocation();
 
+	float FrameDistance = FVector::Distance(CurrentLocation, LastLocation);
+
+	if (FrameDistance > 0.1f)
+	{
+		TotalDistance += FrameDistance;
+		LastLocation = CurrentLocation;
+	}
+}
