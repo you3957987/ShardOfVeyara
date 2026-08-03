@@ -6,6 +6,7 @@
 #include "AGSDCharacter.h"
 #include "AGSDInteractionComponent.h"
 #include "InteractionOwnerInterface.h"
+#include "TextLog.h"
 #include "Components/BoxComponent.h"
 
 // Sets default values
@@ -121,6 +122,8 @@ void AWeeds::OnMontageEnded(UAnimMontage* AnimMontage, bool bArg)
     
 	// 로그로 확인
 	UE_LOG(LogTemp, Warning, TEXT("몽타주 종료! 다시 움직일 수 있습니다."));
+
+	UTextLog::WriteTextLogByKeyword(TEXT("잡초 제거"));
 	Destroy();
 }
 

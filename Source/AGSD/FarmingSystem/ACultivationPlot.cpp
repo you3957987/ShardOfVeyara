@@ -12,6 +12,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "TextLog.h"
 
 // Sets default values
 AACultivationPlot::AACultivationPlot()
@@ -38,7 +39,13 @@ void AACultivationPlot::HandleDayPassed(int32 CurrentDay)
 {
 	if (PlantedCrop)
 	{
-		if (bHasWeeds) ScheduledDay++;
+		if (bHasWeeds)
+		{
+			ScheduledDay++;
+			DelayedDays++;
+			FString LogMsg = FString::Printf(TEXT("%s (누적 %d일 지연)"), *CropData->CropName.ToString(), DelayedDays);
+			UTextLog::WriteTextLogByString(TEXT("성장 지연"), LogMsg);
+		}
 		else if (ScheduledDay <= CurrentDay) AdvanceGrowth();
 	}
 	if (!bHasWeeds && FMath::FRand() <= weedsProb)
@@ -144,6 +151,7 @@ void AACultivationPlot::Interact_Implementation(AAGSDCharacter* player)
 		CurrentGrowStageIndex = 0;
 		GrowthTimeCounter = CropData->GrowthStages[CurrentGrowStageIndex].TimeToGrow;
 		FinishGrowStageIndex = CropData->GrowthStages.Num() - 1;
+		DelayedDays = 0;
 		
 		int32 currentDay = GS->GetCurrentDay();
 		ScheduledDay =  currentDay + GrowthTimeCounter;
@@ -192,6 +200,7 @@ void AACultivationPlot::BeginPlay()
 	FinishGrowStageIndex = LoadedData.FinishGrowStageIndex;
 	FullyGrown = LoadedData.FullyGrown;
 	ScheduledDay = LoadedData.ScheduledDay;
+	DelayedDays = LoadedData.DelayedDays;
 	bHasWeeds = LoadedData.bHasWeeds;
 	BonusYield = LoadedData.BonusYield;
 
@@ -232,6 +241,7 @@ void AACultivationPlot::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	SaveData.FinishGrowStageIndex = FinishGrowStageIndex;
 	SaveData.FullyGrown = FullyGrown;
 	SaveData.ScheduledDay = ScheduledDay;
+	SaveData.DelayedDays = DelayedDays;
 	SaveData.bHasWeeds = bHasWeeds;
 	SaveData.BonusYield = BonusYield;
 
@@ -279,6 +289,7 @@ void AACultivationPlot::OnPlantedCropDestroyed()
 	CurrentGrowStageIndex = 0;
 	FullyGrown = false;
 	ScheduledDay = 0;
+	DelayedDays = 0;
 	SeedName = NAME_None;
 	BonusYield = 0;
 

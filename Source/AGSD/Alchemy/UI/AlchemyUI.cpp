@@ -18,6 +18,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/DragDropOperation.h"
 #include "EnhancedInputSubsystems.h"
+#include "TextLog.h"
 
 void UAlchemyUI::CallOnCropInserted()
 {
@@ -187,6 +188,18 @@ void UAlchemyUI::InsertMaterial(UAlchemyCropSlotBase* InsertedSlot)
 			
 			// 솥 효과음 및 파티클 재생 (clear = false)
 			Table->SplashPot(false);
+
+			if (Table->GetInsertedItemID().Num() >= 2)
+			{
+				if (Table->TargetRecipe.ItemID.Equals(TEXT("Sludge"), ESearchCase::IgnoreCase))
+				{
+					UTextLog::WriteTextLogByKeyword(TEXT("포션 제조 실패"));
+				}
+				else
+				{
+					UTextLog::WriteTextLogByString(TEXT("포션 제조"), Table->TargetRecipe.ItemID);
+				}
+			}
 
 			// 델리게이트 이벤트 브로드캐스트
 			CallOnCropInserted();

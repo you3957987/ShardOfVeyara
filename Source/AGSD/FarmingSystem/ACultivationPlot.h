@@ -62,6 +62,9 @@ protected:
 	//다음 성장 날짜
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
     int32 ScheduledDay = 0;
+    //잡초로 인한 누적 지연 날짜
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
+    int32 DelayedDays = 0;
     //현재 단계
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farming")
     int32 CurrentGrowStageIndex = 0;

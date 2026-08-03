@@ -7,6 +7,7 @@
 #include "AGSDInteractionComponent.h"
 #include "InteractionOwnerInterface.h"
 #include "AGSDPlayerController.h"
+#include "TextLog.h"
 
 // Sets default values
 ACrop::ACrop()
@@ -175,6 +176,7 @@ void ACrop::Interact_Implementation(AAGSDCharacter* player)
 	{
 		OnHarvested.Broadcast();
 	}
+	UTextLog::WriteTextLogByStringAndFloat(TEXT("작물 수확"), CropData->CropName.ToString(), FinalQuantity);
 	Destroy();
 }
 
