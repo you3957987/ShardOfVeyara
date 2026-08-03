@@ -6,6 +6,7 @@
 #include "AGSDCharacter.h"
 #include "AGSDInteractionComponent.h"
 #include "InteractionOwnerInterface.h"
+#include "TextLog.h"
 #include "Tribute/TributeTextUI.h"
 #include "Tribute/TributeUI.h"
 #include "Camera/CameraComponent.h"
@@ -214,6 +215,7 @@ void ATribute::SuccessInsert(FString ItemID, int32 AmountToRemove)
 		PlayFireExplosionNiagara();
 		Player->AddDamage(10.0f);
 		SetNextTributeUI(++TributeLevel);
+		UTextLog::WriteTextLogByFloat(TEXT("봉헌 단계"), TributeLevel);
 	} 
 }
 
