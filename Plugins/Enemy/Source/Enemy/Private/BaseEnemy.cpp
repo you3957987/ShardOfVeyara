@@ -1,7 +1,6 @@
 #include "BaseEnemy.h"
 
 #include "AIController.h"
-#include "EnemyLogManager.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/Progressbar.h"
@@ -216,21 +215,13 @@ float ABaseEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& Dama
 		Health -= DamageToApply;
 		if ( Health <= 0.f )
 		{
-			UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
-			FString::Printf(TEXT("적 [%s]가 [%.f] 대미지 받아 사망"), 
-				*MeshName, DamageToApply));
-			
 			Die();
 			return DamageToApply;
 		}
 	}
 	
 	SetHitOverlay(); // 히트 오버레이 설정
-	
-	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
-		FString::Printf(TEXT("적 [%s]가 [%.f] 대미지 받음 (%.f / %.f)"), 
-			*MeshName, DamageToApply, MaxHealth,Health));
-	
+
 	return DamageToApply;
 }
 
@@ -399,9 +390,6 @@ void ABaseEnemy::StartBattleLog()
 	FString MeshName = GetMesh() && GetMesh()->GetSkeletalMeshAsset() ? 
 		GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
 
-	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), // 적절한 타입으로 변경 가능
-		FString::Printf(TEXT("적 [%s] 전투 진입 (시작 시간: %.2f)"), *MeshName, BattleStartTime));
-	
 	EnemyLogData.StartWorldTime = BattleStartTime; // 로그 데이터에 시작 시간 기록
 	
 }
@@ -411,10 +399,7 @@ void ABaseEnemy::PlayerDeadLog()
 	// 메쉬 이름 가져오기 헬퍼
 	FString MeshName = GetMesh() && GetMesh()->GetSkeletalMeshAsset() ? 
 		GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
-	
-	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
-		FString::Printf(TEXT("적 [%s] 의 공격으로 플레이어 사망"), *MeshName));
-	
+
 	EnemyLogData.Result = TEXT("PlayerDead"); // 로그 데이터에 결과 기록
 	
 	if ( BlackboardComp )
@@ -436,16 +421,11 @@ void ABaseEnemy::EndBattleLog()
 	FString MeshName = GetMesh() && GetMesh()->GetSkeletalMeshAsset() ? 
 		GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
 
-	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
-		FString::Printf(TEXT("적 [%s] 전투 종료 | 소요 시간: %.2f초 (시작: %.2f / 종료: %.2f)"), 
-			*MeshName, BattleDuration, BattleStartTime, EndTime));
-
 	EnemyLogData.EndWorldTime = EndTime; // 로그 데이터에 종료 시간 기록
 	EnemyLogData.ElapsedTime = BattleDuration; // 로그 데이터에 소요 시간 기록
 	
 	// 최종적으로 CSV 로그 파일에 추가
-	UCSVLog::AddEnemyLog(TEXT("Test"), 
-		EnemyLogID, GetEnemyTypeAsString(), EnemyLogData);
+	UCSVLog::AddEnemyLog(EnemyLogID, GetEnemyTypeAsString(), EnemyLogData);
 	
 	// EnemyLogData 초기화 (다음 전투를 위해)
 	EnemyLogData = FEnemyLogData();
@@ -478,30 +458,6 @@ FString ABaseEnemy::GetEnemyTypeAsString() const
 		case EEnemyType::EET_Burrow:    return TEXT("Burrow");
 		case EEnemyType::EET_Revive:    return TEXT("Revive");
 	default:                        return TEXT("Melee");
-	}
-}
-
-EEnemyLogType ABaseEnemy::GetLogTypeFromEnemyType() const
-{
-	if (GetName().Contains(TEXT("Rebirth")))
-	{
-		return EEnemyLogType::Revive;
-	}
-
-	switch (EnemyType)
-	{
-		case EEnemyType::EET_Melee:     return EEnemyLogType::Melee;
-		case EEnemyType::EET_Ranged:    return EEnemyLogType::Ranged;
-		case EEnemyType::EET_Exploder:  return EEnemyLogType::Exploder;
-		case EEnemyType::EET_Transpar:  return EEnemyLogType::Transpar;
-		case EEnemyType::EET_Mimic:     return EEnemyLogType::Mimic;
-		case EEnemyType::EET_Slime:     return EEnemyLogType::Slime;
-		case EEnemyType::EET_Mage:      return EEnemyLogType::Mage;
-		case EEnemyType::EET_Guard:     return EEnemyLogType::Guard;
-		case EEnemyType::EET_Passive:   return EEnemyLogType::Passive;
-		case EEnemyType::EET_Burrow:    return EEnemyLogType::Burrow;
-		case EEnemyType::EET_Revive: return EEnemyLogType::Revive;
-	default:                        return EEnemyLogType::Melee;
 	}
 }
 

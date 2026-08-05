@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "EnemyLogManager.h"
 #include "Interface/ItemDropInterface.h"
 #include "CSVLogType.h" 
 #include "BaseEnemy.generated.h"
@@ -69,9 +68,6 @@ public:
 	// 로그 데이터에 사용할 EnemyID
 	UPROPERTY(EditAnywhere, Category="자체설정")
 	FString EnemyLogID;
-	// 이번 전투 세션의 데이터를 실시간으로 누적할 바구니
-	UPROPERTY(BlueprintReadOnly)
-	FEnemyLogData EnemyLogData;
 	// 적 타입
 	UPROPERTY(EditAnywhere, Category="자체설정")
 	EEnemyType EnemyType = EEnemyType::EET_Melee;
@@ -203,12 +199,15 @@ public:
 	// 오버레이를 다시 제거할 함수
 	void ClearHitOverlay();
 	
-	// 로그 관리 함수
+	// 로그 관리 
+	
+	// 이번 전투 세션의 데이터를 실시간으로 누적할 바구니
+	UPROPERTY(BlueprintReadOnly)
+	FEnemyLogData EnemyLogData;
 	float BattleStartTime = 0.f;
 	bool bIsInBattle = false;
 	void StartBattleLog();
 	void EndBattleLog();
-	EEnemyLogType GetLogTypeFromEnemyType() const;
 	UFUNCTION()
 	void PlayerDeadLog();
 

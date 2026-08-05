@@ -1,6 +1,5 @@
 #include "EnemyBoss/SkeletonMage/BossSkeletonMageMagicBall.h"
 
-#include "EnemyLogManager.h"
 #include "NiagaraFunctionLibrary.h"
 
 ABossSkeletonMageMagicBall::ABossSkeletonMageMagicBall()

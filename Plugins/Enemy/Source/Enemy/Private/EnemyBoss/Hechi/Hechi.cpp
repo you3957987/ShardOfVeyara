@@ -982,7 +982,7 @@ void AHechi::EndBattleLog()
 	
 	HechiLogData.Base = CommonBossLogData;
 	
-	UCSVLog::AddHechiLog( TEXT("Test"), HechiLogData);
+	UCSVLog::AddHechiLog( HechiLogData);
 	
 	CommonBossLogData = FCommonBossLogData(); // 공통 로그 데이터 초기화
 	HechiLogData = FHechiLogData(); // 보스별 로그 데이터 초기화

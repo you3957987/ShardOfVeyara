@@ -1,7 +1,6 @@
 #include "EnemyProjectile/BaseDelayedBurstProjectile.h"
 
 #include "BaseEnemy.h"
-#include "EnemyLogManager.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Components/SphereComponent.h"
@@ -98,12 +97,6 @@ void ABaseDelayedBurstProjectile::Explode()
 					// 주인 캐릭터의 스켈레탈 메쉬 에셋 이름 가져오기
 					FString OwnerMeshName = OwnerCharacter->GetMesh()->GetSkeletalMeshAsset() ? 
 						OwnerCharacter->GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
-
-					// 로그 남기기 (투사체이므로 EEnemyLogType::Ranged 사용 권장)
-					UEnemyLogManager::EnemyLog(EEnemyLogType::Mage, 
-						FString::Printf(TEXT("적 [%s]가 폭발 마법으로 [%.f] 대미지 줌"), 
-							*OwnerMeshName, 
-							ExplosionDamage));
 				}
 			}
 			// 대미지 적용

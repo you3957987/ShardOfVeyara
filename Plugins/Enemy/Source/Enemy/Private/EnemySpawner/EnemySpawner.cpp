@@ -2,7 +2,6 @@
 
 #include "BaseEnemy.h"
 #include "CSVLog.h"
-#include "EnemyLogManager.h"
 #include "NavigationSystem.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Components/CapsuleComponent.h"
@@ -123,19 +122,13 @@ float AEnemySpawner::TakeDamage(float DamageAmount, struct FDamageEvent const& D
 		Health -= DamageToApply;
 		if ( Health <= 0.f )
 		{
-			UEnemyLogManager::EnemyLog(EEnemyLogType::Spawner, 
-			FString::Printf(TEXT("적 [스포너]가 [%.f] 대미지 받아 사망"), DamageToApply));
-			
 			Die();
 			return DamageToApply;
 		}
 	}
 	
 	SetHitOverlay(); // 히트 오버레이 설정
-	
-	UEnemyLogManager::EnemyLog(EEnemyLogType::Spawner, 
-		FString::Printf(TEXT("적 [스포너]가 [%.f] 대미지 받음 (%.f / %.f)"), DamageToApply, MaxHealth,Health));
-	
+
 	return DamageToApply;
 }
 
@@ -304,9 +297,6 @@ void AEnemySpawner::SpawnEnemy()
 
 				EnemyLogData.SpawnCount += 1; // 로그 데이터에 스폰 횟수 누적
 				SpawnEnemyId++;
-				
-				// 로그에 메시 이름 추가 출력
-				UEnemyLogManager::EnemyLog(EEnemyLogType::Spawner, FString::Printf(TEXT("적 [스포너]가 [%s] 스폰"), *MeshName));
 			}
 		}
 	}
@@ -337,8 +327,7 @@ void AEnemySpawner::Die()
 	DropItemsAfterDead();
 	
 	// 최종적으로 CSV 로그 파일에 추가
-	UCSVLog::AddEnemyLog(TEXT("Test"), 
-		EnemyLogID, TEXT("Spanwer"), EnemyLogData);
+	UCSVLog::AddEnemyLog(EnemyLogID, TEXT("Spanwer"), EnemyLogData);
 	
 	// EnemyLogData 초기화 (다음 전투를 위해)
 	EnemyLogData = FEnemyLogData();

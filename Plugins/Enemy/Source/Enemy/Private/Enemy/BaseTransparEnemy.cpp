@@ -1,6 +1,5 @@
 #include "Enemy/BaseTransparEnemy.h"
 
-#include "EnemyLogManager.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
@@ -86,11 +85,6 @@ void ABaseTransparEnemy::CheckMeleeAttackHit(float DeltaTime)
 				{
 					// 스켈레탈 메쉬 에셋 이름 가져오기
 					FString MeshName = GetMesh()->GetSkeletalMeshAsset() ? GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
-					
-					UEnemyLogManager::EnemyLog(EEnemyLogType::Transpar, 
-						FString::Printf(TEXT("적 [%s]가 [%.f] 대미지"), 
-							*MeshName, 
-							MeleeAttackDamage));
 				}
 				
 				EnemyLogData.TotalDamageDealt += MeleeAttackDamage; // 로그 데이터에 입힌 대미지 누적

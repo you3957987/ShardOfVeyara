@@ -1,6 +1,4 @@
 #include "Enemy/BaseGuardEnemy.h"
-
-#include "EnemyLogManager.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -83,10 +81,6 @@ float ABaseGuardEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const&
     
 			// 현재 적용된 대미지가 기본 공격인지 가드 반격인지 구분
 			FString AttackTypeName = (AttackDamage == GuardReactionDamage) ? TEXT("가드 반격") : TEXT("기본 공격");
-
-			UEnemyLogManager::EnemyLog(EEnemyLogType::Guard, 
-				FString::Printf(TEXT("적 [%s]가 [%.f] 대미지 가드 | 가드중 받은 대미지 / 반격 임계치[%.f / %.f]"), 
-					*MeshName, DamageAmount, DamageWhileGuarding, MaxDamageToReaction));
 		}
 		
 		EnemyLogData.TotalDamageGuarded += DamageAmount; // 로그 데이터에 가드한 대미지 누적
@@ -127,12 +121,6 @@ void ABaseGuardEnemy::OnBeginOverlapWeaponCollisionSphere(UPrimitiveComponent* O
     
 			// 현재 적용된 대미지가 기본 공격인지 가드 반격인지 구분
 			FString AttackTypeName = (AttackDamage == GuardReactionDamage) ? TEXT("가드 반격") : TEXT("기본 공격");
-
-			UEnemyLogManager::EnemyLog(EEnemyLogType::Guard, 
-				FString::Printf(TEXT("적 [%s]가 [%s]으로 [%.f] 대미지"), 
-					*MeshName, 
-					*AttackTypeName,
-					AttackDamage));
 		}
 		
 		EnemyLogData.TotalDamageDealt += AttackDamage; // 로그 데이터에 입힌 대미지 누적

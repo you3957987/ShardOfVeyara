@@ -69,11 +69,7 @@ float ABossMagicSwordMan::TakeDamage(float DamageAmount, struct FDamageEvent con
 		{
 			PlayAnimMontage(GuardHitMontage);
 		}
-		
-		UEnemyLogManager::EnemyLog(EEnemyLogType::BlackKnight, 
-			FString::Printf(TEXT("[소드맨] 가드 성공 | 가드로 막은 대미지: [%.f] | 가드중 받은 대미지 / 반격 임계치[%.f / %.f]"), 
-				DamageAmount, DamageWhileGuarding, AttackStruct.MaxDamageToReaction));
-		
+
 		BossMagicSwordManLogData.TotalDamageGuarded += DamageAmount; // 로그 데이터에 가드로 막은 대미지 누적
 		
 		return 0.f; // 대미지 무효화
@@ -283,10 +279,7 @@ UAnimMontage* ABossMagicSwordMan::StartDashJumpUpAttack()
 void ABossMagicSwordMan::JumpUpAttackCheck()
 {
 	UE_LOG( LogTemp, Warning, TEXT("JumpUpAttackCheck called. bSuccessJumpUpAttack: %s"), bSuccessJumpUpAttack ? TEXT("true") : TEXT("false") );
-	
-	UEnemyLogManager::EnemyLog(EEnemyLogType::MagicSwordMan, 
-		FString::Printf(TEXT("[소드맨] 띄우기 성공 여부: [%s]"), bSuccessJumpUpAttack ? TEXT("성공") : TEXT("실패")));
-	
+
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	if ( bSuccessJumpUpAttack == true )
 	{
@@ -405,9 +398,7 @@ void ABossMagicSwordMan::OnBeginOverlapPowerAttackCollisionSphere(UPrimitiveComp
 		HandlePowerAttackDamage(OtherActor);
 		
 		bIsPowerAttackHit = true; // 궁극기 공격이 적중했음을 표시하는 플래그를 true로 설정
-		
-		UEnemyLogManager::EnemyLog(EEnemyLogType::MagicSwordMan, FString::Printf(TEXT("[소드맨] 궁극기 공격 적중 ")));
-		
+
 		// 타겟 정지 및 입력 차단 로직 시작 
 		if (ACharacter* HitCharacter = Cast<ACharacter>(OtherActor))
 		{
@@ -442,8 +433,6 @@ void ABossMagicSwordMan::HandlePowerAttackDamage(AActor* OtherActor)
 	// 1. 반응성을 위해 즉시 1회 대미지 적용 (선택 사항)
 	UGameplayStatics::ApplyDamage(OtherActor, AttackDamage, GetController(), this, UDamageType::StaticClass());
 
-	UEnemyLogManager::EnemyLog(EEnemyLogType::MagicSwordMan, FString::Printf(TEXT("[소드맨] 궁극기 대미지 적용 | 대미지: [%.f]"), AttackDamage));
-	
 	BossMagicSwordManLogData.PowerAttackDamage += AttackDamage;
 	CommonBossLogData.TotalDamageDealt += AttackDamage;
 	
@@ -497,9 +486,7 @@ void ABossMagicSwordMan::FinishPowerAttack()
 	{
 		UGameplayStatics::ApplyDamage(TargetCharacter, AttackStruct.PowerAttackFinishDamage, 
 			GetController(), this, UDamageType::StaticClass());
-		
-		UEnemyLogManager::EnemyLog(EEnemyLogType::MagicSwordMan, FString::Printf(TEXT("[소드맨] 궁극기 마무리 대미지 적용 | 대미지: [%.f]"), AttackStruct.PowerAttackFinishDamage));
-		
+
 		// 피니쉬 대미지 로그
 		UE_LOG(LogTemp, Warning, TEXT("Boss Power Attack Finish Damage : %f"), AttackStruct.PowerAttackFinishDamage);
 		
@@ -572,9 +559,7 @@ UAnimMontage* ABossMagicSwordMan::StartDashBack()
 void ABossMagicSwordMan::StartSecondPhase()
 {
 	if ( BlackboardComp == nullptr ) return;
-	
-	UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, TEXT("[매직소드맨] 2페이즈 패턴"));
-	
+
 	BlackboardComp->SetValueAsBool("SecondPhase", true);
 }
 
@@ -681,9 +666,6 @@ void ABossMagicSwordMan::RushStrike()
 
 				BossMagicSwordManLogData.RushStrikeAttackDamage += AttackStruct.RushStrikeAttackDamage;
 				CommonBossLogData.TotalDamageDealt += AttackStruct.RushStrikeAttackDamage;
-				
-				UEnemyLogManager::EnemyLog(EEnemyLogType::MagicSwordMan, 
-					FString::Printf(TEXT("[소드맨] RushStrike 적중 | 대미지: [%.f] | 밀치기 적용"),  AttackStruct.RushStrikeAttackDamage));
 			}
 		}
 	}
@@ -698,7 +680,7 @@ void ABossMagicSwordMan::EndBattleLog()
 	
 	BossMagicSwordManLogData.Base = CommonBossLogData;
 	
-	UCSVLog::AddMagicSwordManLog( TEXT("Test"), BossMagicSwordManLogData);
+	UCSVLog::AddMagicSwordManLog( BossMagicSwordManLogData);
 	
 	CommonBossLogData = FCommonBossLogData(); // 공통 로그 데이터 초기화
 	BossMagicSwordManLogData = FBossMagicSwordManLogData(); // 보스별 로그 데이터 초기화

@@ -26,7 +26,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "LogData_CSVLogger", 
 		Meta = (AutoCreateRefTerm = "LogData", AdvancedDisplay = "LogCategory")) 
 	static void AddEnemyLog(
-		const FString& LogCategory,
 		const FString& EnemyID, 
 		const FString& EnemyType, 
 		const FEnemyLogData& LogData
@@ -36,7 +35,6 @@ public:
 	/** 스켈레톤 마법사 보스 로그 */
 	UFUNCTION(BlueprintCallable, Category = "LogData_CSVLogger", Meta = (AutoCreateRefTerm = "LogData"))
 	static void AddSkeletonMageLog(
-		const FString& LogCategory, 
 		const FBossSkeletonMageLogData& LogData
 		
 	);
@@ -44,7 +42,6 @@ public:
 	// 매직소드맨 보스 로그
 	UFUNCTION(BlueprintCallable, Category = "LogData_CSVLogger", Meta = (AutoCreateRefTerm = "LogData"))
 	static void AddMagicSwordManLog(
-		const FString& LogCategory, 
 		const FBossMagicSwordManLogData& LogData
 		
 	);
@@ -53,11 +50,8 @@ public:
 	// 매직소드맨 보스 로그
 	UFUNCTION(BlueprintCallable, Category = "LogData_CSVLogger", Meta = (AutoCreateRefTerm = "LogData"))
 	static void AddHechiLog(
-		const FString& LogCategory, 
 		const FHechiLogData& LogData
 		
 	);
 	
-
-
 };

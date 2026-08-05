@@ -1,6 +1,5 @@
 #include "EnemyProjectile/BaseStreamProjectile.h"
 
-#include "EnemyLogManager.h"
 #include "NiagaraComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -80,9 +79,7 @@ void ABaseStreamProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedCompon
 	{
 		// 대미지 로그
 		UE_LOG(LogTemp, Warning, TEXT("Stream Projectile %f hit Player: %s"), Damage , *OtherActor->GetName());
-		
-		UEnemyLogManager::EnemyLog(EEnemyLogType::Worm, FString::Printf(TEXT("[웜] 화염 방사 | 대미지[%.f]"), Damage));
-		
+
 		UGameplayStatics::ApplyDamage(
 		   OtherActor,
 		   Damage, // 헤더 파일에 선언된 대미지 변수
