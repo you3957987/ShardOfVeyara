@@ -52,6 +52,11 @@ void USOVGameInstance::UpdatePlotData(FPlotSaveData NewData)
 	GlobalPlotDataMap.Add(NewData.PlotName, NewData);
 }
 
+void USOVGameInstance::UpdateAppleTreeData(FAppleTreeSaveData NewData)
+{
+	GlobalAppleTreeDataMap.Add(NewData.TreeName, NewData);
+}
+
 void USOVGameInstance::UpdateTableData(FAlchemySaveData NewData)
 {
 	// 장부에 기록 (이미 있으면 덮어쓰기, 없으면 추가)
@@ -61,6 +66,16 @@ void USOVGameInstance::UpdateTableData(FAlchemySaveData NewData)
 bool USOVGameInstance::GetPlotData(FString name, FPlotSaveData& OutData)
 {
 	if (FPlotSaveData* FoundData = GlobalPlotDataMap.Find(name))
+	{
+		OutData = *FoundData;
+		return true;
+	}
+	return false;
+}
+
+bool USOVGameInstance::GetAppleTreeData(FString name, FAppleTreeSaveData& OutData)
+{
+	if (FAppleTreeSaveData* FoundData = GlobalAppleTreeDataMap.Find(name))
 	{
 		OutData = *FoundData;
 		return true;
@@ -96,6 +111,7 @@ FSaveData USOVGameInstance::GetSaveData()
 	SaveData.TempInventory = TempInventory;
 	SaveData.TempHotbar = TempHotbar;
 	SaveData.GlobalPlotDataMap = GlobalPlotDataMap;
+	SaveData.GlobalAppleTreeDataMap = GlobalAppleTreeDataMap;
 	SaveData.AlchemyTableDataMap = AlchemyTableDataMap;
 	SaveData.TributeLevel = TributeLevel;
 	SaveData.CurrentLevelTributeItems = CurrentLevelTributeItems;
@@ -128,6 +144,7 @@ void USOVGameInstance::SetSaveData(FSaveData SaveData)
 	TempInventory = SaveData.TempInventory;
 	TempHotbar = SaveData.TempHotbar;
 	GlobalPlotDataMap = SaveData.GlobalPlotDataMap;
+	GlobalAppleTreeDataMap = SaveData.GlobalAppleTreeDataMap;
 	AlchemyTableDataMap = SaveData.AlchemyTableDataMap;
 	TributeLevel = SaveData.TributeLevel;
 	CurrentLevelTributeItems = SaveData.CurrentLevelTributeItems;

@@ -21,6 +21,7 @@ public:
 	AWeeds();
 
 protected:
+	UFUNCTION(BlueprintCallable)
 	void SnapWeedsToGround();
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -95,6 +95,15 @@ protected:
 
 public:	
 	UFUNCTION(BlueprintCallable, Category = "Farming")
+	void SetSeedInfo(FName InSeedName, UDataTable* InSeedDataTable);
+
+	UFUNCTION(BlueprintCallable, Category = "Farming")
+	void SetSeedDataTable(UDataTable* InSeedDataTable) { SeedDataTable = InSeedDataTable; }
+
+	UFUNCTION(BlueprintCallable, Category = "Farming")
+	void SetSeedName(FName InSeedName) { SeedName = InSeedName; }
+
+	UFUNCTION(BlueprintCallable, Category = "Farming")
 	void ApplyFertilizer(int32 Amount);
 
 	UFUNCTION(BlueprintCallable, Category = "Farming")

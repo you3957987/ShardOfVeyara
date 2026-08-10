@@ -74,6 +74,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "FarmingState")
 	TMap<FString, FPlotSaveData> GlobalPlotDataMap;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "FarmingState")
+	TMap<FString, FAppleTreeSaveData> GlobalAppleTreeDataMap;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AlchemyTableState")
 	TMap<FString, FAlchemySaveData> AlchemyTableDataMap;
 
@@ -94,11 +97,17 @@ public:
 	void UpdatePlotData(FPlotSaveData NewData);
 
 	UFUNCTION(BlueprintCallable, Category = "Farming")
+	void UpdateAppleTreeData(FAppleTreeSaveData NewData);
+
+	UFUNCTION(BlueprintCallable, Category = "Farming")
 	void UpdateTableData(FAlchemySaveData NewData);
 	
 	// GUID로 데이터를 꺼내주는 함수 (나중에 로드할 때 씀)
 	UFUNCTION(BlueprintCallable, Category = "Farming")
 	bool GetPlotData(FString name, FPlotSaveData& OutData);
+
+	UFUNCTION(BlueprintCallable, Category = "Farming")
+	bool GetAppleTreeData(FString name, FAppleTreeSaveData& OutData);
 
 	UFUNCTION(BlueprintCallable, Category = "Alchemy")
 	bool GetAlchemyData(FString name, FAlchemySaveData& OutData);
