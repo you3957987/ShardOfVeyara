@@ -1,5 +1,6 @@
 #pragma once
 #include "PlotSaveData.h"
+#include "FarmingSystem/AppleTreeSaveData.h"
 #include "Alchemy/AlchemySaveData.h"
 #include "Struct_InventorySlotData.h"
 #include "Struct_WorldChestData.h"
@@ -52,6 +53,9 @@ struct FSaveData : public FTableRowBase
 	
 	UPROPERTY()
 	TMap<FString, FPlotSaveData> GlobalPlotDataMap;
+
+	UPROPERTY()
+	TMap<FString, FAppleTreeSaveData> GlobalAppleTreeDataMap;
 
 	UPROPERTY()
 	TMap<FString, FAlchemySaveData> AlchemyTableDataMap;

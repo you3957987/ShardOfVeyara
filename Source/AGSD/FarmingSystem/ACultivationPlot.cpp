@@ -414,3 +414,13 @@ void AACultivationPlot::SpawnGrowthEffect(UNiagaraSystem* EffectSystem)
 	}
 }
 
+void AACultivationPlot::SetSeedInfo(FName InSeedName, UDataTable* InSeedDataTable)
+{
+	if (InSeedDataTable)
+	{
+		SeedDataTable = InSeedDataTable;
+	}
+	SeedName = InSeedName;
+}
+
+
