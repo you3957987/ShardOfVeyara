@@ -2,7 +2,6 @@
 
 #include "AIController.h"
 #include "Components/WidgetComponent.h"
-#include "EnemyLogManager.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/ProgressBar.h"
@@ -190,10 +189,6 @@ float ABaseBossEnemy::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 		}
 		
 		SetHitOverlay(); // 히트 오버레이 설정
-		
-		UEnemyLogManager::EnemyLog( GetLogTypeFromEnemyType(), 
-		FString::Printf(TEXT("[%s]가 [%.f] 대미지 받음 (%.f / %.f)"), 
-			*MeshName, DamageToApply, MaxHealth, Health));
 	}
 	
 	return DamageToApply;
@@ -489,9 +484,6 @@ void ABaseBossEnemy::StartBattleLog()
 	FString MeshName = GetMesh() && GetMesh()->GetSkeletalMeshAsset() ? 
 		GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
 
-	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
-		FString::Printf(TEXT("[%s] 전투 진입 (시작 시간: %.2f)"), *MeshName, BattleStartTime));
-	
 	CommonBossLogData.StartWorldTime = BattleStartTime; // 로그 데이터에 시작 시간 기록
 }
 
@@ -505,10 +497,6 @@ void ABaseBossEnemy::EndBattleLog()
 
 	FString MeshName = GetMesh() && GetMesh()->GetSkeletalMeshAsset() ? 
 		GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
-
-	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
-		FString::Printf(TEXT("[%s] 전투 종료 | 소요 시간: %.2f초 (시작: %.2f / 종료: %.2f)"), 
-			*MeshName, BattleDuration, BattleStartTime, EndTime));
 
 	CommonBossLogData.EndWorldTime = EndTime; // 로그 데이터에 종료 시간 기록
 	CommonBossLogData.ElapsedTime = BattleDuration; // 로그 데이터에 소요 시간 기록
@@ -525,10 +513,7 @@ void ABaseBossEnemy::PlayerDeadLog()
 	// 메쉬 이름 가져오기 헬퍼
 	FString MeshName = GetMesh() && GetMesh()->GetSkeletalMeshAsset() ? 
 		GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
-	
-	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
-		FString::Printf(TEXT("보스 [%s] 의 공격으로 플레이어 사망"), *MeshName));
-	
+
 	CommonBossLogData.Result = TEXT("PlayerDead"); // 로그 데이터에 결과 기록
 	
 	if ( BlackboardComp )
@@ -544,40 +529,6 @@ void ABaseBossEnemy::AttackPatternLog(FString PatternName) const
 	// 메쉬 이름 가져오기
 	FString MeshName = GetMesh() && GetMesh()->GetSkeletalMeshAsset() ? 
 		GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
-
-	// 로그 기록: [거리분류] 패턴명 선택
-	UEnemyLogManager::EnemyLog(GetLogTypeFromEnemyType(), 
-		FString::Printf(TEXT("[%s] 패턴 결정 | 거리: [%s] | 패턴: [%s] "), 
-			*MeshName, *SelectedRangeName ,*PatternName));
-	
-	
-	
-}
-
-EEnemyLogType ABaseBossEnemy::GetLogTypeFromEnemyType() const
-{
-	FString ActorName = GetName();
-
-	// 1. 클래스 이름 또는 액터 이름으로 보스 종류 판별
-	if (ActorName.Contains(TEXT("SkeletonMage")))
-	{
-		return EEnemyLogType::SkeletonMage;
-	}
-	else if (ActorName.Contains(TEXT("BlackKnight")))
-	{
-		return EEnemyLogType::BlackKnight;
-	}
-	else if (ActorName.Contains(TEXT("Worm")))
-	{
-		return EEnemyLogType::Worm;
-	}
-	else if (ActorName.Contains(TEXT("MagicSwordMan")))
-	{
-		return EEnemyLogType::MagicSwordMan;
-	}
-
-	// 기본값 (판별 불가능할 경우)
-	return EEnemyLogType::SkeletonMage; 
 }
 
 #if	WITH_EDITOR

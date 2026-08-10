@@ -1,6 +1,5 @@
 #include "EnemyProjectile/GroundAttackProjectile.h"
 
-#include "EnemyLogManager.h"
 #include "EnemyBoss/SkeletonMage/BossSkeletonMage.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -140,10 +139,7 @@ void AGroundAttackProjectile::HandleDamage()
 					BossOwner->BossSkeletonMageLogData.GroundAttackDamage += Damage; // 로그 데이터에 입힌 대미지 누적
 					BossOwner->CommonBossLogData.TotalDamageDealt += Damage; // 공통 로그 데이터에도 누적
 				}
-				
-				UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, 
-					FString::Printf(TEXT("[스켈레톤 메이지] 뼈 장판 공격 [%.f] 대미지 줌"), Damage));
-                
+
 				// 4. 대미지 적용
 				UGameplayStatics::ApplyDamage(
 					OtherActor,

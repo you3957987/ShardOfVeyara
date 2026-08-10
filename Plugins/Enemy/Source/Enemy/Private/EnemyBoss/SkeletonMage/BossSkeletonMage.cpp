@@ -105,9 +105,7 @@ void ABossSkeletonMage::Tick(float DeltaTime)
 					
 				}
 				// --- 플레이어 밀치기 효과 끝 ---
-				
-				UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, FString::Printf(TEXT("[스켈레톤 메이지] 실드 캐스트 적중으로 플레이어 밀치기")));
-				
+
 				// 이 아래에 이제 대미지 넣는거 추가 가능
 			}
 		}
@@ -204,9 +202,6 @@ void ABossSkeletonMage::TeleportMoveToNextPoint()
 {
 	if (TeleportDestination != FVector::ZeroVector)
 	{
-		UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, FString::Printf(TEXT("[스켈레톤 메이지] 텔레포트 이동: %.2f"), 
-			FVector::Dist(GetActorLocation(), TeleportDestination)));
-		
 		//SpawnTeleportEffectAtLocation(GetActorLocation()); // 현재 위치에 이펙트 생성
 		
 		// --- 수정된 부분: 캡슐 절반 높이만큼 위로 오프셋을 주어 바닥 위에 정상적으로 서도록 함 ---
@@ -389,11 +384,6 @@ void ABossSkeletonMage::SummonEnemy()
 			{
 				SpawnedEnemy->EnemyLogID = FString::Printf(TEXT("%s_SummonedEnemy"), *BossLogId);
 			}
-			
-			// 보스와 소환되는 거리 로그 매니저로 출력
-			UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, FString::Printf(TEXT("[스켈레톤 메이지] 적 소환: %s (거리: %.2f)"), 
-				*SpawnedEnemy->GetName(), FVector::Dist(GetActorLocation(), SpawnLocation)));
-			
 		}
 	}
 }
@@ -697,10 +687,7 @@ void ABossSkeletonMage::EndGravityAttack()
 					
 					CommonBossLogData.TotalDamageDealt += AttackStruct.GravityAttackDamage;
 					BossSkeletonMageLogData.GravityAttackDamage += AttackStruct.GravityAttackDamage;
-					
-					UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, 
-						FString::Printf(TEXT("[스켈레톤 메이지] 중력 공격으로 플레이어에게 %.2f 대미지"), AttackStruct.GravityAttackDamage));
-					
+
 					BossSkeletonMageLogData.GravityAttackDamage += AttackStruct.GravityAttackDamage;
 				}
 			}
@@ -778,9 +765,7 @@ void ABossSkeletonMage::HandleGravityAttack(float DeltaTime)
 void ABossSkeletonMage::StartSecondPhase()
 {
 	if ( BlackboardComp == nullptr ) return;
-	
-	UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, TEXT("[스켈레톤 메이지] 2페이즈 패턴"));
-	
+
 	BlackboardComp->SetValueAsBool("SecondPhase", true);
 }
 
@@ -863,8 +848,6 @@ void ABossSkeletonMage::SecondPhaseTeleportBossAndPlayer()
 			PC->SetControlRotation(NewControlRotation);
 		}
 	}
-
-	UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, TEXT("[스켈레톤 메이지] 2페이즈 위치로 보스 및 플레이어 강제 이동 완료"));
 }
 
 void ABossSkeletonMage::SummonThunderToPlayer()
@@ -933,9 +916,6 @@ void ABossSkeletonMage::SummonThunderToPlayer()
 					
 					BossSkeletonMageLogData.SecondPhaseThunderAttackDamage += AttackStruct.SecondPhaseThunderAttackDamage;
 					CommonBossLogData.TotalDamageDealt += AttackStruct.SecondPhaseThunderAttackDamage;
-					
-					UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, 
-						FString::Printf(TEXT("[스켈레톤 메이지] 2페이즈 번개 공격으로 플레이어에게 %.2f 대미지"), AttackStruct.SecondPhaseThunderAttackDamage));
 				}
 			}
         }
@@ -1005,11 +985,8 @@ void ABossSkeletonMage::StartSummonRandomMeteor()
                     if (HitActor && HitActor->ActorHasTag(TEXT("Player")))
                     {
                         UGameplayStatics::ApplyDamage(HitActor, AttackStruct.SecondPhaseMeteorAttackDamage, GetController(), this, UDamageType::StaticClass());
-                        
-                        UEnemyLogManager::EnemyLog(EEnemyLogType::SkeletonMage, 
-                            TEXT("[스켈레톤 메이지] 단일 메테오 적중"));
-                    	
-                    	BossSkeletonMageLogData.SecondPhaseMeteorAttackDamage += AttackStruct.SecondPhaseMeteorAttackDamage;
+
+                        BossSkeletonMageLogData.SecondPhaseMeteorAttackDamage += AttackStruct.SecondPhaseMeteorAttackDamage;
 						CommonBossLogData.TotalDamageDealt += AttackStruct.SecondPhaseMeteorAttackDamage;
                     }
                 }
@@ -1024,7 +1001,7 @@ void ABossSkeletonMage::EndBattleLog()
 	
 	BossSkeletonMageLogData.Base = CommonBossLogData;
 	
-	UCSVLog::AddSkeletonMageLog( TEXT("Test"), BossSkeletonMageLogData );
+	UCSVLog::AddSkeletonMageLog( BossSkeletonMageLogData );
 	
 	CommonBossLogData = FCommonBossLogData();
 	BossSkeletonMageLogData = FBossSkeletonMageLogData();

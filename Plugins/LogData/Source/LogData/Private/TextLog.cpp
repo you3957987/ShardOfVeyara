@@ -33,7 +33,9 @@ void UTextLog::WriteTextLogByKeyword(const FString& Keyword)
 
 void UTextLog::WriteTextLogByString(const FString& Keyword, const FString& Value)
 {
-	const FString Directory = FPaths::ProjectSavedDir() / TEXT("TextLogs");
+	// 로그 파일 경로 설정
+	//저장 경로 설정 (Saved/LogData/[LogCategory]/[EnemyLogID].csv)
+	const FString Directory = FPaths::ProjectSavedDir() / TEXT("LogData");
 	const FString FilePath = Directory / TEXT("PlayDataLog.txt");
 
 	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();

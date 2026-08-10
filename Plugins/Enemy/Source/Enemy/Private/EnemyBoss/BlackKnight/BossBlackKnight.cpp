@@ -66,11 +66,7 @@ float ABossBlackKnight::TakeDamage(float DamageAmount, struct FDamageEvent const
 		{
 			PlayAnimMontage(GuardMontage);
 		}
-		// 가드 했다고 로그매니저 출력 
-		UEnemyLogManager::EnemyLog(EEnemyLogType::BlackKnight, 
-			FString::Printf(TEXT("[블랙나이트] 가드 성공 | 가드로 막은 대미지: [%.f] | 가드중 받은 대미지 / 반격 임계치[%.f / %.f]"), 
-				DamageAmount, DamageWhileGuarding, AttackStruct.MaxDamageToReaction));
-		
+
 		return 0.f; // 대미지 무효화
 	}
 	
@@ -90,15 +86,12 @@ void ABossBlackKnight::OnBeginOverlapAxeCollisionSphere(UPrimitiveComponent* Ove
 
 		if ( AttackDamage == AttackStruct.GuardAttackDamage )
 		{
-			UEnemyLogManager::EnemyLog(EEnemyLogType::BlackKnight, FString::Printf(TEXT("[블랙나이트] 가드 반격 적중 | 대미지: [%.f]"), AttackDamage));
 		}
 		else if ( AttackDamage == AttackStruct.NormalAttackDamage )
 		{
-			UEnemyLogManager::EnemyLog(EEnemyLogType::BlackKnight, FString::Printf(TEXT("[블랙나이트] 일반 공격 적중 | 대미지: [%.f]"), AttackDamage));
 		}
 		else if ( AttackDamage == AttackStruct.ChargeAttackDamage )
 		{
-			UEnemyLogManager::EnemyLog(EEnemyLogType::BlackKnight, FString::Printf(TEXT("[블랙나이트] 차지 공격 적중 | 대미지: [%.f]"), AttackDamage));
 		}
 		
 		// 다시 콜리전 끄기
@@ -144,10 +137,7 @@ void ABossBlackKnight::OnBeginOverlapRushAttackSphere(UPrimitiveComponent* Overl
 			// bXYOverride와 bZOverride를 true로 설정하여 현재 속도를 무시하고 새로운 속도를 적용합니다.
 			PlayerCharacter->LaunchCharacter(LaunchVelocity, true, true);
 		}
-		
-		// 돌진 공격 적중 여부 로그매니저 로그 출력
-		UEnemyLogManager::EnemyLog(EEnemyLogType::BlackKnight, FString::Printf(TEXT("[블랙나이트] 돌진 공격 적중 | 대미지: [%.f]"), AttackStruct.RushAttackDamage));
-		
+
 		// 다시 콜리전 끄기
 		RushAttackSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
@@ -270,10 +260,7 @@ void ABossBlackKnight::StartWaveAttack()
 									WeakThis.Get(),             // 가해자 액터 (보스)
 									UDamageType::StaticClass()  // 데미지 타입 클래스
 								);
-            					
-            					UEnemyLogManager::EnemyLog(EEnemyLogType::BlackKnight, 
-            						FString::Printf(TEXT("[블랙나이트] 차지 어택 번개 적중 | 대미지: [%.f]"), WeakThis->AttackStruct.ZapDamage));
-            				}
+				            }
             			}
             		}
             	}
@@ -524,8 +511,6 @@ void ABossBlackKnight::SpawnZapAttackEffect()
 					UDamageType::StaticClass()
 				);
 				UE_LOG(LogTemp, Warning, TEXT("Zap Attack Hit Player!"));
-				
-				UEnemyLogManager::EnemyLog(EEnemyLogType::BlackKnight, FString::Printf(TEXT("[블랙나이트] 번개 소환 적중 | 대미지: [%.f]"), AttackStruct.ZapAttackDamage));
 			}
 		}
 	}

@@ -1,7 +1,6 @@
 #include "Enemy/BaseMeleeEnemy.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "EnemyLogManager.h"
 
 ABaseMeleeEnemy::ABaseMeleeEnemy()
 {
@@ -46,11 +45,6 @@ void ABaseMeleeEnemy::CheckMeleeAttackHit(float DeltaTime)
 				{
 					// 스켈레탈 메쉬 에셋 이름 가져오기
 					FString MeshName = GetMesh()->GetSkeletalMeshAsset() ? GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
-					
-					UEnemyLogManager::EnemyLog( EnemyType == EEnemyType::EET_Melee ? EEnemyLogType::Melee : EEnemyLogType::Revive,
-						FString::Printf(TEXT("적 [%s]가 [%.f] 대미지"), 
-							*MeshName, 
-							MeleeAttackDamage));
 				}
 				
 				EnemyLogData.TotalDamageDealt += MeleeAttackDamage; // 로그 데이터에 입힌 대미지 누적

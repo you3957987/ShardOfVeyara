@@ -3,10 +3,10 @@
 #include "Misc/Paths.h"
 #include "HAL/PlatformFileManager.h"
 
-void UCSVLog::AddEnemyLog(const FString& LogCategory, const FString& EnemyID, const FString& EnemyType, const FEnemyLogData& LogData)
+void UCSVLog::AddEnemyLog(const FString& EnemyID, const FString& EnemyType, const FEnemyLogData& LogData)
 {
-	// 1. 저장 경로 설정 (Saved/CSVLogs/[LogCategory]/[EnemyLogID].csv)
-	const FString Directory = FPaths::ProjectSavedDir() / TEXT("CSVLogs") / LogCategory;
+	// 1. 저장 경로 설정 (Saved/LogData/[EnemyLogID].csv)
+	const FString Directory = FPaths::ProjectSavedDir() / TEXT("LogData");
 	const FString FileName = TEXT("EnemyLog.csv");
 	const FString FilePath = Directory / FileName;
 
@@ -48,10 +48,10 @@ void UCSVLog::AddEnemyLog(const FString& LogCategory, const FString& EnemyID, co
 	);
 }
 
-void UCSVLog::AddSkeletonMageLog(const FString& LogCategory, const FBossSkeletonMageLogData& LogData)
+void UCSVLog::AddSkeletonMageLog(const FBossSkeletonMageLogData& LogData)
 {
-	// 저장 경로 설정 (Saved/CSVLogs/[LogCategory]/SkeletonMageLog.csv)
-	const FString Directory = FPaths::ProjectSavedDir() / TEXT("CSVLogs") / LogCategory;
+	// 저장 경로 설정 (Saved/LogData/SkeletonMageLog.csv)
+	const FString Directory = FPaths::ProjectSavedDir() / TEXT("LogData");
 	const FString FileName = TEXT("SkeletonMageLog.csv");
 	const FString FilePath = Directory / FileName;
 
@@ -92,10 +92,10 @@ void UCSVLog::AddSkeletonMageLog(const FString& LogCategory, const FBossSkeleton
 	);
 }
 
-void UCSVLog::AddMagicSwordManLog(const FString& LogCategory, const FBossMagicSwordManLogData& LogData)
+void UCSVLog::AddMagicSwordManLog(const FBossMagicSwordManLogData& LogData)
 {
-	// 저장 경로 설정 (Saved/CSVLogs/[LogCategory]/MagicSwordMan.csv)
-	const FString Directory = FPaths::ProjectSavedDir() / TEXT("CSVLogs") / LogCategory;
+	// 저장 경로 설정 (Saved/LogData/MagicSwordMan.csv)
+	const FString Directory = FPaths::ProjectSavedDir() / TEXT("LogData");
 	const FString FileName = TEXT("MagicSwordMan.csv");
 	const FString FilePath = Directory / FileName;
 
@@ -120,7 +120,7 @@ void UCSVLog::AddMagicSwordManLog(const FString& LogCategory, const FBossMagicSw
 	FBossMagicSwordManLogData FinalData = LogData;
 	if (FinalData.Base.BossID.IsEmpty())
 	{
-		FinalData.Base.BossID = TEXT("FBossMagicSwordManLogData_Unknown");
+		FinalData.Base.BossID = TEXT("MagicSwordMan_Unknown");
 	}
 
 	// CSV 행 변환 및 누적
@@ -136,10 +136,10 @@ void UCSVLog::AddMagicSwordManLog(const FString& LogCategory, const FBossMagicSw
 	);
 }
 
-void UCSVLog::AddHechiLog(const FString& LogCategory, const FHechiLogData& LogData)
+void UCSVLog::AddHechiLog(const FHechiLogData& LogData)
 {
-	// 저장 경로 설정 (Saved/CSVLogs/[LogCategory]/MagicSwordMan.csv)
-	const FString Directory = FPaths::ProjectSavedDir() / TEXT("CSVLogs") / LogCategory;
+	// 저장 경로 설정 (Saved/LogData/Hechi.csv)
+	const FString Directory = FPaths::ProjectSavedDir() / TEXT("LogData");
 	const FString FileName = TEXT("Hechi.csv");
 	const FString FilePath = Directory / FileName;
 
@@ -164,7 +164,7 @@ void UCSVLog::AddHechiLog(const FString& LogCategory, const FHechiLogData& LogDa
 	FHechiLogData FinalData = LogData;
 	if (FinalData.Base.BossID.IsEmpty())
 	{
-		FinalData.Base.BossID = TEXT("FHechiLogData_Unknown");
+		FinalData.Base.BossID = TEXT("Hechi_Unknown");
 	}
 
 	// CSV 행 변환 및 누적

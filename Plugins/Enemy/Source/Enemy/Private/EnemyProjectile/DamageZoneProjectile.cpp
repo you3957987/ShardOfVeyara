@@ -1,6 +1,5 @@
 #include "EnemyProjectile/DamageZoneProjectile.h"
 
-#include "EnemyLogManager.h"
 #include "NiagaraComponent.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
@@ -73,15 +72,9 @@ void ADamageZoneProjectile::ApplyDamageToOverlappingActors()
 					// 3. 메시 이름에 "Worm"이 포함되어 있는지 확인
 					if (OwnerMeshName.Contains(TEXT("WormMonster_SK")))
 					{
-						// 웜 보스 전용 로그
-						UEnemyLogManager::EnemyLog(EEnemyLogType::Worm, 
-							FString::Printf(TEXT("[웜] 화염 장판 적중 | 대미지[%.f]"), DamageAmount));
 					}
 					else
 					{
-						// 그 외(메이지 등) 일반 로그
-						UEnemyLogManager::EnemyLog(EEnemyLogType::Mage, 
-							FString::Printf(TEXT("적 [%s]가 대미지 유지 발사체가 [%.f] 대미지 줌"), *OwnerMeshName, DamageAmount));
 					}
 				}
 			}

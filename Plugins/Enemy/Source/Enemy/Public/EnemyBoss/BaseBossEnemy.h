@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "EnemyLogManager.h"
 #include "Interface/ItemDropInterface.h"
 #include "Interface/InteractionInterface.h"
 #include "CSVLogType.h" 
@@ -167,7 +166,6 @@ public:
 	virtual void EndBattleLog();
 	void AttackPatternLog(FString PatternName) const;
 	FString SelectedRangeName = TEXT("Long Range");
-	EEnemyLogType GetLogTypeFromEnemyType() const;
 	UFUNCTION()
 	void PlayerDeadLog();
 	

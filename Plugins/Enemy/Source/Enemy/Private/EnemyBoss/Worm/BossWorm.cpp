@@ -117,15 +117,12 @@ void ABossWorm::OnBeginOverlapAttackCollisionSphere(UPrimitiveComponent* Overlap
 		
 		if ( AttackDamage == AttackStruct.NormalAttackDamage )
 		{
-			UEnemyLogManager::EnemyLog(EEnemyLogType::Worm, FString::Printf(TEXT("[웜] 일반 공격 | 대미지[%.f]"), AttackDamage));
 		}
 		else if ( AttackDamage == AttackStruct.LungeAttackDamage )
 		{
-			UEnemyLogManager::EnemyLog(EEnemyLogType::Worm, FString::Printf(TEXT("[웜] 런지 공격 | 대미지[%.f]"), AttackDamage));
 		}
 		else if ( AttackDamage ==  AttackStruct.SuctionAttackDamage )
 		{
-			UEnemyLogManager::EnemyLog(EEnemyLogType::Worm, FString::Printf(TEXT("[웜] 석션 공격 | 대미지[%.f]"), AttackDamage));
 		}
 			
 		
@@ -321,9 +318,7 @@ void ABossWorm::Unburrow()
 					// 대미지 적용
 					UGameplayStatics::ApplyDamage(PlayerCharacter, AttackStruct.UnBurrowAttackDamage, GetController(),
 						this, UDamageType::StaticClass());
-					
-					UEnemyLogManager::EnemyLog(EEnemyLogType::Worm, FString::Printf(TEXT("[웜] 언버로우 공격 | 대미지[%.f]"), AttackStruct.UnBurrowAttackDamage));
-					
+
 					// 로그 출력 (필요시 주석 해제)
 					UE_LOG(LogTemp, Warning, TEXT("Player Hit At Unburrow Attack!"));
 				}
@@ -508,10 +503,7 @@ void ABossWorm::HandleSuction(float DeltaTime)
 			BlackboardComp->SetValueAsBool("bIsInSuctionAttackArea", true); // 블랙보드에도 반영
 			
 			float ElapsedTime = GetWorld()->GetTimeSeconds() - SuctionStartTime;
-			
-			UEnemyLogManager::EnemyLog(EEnemyLogType::Worm, 
-				FString::Printf(TEXT("[웜] 석션 성공 | 경과 시간: %.1f초"), ElapsedTime));
-			
+
 			EndSuction();
 			return;
 		}

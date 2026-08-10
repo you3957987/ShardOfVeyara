@@ -1,6 +1,4 @@
 #include "Enemy/BaseBurrowEnemy.h"
-
-#include "EnemyLogManager.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "EnemyProjectile/BaseStreamProjectile.h"
@@ -98,11 +96,6 @@ void ABaseBurrowEnemy::OnBeginOverlapAttackCollisionSphere(UPrimitiveComponent* 
 		{
 			// 스켈레탈 메쉬 에셋 이름 가져오기
 			FString MeshName = GetMesh()->GetSkeletalMeshAsset() ? GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
-					
-			UEnemyLogManager::EnemyLog(EEnemyLogType::Burrow, 
-				FString::Printf(TEXT("적 [%s]가 [%.f] 대미지 - 기본 공격"), 
-					*MeshName, 
-					AttackDamage));
 		}
 		
 		EnemyLogData.TotalDamageDealt += AttackDamage; // 로그 데이터에 입힌 대미지 누적
@@ -212,11 +205,6 @@ void ABaseBurrowEnemy::FinishUnburrow()
 					{
 						// 스켈레탈 메쉬 에셋 이름 가져오기
 						FString MeshName = GetMesh()->GetSkeletalMeshAsset() ? GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
-					
-						UEnemyLogManager::EnemyLog(EEnemyLogType::Burrow, 
-							FString::Printf(TEXT("적 [%s]가 [%.f] 대미지 - 언버로우"), 
-								*MeshName, 
-								UnburrowAttackDamage));
 					}
 					
 					EnemyLogData.TotalDamageDealt += UnburrowAttackDamage; // 로그 데이터에 입힌 대미지 누적

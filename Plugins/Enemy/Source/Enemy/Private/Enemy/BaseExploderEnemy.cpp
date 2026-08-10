@@ -1,6 +1,5 @@
 #include "Enemy/BaseExploderEnemy.h"
 
-#include "EnemyLogManager.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -36,12 +35,6 @@ void ABaseExploderEnemy::Explode()
 				{
 					// 스켈레탈 메쉬 에셋 이름 가져오기
 					FString MeshName = GetMesh()->GetSkeletalMeshAsset() ? GetMesh()->GetSkeletalMeshAsset()->GetName() : TEXT("NoMeshAsset");
-					
-					UEnemyLogManager::EnemyLog(EEnemyLogType::Exploder, 
-						FString::Printf(TEXT("적 [%s]가 [%.f] 대미지"), 
-							*MeshName, 
-							ExplosionDamage)
-					);
 				}
 				
 				EnemyLogData.TotalDamageDealt += ExplosionDamage; // 로그 데이터에 입힌 대미지 누적
