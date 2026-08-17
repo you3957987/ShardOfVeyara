@@ -203,7 +203,7 @@
 
     | 근접 콤보 | 근접 띄우기 | 점프 공격 | 대시 연계 | 대시 띄우기 |
     | :---: | :---: | :---: | :---: | :---: |
-    | <img width="150" alt="근접 모음" src="./portfolio/근접 모음.gif" /> | <img width="150" alt="근접 띄우기" src="./portfolio/근접 띄우기.gif" /> | <img width="150" alt="점프 공격" src="./portfolio/점프 공격.gif" /> | <img width="150" alt="대시 모음" src="./portfolio/대시 모음.gif" /> | <img width="150" alt="대시 띄우기" src="./portfolio/대시 띄우기.gif" /> |
+    | <img width="150" alt="근접 모음" src="./portfolio/근접 모음.gif" /> | <img width="150" alt="근접 띄우기" src="./portfolio/근점 띄우기.gif" /> | <img width="150" alt="점프 공격" src="./portfolio/점프 공격.gif" /> | <img width="150" alt="대시 모음" src="./portfolio/대시 모음.gif" /> | <img width="150" alt="대시 띄우기" src="./portfolio/대시 띄우기.gif" /> |
 
     | 백대시 | 가드 및 카운터 | 검기 발사 | 특수 패턴 |
     | :---: | :---: | :---: | :---: |
