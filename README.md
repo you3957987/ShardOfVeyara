@@ -275,17 +275,25 @@
 
 <div align="center">
 
-| 근접 콤보 | 근접 띄우기 | 점프 공격 |
-| :---: | :---: | :---: |
-| <img width="200" alt="근접 모음" src="./portfolio/근접%20모음.gif" /> | <img width="200" alt="근접 띄우기" src="./portfolio/근점%20띄우기.gif" /> | <img width="200" alt="점프 공격" src="./portfolio/점프%20공격.gif" /> |
+| 근접 콤보 | 근접 띄우기 |
+| :---: | :---: |
+| <img width="450" alt="근접 모음" src="./portfolio/근접%20모음.gif" /> | <img width="450" alt="근접 띄우기" src="./portfolio/근점%20띄우기.gif" /> |
 
-| 대시 연계 | 대시 띄우기 | 백대시 |
-| :---: | :---: | :---: |
-| <img width="200" alt="대시 모음" src="./portfolio/대시%20모음.gif" /> | <img width="200" alt="대시 띄우기" src="./portfolio/대시%20띄우기.gif" /> | <img width="200" alt="백대시" src="./portfolio/백대시.gif" /> |
+| 점프 공격 | 대시 연계 |
+| :---: | :---: |
+| <img width="450" alt="점프 공격" src="./portfolio/점프%20공격.gif" /> | <img width="450" alt="대시 모음" src="./portfolio/대시%20모음.gif" /> |
 
-| 가드 및 카운터 | 검기 발사 | 특수 패턴 |
-| :---: | :---: | :---: |
-| <img width="200" alt="가드 모음" src="./portfolio/가드%20모음.gif" /> | <img width="200" alt="검기" src="./portfolio/검기.gif" /> | <img width="200" alt="특수 패턴" src="./portfolio/특수%20패턴.gif" /> |
+| 대시 띄우기 | 백대시 |
+| :---: | :---: |
+| <img width="450" alt="대시 띄우기" src="./portfolio/대시%20띄우기.gif" /> | <img width="450" alt="백대시" src="./portfolio/백대시.gif" /> |
+
+| 가드 및 카운터 | 검기 발사 |
+| :---: | :---: |
+| <img width="450" alt="가드 모음" src="./portfolio/가드%20모음.gif" /> | <img width="450" alt="검기" src="./portfolio/검기.gif" /> |
+
+| 특수 패턴 |
+| :---: |
+| <img width="450" alt="특수 패턴" src="./portfolio/특수%20패턴.gif" /> |
 
 </div>
 
