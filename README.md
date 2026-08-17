@@ -242,19 +242,19 @@
 
 | 매직 볼트 | 장판 공격 |
 | :---: | :---: |
-| <img width="300" alt="해골마법사 매직볼트" src="./portfolio/해골%20마법사/해골마법사%20매직볼트.gif" /> | <img width="300" alt="해골마법사 장판" src="./portfolio/해골%20마법사/해골마법사%20장판.gif" /> |
+| <img width="350" alt="해골마법사 매직볼트" src="./portfolio/해골%20마법사/해골마법사%20매직볼트.gif" /> | <img width="350" alt="해골마법사 장판" src="./portfolio/해골%20마법사/해골마법사%20장판.gif" /> |
 
 | 중력 공격 | 몬스터 소환 |
 | :---: | :---: |
-| <img width="300" alt="중력 공격" src="./portfolio/해골%20마법사/중력%20공격.gif" /> | <img width="300" alt="해골마법사 소환" src="./portfolio/해골%20마법사/해골마법사%20소환.gif" /> |
+| <img width="350" alt="중력 공격" src="./portfolio/해골%20마법사/중력%20공격.gif" /> | <img width="350" alt="해골마법사 소환" src="./portfolio/해골%20마법사/해골마법사%20소환.gif" /> |
 
 | 실드 전개 | 텔레포트 |
 | :---: | :---: |
-| <img width="300" alt="해골마법사 실드" src="./portfolio/해골%20마법사/해골마법사%20실드.gif" /> | <img width="300" alt="해골마법사 텔포" src="./portfolio/해골%20마법사/해골마법사%20텔포.gif" /> |
+| <img width="350" alt="해골마법사 실드" src="./portfolio/해골%20마법사/해골마법사%20실드.gif" /> | <img width="350" alt="해골마법사 텔포" src="./portfolio/해골%20마법사/해골마법사%20텔포.gif" /> |
 
 | 특수 패턴 |
 | :---: |
-| <img width="300" alt="해골마법사 특수 패턴" src="./portfolio/해골%20마법사/특수%20패턴.gif" /> |
+| <img width="350" alt="해골마법사 특수 패턴" src="./portfolio/해골%20마법사/특수%20패턴.gif" /> |
 
 </div>
 
@@ -277,23 +277,23 @@
 
 | 근접 콤보 | 근접 띄우기 |
 | :---: | :---: |
-| <img width="450" alt="근접 모음" src="./portfolio/근접%20모음.gif" /> | <img width="450" alt="근접 띄우기" src="./portfolio/근점%20띄우기.gif" /> |
+| <img width="350" alt="근접 모음" src="./portfolio/근접%20모음.gif" /> | <img width="350" alt="근접 띄우기" src="./portfolio/근점%20띄우기.gif" /> |
 
 | 점프 공격 | 대시 연계 |
 | :---: | :---: |
-| <img width="450" alt="점프 공격" src="./portfolio/점프%20공격.gif" /> | <img width="450" alt="대시 모음" src="./portfolio/대시%20모음.gif" /> |
+| <img width="350" alt="점프 공격" src="./portfolio/점프%20공격.gif" /> | <img width="350" alt="대시 모음" src="./portfolio/대시%20모음.gif" /> |
 
 | 대시 띄우기 | 백대시 |
 | :---: | :---: |
-| <img width="450" alt="대시 띄우기" src="./portfolio/대시%20띄우기.gif" /> | <img width="450" alt="백대시" src="./portfolio/백대시.gif" /> |
+| <img width="350" alt="대시 띄우기" src="./portfolio/대시%20띄우기.gif" /> | <img width="350" alt="백대시" src="./portfolio/백대시.gif" /> |
 
 | 가드 및 카운터 | 검기 발사 |
 | :---: | :---: |
-| <img width="450" alt="가드 모음" src="./portfolio/가드%20모음.gif" /> | <img width="450" alt="검기" src="./portfolio/검기.gif" /> |
+| <img width="350" alt="가드 모음" src="./portfolio/가드%20모음.gif" /> | <img width="350" alt="검기" src="./portfolio/검기.gif" /> |
 
 | 특수 패턴 |
 | :---: |
-| <img width="450" alt="특수 패턴" src="./portfolio/특수%20패턴.gif" /> |
+| <img width="350" alt="특수 패턴" src="./portfolio/특수%20패턴.gif" /> |
 
 </div>
 
