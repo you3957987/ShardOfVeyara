@@ -190,19 +190,19 @@
 
 | 근접 타입 | 원거리 타입 | 자폭 타입 | 은신 타입 |
 | :---: | :---: | :---: | :---: |
-| <img width="165" alt="근접 타입" src="./portfolio/근접형.gif" /> | <img width="165" alt="원거리 타입" src="./portfolio/원거리.gif" /> | <img width="165" alt="자폭 타입" src="./portfolio/자폭형.gif" /> | <img width="165" alt="은신 타입" src="./portfolio/은신.gif" /> |
+| <img width="180" alt="근접 타입" src="./portfolio/근접형.gif" /> | <img width="180" alt="원거리 타입" src="./portfolio/원거리.gif" /> | <img width="180" alt="자폭 타입" src="./portfolio/자폭형.gif" /> | <img width="180" alt="은신 타입" src="./portfolio/은신.gif" /> |
 
 | 미믹 타입 | 분열 타입 | 부활 타입 (성공) | 부활 타입 (실패) |
 | :---: | :---: | :---: | :---: |
-| <img width="165" alt="미믹 타입" src="./portfolio/미믹.gif" /> | <img width="165" alt="분열 타입" src="./portfolio/분열%20-%20슬라임.gif" /> | <img width="165" alt="부활 타입 성공" src="./portfolio/부활%20-%20부활%20성공.gif" /> | <img width="165" alt="부활 타입 실패" src="./portfolio/부활%20-%20부활%20실패.gif" /> |
+| <img width="180" alt="미믹 타입" src="./portfolio/미믹.gif" /> | <img width="180" alt="분열 타입" src="./portfolio/분열%20-%20슬라임.gif" /> | <img width="180" alt="부활 타입 성공" src="./portfolio/부활%20-%20부활%20성공.gif" /> | <img width="180" alt="부활 타입 실패" src="./portfolio/부활%20-%20부활%20실패.gif" /> |
 
 | 방패병 타입 | 비선공 타입 | 버로우 타입 | 마법사 타입 |
 | :---: | :---: | :---: | :---: |
-| <img width="165" alt="방패병 타입" src="./portfolio/방패병.gif" /> | <img width="165" alt="비선공 타입" src="./portfolio/비선공.gif" /> | <img width="165" alt="버로우 타입" src="./portfolio/버로우.gif" /> | <img width="165" alt="마법사 타입" src="./portfolio/마법사%201.gif" /> |
+| <img width="180" alt="방패병 타입" src="./portfolio/방패병.gif" /> | <img width="180" alt="비선공 타입" src="./portfolio/비선공.gif" /> | <img width="180" alt="버로우 타입" src="./portfolio/버로우.gif" /> | <img width="180" alt="마법사 타입" src="./portfolio/마법사%201.gif" /> |
 
 | 스포너 타입 |
 | :---: |
-| <img width="165" alt="스포너 타입" src="./portfolio/스포너.gif" /> |
+| <img width="180" alt="스포너 타입" src="./portfolio/스포너.gif" /> |
 
 </div>
 
