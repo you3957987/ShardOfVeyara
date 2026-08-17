@@ -240,17 +240,21 @@
 
 <div align="center">
 
-| 매직 볼트 | 장판 공격 | 중력 공격 |
-| :---: | :---: | :---: |
-| <img width="200" alt="해골마법사 매직볼트" src="./portfolio/해골%20마법사/해골마법사%20매직볼트.gif" /> | <img width="200" alt="해골마법사 장판" src="./portfolio/해골%20마법사/해골마법사%20장판.gif" /> | <img width="200" alt="중력 공격" src="./portfolio/해골%20마법사/중력%20공격.gif" /> |
+| 매직 볼트 | 장판 공격 |
+| :---: | :---: |
+| <img width="230" alt="해골마법사 매직볼트" src="./portfolio/해골%20마법사/해골마법사%20매직볼트.gif" /> | <img width="230" alt="해골마법사 장판" src="./portfolio/해골%20마법사/해골마법사%20장판.gif" /> |
 
-| 몬스터 소환 | 실드 전개 | 텔레포트 |
-| :---: | :---: | :---: |
-| <img width="200" alt="해골마법사 소환" src="./portfolio/해골%20마법사/해골마법사%20소환.gif" /> | <img width="200" alt="해골마법사 실드" src="./portfolio/해골%20마법사/해골마법사%20실드.gif" /> | <img width="200" alt="해골마법사 텔포" src="./portfolio/해골%20마법사/해골마법사%20텔포.gif" /> |
+| 중력 공격 | 몬스터 소환 |
+| :---: | :---: |
+| <img width="230" alt="중력 공격" src="./portfolio/해골%20마법사/중력%20공격.gif" /> | <img width="230" alt="해골마법사 소환" src="./portfolio/해골%20마법사/해골마법사%20소환.gif" /> |
+
+| 실드 전개 | 텔레포트 |
+| :---: | :---: |
+| <img width="230" alt="해골마법사 실드" src="./portfolio/해골%20마법사/해골마법사%20실드.gif" /> | <img width="230" alt="해골마법사 텔포" src="./portfolio/해골%20마법사/해골마법사%20텔포.gif" /> |
 
 | 특수 패턴 |
 | :---: |
-| <img width="200" alt="해골마법사 특수 패턴" src="./portfolio/해골%20마법사/특수%20패턴.gif" /> |
+| <img width="230" alt="해골마법사 특수 패턴" src="./portfolio/해골%20마법사/특수%20패턴.gif" /> |
 
 </div>
 
