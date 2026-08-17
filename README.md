@@ -240,15 +240,15 @@
 
 <div align="center">
 
-| 매직 볼트 | 장판 공격 |
+| 매직 볼트 | 뼈 장판 소환 |
 | :---: | :---: |
 | <img width="350" alt="해골마법사 매직볼트" src="./portfolio/해골%20마법사/해골마법사%20매직볼트.gif" /> | <img width="350" alt="해골마법사 장판" src="./portfolio/해골%20마법사/해골마법사%20장판.gif" /> |
 
-| 중력 공격 | 몬스터 소환 |
+| 중력 제어 | 해골 소환 |
 | :---: | :---: |
 | <img width="350" alt="중력 공격" src="./portfolio/해골%20마법사/중력%20공격.gif" /> | <img width="350" alt="해골마법사 소환" src="./portfolio/해골%20마법사/해골마법사%20소환.gif" /> |
 
-| 실드 전개 | 텔레포트 |
+| 실드 캐스트 | 텔레포트 |
 | :---: | :---: |
 | <img width="350" alt="해골마법사 실드" src="./portfolio/해골%20마법사/해골마법사%20실드.gif" /> | <img width="350" alt="해골마법사 텔포" src="./portfolio/해골%20마법사/해골마법사%20텔포.gif" /> |
 
@@ -275,7 +275,7 @@
 
 <div align="center">
 
-| 근접 콤보 | 근접 띄우기 |
+| 근접 공격 | 근접 띄우기 |
 | :---: | :---: |
 | <img width="350" alt="근접 모음" src="./portfolio/어썌신/근접%20모음.gif" /> | <img width="350" alt="근접 띄우기" src="./portfolio/어썌신/근접%20띄우기.gif" /> |
 
