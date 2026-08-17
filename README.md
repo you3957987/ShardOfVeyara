@@ -155,6 +155,18 @@
 
 #### 👾 몬스터 및 보스
 
+<div align="center">
+
+| 근접 타입 | 원거리 타입 | 자폭 타입 | 은신 타입 | 미믹 타입 | 분열 타입 |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| <img width="135" alt="근접 타입" src="./portfolio/근접형.gif" /> | <img width="135" alt="원거리 타입" src="./portfolio/원거리.gif" /> | <img width="135" alt="자폭 타입" src="./portfolio/자폭형.gif" /> | <img width="135" alt="은신 타입" src="./portfolio/은신.gif" /> | <img width="135" alt="미믹 타입" src="./portfolio/미믹.gif" /> | <img width="135" alt="분열 타입" src="./portfolio/분열%20-%20슬라임.gif" /> |
+
+| 부활 타입 (성공) | 부활 타입 (실패) | 방패병 타입 | 비선공 타입 | 버로우 타입 | 마법사 타입 | 스포너 타입 |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| <img width="115" alt="부활 타입 성공" src="./portfolio/부활%20-%20부활%20성공.gif" /> | <img width="115" alt="부활 타입 실패" src="./portfolio/부활%20-%20부활%20실패.gif" /> | <img width="115" alt="방패병 타입" src="./portfolio/방패병.gif" /> | <img width="115" alt="비선공 타입" src="./portfolio/비선공.gif" /> | <img width="115" alt="버로우 타입" src="./portfolio/버로우.gif" /> | <img width="115" alt="마법사 타입" src="./portfolio/마법사%201.gif" /> | <img width="115" alt="스포너 타입" src="./portfolio/스포너.gif" /> |
+
+</div>
+
 > 🔗 [일반 몬스터 갤러리 위젯 보기](https://indify.co/widgets/live/gallery/P9mZVjAxQRx6kVeRGr33)
 
 - **일반 몬스터 타입 :**
