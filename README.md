@@ -182,12 +182,36 @@
   - **버로우 타입 :** 지면 아래에 숨어 대기하다가 플레이어가 접근하면 지상으로 튀어나와 기습합니다.
   - **마법사 타입 :** 일정 시간 이후 폭발하는 구체를 플레이어의 위치에 소환하여 공격합니다.
   - **스포너 타입 :** 플레이어가 일정 범위 안으로 진입하면 주기적으로 하위 몬스터들을 소환합니다.
-
+    
 - **보스 몬스터 :**
   - **스켈레톤 메이지 :** 숲 스테이지 보스
     > 🔗 [스켈레톤 메이지 갤러리 위젯 보기](https://indify.co/widgets/live/gallery/hGubosmUIlHybs14mvlo)
+
+  <br>
+
   - **어쌔신 :** 던전 스테이지 보스
     > 🔗 [어쌔신 갤러리 위젯 보기](https://indify.co/widgets/live/gallery/3zn7m0MQAJIvYxbWMzA3)
+
+    <br>
+
+    <details open>
+    <summary><b>🎬 보스 [어쌔신] 패턴 GIF 모아보기 (클릭하여 접기/펼치기)</b></summary>
+
+    <br>
+
+    <div align="center">
+
+    | 근접 콤보 | 근접 띄우기 | 점프 공격 | 대시 연계 | 대시 띄우기 |
+    | :---: | :---: | :---: | :---: | :---: |
+    | <img width="150" alt="근접 모음" src="./portfolio/근접 모음.gif" /> | <img width="150" alt="근접 띄우기" src="./portfolio/근접 띄우기.gif" /> | <img width="150" alt="점프 공격" src="./portfolio/점프 공격.gif" /> | <img width="150" alt="대시 모음" src="./portfolio/대시 모음.gif" /> | <img width="150" alt="대시 띄우기" src="./portfolio/대시 띄우기.gif" /> |
+
+    | 백대시 | 가드 및 카운터 | 검기 발사 | 특수 패턴 |
+    | :---: | :---: | :---: | :---: |
+    | <img width="150" alt="백대시" src="./portfolio/백대시.gif" /> | <img width="150" alt="가드 모음" src="./portfolio/가드 모음.gif" /> | <img width="150" alt="검기" src="./portfolio/검기.gif" /> | <img width="150" alt="특수 패턴" src="./portfolio/특수 패턴.gif" /> |
+
+    </div>
+
+    </details>
 
 <br>
 
