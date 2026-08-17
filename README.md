@@ -279,7 +279,7 @@
 | :---: | :---: |
 | <img width="350" alt="근접 모음" src="./portfolio/어썌신/근접%20모음.gif" /> | <img width="350" alt="근접 띄우기" src="./portfolio/어썌신/근접%20띄우기.gif" /> |
 
-| 점프 공격 | 대시 연계 |
+| 점프 공격 | 대시 공격 |
 | :---: | :---: |
 | <img width="350" alt="점프 공격" src="./portfolio/어썌신/점프%20공격.gif" /> | <img width="350" alt="대시 모음" src="./portfolio/어썌신/대시%20모음.gif" /> |
 
