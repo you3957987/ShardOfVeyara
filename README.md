@@ -36,7 +36,7 @@
     <img width="800" alt="게임 플레이 영상" src="http://img.youtube.com/vi/oBHnLEEwE6M/0.jpg" />
   </a>
   <br>
-  <sub>▲ 이미지를 클릭하면 30초 소개 영상으로 이동합니다.</sub>
+  <sub>▲ 이미지를 클릭하면 YouTube 영상으로 이동합니다.</sub>
 </div>
 
 <br>
@@ -52,8 +52,7 @@
   - 튀어 오르는 버섯을 밟고 도약하는 '숲', 복잡한 미로와 함정이 도사리는 '던전' 등 다채로운 지형지물을 돌파하며 시공간을 넘나드는 플랫포머 액션의 묘미를 선사합니다.
 
 <p align="center">
-  <!-- ⚠️ 아래 src의 괄호 안에 준비하신 '개요_농사,봉헌,포션.gif' 깃허브 링크를 넣어주세요 -->
-  <img width="800" alt="농사 봉헌 포션 개요" src="개요_농사_봉헌_포션_이미지_링크_입력" />
+  <img width="800" alt="농사 봉헌 포션 개요" src="./portfolio/농사_봉헌_포션.gif" />
 </p>
 
 - **뿌린 만큼 거두는 농사 콘텐츠**
@@ -87,35 +86,56 @@
 #### 🌱 농사, 봉헌, 연금술 시스템
 
 - **농사 시스템 :**
-  <p align="center">
-    <!-- ⚠️ 아래 src의 괄호 안에 '작물 수확.gif' 깃허브 링크를 넣어주세요 -->
-    <img width="600" alt="작물 수확" src="작물_수확_이미지_링크_입력" />
-  </p>
+
+<p align="center">
+  <img width="600" alt="작물 수확" src="./portfolio/작물 수확.gif" />
+</p>
+
   - **탐험과 농사 :** 차원문 너머의 맵을 탐험하며 전리품으로 얻은 다양한 씨앗을 마을의 밭에 심고 재배할 수 있습니다.
   - **인게임 시간 기반 성장 :** 씨앗을 심은 후 인게임 타임라인 기준으로 총 2일의 시간이 흐르면 수확이 가능합니다.
   - **잡초 기믹 :** 작물 성장 중 무작위로 '잡초'가 발생하며, 잡초에 얽힌 작물은 성장이 멈춥니다. 플레이어는 상호작용을 통해 잡초를 제거해야 작물을 정상적으로 수확할 수 있습니다.
 
+<br>
+
 - **봉헌 시스템 :**
-  <p align="center">
-    <!-- ⚠️ 아래 src의 괄호 안에 '봉헌.gif' 깃허브 링크를 넣어주세요 -->
-    <img width="600" alt="봉헌 시스템" src="봉헌_이미지_링크_입력" />
-  </p>
+
+<p align="center">
+  <img width="600" alt="봉헌 시스템" src="./portfolio/봉헌.gif" />
+</p>
+
   - **스탯 강화 :** 수확한 작물을 마을 제단에 봉헌하여 캐릭터(에린드)의 최대 체력과 공격력을 영구적으로 증가시킬 수 있습니다.
   - **봉헌 UI :** 화면 하단에서 봉헌에 필요한 작물의 종류와 개수를 확인하고, 상단 인벤토리에서 작물을 드래그 앤 드랍하여 직관적으로 봉헌할 수 있습니다.
 
+<br>
+
 - **연금술 시스템 :**
-  <p align="center">
-    <!-- ⚠️ 아래 src의 괄호 안에 '포션 제작.gif' 깃허브 링크를 넣어주세요 -->
-    <img width="600" alt="포션 제작" src="포션_제작_이미지_링크_입력" />
-  </p>
+
+<p align="center">
+  <img width="600" alt="포션 제작" src="./portfolio/포션제작.gif" />
+</p>
+
   - **포션 제작 :** 수확한 작물을 조합하여 모험과 농사에 도움이 되는 다양한 포션을 제작할 수 있습니다. 다이아몬드 크리스탈과 알맞은 작물 2개를 조합하면 체력 포션, 작물 성장 포션 등이 완성되지만, 레시피에 맞지 않는 잘못된 재료를 조합할 경우 실패작인 '슬러지'가 생성됩니다.
   - **연금술 UI :** 화면 상단 메뉴의 좌측에는 다이아몬드 크리스탈이, 우측에는 현재 플레이어가 보유 중인 작물 재료가 표시됩니다. 원하는 재료를 중앙의 연금술 솥으로 드래그 앤 드랍하여 직관적으로 투입할 수 있으며, 솥에 들어간 재료는 하단의 슬롯에서 확인하고 '비우기' 버튼을 눌러 언제든 초기화할 수 있습니다.
 
-<br>
-
 #### 🗺️ 스테이지
 
-> 🔗 [스테이지 갤러리 위젯 보기](https://indify.co/widgets/live/gallery/FJg9gHXEEghI48jUR9TQ)
+<div align="center">
+
+| 튜토리얼 마을 | 튜토리얼 하늘섬 |
+| :---: | :---: |
+| <img width="380" alt="튜토리얼 마을" src="https://github.com/user-attachments/assets/b8f1b199-f9f5-46d8-84f6-4c8429ee6ac9" /> | <img width="380" alt="튜토리얼 하늘섬" src="https://github.com/user-attachments/assets/2213fb02-bb0c-4bbb-b056-7e0ad9ed195f" /> |
+
+| 베이라 마을 (거점) |
+| :---: |
+| <img width="500" alt="베이라 마을" src="https://github.com/user-attachments/assets/239f9ab5-9f8a-43be-a92f-3d9a74f173fb" /> |
+
+| 숲맵 | 던전맵 중앙 |
+| :---: | :---: |
+| <img width="380" alt="숲맵" src="https://github.com/user-attachments/assets/3a27f93a-b706-4ef7-8d5c-de8028f246a6" /> | <img width="380" alt="던전맵 중앙" src="https://github.com/user-attachments/assets/b53ee01f-64e3-43f2-b45d-967b3b9f5e31" /> |
+
+</div>
+
+<br>
 
 - **튜토리얼 마을 및 하늘섬 :**
   - 에린드가 살던 고향 마을에 차원의 구슬이 떨어지고 구슬과 접촉하여 베이라로 넘어와 아르키안을 만나게 된 후 베이라 마을로 이동하면서 기본적인 게임 튜토리얼을 진행할 수 있습니다. (튜토리얼 스테이지는 `F`키를 길게 눌러 스킵할 수 있습니다.)
@@ -161,7 +181,19 @@
 
 #### 🖥️ HUD 및 UI
 
-> 🔗 [HUD 및 UI 갤러리 위젯 보기](https://indify.co/widgets/live/gallery/4n5HyNXXzstOv7w80Ljp)
+<div align="center">
+
+| 메인 UI | 인벤토리 UI |
+| :---: | :---: |
+| <img width="380" alt="UI2" src="https://github.com/user-attachments/assets/a7076c7c-0644-4853-a976-34911d8190ca" /> | <img width="380" alt="UI1" src="https://github.com/user-attachments/assets/f256413a-dde2-4581-9c76-47b8057f89a9" /> |
+
+| NPC 대화창 UI | 대화 로그 UI | 자막형 UI |
+| :---: | :---: | :---: |
+| <img width="260" alt="대화1" src="https://github.com/user-attachments/assets/dfaec469-86af-4119-a72e-a3d43766a744" /> | <img width="260" alt="대화 2" src="https://github.com/user-attachments/assets/73071357-9419-456a-9fe7-37554b938c1f" /> | <img width="260" alt="대화 3" src="https://github.com/user-attachments/assets/b96c9617-ff94-4bfd-9621-a8dbc0bc9203" /> |
+
+</div>
+
+<br>
 
 - **상태 및 재화 UI :**
   - 퀵슬롯 상단에 체력 게이지가, 화면 좌상단에는 현재 골드가 표시되어 전투나 탐험 중에도 캐릭터의 상태와 자원을 한눈에 확인할 수 있습니다.
