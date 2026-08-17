@@ -119,7 +119,23 @@
 
 #### 🗺️ 스테이지
 
-> 🔗 [스테이지 갤러리 위젯 보기](https://indify.co/widgets/live/gallery/FJg9gHXEEghI48jUR9TQ)
+<div align="center">
+
+| 튜토리얼 마을 | 튜토리얼 하늘섬 |
+| :---: | :---: |
+| <img width="380" alt="튜토리얼 마을" src="https://github.com/user-attachments/assets/b8f1b199-f9f5-46d8-84f6-4c8429ee6ac9" /> | <img width="380" alt="튜토리얼 하늘섬" src="https://github.com/user-attachments/assets/2213fb02-bb0c-4bbb-b056-7e0ad9ed195f" /> |
+
+| 베이라 마을 (거점) |
+| :---: |
+| <img width="500" alt="베이라 마을" src="https://github.com/user-attachments/assets/239f9ab5-9f8a-43be-a92f-3d9a74f173fb" /> |
+
+| 숲맵 | 던전맵 중앙 |
+| :---: | :---: |
+| <img width="380" alt="숲맵" src="https://github.com/user-attachments/assets/3a27f93a-b706-4ef7-8d5c-de8028f246a6" /> | <img width="380" alt="던전맵 중앙" src="https://github.com/user-attachments/assets/b53ee01f-64e3-43f2-b45d-967b3b9f5e31" /> |
+
+</div>
+
+<br>
 
 - **튜토리얼 마을 및 하늘섬 :**
   - 에린드가 살던 고향 마을에 차원의 구슬이 떨어지고 구슬과 접촉하여 베이라로 넘어와 아르키안을 만나게 된 후 베이라 마을로 이동하면서 기본적인 게임 튜토리얼을 진행할 수 있습니다. (튜토리얼 스테이지는 `F`키를 길게 눌러 스킵할 수 있습니다.)
