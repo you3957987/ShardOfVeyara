@@ -181,7 +181,19 @@
 
 #### 🖥️ HUD 및 UI
 
-> 🔗 [HUD 및 UI 갤러리 위젯 보기](https://indify.co/widgets/live/gallery/4n5HyNXXzstOv7w80Ljp)
+<div align="center">
+
+| 메인 UI | 인벤토리 UI |
+| :---: | :---: |
+| <img width="380" alt="UI2" src="https://github.com/user-attachments/assets/a7076c7c-0644-4853-a976-34911d8190ca" /> | <img width="380" alt="UI1" src="https://github.com/user-attachments/assets/f256413a-dde2-4581-9c76-47b8057f89a9" /> |
+
+| NPC 대화창 UI | 대화 로그 UI | 자막형 UI |
+| :---: | :---: | :---: |
+| <img width="260" alt="대화1" src="https://github.com/user-attachments/assets/dfaec469-86af-4119-a72e-a3d43766a744" /> | <img width="260" alt="대화 2" src="https://github.com/user-attachments/assets/73071357-9419-456a-9fe7-37554b938c1f" /> | <img width="260" alt="대화 3" src="https://github.com/user-attachments/assets/b96c9617-ff94-4bfd-9621-a8dbc0bc9203" /> |
+
+</div>
+
+<br>
 
 - **상태 및 재화 UI :**
   - 퀵슬롯 상단에 체력 게이지가, 화면 좌상단에는 현재 골드가 표시되어 전투나 탐험 중에도 캐릭터의 상태와 자원을 한눈에 확인할 수 있습니다.
