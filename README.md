@@ -143,11 +143,11 @@
 | :---: | :---: |
 | <img width="380" alt="튜토리얼 마을" src="https://github.com/user-attachments/assets/b8f1b199-f9f5-46d8-84f6-4c8429ee6ac9" /> | <img width="380" alt="튜토리얼 하늘섬" src="https://github.com/user-attachments/assets/2213fb02-bb0c-4bbb-b056-7e0ad9ed195f" /> |
 
-| 베이라 마을 (거점) |
+| 베이라 마을 |
 | :---: |
 | <img width="500" alt="베이라 마을" src="https://github.com/user-attachments/assets/239f9ab5-9f8a-43be-a92f-3d9a74f173fb" /> |
 
-| 숲맵 | 던전맵 중앙 |
+| 숲 스테이지 | 던전 스테이지 |
 | :---: | :---: |
 | <img width="380" alt="숲맵" src="https://github.com/user-attachments/assets/3a27f93a-b706-4ef7-8d5c-de8028f246a6" /> | <img width="380" alt="던전맵 중앙" src="https://github.com/user-attachments/assets/b53ee01f-64e3-43f2-b45d-967b3b9f5e31" /> |
 
