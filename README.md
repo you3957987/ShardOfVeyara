@@ -185,33 +185,28 @@
     
 - **보스 몬스터 :**
   - **스켈레톤 메이지 :** 숲 스테이지 보스
-    > 🔗 [스켈레톤 메이지 갤러리 위젯 보기](https://indify.co/widgets/live/gallery/hGubosmUIlHybs14mvlo)
 
   <br>
 
   - **어쌔신 :** 던전 스테이지 보스
-    > 🔗 [어쌔신 갤러리 위젯 보기](https://indify.co/widgets/live/gallery/3zn7m0MQAJIvYxbWMzA3)
 
-    <br>
+<br>
 
-    <details open>
-    <summary><b>🎬 보스 [어쌔신] 패턴 GIF 모아보기 (클릭하여 접기/펼치기)</b></summary>
+<div align="center">
 
-    <br>
+| 근접 콤보 | 근접 띄우기 | 점프 공격 |
+| :---: | :---: | :---: |
+| <img width="200" alt="근접 모음" src="./portfolio/근접 모음.gif" /> | <img width="200" alt="근접 띄우기" src="./portfolio/근점 띄우기.gif" /> | <img width="200" alt="점프 공격" src="./portfolio/점프 공격.gif" /> |
 
-    <div align="center">
+| 대시 연계 | 대시 띄우기 | 백대시 |
+| :---: | :---: | :---: |
+| <img width="200" alt="대시 모음" src="./portfolio/대시 모음.gif" /> | <img width="200" alt="대시 띄우기" src="./portfolio/대시 띄우기.gif" /> | <img width="200" alt="백대시" src="./portfolio/백대시.gif" /> |
 
-    | 근접 콤보 | 근접 띄우기 | 점프 공격 | 대시 연계 | 대시 띄우기 |
-    | :---: | :---: | :---: | :---: | :---: |
-    | <img width="150" alt="근접 모음" src="./portfolio/근접 모음.gif" /> | <img width="150" alt="근접 띄우기" src="./portfolio/근점 띄우기.gif" /> | <img width="150" alt="점프 공격" src="./portfolio/점프 공격.gif" /> | <img width="150" alt="대시 모음" src="./portfolio/대시 모음.gif" /> | <img width="150" alt="대시 띄우기" src="./portfolio/대시 띄우기.gif" /> |
+| 가드 및 카운터 | 검기 발사 | 특수 패턴 |
+| :---: | :---: | :---: |
+| <img width="200" alt="가드 모음" src="./portfolio/가드 모음.gif" /> | <img width="200" alt="검기" src="./portfolio/검기.gif" /> | <img width="200" alt="특수 패턴" src="./portfolio/특수 패턴.gif" /> |
 
-    | 백대시 | 가드 및 카운터 | 검기 발사 | 특수 패턴 |
-    | :---: | :---: | :---: | :---: |
-    | <img width="150" alt="백대시" src="./portfolio/백대시.gif" /> | <img width="150" alt="가드 모음" src="./portfolio/가드 모음.gif" /> | <img width="150" alt="검기" src="./portfolio/검기.gif" /> | <img width="150" alt="특수 패턴" src="./portfolio/특수 패턴.gif" /> |
-
-    </div>
-
-    </details>
+</div>
 
 <br>
 
